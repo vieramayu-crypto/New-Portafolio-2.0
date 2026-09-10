@@ -79,6 +79,11 @@ export interface SiteContent {
   milestones: {
     eyebrow: string;
     items: MilestoneItem[];
+    /** Los grupos hoteleros detrás de las marcas del carrusel. Sin esta línea
+     *  el carrusel es una lista de 22 nombres sueltos y el lector nunca ata
+     *  que Ritz-Carlton es Marriott, que InterContinental y Holiday Inn
+     *  Express son ambos IHG, y que Dolce es Wyndham. */
+    affiliations: string;
     footnote: string;
   };
   howWeWork: {
@@ -154,6 +159,8 @@ export const DEFAULT_CONTENT: SiteContent = {
       { value: '5', label: 'countries' },
       { value: '4', label: 'returning clients' },
     ],
+    affiliations:
+      'Properties within Marriott International, IHG Hotels & Resorts and Wyndham, alongside independent boutique collections across five countries.',
     footnote:
       'Returning clients: GPRO Valparaíso (3 shoots) · Numa Group (3 properties) · Hotel Espléndido (2 shoots) · Portixol (2 shoots)',
   },
@@ -452,6 +459,9 @@ function mergeContent(fetched: unknown): SiteContent {
         ? f.milestones!.eyebrow
         : DEFAULT_CONTENT.milestones.eyebrow,
       items: milestoneItems,
+      affiliations: isNonEmptyString(f.milestones?.affiliations)
+        ? f.milestones!.affiliations
+        : DEFAULT_CONTENT.milestones.affiliations,
       footnote: isNonEmptyString(f.milestones?.footnote)
         ? f.milestones!.footnote
         : DEFAULT_CONTENT.milestones.footnote,
