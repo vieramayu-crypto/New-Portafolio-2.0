@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { HERO_PHOTO } from '../data/media';
+import { HERO_PHOTO, HERO_PHOTO_MOBILE } from '../data/media';
 import { useSiteContent } from '../src/lib/content';
 
 interface HeroSectionProps {
@@ -39,15 +39,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone }) => {
 
   return (
     <section className="relative h-[100svh] min-h-[680px] w-full select-none overflow-hidden bg-[#1a1918] font-sans text-white">
-      <img
-        src={HERO_PHOTO}
-        alt="Mayu Travel, visual production for luxury hotels"
-        // En movil la foto se dibuja un 5% mas alta y anclada arriba: a 390x844
-        // el `cover` ya encaja de altura exacta, asi que `object-position` en el
-        // eje Y no hace nada y esta es la unica forma de bajar a la persona
-        // hasta la altura del titular. El sobrante cae detras de la banda.
-        className="absolute left-0 top-0 h-[105%] w-full object-cover object-[34%_24%] saturate-[.84] md:h-full md:object-[56%_28%]"
-      />
+      {/* Dos encuadres de la misma escena, uno por tamano. La horizontal en
+          vertical obligaba al movil a usar un tercio de su ancho y estirarlo
+          casi al doble, y la foto se veia blanda; la vertical llega ya
+          recortada y el movil no amplia nada. `<picture>` no crea bloque
+          contenedor, asi que el `absolute` del <img> sigue midiendo contra la
+          seccion. */}
+      <picture>
+        <source media="(min-width: 768px)" srcSet={HERO_PHOTO} />
+        <img
+          src={HERO_PHOTO_MOBILE}
+          alt="Mayu Travel, visual production for luxury hotels"
+          // En movil la foto se dibuja un 5% mas alta y anclada arriba: a
+          // 390x844 el `cover` ya encaja de altura exacta, asi que
+          // `object-position` en el eje Y no hace nada y esta es la unica forma
+          // de bajar a la persona hasta la altura del titular. El sobrante cae
+          // detras de la banda.
+          className="absolute left-0 top-0 h-[105%] w-full object-cover object-[10%_50%] saturate-[.84] md:h-full md:object-[56%_28%]"
+        />
+      </picture>
 
       {/* Dos velos cruzados: uno lateral que sostiene el titular sobre el margen
           izquierdo y uno inferior muy leve que asienta la banda. En movil el

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { COUPLE_PHOTO, MAYU_PORTRAIT, PORTFOLIO_MENU_PHOTO } from '../data/media';
+import { MENU_ABOUT_PHOTO, MAYU_PORTRAIT, PORTFOLIO_MENU_PHOTO } from '../data/media';
 import mayuLogoBlack from '../src/assets/images/mayu-logo-black.png';
 
 interface NavbarProps {
@@ -21,7 +21,7 @@ type MenuLink = 'portfolio' | 'about' | 'contact';
 
 const MENU_PHOTOS: Record<MenuLink, string> = {
   portfolio: PORTFOLIO_MENU_PHOTO,
-  about: COUPLE_PHOTO,
+  about: MENU_ABOUT_PHOTO,
   contact: MAYU_PORTRAIT,
 };
 
