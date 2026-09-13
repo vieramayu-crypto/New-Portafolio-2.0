@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { HotelStory, Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { HeroSection } from './HeroSection';
 import { HotelSectionBlock } from './HotelSectionBlock';
 import { ValueBlock } from './ValueBlock';
+import { VideoShowcase } from './VideoShowcase';
 import { WhatWeCreate } from './WhatWeCreate';
 import { WhyUs } from './WhyUs';
 import { WaysToWork } from './WaysToWork';
@@ -12,6 +14,12 @@ import { ClosingCta } from './ClosingCta';
 import { Testimonials } from './Testimonials';
 import { BrandsMarquee } from './BrandsMarquee';
 import { useSiteContent } from '../src/lib/content';
+
+/** Inicio muestra solo las propiedades insignia (Ritz-Carlton Abama, GPRO
+ *  Valparaíso, Vestige Binidufà -- las mismas que elige la auditoría). Las
+ *  nueve siguen intactas y visibles en /trabajo; aquí solo se reduce la
+ *  vitrina de Inicio, nunca se borra ningún hotel. */
+const FLAGSHIP_IDS = ['ritz-carlton-abama', 'hotel-danieli-venezia', 'villa-cimbrone-ravello'];
 
 interface HomeMainProps {
   /** El hero no anima hasta que el video de intro se va: si no, la entrada se
@@ -65,6 +73,17 @@ export const HomeMain: React.FC<HomeMainProps> = ({
         quote: hotelContent[i]?.quote ?? story.quote,
       })),
     [hotelContent]
+  );
+
+  // Subconjunto que realmente se pinta en Inicio, en el orden fijo de la
+  // auditoría -- el resto del código sigue hablando de hotelStories (las
+  // nueve) para el overlay de contenido y el buscador por id.
+  const flagshipStories = useMemo(
+    () =>
+      FLAGSHIP_IDS.map((id) => hotelStories.find((s) => s.id === id)).filter(
+        (s): s is (typeof hotelStories)[number] => Boolean(s)
+      ),
+    [hotelStories]
   );
 
   const currentStory = hotelStories[activeStoryIndex] || hotelStories[0];
@@ -154,6 +173,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
 
       <WhatWeCreate onOpenAvailability={onOpenAvailability} />
       <ValueBlock onOpenAvailability={onOpenAvailability} />
+      <VideoShowcase />
 
       {/* Target for smooth scroll from Hero */}
       <div id="hotel-section" className="relative pt-6">
@@ -199,10 +219,21 @@ export const HomeMain: React.FC<HomeMainProps> = ({
             )}
           </AnimatePresence>
 
-          {/* Seamless Stack of all 8 Hotel Sections (NO DIVIDING LINES) */}
-          {hotelStories.map((story, index) => (
+          {/* Vitrina de Inicio: solo las propiedades insignia (sin líneas divisorias) */}
+          {flagshipStories.map((story, index) => (
             <HotelSectionBlock key={story.id} story={story} index={index} onSelectStory={onSelectStory} />
           ))}
+
+          {/* CTA hacia el portafolio completo -- las nueve propiedades viven
+              en /trabajo, cada una con su propia URL. */}
+          <div className="flex justify-center pt-4 pb-4">
+            <Link
+              to="/trabajo"
+              className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            >
+              Ver todo el trabajo
+            </Link>
+          </div>
 
           {/* Bottom Floating Button: only appears once the first photo section is reached */}
           <AnimatePresence>
@@ -218,7 +249,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                   onClick={() => setIsHotelSelectorOpen(!isHotelSelectorOpen)}
                   className="pointer-events-auto bg-[#f5f3ed]/95 backdrop-blur-sm px-5 py-2 flex items-center gap-3 text-sm md:text-base font-serif tracking-[0.25em] font-medium text-[#1a1918] hover:bg-[#1a1918] hover:text-[#f5f3ed] transition-all duration-300 shadow-[0_2px_20px_rgba(26,25,24,0.14)]"
                 >
-                  <span>Ver trabajo ({hotelStories.length})</span>
+                  <span>Ver trabajo ({flagshipStories.length})</span>
                   <span className="text-xs">{isHotelSelectorOpen ? '▼' : '▲'}</span>
                 </button>
 
@@ -238,14 +269,14 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                           blanca. */}
                       <div className="no-scrollbar max-h-80 space-y-1 overflow-y-auto p-3">
                       <div className="mb-1 border-b border-[#1a1918]/15 px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854]">
-                        Ir a hotel / cliente ({hotelStories.length})
+                        Ir a hotel / cliente ({flagshipStories.length})
                       </div>
-                      {hotelStories.map((hotel, idx) => (
+                      {flagshipStories.map((hotel) => (
                         <button
                           key={hotel.id}
                           onClick={() => scrollToHotel(hotel.id)}
                           className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between text-xs font-sans transition-colors ${
-                            activeStoryIndex === idx
+                            currentStory.id === hotel.id
                               ? 'bg-[#1a1918] text-[#fbfaf6] font-medium'
                               : 'text-[#1a1918] hover:bg-white/45'
                           }`}
@@ -260,6 +291,13 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                         </button>
                       ))}
                       </div>
+                      <Link
+                        to="/trabajo"
+                        onClick={() => setIsHotelSelectorOpen(false)}
+                        className="block border-t border-[#1a1918]/15 px-3 py-3 text-center font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854] transition-colors hover:bg-white/45 hover:text-[#1a1918]"
+                      >
+                        Ver las nueve propiedades →
+                      </Link>
                     </motion.div>
                   )}
                 </AnimatePresence>
