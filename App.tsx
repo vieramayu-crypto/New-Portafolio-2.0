@@ -1,38 +1,85 @@
 import React, { useLayoutEffect, useState } from 'react';
+import { HashRouter, Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Page, HotelStory } from './types';
 import { HOTEL_STORIES } from './data/hotels';
 import { Navbar } from './components/Navbar';
 import { HomeMain } from './components/HomeMain';
 import { About } from './components/About';
 import { Contact } from './components/Contact';
+import { WorkPage } from './components/WorkPage';
+import { ProjectCaseStudy } from './components/ProjectCaseStudy';
 import { InquiryModal } from './components/InquiryModal';
 import { Footer } from './components/Footer';
 import { HotelDetail } from './components/HotelDetail';
 import { PhotoZoomTransition } from './components/PhotoZoomTransition';
 import { IntroLoader } from './components/IntroLoader';
-import { ContentProvider } from './src/lib/content';
+import { ContentProvider, useSiteContent } from './src/lib/content';
 
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+/** Cada página real vive en su propia ruta (URL compartible), pero el resto
+ *  de la web sigue hablando en términos de `Page` como antes: este mapa
+ *  traduce entre los dos mundos sin tocar Navbar.tsx ni Footer.tsx. */
+const PATH_BY_PAGE: Record<Page, string> = { home: '/', about: '/acerca-de', contact: '/contacto' };
+const PAGE_BY_PATH: Partial<Record<string, Page>> = { '/': 'home', '/acerca-de': 'about', '/contacto': 'contact' };
+
+/** Ficha de un proyecto de Trabajo, alcanzable por URL propia
+ *  (/trabajo/:id) además de por clic desde Inicio. */
+const WorkProjectRoute: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { hotels: hotelContent } = useSiteContent();
+  const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
+
+  if (idx === -1) {
+    navigate('/trabajo', { replace: true });
+    return null;
+  }
+
+  const total = HOTEL_STORIES.length;
+  const base = HOTEL_STORIES[idx];
+  const story: HotelStory = {
+    ...base,
+    hotelName: hotelContent[idx]?.hotelName ?? base.hotelName,
+    coupleName: hotelContent[idx]?.coupleName ?? base.coupleName,
+    description: hotelContent[idx]?.description ?? base.description,
+    quote: hotelContent[idx]?.quote ?? base.quote,
+  };
+  const prevStory = HOTEL_STORIES[(idx - 1 + total) % total];
+  const nextStory = HOTEL_STORIES[(idx + 1) % total];
+
+  return (
+    <HotelDetail
+      story={story}
+      onBack={() => navigate('/trabajo')}
+      onNavigateStory={(direction) =>
+        navigate(`/trabajo/${direction === 'next' ? nextStory.id : prevStory.id}`)
+      }
+      prevStory={prevStory}
+      nextStory={nextStory}
+    />
+  );
+};
+
+const AppShell: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isInquiryOpen, setIsInquiryOpen] = useState<boolean>(false);
-  const [selectedStory, setSelectedStory] = useState<HotelStory | null>(null);
   const [pendingTransition, setPendingTransition] = useState<HotelStory | null>(null);
   // The intro plays once per full page load. Internal SPA navigation (e.g.
   // returning to Home from a hotel detail) does not re-trigger it -- a
   // refresh does, because React state resets with the page.
   const [introPlayed, setIntroPlayed] = useState<boolean>(false);
 
+  const currentPage: Page = PAGE_BY_PATH[location.pathname] ?? 'home';
+
   const handleNavigate = (page: Page) => {
-    setCurrentPage(page);
-    setSelectedStory(null);
-    setPendingTransition(null);
+    navigate(PATH_BY_PAGE[page]);
   };
 
   // El reseteo va después del render, no en el manejador: hacerlo antes de que
   // React monte la página nueva dejaba el scroll a media altura.
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [currentPage]);
+  }, [location.pathname]);
 
   const handleSelectStory = (story: HotelStory) => {
     if (pendingTransition) return;
@@ -41,46 +88,18 @@ export default function App() {
 
   const handleTransitionComplete = () => {
     if (pendingTransition) {
-      setSelectedStory(pendingTransition);
+      navigate(`/trabajo/${pendingTransition.id}`);
     }
     setPendingTransition(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  const handleCloseStory = () => {
-    setSelectedStory(null);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
-
-  const handleNavigateStory = (direction: 'prev' | 'next') => {
-    if (!selectedStory) return;
-    const idx = HOTEL_STORIES.findIndex((s) => s.id === selectedStory.id);
-    if (idx === -1) return;
-    const total = HOTEL_STORIES.length;
-    const newIdx = direction === 'next' ? (idx + 1) % total : (idx - 1 + total) % total;
-    setSelectedStory(HOTEL_STORIES[newIdx]);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
-
-  const currentIdx = selectedStory
-    ? HOTEL_STORIES.findIndex((s) => s.id === selectedStory.id)
-    : -1;
-  const prevStory =
-    currentIdx >= 0
-      ? HOTEL_STORIES[(currentIdx - 1 + HOTEL_STORIES.length) % HOTEL_STORIES.length]
-      : null;
-  const nextStory =
-    currentIdx >= 0 ? HOTEL_STORIES[(currentIdx + 1) % HOTEL_STORIES.length] : null;
+  const openAvailability = () => setIsInquiryOpen(true);
 
   return (
-    <ContentProvider>
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans antialiased selection:bg-[#1a1918] selection:text-[#f5f3ed]">
       {/* Top Header Navigation */}
-      <Navbar
-        currentPage={currentPage}
-        onNavigate={handleNavigate}
-        onOpenAvailability={() => setIsInquiryOpen(true)}
-      />
+      <Navbar currentPage={currentPage} onNavigate={handleNavigate} onOpenAvailability={openAvailability} />
 
       {/* Detras del cristal, la pagina se desenfoca y se apaga — sin eso, una
           foto a pantalla completa atraviesa el modal como una mancha. Envuelve
@@ -95,40 +114,41 @@ export default function App() {
           isInquiryOpen ? 'scale-[.994] opacity-60 blur-[20px]' : ''
         }`}
       >
-      <main>
-        {selectedStory ? (
-          <HotelDetail
-            story={selectedStory}
-            onBack={handleCloseStory}
-            onNavigateStory={handleNavigateStory}
-            prevStory={prevStory}
-            nextStory={nextStory}
-          />
-        ) : (
-          <>
-            {currentPage === 'home' && (
-              <HomeMain
-                introDone={introPlayed}
-                onNavigate={handleNavigate}
-                onOpenAvailability={() => setIsInquiryOpen(true)}
-                onSelectStory={handleSelectStory}
-              />
-            )}
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomeMain
+                  introDone={introPlayed}
+                  onNavigate={handleNavigate}
+                  onOpenAvailability={openAvailability}
+                  onSelectStory={handleSelectStory}
+                />
+              }
+            />
+            <Route path="/acerca-de" element={<About onOpenAvailability={openAvailability} />} />
+            <Route path="/contacto" element={<Contact onOpen={openAvailability} />} />
+            <Route path="/trabajo" element={<WorkPage />} />
+            <Route path="/trabajo/:id" element={<WorkProjectRoute />} />
+            <Route path="/proyecto/:id" element={<ProjectCaseStudy />} />
+            <Route
+              path="*"
+              element={
+                <HomeMain
+                  introDone={introPlayed}
+                  onNavigate={handleNavigate}
+                  onOpenAvailability={openAvailability}
+                  onSelectStory={handleSelectStory}
+                />
+              }
+            />
+          </Routes>
+        </main>
 
-            {currentPage === 'about' && (
-              <About onOpenAvailability={() => setIsInquiryOpen(true)} />
-            )}
-
-            {currentPage === 'contact' && (
-              <Contact onOpen={() => setIsInquiryOpen(true)} />
-            )}
-          </>
-        )}
-      </main>
-
-      {/* El pie cierra todas las páginas, Inicio incluido: hasta ahora Inicio
-          terminaba en seco, sin Instagram, sin navegación y sin aviso legal. */}
-      <Footer onNavigate={handleNavigate} />
+        {/* El pie cierra todas las páginas, Inicio incluido: hasta ahora Inicio
+            terminaba en seco, sin Instagram, sin navegación y sin aviso legal. */}
+        <Footer onNavigate={handleNavigate} />
       </div>
 
       {/* Un solo formulario de solicitud en toda la web: lo abren el CTA de
@@ -146,6 +166,15 @@ export default function App() {
           inner navigation. */}
       {!introPlayed && <IntroLoader onDone={() => setIntroPlayed(true)} />}
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <ContentProvider>
+      <HashRouter>
+        <AppShell />
+      </HashRouter>
     </ContentProvider>
   );
 }

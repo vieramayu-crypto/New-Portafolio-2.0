@@ -23,7 +23,7 @@ export interface InquiryFields {
 
 export function buildInquirySubject(f: InquiryFields): string {
   const property = f.propertyName.trim() || 'nueva propiedad';
-  return `Consulta de disponibilidad — ${property}`;
+  return `Consulta de disponibilidad: ${property}`;
 }
 
 export function buildInquiryBody(f: InquiryFields): string {
