@@ -3,20 +3,13 @@ import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent } from '../src/lib/content';
 
-/** Primera frase de la descripción larga del hotel (pensada para la ficha
- *  completa), para el texto corto que acompaña la foto activa aquí. */
-function firstSentence(text: string): string {
-  const cut = text.indexOf('. ');
-  return cut === -1 ? text : text.slice(0, cut + 1);
-}
-
-/** "Trabajo": vitrina inmersiva de las nueve propiedades, reemplaza el grid
- *  plano anterior (rechazado por no reflejar el resto del diseño). Una sola
- *  pantalla -- foto de fondo a pantalla completa por hotel, con crossfade al
- *  cambiar -- y abajo una fila de miniaturas horizontales (la misma portada
- *  de cada ficha, sin recortar a círculo) para elegir cuál mirar. Solo al
- *  confirmar con "Ver portafolio" navega de verdad a /trabajo/:id -- mientras
- *  tanto es puro vistazo, sin cambiar de URL. */
+/** "Trabajo": misma tarjeta de cristal que el formulario de Contacto (mismo
+ *  borde, mismo fondo, misma X para cerrar), no una foto a pantalla completa
+ *  -- probamos esa vía y no funcionó. La foto ocupa solo la franja superior
+ *  de la tarjeta; el resto es el panel de cristal con el nombre del hotel y
+ *  el selector. Las miniaturas van superpuestas y comprimidas (no en fila
+ *  suelta): solo la activa, o la que se pasa por encima, se agranda -- nueve
+ *  fotos horizontales una al lado de la otra rompían la elegancia. */
 export const WorkPage: React.FC = () => {
   const { hotels: hotelContent } = useSiteContent();
   const [active, setActive] = useState(0);
@@ -26,7 +19,6 @@ export const WorkPage: React.FC = () => {
       HOTEL_STORIES.map((story, i) => ({
         ...story,
         hotelName: hotelContent[i]?.hotelName ?? story.hotelName,
-        description: hotelContent[i]?.description ?? story.description,
       })),
     [hotelContent]
   );
@@ -34,77 +26,70 @@ export const WorkPage: React.FC = () => {
   const current = stories[active];
 
   return (
-    <section className="relative h-[100svh] w-full select-none overflow-hidden bg-[#1a1918] font-sans text-white">
-      {/* Fondos apilados, uno por hotel: solo el activo tiene opacidad, el
-          resto queda listo debajo para el siguiente crossfade. */}
-      {stories.map((story, i) => (
-        <div
-          key={story.id}
-          aria-hidden={i !== active}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-out ${
-            i === active ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ backgroundImage: `url(${story.coverImage})` }}
-        />
-      ))}
-
-      {/* Velo suave: sostiene el texto sin apagar la foto. */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 to-black/45" />
-
-      <div className="relative z-10 flex h-full flex-col justify-between px-6 pb-6 pt-28 sm:px-10 sm:pb-8 sm:pt-32 lg:px-16 lg:pt-36">
-        {/* Encabezado: titular fijo a la izquierda, descripción del hotel activo
-            a la derecha (cambia con la selección). */}
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-16">
-          <h1 className="max-w-xl font-serif text-3xl font-normal leading-[1.1] tracking-tight sm:text-5xl lg:text-7xl">
-            El trabajo completo, hotel por hotel.
-          </h1>
-          <p
-            key={current.id + '-desc'}
-            className="max-w-xs animate-[fadeIn_0.5s_ease] font-sans text-sm font-medium leading-relaxed text-white/80 sm:text-base md:pt-2"
+    <div className="relative flex min-h-[100svh] w-full items-center justify-center bg-[#f5f3ed] px-3 py-24 md:px-10 md:py-16">
+      <div className="mt-glass mt-glass-light relative flex max-h-full w-full flex-col overflow-hidden rounded-lg text-[#1a1918] md:max-h-[min(760px,calc(100svh-140px))] md:w-[min(880px,100%)] md:rounded-[10px]">
+        {/* Un solo hijo directo de `.mt-glass`: esa clase fuerza `position:
+            relative` en sus hijos directos (para que ganen al destello), y
+            eso le habría roto el `absolute` a la X si viviera aquí mismo. */}
+        <div className="no-scrollbar relative flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <Link
+            to="/"
+            aria-label="Cerrar"
+            className="absolute right-4 top-4 z-[3] flex h-10 w-10 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/20 text-xl text-[#1a1918] transition-colors hover:bg-white/40 md:right-6 md:top-6 md:h-[42px] md:w-[42px]"
           >
-            {firstSentence(current.description)}
-          </p>
-        </div>
+            ×
+          </Link>
 
-        {/* Pie: selector de miniaturas + ficha del hotel activo. */}
-        <div className="flex flex-col gap-6 sm:gap-8">
-          <div className="no-scrollbar flex items-end gap-2 overflow-x-auto pb-1 sm:gap-3 sm:overflow-visible sm:pb-0">
-            {stories.map((story, i) => (
-              <button
-                key={story.id}
-                onClick={() => setActive(i)}
-                aria-label={`Ver ${story.hotelName}`}
-                className="flex shrink-0 flex-col items-center gap-2"
-              >
-                <span
-                  className={`h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(0,0,0,0.7)] transition-opacity duration-300 ${
-                    i === active ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-                <span className="block aspect-video w-16 overflow-hidden sm:w-24 lg:w-28">
-                  <img src={story.coverImage} alt={story.hotelName} className="h-full w-full object-cover" />
-                </span>
-              </button>
-            ))}
+          {/* Foto del hotel activo: solo la franja superior de la tarjeta. */}
+          <div className="relative h-[30vh] max-h-[300px] w-full shrink-0 overflow-hidden">
+            <img
+              key={current.id}
+              src={current.coverImage}
+              alt={current.hotelName}
+              className="h-full w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#faf8f2] to-transparent" />
           </div>
 
-          <div className="flex flex-col items-center gap-3 border-t border-white/20 pt-5 text-center">
-            <h2 key={current.id + '-name'} className="animate-[fadeIn_0.5s_ease] font-serif text-xl sm:text-2xl">
+          <div className="px-6 pb-8 pt-6 text-center md:px-12 md:pb-10 md:pt-7">
+            <h2 key={current.id + '-name'} className="font-serif text-2xl md:text-3xl">
               {current.hotelName}
             </h2>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/70 sm:text-xs">
+            <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
               {current.leftTag ? `${current.leftTag} · ` : ''}
               {current.location}, {current.country}
             </p>
+
+            {/* Selector superpuesto: cada miniatura se monta sobre la anterior;
+                la activa y la que se pasa por encima se agrandan y suben de
+                plano. */}
+            <div className="mt-7 flex items-center justify-center md:mt-9">
+              {stories.map((story, i) => (
+                <button
+                  key={story.id}
+                  onClick={() => setActive(i)}
+                  aria-label={`Ver ${story.hotelName}`}
+                  style={{ marginLeft: i === 0 ? 0 : -18, zIndex: i === active ? 20 : i }}
+                  className={`group relative shrink-0 overflow-hidden rounded-[3px] border-2 border-[#faf8f2] shadow-[0_2px_10px_rgba(26,25,24,0.18)] transition-all duration-300 ease-out hover:z-30 hover:scale-125 ${
+                    i === active ? 'w-14 scale-110 md:w-16' : 'w-11 scale-100 md:w-12'
+                  }`}
+                >
+                  <span className="block aspect-video w-full">
+                    <img src={story.coverImage} alt="" className="h-full w-full object-cover" />
+                  </span>
+                </button>
+              ))}
+            </div>
+
             <Link
               to={`/trabajo/${current.id}`}
-              className="mt-2 border border-white px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-white transition-colors hover:bg-white hover:text-[#1a1918] md:px-10 md:py-[1.15rem] md:text-xs"
+              className="mt-8 inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
               Ver portafolio
             </Link>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
