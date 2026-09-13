@@ -82,7 +82,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpen }) => {
               </button>
 
               <div className="text-[10px] uppercase tracking-[0.14em] text-[#5a5854]">
-                Or write to us directly at{' '}
+                {contact.directLabel}{' '}
                 <a
                   href={`mailto:${contact.emailAddress}`}
                   className="underline underline-offset-4 hover:text-[#1a1918]"

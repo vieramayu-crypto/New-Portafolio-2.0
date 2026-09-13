@@ -11,8 +11,8 @@ interface NavbarProps {
 }
 
 const PAGE_LABELS: Partial<Record<Page, string>> = {
-  about: 'About',
-  contact: 'Contact',
+  about: 'Acerca de',
+  contact: 'Contacto',
 };
 
 // The "Portafolio" link navigates to Home, so its hover-preview photo is
@@ -95,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                 aria-label="Close menu"
                 className="text-xs font-sans tracking-[0.2em] uppercase text-[#1a1918] hover:opacity-60 transition-opacity p-2"
               >
-                [ CLOSE ]
+                [ CERRAR ]
               </button>
             </div>
 
@@ -110,7 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                   onMouseLeave={() => setHoveredLink(null)}
                   className="group relative inline-block font-serif text-3xl md:text-5xl tracking-wide text-[#1a1918]"
                 >
-                  Portfolio
+                  Portafolio
                   <span
                     className={`pointer-events-none absolute left-0 -bottom-1 h-px w-full origin-left bg-[#1a1918] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
                       currentPage === 'home' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                   onMouseLeave={() => setHoveredLink(null)}
                   className="group relative inline-block font-serif text-3xl md:text-5xl tracking-wide text-[#1a1918]"
                 >
-                  About
+                  Acerca de
                   <span
                     className={`pointer-events-none absolute left-0 -bottom-1 h-px w-full origin-left bg-[#1a1918] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
                       currentPage === 'about' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -138,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                   onMouseLeave={() => setHoveredLink(null)}
                   className="group relative inline-block font-serif text-3xl md:text-5xl tracking-wide text-[#1a1918]"
                 >
-                  Contact
+                  Contacto
                   <span
                     className={`pointer-events-none absolute left-0 -bottom-1 h-px w-full origin-left bg-[#1a1918] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
                       currentPage === 'contact' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -185,7 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                 }}
                 className="flex items-center space-x-2 text-[#1a1918] hover:opacity-70 transition-opacity uppercase font-medium"
               >
-                <span>Check availability</span>
+                <span>Consultar disponibilidad</span>
                 <span className="w-5 h-5 rounded-full bg-[#1a1918] text-[#f5f3ed] flex items-center justify-center text-[10px]">
                   &rarr;
                 </span>

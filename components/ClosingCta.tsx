@@ -44,7 +44,7 @@ export const ClosingCta: React.FC<ClosingCtaProps> = ({ onOpenAvailability, onNa
             onClick={() => onNavigate('about')}
             className="border border-[#f5f3ed]/50 px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:border-[#f5f3ed] hover:bg-[#f5f3ed] hover:text-[#1a1918] md:px-10 md:py-[1.15rem] md:text-xs"
           >
-            Meet us
+            {closingCta.secondaryLabel}
           </button>
         </motion.div>
       </div>

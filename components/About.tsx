@@ -22,8 +22,8 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
           transition={{ duration: 0.9, ease: 'easeOut' }}
           className="font-serif font-medium text-[16vw] leading-[1.08] text-[#1a1918] sm:text-[13vw] md:text-[10.5vw]"
         >
-          <span className="block">Photography,</span>
-          <span className="block">film and</span>
+          <span className="block">Fotografía,</span>
+          <span className="block">cine y</span>
           <FlipWords words={content.about.flipWords} />
         </motion.h1>
       </section>
@@ -131,7 +131,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
               onClick={onOpenAvailability}
               className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
-              Check availability
+              Consultar disponibilidad
             </button>
           </div>
         </div>

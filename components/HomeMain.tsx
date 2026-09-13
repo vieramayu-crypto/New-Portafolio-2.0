@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { HeroSection } from './HeroSection';
 import { HotelSectionBlock } from './HotelSectionBlock';
 import { ValueBlock } from './ValueBlock';
+import { WhatWeCreate } from './WhatWeCreate';
+import { WhyUs } from './WhyUs';
+import { WaysToWork } from './WaysToWork';
 import { ClosingCta } from './ClosingCta';
 import { Testimonials } from './Testimonials';
 import { BrandsMarquee } from './BrandsMarquee';
@@ -34,7 +37,7 @@ const ContinueCue: React.FC<{ nextSectionId: string }> = ({ nextSectionId }) => 
         }
         className="group flex items-center gap-4 text-[10px] font-sans uppercase tracking-[0.25em] text-[#5a5854] transition-colors hover:text-[#1a1918] md:text-xs"
       >
-        <span>See more work</span>
+        <span>Ver más trabajo</span>
         <span className="inline-block transition-transform duration-300 group-hover:translate-y-1">&darr;</span>
       </button>
     </div>
@@ -169,7 +172,9 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   return (
     <div className="relative min-h-screen bg-[#fbfaf6] text-[#1a1918] select-none font-sans overflow-x-hidden">
       {/* Hero Section */}
-      <HeroSection introDone={introDone} />
+      <HeroSection introDone={introDone} onOpenAvailability={onOpenAvailability} />
+
+      <WhatWeCreate />
 
       {/* Target for smooth scroll from Hero */}
       <div id="hotel-section" className="relative pt-6">
@@ -244,7 +249,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                   onClick={() => setIsHotelSelectorOpen(!isHotelSelectorOpen)}
                   className="pointer-events-auto bg-[#f5f3ed]/95 backdrop-blur-sm px-5 py-2 flex items-center gap-3 text-sm md:text-base font-serif tracking-[0.25em] font-medium text-[#1a1918] hover:bg-[#1a1918] hover:text-[#f5f3ed] transition-all duration-300 shadow-[0_2px_20px_rgba(26,25,24,0.14)]"
                 >
-                  <span>View work ({hotelStories.length})</span>
+                  <span>Ver trabajo ({hotelStories.length})</span>
                   <span className="text-xs">{isHotelSelectorOpen ? '▼' : '▲'}</span>
                 </button>
 
@@ -264,7 +269,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                           blanca. */}
                       <div className="no-scrollbar max-h-80 space-y-1 overflow-y-auto p-3">
                       <div className="mb-1 border-b border-[#1a1918]/15 px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854]">
-                        Jump to hotel / client ({hotelStories.length})
+                        Ir a hotel / cliente ({hotelStories.length})
                       </div>
                       {hotelStories.map((hotel, idx) => (
                         <button
@@ -295,6 +300,9 @@ export const HomeMain: React.FC<HomeMainProps> = ({
         </div>
       </div>
 
+      <WhyUs />
+      <WaysToWork />
+
       {/* Autoridad, después de haber enseñado el trabajo entero: primero las
           voces de los equipos, después las marcas. Los dos bloques son los
           originales — sólo cambian de sitio, desde Contacto hasta aquí. */}
@@ -304,7 +312,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
               lo que hay que leer aqui. */}
           <div className="mb-14 text-center">
             <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-              What the teams say
+              Lo que dicen los equipos
             </span>
           </div>
           <Testimonials />

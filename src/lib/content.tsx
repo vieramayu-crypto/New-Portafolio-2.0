@@ -31,6 +31,17 @@ export interface FaqEntry {
   answer: string;
 }
 
+export interface CreateItem {
+  title: string;
+  description: string;
+}
+
+export interface WayToWorkItem {
+  number: string;
+  title: string;
+  description: string;
+}
+
 export interface SiteContent {
   hero: {
     /** Rótulo fino sobre el titular. */
@@ -38,10 +49,29 @@ export interface SiteContent {
     /** Titular editorial, en dos partes: la segunda va en cursiva. */
     titleLead: string;
     titleEmphasis: string;
+    /** Frase funcional bajo el titular: qué producimos y para qué sirve. */
+    subline: string;
     /** Etiqueta a la izquierda de la banda glass inferior. */
     glassLabel: string;
-    /** Enlace al final de la banda glass. */
+    /** CTA comercial de la banda glass: abre el formulario de solicitud. */
     ctaLabel: string;
+  };
+  whatWeCreate: {
+    eyebrow: string;
+    heading: string;
+    items: CreateItem[];
+  };
+  whyUs: {
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    items: string[];
+  };
+  waysToWork: {
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    items: WayToWorkItem[];
   };
   valueBlock: {
     claim: string;
@@ -54,6 +84,7 @@ export interface SiteContent {
   closingCta: {
     heading: string;
     ctaLabel: string;
+    secondaryLabel: string;
   };
   about: {
     flipWords: string[];
@@ -71,6 +102,7 @@ export interface SiteContent {
     introSub: string;
     ctaLabel: string;
     emailAddress: string;
+    directLabel: string;
     /** Cabecera del modal de solicitud. */
     modalKicker: string;
     modalTitle: string;
@@ -104,119 +136,178 @@ export interface SiteContent {
 // in content.json once it's fetched.
 export const DEFAULT_CONTENT: SiteContent = {
   hero: {
-    eyebrow: 'Mayu Travel · Creative Studio',
-    titleLead: 'Visual production for',
-    titleEmphasis: 'luxury hotels.',
-    glassLabel: 'Photo · Film · Content',
-    ctaLabel: 'Projects ↓',
+    eyebrow: 'PRODUCCIÓN VISUAL · HOTELERÍA DE LUJO',
+    titleLead: 'Producción visual para',
+    titleEmphasis: 'hoteles de lujo.',
+    subline: 'Fotografía y cine para hoteles que quieren vender la experiencia, no solo mostrarla.',
+    glassLabel: 'ESTUDIO DE PRODUCCIÓN VISUAL',
+    ctaLabel: 'Iniciar un proyecto',
   },
-  valueBlock: {
-    claim: 'One production. Two ways to create value.',
-    benefits: ['Assets for your brand.', 'Distribution, when it fits.'],
-    benefitDetails: [
-      'Photography and film ready for your website, campaigns, social channels and paid advertising. Scope and usage rights are defined in each proposal, according to what the property needs.',
-      'When it fits the goal of the project, we add coverage and publication to an international audience interested in travel and hospitality. It is not a requirement of the production: it is an additional layer.',
-    ],
-    ctaLabel: 'Enquire about production',
-  },
-  closingCta: {
-    heading: 'Let’s talk about your property.',
-    ctaLabel: 'Check availability',
-  },
-  about: {
-    flipWords: ['Direction', 'Distribution'],
-    introStatement:
-      'Mayu Travel is a visual production studio specialising in luxury hospitality. We work as a couple and build every project from the property itself: its architecture, its rhythm, its service and the way it wants to be remembered.',
-    legacyQuote:
-      'We don’t do this to fill a feed. We do it because every hotel has a soul that deserves to be seen the way it feels to be there.',
-    mayurlin: {
-      name: 'Mayurlin Viera',
-      bio: 'Creating content was Mayu’s dream long before she had the means to do it. Working with the finest hotels in the world was, from the very beginning, her number one goal. That idea never left her. It simply waited for the right moment and the right hands to make it real. Six years and more than 35 properties later, she still looks at every new hotel the way she looked at the first.',
-    },
-    yerfran: {
-      name: 'Yerfran',
-      bio: 'Yerfran came to photography from a different direction: capturing what a person feels in a place, not only how it looks. Years of paying close attention turned into a style of his own: photographs with soul, made with care. Today he directs Mayu Travel’s visual production alongside Mayurlin, in hotels across Spain, Portugal, Greece, Switzerland and the Netherlands.',
-    },
-    closingStatement:
-      'We are especially drawn to properties with a strong sense of place: architecture, landscape, gastronomy, wellness, service, and projects where sustainability is a real part of the experience.',
-  },
-  contact: {
-    headingLines: ['Let\'s talk', 'about your', 'property.'],
-    introMain: 'Tell us what you need to produce, where and when.',
-    introSub:
-      'If there’s a fit, we’ll reply with availability and next steps. You don’t need to prepare a full brief.',
-    ctaLabel: 'Start a project',
-    emailAddress: 'mayuviera@gmail.com',
-    modalKicker: 'Project enquiry',
-    modalTitle: 'Tell us the essentials.',
-    modalCopy:
-      'This is all we need to assess the fit, check availability and propose the next steps.',
-  },
-  milestones: {
-    eyebrow: 'Track record',
+  whatWeCreate: {
+    eyebrow: 'Qué producimos',
+    heading: 'Qué creamos',
     items: [
-      { value: '35+', label: 'properties' },
-      { value: '5', label: 'countries' },
-      { value: '4', label: 'returning clients' },
+      {
+        title: 'Fotografía de hotel',
+        description: 'Arquitectura, interiores, lifestyle y gastronomía.',
+      },
+      {
+        title: 'Cine de hotelería',
+        description: 'Vídeos de marca, films de propiedad y montajes de campaña.',
+      },
+      {
+        title: 'Contenido social-first',
+        description: 'Librería vertical, reels y piezas listas para paid media.',
+      },
+      {
+        title: 'Dirección creativa y librerías de activos',
+        description: 'Producción planificada según la necesidad real de cada hotel.',
+      },
     ],
-    affiliations:
-      'Properties within Marriott International, IHG Hotels & Resorts and Wyndham, alongside independent boutique collections across five countries.',
-    footnote:
-      'Returning clients: GPRO Valparaíso (3 shoots) · Numa Group (3 properties) · Hotel Espléndido (2 shoots) · Portixol (2 shoots)',
   },
-  howWeWork: {
-    eyebrow: 'How we work',
-    heading: 'The process',
-    steps: [
+  whyUs: {
+    eyebrow: 'Diferenciación',
+    heading: 'Por qué Mayu Travel',
+    intro: 'Dos personas, un mismo estándar en cada rodaje.',
+    items: [
+      'Foto y cine en una sola producción.',
+      'Talento lifestyle e integrado en cámara cuando el concepto lo pide.',
+      'Bajo impacto: mínima interrupción en espacios de huéspedes.',
+      'Experiencia específica en producción hotelera.',
+      'Ejecución senior — Mayurlin y Yerfran, sin traspaso a junior.',
+    ],
+  },
+  waysToWork: {
+    eyebrow: 'Cómo empezar',
+    heading: 'Formas de trabajar juntos',
+    intro:
+      'Reduce la incertidumbre sin cerrar el precio. El hotel entiende qué puede contratar antes de pedir una propuesta.',
+    items: [
       {
         number: '01',
-        title: 'First contact and fit',
-        description:
-          'You get in touch through the form or by email. In a short call we get to know the property, the season and how you plan to use the material.',
+        title: 'Producción puntual',
+        description: 'Necesidad concreta: renovación de propiedad, nueva suite, F&B, spa, lanzamiento o campaña.',
       },
       {
         number: '02',
-        title: 'Visual plan',
-        description:
-          'Before we travel we prepare a creative brief, a shot list and a storyboard for the short film. We refine it with the hotel team so that nothing is left out.',
+        title: 'Campaña de temporada',
+        description: 'Rodaje más amplio para construir una librería de activos visuales de temporada.',
       },
       {
         number: '03',
-        title: 'Shooting on site',
+        title: 'Producción continua',
+        description: 'Relación recurrente para propiedades o grupos con necesidad constante.',
+      },
+    ],
+  },
+  valueBlock: {
+    claim: 'Una producción. Múltiples usos comerciales.',
+    benefits: ['Activos para tu marca.', 'Distribución, cuando encaja.'],
+    benefitDetails: [
+      'Fotografía y cine listos para tu web, campañas, canales sociales y publicidad paga. El alcance y los derechos de uso se definen en cada propuesta, según lo que necesite la propiedad.',
+      'Cuando encaja con el objetivo del proyecto, sumamos cobertura y publicación para una audiencia internacional interesada en viajes y hotelería. No es un requisito de la producción: es una capa adicional.',
+    ],
+    ctaLabel: 'Consultar sobre tu producción',
+  },
+  closingCta: {
+    heading: 'Hablemos de tu propiedad.',
+    ctaLabel: 'Consultar disponibilidad',
+    secondaryLabel: 'Conócenos',
+  },
+  about: {
+    flipWords: ['Dirección', 'Distribución'],
+    introStatement:
+      'Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.',
+    legacyQuote:
+      'No hacemos esto para llenar un feed. Lo hacemos porque cada hotel tiene un alma que merece verse tal como se siente estar ahí.',
+    mayurlin: {
+      name: 'Mayurlin Viera',
+      bio: 'Mayurlin dirige la producción creativa de Mayu Travel: define el concepto de cada rodaje, aparece en cámara para mostrar la experiencia desde la perspectiva del huésped, y lleva la distribución editorial en @mayurlintravel cuando el proyecto lo pide. Crear contenido fue su sueño mucho antes de tener los medios para hacerlo, y trabajar con los mejores hoteles del mundo fue, desde el principio, su objetivo número uno. Seis años y más de 35 propiedades después, sigue mirando cada hotel nuevo como miró el primero.',
+    },
+    yerfran: {
+      name: 'Yerfran',
+      bio: 'Yerfran dirige la cinematografía, la fotografía y la producción técnica de cada rodaje. Llegó a la fotografía por un camino distinto: capturar lo que una persona siente en un lugar, no solo cómo se ve. Años de prestar atención se convirtieron en un estilo propio — fotografías con alma, hechas con cuidado. Hoy dirige la producción visual de Mayu Travel junto a Mayurlin, en hoteles de España, Portugal, Grecia, Suiza y Países Bajos.',
+    },
+    closingStatement:
+      'Fotografía y cine en una sola producción, ejecutada siempre por nosotros dos, sin traspaso a equipos junior. Nos atraen especialmente las propiedades con una identidad fuerte: arquitectura, paisaje, gastronomía, bienestar, servicio, y proyectos donde la sostenibilidad es una parte real de la experiencia.',
+  },
+  contact: {
+    headingLines: ['Hablemos', 'de tu', 'propiedad.'],
+    introMain: 'Cuéntanos qué necesitas producir, dónde y cuándo.',
+    introSub:
+      'Si encaja, te respondemos con disponibilidad y los próximos pasos. No hace falta que traigas un briefing completo.',
+    ctaLabel: 'Iniciar un proyecto',
+    emailAddress: 'mayuviera@gmail.com',
+    directLabel: 'O escríbenos directamente a',
+    modalKicker: 'Consulta de proyecto',
+    modalTitle: 'Cuéntanos lo esencial.',
+    modalCopy: 'Con esto nos basta para valorar si encajamos, revisar disponibilidad y proponerte los próximos pasos.',
+  },
+  milestones: {
+    eyebrow: 'Trayectoria',
+    items: [
+      { value: '35+', label: 'propiedades' },
+      { value: '5', label: 'países' },
+      { value: '4', label: 'clientes recurrentes' },
+    ],
+    affiliations:
+      'Propiedades dentro de Marriott International, IHG Hotels & Resorts y Wyndham, junto a colecciones boutique independientes en cinco países.',
+    footnote:
+      'Clientes recurrentes: GPRO Valparaíso (3 rodajes) · Numa Group (3 propiedades) · Hotel Espléndido (2 rodajes) · Portixol (2 rodajes)',
+  },
+  howWeWork: {
+    eyebrow: 'Cómo trabajamos',
+    heading: 'El proceso',
+    steps: [
+      {
+        number: '01',
+        title: 'Primer contacto y encaje',
         description:
-          'Two to five days at the hotel, with the scope set by the season and the activities on offer. We cover the property live while we shoot.',
+          'Nos escribes por el formulario o por email. En una llamada breve conocemos la propiedad, la temporada y cómo piensas usar el material.',
+      },
+      {
+        number: '02',
+        title: 'Plan visual',
+        description:
+          'Antes de viajar preparamos un brief creativo, un shot list y un guion para la pieza de vídeo. Lo afinamos con el equipo del hotel para que no falte nada.',
+      },
+      {
+        number: '03',
+        title: 'Rodaje en sitio',
+        description:
+          'De dos a cinco días en el hotel, con el alcance que marquen la temporada y las actividades disponibles. Cubrimos la propiedad en vivo mientras rodamos.',
       },
       {
         number: '04',
-        title: 'Editing and delivery',
+        title: 'Edición y entrega',
         description:
-          'Colour grading, editing and delivery in approximately three weeks, organised for immediate use on your website, social channels and advertising.',
+          'Corrección de color, edición y entrega en aproximadamente tres semanas, organizados para uso inmediato en tu web, redes sociales y publicidad.',
       },
     ],
   },
   faq: {
-    eyebrow: 'Practical information',
-    heading: 'Common questions.',
+    eyebrow: 'Información práctica',
+    heading: 'Preguntas frecuentes.',
     questions: [
       {
-        question: 'How far in advance should dates be booked?',
+        question: '¿Con cuánta anticipación hay que reservar fecha?',
         answer:
-          'Two to three weeks is the usual range. For high season, openings or larger productions, it is worth getting in touch earlier.',
+          'Dos a tres semanas es el rango habitual. Para temporada alta, aperturas o producciones más grandes, conviene escribir antes.',
       },
       {
-        question: 'Who covers travel and accommodation?',
+        question: '¿Quién cubre viaje y alojamiento?',
         answer:
-          'They are included in the budget proposal for each project. We coordinate the logistics and any transfers the production requires.',
+          'Están incluidos en la propuesta de presupuesto de cada proyecto. Coordinamos la logística y los traslados que necesite la producción.',
       },
       {
-        question: 'What usage rights does the delivery include?',
+        question: '¿Qué derechos de uso incluye la entrega?',
         answer:
-          'Rights are defined according to the intended use: website, social channels, newsletters, PR, booking platforms and paid advertising campaigns, among others.',
+          'Los derechos se definen según el uso previsto: web, redes sociales, newsletters, PR, plataformas de reserva y campañas de publicidad paga, entre otros.',
       },
       {
-        question: 'Is distribution on @mayurlintravel part of every project?',
+        question: '¿La distribución en @mayurlintravel es parte de todos los proyectos?',
         answer:
-          'No. Production and distribution are separate layers. When there is a fit between the property, the campaign and our audience, we can add publication and coverage as an additional part of the proposal.',
+          'No. Producción y distribución son capas separadas. Cuando hay encaje entre la propiedad, la campaña y nuestra audiencia, podemos sumar publicación y cobertura como parte adicional de la propuesta.',
       },
     ],
   },
@@ -224,74 +315,74 @@ export const DEFAULT_CONTENT: SiteContent = {
     {
       seccion: 1,
       hotelName: 'THE RITZ-CARLTON TENERIFE, ABAMA',
-      coupleName: 'Moorish architecture',
+      coupleName: 'Arquitectura morisca',
       description:
-        'A Moorish estate of terracotta walls above the cliffs of Guía de Isora, with subtropical gardens descending to the Atlantic and La Gomera on the horizon.',
-      quote: 'Terracotta, ocean and garden: three tones that meet at every corner of Abama.',
+        'Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte.',
+      quote: 'Terracota, océano y jardín: tres tonos que se encuentran en cada rincón de Abama.',
     },
     {
       seccion: 2,
       hotelName: 'INTERCONTINENTAL LISBOA',
-      coupleName: 'Urban heights',
+      coupleName: 'Altura urbana',
       description:
-        'Contemporary architecture on one of Lisbon’s seven hills, facing Parque Eduardo VII, with the skyline and the Tagus beyond.',
-      quote: 'The whole of Lisbon unfolds from the top of this hill.',
+        'Arquitectura contemporánea sobre una de las siete colinas de Lisboa, frente al Parque Eduardo VII, con el skyline y el Tajo de fondo.',
+      quote: 'Toda Lisboa se despliega desde lo alto de esta colina.',
     },
     {
       seccion: 3,
       hotelName: 'VESTIGE COLLECTION, BINIDUFÀ',
-      coupleName: 'Menorcan heritage',
+      coupleName: 'Herencia menorquina',
       description:
-        'A possessió from the 18th century, restored within a private estate of 800 hectares in northern Menorca: stone, clay and agricultural silence.',
-      quote: 'Stone, earth and silence. Northern Menorca as it has always been.',
+        'Una possessió del siglo XVIII, restaurada dentro de una finca privada de 800 hectáreas en el norte de Menorca: piedra, barro y silencio agrícola.',
+      quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
     },
     {
       seccion: 4,
       hotelName: 'DELTAPARK VITALRESORT',
-      coupleName: 'Alpine wellness',
+      coupleName: 'Bienestar alpino',
       description:
-        'Contemporary Alpine architecture on the shore of Lake Thun, between two reserves of the Kander delta, with a 2,000 m² spa.',
-      quote: 'The silence of the Alps, reflected whole in Lake Thun.',
+        'Arquitectura alpina contemporánea a orillas del lago Thun, entre dos reservas del delta del Kander, con un spa de 2.000 m².',
+      quote: 'El silencio de los Alpes, reflejado entero en el lago Thun.',
     },
     {
       seccion: 5,
       hotelName: 'HONEYMOON PETRA VILLAS',
-      coupleName: 'Aegean cliffside',
+      coupleName: 'Acantilado del Egeo',
       description:
-        'Carved into volcanic rock above the Santorini caldera, with one of the most coveted pools in the Aegean suspended over the sea.',
-      quote: 'Volcanic rock and an endless horizon. This is sunrise over the caldera.',
+        'Tallada en roca volcánica sobre la caldera de Santorini, con una de las piscinas más codiciadas del Egeo suspendida sobre el mar.',
+      quote: 'Roca volcánica y un horizonte infinito. Así amanece sobre la caldera.',
     },
     {
       seccion: 6,
       hotelName: 'GPRO VALPARAÍSO PALACE & SPA',
-      coupleName: 'Mediterranean spa',
+      coupleName: 'Spa mediterráneo',
       description:
-        'Private gardens above the Bay of Palma, high in Bonanova, with the largest spa in Mallorca inside.',
-      quote: 'Gardens, water and the Bay of Palma stretching out beyond every terrace.',
+        'Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
+      quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
     },
     {
       seccion: 7,
       hotelName: 'HOTEL ESPLÉNDIDO',
-      coupleName: 'Bay and stone',
+      coupleName: 'Bahía y piedra',
       description:
-        'Limestone and terraces facing the Bay of Sóller, with the Serra de Tramuntana behind and the historic tram crossing the promenade.',
-      quote: 'Stone, sea and the echo of the tram on the cobbles of Sóller.',
+        'Piedra caliza y terrazas frente a la Bahía de Sóller, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
+      quote: 'Piedra, mar y el eco del tranvía sobre los adoquines de Sóller.',
     },
     {
       seccion: 8,
       hotelName: 'DISTRICT HIVE',
-      coupleName: 'Off the grid, in the desert',
+      coupleName: 'Fuera de la red, en el desierto',
       description:
-        'A capsule of glass and steel suspended above the Gorafe badlands, with architecture that runs off the grid: water drawn from the air and power from the sun.',
-      quote: 'The whole sky for a roof, the whole badlands for a horizon.',
+        'Una cápsula de cristal y acero suspendida sobre el paisaje de Gorafe, con arquitectura que vive fuera de la red: agua extraída del aire y energía del sol.',
+      quote: 'Todo el cielo como techo, todo el paisaje como horizonte.',
     },
     {
       seccion: 9,
       hotelName: 'WELMOON VILLAS PAISAJE',
-      coupleName: 'Under the stars',
+      coupleName: 'Bajo las estrellas',
       description:
-        'Vaulted villas among the pine woods of Caravaca de la Cruz, designed for sleeping under the unfiltered skies of the Murcian sierra.',
-      quote: 'A roof of stars and the silence of the Murcian sierra.',
+        'Villas abovedadas entre los pinares de Caravaca de la Cruz, diseñadas para dormir bajo el cielo sin filtrar de la sierra murciana.',
+      quote: 'Un techo de estrellas y el silencio de la sierra murciana.',
     },
   ],
 };
@@ -325,6 +416,25 @@ function isFaqEntry(v: unknown): v is FaqEntry {
     typeof v === 'object' &&
     isNonEmptyString((v as FaqEntry).question) &&
     isNonEmptyString((v as FaqEntry).answer)
+  );
+}
+
+function isCreateItem(v: unknown): v is CreateItem {
+  return (
+    !!v &&
+    typeof v === 'object' &&
+    isNonEmptyString((v as CreateItem).title) &&
+    isNonEmptyString((v as CreateItem).description)
+  );
+}
+
+function isWayToWorkItem(v: unknown): v is WayToWorkItem {
+  return (
+    !!v &&
+    typeof v === 'object' &&
+    isNonEmptyString((v as WayToWorkItem).number) &&
+    isNonEmptyString((v as WayToWorkItem).title) &&
+    isNonEmptyString((v as WayToWorkItem).description)
   );
 }
 
@@ -377,6 +487,16 @@ function mergeContent(fetched: unknown): SiteContent {
     DEFAULT_CONTENT.valueBlock.benefitDetails
   );
 
+  const createItems =
+    Array.isArray(f.whatWeCreate?.items) && f.whatWeCreate!.items.every(isCreateItem) && f.whatWeCreate!.items.length > 0
+      ? f.whatWeCreate!.items
+      : DEFAULT_CONTENT.whatWeCreate.items;
+
+  const wayToWorkItems =
+    Array.isArray(f.waysToWork?.items) && f.waysToWork!.items.every(isWayToWorkItem) && f.waysToWork!.items.length > 0
+      ? f.waysToWork!.items
+      : DEFAULT_CONTENT.waysToWork.items;
+
   return {
     hero: {
       eyebrow: isNonEmptyString(f.hero?.eyebrow) ? f.hero!.eyebrow : DEFAULT_CONTENT.hero.eyebrow,
@@ -386,12 +506,38 @@ function mergeContent(fetched: unknown): SiteContent {
       titleEmphasis: isNonEmptyString(f.hero?.titleEmphasis)
         ? f.hero!.titleEmphasis
         : DEFAULT_CONTENT.hero.titleEmphasis,
+      subline: isNonEmptyString(f.hero?.subline) ? f.hero!.subline : DEFAULT_CONTENT.hero.subline,
       glassLabel: isNonEmptyString(f.hero?.glassLabel)
         ? f.hero!.glassLabel
         : DEFAULT_CONTENT.hero.glassLabel,
       ctaLabel: isNonEmptyString(f.hero?.ctaLabel)
         ? f.hero!.ctaLabel
         : DEFAULT_CONTENT.hero.ctaLabel,
+    },
+    whatWeCreate: {
+      eyebrow: isNonEmptyString(f.whatWeCreate?.eyebrow)
+        ? f.whatWeCreate!.eyebrow
+        : DEFAULT_CONTENT.whatWeCreate.eyebrow,
+      heading: isNonEmptyString(f.whatWeCreate?.heading)
+        ? f.whatWeCreate!.heading
+        : DEFAULT_CONTENT.whatWeCreate.heading,
+      items: createItems,
+    },
+    whyUs: {
+      eyebrow: isNonEmptyString(f.whyUs?.eyebrow) ? f.whyUs!.eyebrow : DEFAULT_CONTENT.whyUs.eyebrow,
+      heading: isNonEmptyString(f.whyUs?.heading) ? f.whyUs!.heading : DEFAULT_CONTENT.whyUs.heading,
+      intro: isNonEmptyString(f.whyUs?.intro) ? f.whyUs!.intro : DEFAULT_CONTENT.whyUs.intro,
+      items: stringList(f.whyUs?.items, DEFAULT_CONTENT.whyUs.items),
+    },
+    waysToWork: {
+      eyebrow: isNonEmptyString(f.waysToWork?.eyebrow)
+        ? f.waysToWork!.eyebrow
+        : DEFAULT_CONTENT.waysToWork.eyebrow,
+      heading: isNonEmptyString(f.waysToWork?.heading)
+        ? f.waysToWork!.heading
+        : DEFAULT_CONTENT.waysToWork.heading,
+      intro: isNonEmptyString(f.waysToWork?.intro) ? f.waysToWork!.intro : DEFAULT_CONTENT.waysToWork.intro,
+      items: wayToWorkItems,
     },
     valueBlock: {
       claim: isNonEmptyString(f.valueBlock?.claim) ? f.valueBlock!.claim : DEFAULT_CONTENT.valueBlock.claim,
@@ -408,6 +554,9 @@ function mergeContent(fetched: unknown): SiteContent {
       ctaLabel: isNonEmptyString(f.closingCta?.ctaLabel)
         ? f.closingCta!.ctaLabel
         : DEFAULT_CONTENT.closingCta.ctaLabel,
+      secondaryLabel: isNonEmptyString(f.closingCta?.secondaryLabel)
+        ? f.closingCta!.secondaryLabel
+        : DEFAULT_CONTENT.closingCta.secondaryLabel,
     },
     about: {
       flipWords:
@@ -444,6 +593,9 @@ function mergeContent(fetched: unknown): SiteContent {
       emailAddress: isNonEmptyString(f.contact?.emailAddress)
         ? f.contact!.emailAddress
         : DEFAULT_CONTENT.contact.emailAddress,
+      directLabel: isNonEmptyString(f.contact?.directLabel)
+        ? f.contact!.directLabel
+        : DEFAULT_CONTENT.contact.directLabel,
       modalKicker: isNonEmptyString(f.contact?.modalKicker)
         ? f.contact!.modalKicker
         : DEFAULT_CONTENT.contact.modalKicker,

@@ -15,25 +15,29 @@ export interface InquiryFields {
    *  cuerpo del correo ya sabe colocarlo si algún día vuelve a hacer falta. */
   availabilityDate?: string;
   phone?: string;
+  location?: string;
   scope?: string;
+  budget?: string;
   message?: string;
 }
 
 export function buildInquirySubject(f: InquiryFields): string {
-  const property = f.propertyName.trim() || 'new property';
-  return `Availability enquiry — ${property}`;
+  const property = f.propertyName.trim() || 'nueva propiedad';
+  return `Consulta de disponibilidad — ${property}`;
 }
 
 export function buildInquiryBody(f: InquiryFields): string {
   const lines: string[] = [
-    `Name: ${f.name.trim()}`,
+    `Nombre: ${f.name.trim()}`,
     `Email: ${f.email.trim()}`,
   ];
-  if (f.phone?.trim()) lines.push(`Phone: ${f.phone.trim()}`);
-  lines.push(`Property: ${f.propertyName.trim()}`);
-  if (f.scope?.trim()) lines.push(`Service: ${f.scope.trim()}`);
-  if (f.availabilityDate?.trim()) lines.push(`Dates under consideration: ${f.availabilityDate.trim()}`);
-  if (f.message?.trim()) lines.push('', 'Project details:', f.message.trim());
+  if (f.phone?.trim()) lines.push(`Teléfono: ${f.phone.trim()}`);
+  lines.push(`Propiedad: ${f.propertyName.trim()}`);
+  if (f.location?.trim()) lines.push(`Ubicación: ${f.location.trim()}`);
+  if (f.scope?.trim()) lines.push(`Servicio: ${f.scope.trim()}`);
+  if (f.budget?.trim()) lines.push(`Presupuesto estimado: ${f.budget.trim()}`);
+  if (f.availabilityDate?.trim()) lines.push(`Fechas en consideración: ${f.availabilityDate.trim()}`);
+  if (f.message?.trim()) lines.push('', 'Detalles del proyecto:', f.message.trim());
   return lines.join('\n');
 }
 

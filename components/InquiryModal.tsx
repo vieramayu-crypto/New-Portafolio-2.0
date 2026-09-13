@@ -9,10 +9,19 @@ const fieldClass =
   "block w-full border-0 bg-transparent p-0 font-serif text-xl text-[#1a1918] outline-none placeholder:text-[#5a5854]/50 md:text-[22px]";
 
 const SCOPE_OPTIONS = [
-  "Photography",
-  "Cinematic film",
-  "Photography + film",
-  "Production + distribution",
+  "Fotografía",
+  "Cine",
+  "Fotografía + cine",
+  "Librería de activos / campaña",
+  "Producción continua",
+];
+
+const BUDGET_OPTIONS = [
+  "Menos de 2.500€",
+  "2.500€ – 5.000€",
+  "5.000€ – 10.000€",
+  "Más de 10.000€",
+  "Por definir",
 ];
 
 interface FieldProps {
@@ -43,6 +52,10 @@ interface InquiryModalProps {
  *  Contacto, el del bloque de valor, el del cierre de Inicio, el de Acerca de y
  *  "Consultar disponibilidad" del menú. Antes había dos formularios distintos y
  *  el visitante veía uno u otro según por dónde entrara.
+ *
+ *  Los campos de ubicación y presupuesto se añadieron para calificar el
+ *  proyecto antes de una llamada, sin pedir un briefing completo (pág. 11 del
+ *  plan de estrategia comercial).
  */
 export const InquiryModal: React.FC<InquiryModalProps> = ({
   open,
@@ -55,7 +68,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     name: "",
     email: "",
     propertyName: "",
+    location: "",
     scope: "",
+    budget: "",
     message: "",
   });
 
@@ -130,7 +145,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                 <div className="relative px-6 pb-9 pt-16 md:px-[clamp(34px,6vw,84px)] md:pb-[clamp(56px,5.5vw,76px)] md:pt-[clamp(50px,5.5vw,76px)]">
                   <button
                     onClick={onClose}
-                    aria-label="Close"
+                    aria-label="Cerrar"
                     className="absolute right-4 top-4 z-[3] flex h-10 w-10 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/20 text-xl text-[#1a1918] transition-colors hover:bg-white/40 md:right-6 md:top-6 md:h-[42px] md:w-[42px]"
                   >
                     ×
@@ -142,22 +157,22 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         ✓
                       </div>
                       <h2 className="font-serif text-3xl text-[#1a1918] md:text-4xl">
-                        Your enquiry is ready
+                        Tu consulta está lista
                       </h2>
                       <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                        Thank you,{" "}
+                        Gracias,{" "}
                         <span className="font-medium text-[#1a1918]">
                           {form.name}
                         </span>
-                        . We have opened your email client with the enquiry for{" "}
+                        . Hemos abierto tu cliente de correo con la consulta para{" "}
                         <span className="font-medium text-[#1a1918]">
-                          {form.propertyName || "your property"}
+                          {form.propertyName || "tu propiedad"}
                         </span>{" "}
-                        already written, so all that is left is to send it.
+                        ya redactada — solo falta enviarla.
                       </p>
                       <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                        Did your email client not open? Copy the message and
-                        write to us at{" "}
+                        ¿No se abrió tu cliente de correo? Copia el mensaje y
+                        escríbenos a{" "}
                         <a
                           href={`mailto:${contact.emailAddress}`}
                           className="font-medium text-[#1a1918] underline underline-offset-4"
@@ -175,7 +190,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         onClick={() => setSubmitted(false)}
                         className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] underline underline-offset-4"
                       >
-                        Send another enquiry
+                        Enviar otra consulta
                       </button>
                     </div>
                   ) : (
@@ -199,7 +214,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         onSubmit={handleSubmit}
                         className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-[34px] md:gap-y-7"
                       >
-                        <Field label="Name">
+                        <Field label="Nombre">
                           <input
                             required
                             autoComplete="name"
@@ -224,7 +239,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Property">
+                        <Field label="Propiedad">
                           <input
                             required
                             value={form.propertyName}
@@ -235,7 +250,18 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="What you need">
+                        <Field label="Ubicación / país">
+                          <input
+                            required
+                            value={form.location}
+                            onChange={(e) =>
+                              setForm({ ...form, location: e.target.value })
+                            }
+                            className={fieldClass}
+                          />
+                        </Field>
+
+                        <Field label="Qué necesitas">
                           <select
                             required
                             value={form.scope}
@@ -244,7 +270,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             }
                             className={fieldClass}
                           >
-                            <option value="">Select</option>
+                            <option value="">Selecciona</option>
                             {SCOPE_OPTIONS.map((option) => (
                               <option key={option} value={option}>
                                 {option}
@@ -253,14 +279,32 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           </select>
                         </Field>
 
-                        <Field label="Project" wide>
+                        <Field label="Presupuesto estimado">
+                          <select
+                            required
+                            value={form.budget}
+                            onChange={(e) =>
+                              setForm({ ...form, budget: e.target.value })
+                            }
+                            className={fieldClass}
+                          >
+                            <option value="">Selecciona</option>
+                            {BUDGET_OPTIONS.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </Field>
+
+                        <Field label="Proyecto" wide>
                           <textarea
                             required
                             value={form.message}
                             onChange={(e) =>
                               setForm({ ...form, message: e.target.value })
                             }
-                            placeholder="Your goal, approximate dates and any context you think is useful."
+                            placeholder="Tu objetivo, fechas aproximadas y cualquier contexto que creas útil."
                             className={`${fieldClass} h-48 min-h-[190px] resize-y`}
                           />
                         </Field>
@@ -270,7 +314,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             type="submit"
                             className="border-b border-[#1a1918]/65 pb-3 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918]"
                           >
-                            Send enquiry →
+                            Enviar consulta →
                           </button>
                         </div>
                       </form>

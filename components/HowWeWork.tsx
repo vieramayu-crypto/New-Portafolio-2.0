@@ -131,7 +131,7 @@ export const HowWeWork: React.FC = () => {
                   <div className="clear-left pt-8 md:pt-12">
                     <div className="font-serif text-xl text-[#1a1918] md:text-2xl">{step.title}</div>
                     <div className="mt-1 text-[10px] font-sans uppercase tracking-[0.25em] text-[#5a5854] md:text-xs">
-                      Step {index + 1} of {steps.length}
+                      Paso {index + 1} de {steps.length}
                     </div>
                   </div>
                 </div>

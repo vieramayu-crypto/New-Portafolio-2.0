@@ -14,24 +14,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="md:col-span-4 space-y-4">
           <img src={mayuLogoWhite} alt="MAYU" className="h-[25px] w-auto" />
           <p className="text-xs text-[#f5f3ed]/60 max-w-xs leading-relaxed font-sans">
-            Visual production for luxury hotels.
+            Producción visual para hoteles de lujo.
           </p>
         </div>
 
         {/* Links */}
         <div className="md:col-span-4 space-y-3">
           <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#f5f3ed]/60 block mb-2">
-            Navigation
+            Navegación
           </span>
           <div className="flex flex-col space-y-2 text-xs font-sans tracking-wider uppercase text-[#f5f3ed]/80">
             <button onClick={() => onNavigate('home')} className="text-left hover:text-[#f5f3ed]">
-              Home
+              Inicio
             </button>
             <button onClick={() => onNavigate('about')} className="text-left hover:text-[#f5f3ed]">
-              About
+              Acerca de
             </button>
             <button onClick={() => onNavigate('contact')} className="text-left hover:text-[#f5f3ed]">
-              Contact
+              Contacto
             </button>
           </div>
         </div>
@@ -39,7 +39,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Contact & Social */}
         <div className="md:col-span-4 space-y-3">
           <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#f5f3ed]/60 block mb-2">
-            Contact & Social
+            Contacto y redes
           </span>
           <p className="text-xs text-[#f5f3ed]/80">
             <a href="mailto:mayuviera@gmail.com" className="hover:text-[#f5f3ed]">
@@ -61,7 +61,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
       {/* Copyright */}
       <div className="max-w-7xl mx-auto pt-8 text-center text-[11px] font-sans text-[#f5f3ed]/50 tracking-wider">
-        <span>&copy; {new Date().getFullYear()} Mayurlin Viera. All rights reserved.</span>
+        <span>&copy; {new Date().getFullYear()} Mayurlin Viera. Todos los derechos reservados.</span>
       </div>
     </footer>
   );

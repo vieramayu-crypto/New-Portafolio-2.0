@@ -8,6 +8,10 @@ interface HeroSectionProps {
    *  montar, se reproduciria entera tapada por el video y al descubrirse ya
    *  estaria puesta — que es justo lo que pasaba. */
   introDone: boolean;
+  /** El CTA de la banda de cristal abre el formulario de solicitud en vez de
+   *  solo hacer scroll: la Home necesita un gesto comercial, no solo uno de
+   *  navegación (pedido explícito del rediseño). */
+  onOpenAvailability: () => void;
 }
 
 /** Entrada compartida del bloque editorial, con los mismos valores que el
@@ -33,7 +37,7 @@ const SETTLED = { opacity: 1, y: 0, filter: 'blur(0px)' } as const;
  *    izquierda limpia,
  *  - y por eso mismo el velo lateral desaparece: ahi ya no hace falta.
  */
-export const HeroSection: React.FC<HeroSectionProps> = ({ introDone }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvailability }) => {
   const { hero, milestones } = useSiteContent();
   const animate = introDone ? SETTLED : undefined;
 
@@ -101,6 +105,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone }) => {
         >
           {hero.titleLead} <i>{hero.titleEmphasis}</i>
         </motion.h1>
+        {/* Frase funcional: qué producimos y para qué sirve. Un solo renglón
+            discreto, nunca compite en tamaño con el titular. */}
+        <motion.p
+          {...rise(0.26)}
+          animate={animate}
+          className="mt-3 max-w-[26ch] text-[13px] leading-snug text-white/80 md:mt-4 md:max-w-[34ch] md:text-[15px]"
+        >
+          {hero.subline}
+        </motion.p>
       </div>
 
       {/* Banda de cristal. Se centra con `mx-auto`, no con `translate`: Framer
@@ -133,9 +146,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone }) => {
           ))}
 
           <button
-            onClick={() =>
-              document.getElementById('hotel-section')?.scrollIntoView({ behavior: 'smooth' })
-            }
+            onClick={onOpenAvailability}
             className="hidden text-right uppercase tracking-[0.18em] text-white/90 transition-opacity hover:opacity-100 md:block"
           >
             {hero.ctaLabel}
