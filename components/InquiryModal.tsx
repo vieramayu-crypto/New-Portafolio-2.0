@@ -168,7 +168,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         <span className="font-medium text-[#1a1918]">
                           {form.propertyName || "tu propiedad"}
                         </span>{" "}
-                        ya redactada — solo falta enviarla.
+                        ya redactada, solo falta enviarla.
                       </p>
                       <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
                         ¿No se abrió tu cliente de correo? Copia el mensaje y

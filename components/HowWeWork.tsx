@@ -112,7 +112,7 @@ export const HowWeWork: React.FC = () => {
                     goNext();
                   }
                 }}
-                aria-label="See the next step"
+                aria-label="Ver el siguiente paso"
                 className="cursor-pointer"
               >
                 <div>
@@ -146,7 +146,7 @@ export const HowWeWork: React.FC = () => {
             <button
               key={s.number}
               onClick={() => goTo(i)}
-              aria-label={`Go to step ${i + 1}: ${s.title}`}
+              aria-label={`Ir al paso ${i + 1}: ${s.title}`}
               aria-current={i === index}
               className="p-1.5 -m-1.5"
             >

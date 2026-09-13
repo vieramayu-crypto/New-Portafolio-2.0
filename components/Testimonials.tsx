@@ -89,7 +89,7 @@ export const Testimonials: React.FC = () => {
       <div className="flex items-center justify-center gap-6 pt-12 md:pt-14">
         <button
           onClick={() => go(-1)}
-          aria-label="Previous testimonial"
+          aria-label="Testimonio anterior"
           className="p-2 text-[#1a1918]/50 transition-colors hover:text-[#1a1918]"
         >
           <span className="text-2xl leading-none">&#8249;</span>
@@ -100,7 +100,7 @@ export const Testimonials: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setIndex(i)}
-              aria-label={`View testimonial from ${item.brandName}`}
+              aria-label={`Ver testimonio de ${item.brandName}`}
               aria-current={i === index}
               className="p-1.5 -m-1.5"
             >
@@ -115,7 +115,7 @@ export const Testimonials: React.FC = () => {
 
         <button
           onClick={() => go(1)}
-          aria-label="Next testimonial"
+          aria-label="Siguiente testimonio"
           className="p-2 text-[#1a1918]/50 transition-colors hover:text-[#1a1918]"
         >
           <span className="text-2xl leading-none">&#8250;</span>

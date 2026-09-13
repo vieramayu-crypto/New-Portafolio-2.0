@@ -74,7 +74,7 @@ const GalleryVideo: React.FC<GalleryVideoProps> = ({ video, y }) => {
       {!isPlaying && (
         <button
           onClick={handlePlay}
-          aria-label="Play video"
+          aria-label="Reproducir vídeo"
           className="absolute inset-0 flex items-center justify-center"
         >
           <span className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/95 shadow-lg flex items-center justify-center transition-transform group-hover:scale-105">
@@ -965,7 +965,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
           className="absolute top-24 sm:top-28 left-6 md:left-12 z-10 flex items-center gap-2 text-xs md:text-sm font-sans tracking-[0.15em] uppercase text-white/90 hover:text-white transition-colors"
         >
           <span aria-hidden="true">&larr;</span>
-          <span>Back</span>
+          <span>Volver</span>
         </button>
 
         {/* Los datos del rodaje, en una sola línea al pie de la portada: se leen
@@ -994,7 +994,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
 
         <div className="grid grid-cols-3 gap-3 md:gap-6 mt-16 md:mt-20">
           <div>
-            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Property</span>
+            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Propiedad</span>
             <a
               href={venueMapUrl}
               target="_blank"
@@ -1005,17 +1005,17 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
             </a>
           </div>
           <div>
-            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Location</span>
+            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Ubicación</span>
             <span className="text-xs sm:text-sm md:text-base font-sans text-[#1a1918]">
               {story.location}
             </span>
           </div>
           <div>
-            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Credits</span>
+            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Créditos</span>
             <button
               onClick={() => setCreditsOpen((v) => !v)}
               aria-expanded={creditsOpen}
-              aria-label={creditsOpen ? 'Close credits' : 'View credits'}
+              aria-label={creditsOpen ? 'Cerrar créditos' : 'Ver créditos'}
               className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#1a1918] text-[#f5f3ed] flex items-center justify-center mx-auto hover:opacity-80 transition-opacity"
             >
               <motion.span
@@ -1039,8 +1039,8 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
               className="overflow-hidden"
             >
               <div className="pt-6 space-y-1.5 text-xs sm:text-sm text-[#5a5854] font-sans">
-                <div>Photography &amp; Creative Direction · Mayurlin Viera</div>
-                <div>Film &amp; Production · Yerfran</div>
+                <div>Fotografía y dirección creativa · Mayurlin Viera</div>
+                <div>Film y producción · Yerfran</div>
               </div>
             </motion.div>
           )}
@@ -1062,7 +1062,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
       {/* Navigation between hotel portfolios — no re-load, no intro re-play */}
       {onNavigateStory && (prevStory || nextStory) && (
         <nav
-          aria-label="Hotel navigation"
+          aria-label="Navegación entre hoteles"
           className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pb-20 md:pb-28 border-t border-[#1a1918]/10 pt-10 md:pt-14"
         >
           <div className="flex items-stretch justify-between gap-4 md:gap-10">
@@ -1075,7 +1075,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
                   <span aria-hidden="true" className="transition-transform group-hover:-translate-x-1">
                     &larr;
                   </span>
-                  Previous
+                  Anterior
                 </span>
                 <span className="mt-2 md:mt-3 font-serif text-sm md:text-lg tracking-wide text-[#1a1918]">
                   {prevStory.hotelName}
@@ -1091,7 +1091,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
                 className="group flex flex-col items-end text-right flex-1 max-w-[46%] hover:opacity-70 transition-opacity"
               >
                 <span className="text-[10px] md:text-xs font-sans tracking-[0.25em] uppercase text-[#5a5854] flex items-center gap-2">
-                  Next
+                  Siguiente
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
                     &rarr;
                   </span>

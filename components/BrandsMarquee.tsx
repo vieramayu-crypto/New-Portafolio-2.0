@@ -9,7 +9,7 @@ const SERIF_SEMI = 'font-serif font-semibold tracking-wide text-2xl md:text-3xl'
 
 const BRANDS: { name: string; sub?: string; className: string }[] = [
   { name: 'The Ritz-Carlton', className: SERIF_WIDE },
-  { name: 'InterContinental', sub: 'LISBON', className: SERIF_SEMI },
+  { name: 'InterContinental', sub: 'LISBOA', className: SERIF_SEMI },
   { name: 'Holiday Inn Express', className: SANS_MEDIUM_UPPER },
   { name: 'numa', className: 'font-sans font-bold lowercase text-2xl md:text-3xl' },
   { name: 'Dolce', sub: 'BARCELONA RESORT', className: SERIF_WIDE },

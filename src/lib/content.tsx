@@ -152,7 +152,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     titleLead: 'Producción visual para',
     titleEmphasis: 'hoteles de lujo.',
     subline:
-      'Fotografía, film y contenido social-first creados alrededor de la experiencia que vende cada propiedad.',
+      'Fotografía, cine y contenido para redes sociales creados alrededor de la experiencia que vende cada propiedad.',
     glassLabel: 'ESTUDIO DE PRODUCCIÓN VISUAL',
     ctaLabel: 'Iniciar un proyecto',
     secondaryLabel: 'Ver trabajo',
@@ -166,16 +166,16 @@ export const DEFAULT_CONTENT: SiteContent = {
         description: 'Arquitectura · interiores · gastronomía · lifestyle.',
       },
       {
-        title: 'Film hospitality',
-        description: 'Brand films · property films · campaña.',
+        title: 'Cine hotelero',
+        description: 'Vídeos de marca · vídeos de propiedad · montajes de campaña.',
       },
       {
-        title: 'Contenido social-first',
+        title: 'Contenido para redes sociales',
         description: 'Piezas verticales y variaciones.',
       },
       {
         title: 'Dirección y biblioteca visual',
-        description: 'Assets coherentes para uso multicanal.',
+        description: 'Activos coherentes para uso multicanal.',
       },
     ],
     ctaLabel: 'Cuéntanos qué necesita la propiedad',
@@ -209,7 +209,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
       {
         title: 'Biblioteca de contenido',
-        description: 'Assets para web, social, OTAs y paid.',
+        description: 'Activos para web, redes, OTA y publicidad paga.',
       },
       {
         title: 'Producción recurrente',
@@ -250,7 +250,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         { label: 'Especialización', value: 'Hotelería de lujo' },
         { label: 'Criterio', value: 'Propiedad antes que fórmula' },
         { label: 'Modelo', value: 'Dos profesionales · ejecución directa' },
-        { label: 'Resultado', value: 'Assets coherentes y utilizables' },
+        { label: 'Resultado', value: 'Activos coherentes y utilizables' },
       ],
       ctaLabel: 'Conocer nuestros roles',
     },
@@ -262,7 +262,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     yerfran: {
       name: 'Yerfran',
       role: 'Film y cinematografía',
-      bio: 'Yerfran dirige la cinematografía, la fotografía y la producción técnica de cada rodaje. Llegó a la fotografía por un camino distinto: capturar lo que una persona siente en un lugar, no solo cómo se ve. Años de prestar atención se convirtieron en un estilo propio — fotografías con alma, hechas con cuidado. Hoy dirige la producción visual de Mayu Travel junto a Mayurlin, en hoteles de España, Portugal, Grecia, Suiza y Países Bajos.',
+      bio: 'Yerfran dirige la cinematografía, la fotografía y la producción técnica de cada rodaje. Llegó a la fotografía por un camino distinto: capturar lo que una persona siente en un lugar, no solo cómo se ve. Años de prestar atención se convirtieron en un estilo propio, fotografías con alma, hechas con cuidado. Hoy dirige la producción visual de Mayu Travel junto a Mayurlin, en hoteles de España, Portugal, Grecia, Suiza y Países Bajos.',
     },
     together: {
       heading: 'Un equipo, una producción',
@@ -343,7 +343,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         question: '¿Qué derechos de uso incluye la entrega?',
         answer:
-          'Los derechos se definen según el uso previsto: web, redes sociales, newsletters, PR, plataformas de reserva y campañas de publicidad paga, entre otros.',
+          'Los derechos se definen según el uso previsto: web, redes sociales, boletines por correo, relaciones públicas, plataformas de reserva y campañas de publicidad paga, entre otros.',
       },
       {
         question: '¿La distribución en @mayurlintravel es parte de todos los proyectos?',
