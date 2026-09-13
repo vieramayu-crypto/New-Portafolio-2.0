@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - claude/vieramayu-portfolio-setup-vhn4sr
   workflow_dispatch:
 
 permissions:
@@ -24,8 +23,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: actions/configure-pages@v5
       - run: npm install
       - run: npm run build
+        env:
+          # Este repo (New-Portafolio-2.0) vive en su propia subcarpeta de
+          # GitHub Pages, distinta de la del repo original -- ver vite.config.ts.
+          VITE_BASE: /New-Portafolio-2.0/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
