@@ -54,7 +54,7 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
 
   return (
     <div
-      className="relative h-[210px] w-full select-none overflow-hidden sm:h-[260px]"
+      className="relative h-[230px] w-full select-none overflow-hidden sm:h-[290px]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -63,34 +63,40 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
         if (diff > total / 2) diff -= total;
         if (diff < -total / 2) diff += total;
 
+        const absDiff = Math.abs(diff);
         const isCenter = diff === 0;
-        const isSide = Math.abs(diff) === 1;
-        const scale = isCenter ? 1 : isSide ? 0.56 : 0.5;
-        const opacity = isCenter ? 1 : isSide ? 0.75 : 0;
-        const blur = isCenter ? 0 : isSide ? 2 : 4;
-        const zIndex = isCenter ? 20 : isSide ? 10 : 0;
-        const leftPercent = 50 + diff * 27;
+        const isNear = absDiff === 1;
+        const isFar = absDiff === 2;
+        // Dos niveles de profundidad a cada lado (no solo uno): así se nota
+        // que hay más de tres propiedades, aunque el segundo nivel quede
+        // borroso e ilegible a propósito.
+        const scale = isCenter ? 1 : isNear ? 0.42 : isFar ? 0.28 : 0.22;
+        const opacity = isCenter ? 1 : isNear ? 0.72 : isFar ? 0.4 : 0;
+        const blur = isCenter ? 0 : isNear ? 2.5 : isFar ? 4.5 : 6;
+        const zIndex = isCenter ? 20 : isNear ? 10 : isFar ? 5 : 0;
+        const leftPercent = 50 + diff * 20;
+        const clickable = isNear;
 
         return (
           <button
             key={story.id}
             onClick={() => {
-              if (justSwiped.current) return;
+              if (!clickable || justSwiped.current) return;
               if (diff === -1) onNavigate('prev');
               else if (diff === 1) onNavigate('next');
             }}
-            aria-label={isCenter ? undefined : `Ver ${story.hotelName}`}
-            aria-hidden={isCenter || undefined}
-            tabIndex={isCenter || Math.abs(diff) > 1 ? -1 : 0}
+            aria-label={clickable ? `Ver ${story.hotelName}` : undefined}
+            aria-hidden={!clickable || undefined}
+            tabIndex={clickable ? 0 : -1}
             style={{
               left: `${leftPercent}%`,
               zIndex,
               opacity,
               filter: `blur(${blur}px)`,
               transform: `translate(-50%, -50%) scale(${scale})`,
-              pointerEvents: isCenter || Math.abs(diff) > 1 ? 'none' : 'auto',
+              pointerEvents: clickable ? 'auto' : 'none',
             }}
-            className="absolute top-1/2 aspect-[4/3] h-[150px] overflow-hidden rounded-[8px] shadow-[0_10px_30px_rgba(26,25,24,0.22)] transition-[transform,opacity,filter,left] duration-500 ease-out sm:h-[190px]"
+            className="absolute top-1/2 aspect-[4/3] h-[180px] overflow-hidden rounded-[8px] shadow-[0_10px_30px_rgba(26,25,24,0.22)] transition-[transform,opacity,filter,left] duration-500 ease-out sm:h-[240px]"
           >
             <img src={story.coverImage} alt={story.hotelName} className="h-full w-full object-cover" />
           </button>
@@ -216,13 +222,15 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                 <div className="px-6 pb-10 pt-14 text-center md:px-12 md:pb-14 md:pt-16">
                   <HotelCarousel stories={stories} active={active} onNavigate={navigateCarousel} />
 
-                  <h2
-                    id="work-modal-title"
-                    key={current.id + '-name'}
-                    className="mt-7 font-serif text-2xl md:mt-9 md:text-3xl"
-                  >
-                    {current.hotelName}
-                  </h2>
+                  {/* Alto fijo para dos líneas: un nombre corto (una línea)
+                      y uno largo (dos) no deben cambiar la altura de la
+                      tarjeta -- eso es lo que causaba el salto al pasar de
+                      un hotel a otro en móvil. */}
+                  <div className="mt-7 flex min-h-[64px] items-center justify-center md:mt-9 md:min-h-[72px]">
+                    <h2 id="work-modal-title" key={current.id + '-name'} className="font-serif text-2xl md:text-3xl">
+                      {current.hotelName}
+                    </h2>
+                  </div>
 
                   <button
                     onClick={openPortfolio}
