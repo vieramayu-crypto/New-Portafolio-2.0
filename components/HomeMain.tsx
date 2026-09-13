@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { HotelStory, Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -17,8 +16,9 @@ import { useSiteContent } from '../src/lib/content';
 
 /** Inicio muestra solo las propiedades insignia (Ritz-Carlton Abama, GPRO
  *  Valparaíso, Vestige Binidufà -- las mismas que elige la auditoría). Las
- *  nueve siguen intactas y visibles en /trabajo; aquí solo se reduce la
- *  vitrina de Inicio, nunca se borra ningún hotel. */
+ *  nueve siguen intactas y visibles en la ventana emergente de Trabajo
+ *  (onOpenWork); aquí solo se reduce la vitrina de Inicio, nunca se borra
+ *  ningún hotel. */
 const FLAGSHIP_IDS = ['ritz-carlton-abama', 'hotel-danieli-venezia', 'villa-cimbrone-ravello'];
 
 interface HomeMainProps {
@@ -27,6 +27,7 @@ interface HomeMainProps {
   introDone: boolean;
   onNavigate: (page: Page) => void;
   onOpenAvailability: () => void;
+  onOpenWork: () => void;
   onSelectStory?: (story: HotelStory) => void;
 }
 
@@ -52,6 +53,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   introDone,
   onNavigate,
   onOpenAvailability,
+  onOpenWork,
   onSelectStory,
 }) => {
   const [activeStoryIndex, setActiveStoryIndex] = useState<number>(0);
@@ -224,15 +226,15 @@ export const HomeMain: React.FC<HomeMainProps> = ({
             <HotelSectionBlock key={story.id} story={story} index={index} onSelectStory={onSelectStory} />
           ))}
 
-          {/* CTA hacia el portafolio completo -- las nueve propiedades viven
-              en /trabajo, cada una con su propia URL. */}
+          {/* CTA hacia el portafolio completo -- abre la ventana emergente de
+              Trabajo (misma lógica que el modal de Contacto), no una página. */}
           <div className="flex justify-center pt-4 pb-4">
-            <Link
-              to="/trabajo"
+            <button
+              onClick={onOpenWork}
               className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
               Ver todo el trabajo
-            </Link>
+            </button>
           </div>
 
           {/* Bottom Floating Button: only appears once the first photo section is reached */}
@@ -291,13 +293,15 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                         </button>
                       ))}
                       </div>
-                      <Link
-                        to="/trabajo"
-                        onClick={() => setIsHotelSelectorOpen(false)}
-                        className="block border-t border-[#1a1918]/15 px-3 py-3 text-center font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854] transition-colors hover:bg-white/45 hover:text-[#1a1918]"
+                      <button
+                        onClick={() => {
+                          setIsHotelSelectorOpen(false);
+                          onOpenWork();
+                        }}
+                        className="block w-full border-t border-[#1a1918]/15 px-3 py-3 text-center font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854] transition-colors hover:bg-white/45 hover:text-[#1a1918]"
                       >
                         Ver las nueve propiedades →
-                      </Link>
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>

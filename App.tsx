@@ -6,7 +6,7 @@ import { Navbar } from './components/Navbar';
 import { HomeMain } from './components/HomeMain';
 import { About } from './components/About';
 import { Contact } from './components/Contact';
-import { WorkPage } from './components/WorkPage';
+import { WorkModal } from './components/WorkModal';
 import { ProjectCaseStudy } from './components/ProjectCaseStudy';
 import { InquiryModal } from './components/InquiryModal';
 import { Footer } from './components/Footer';
@@ -30,7 +30,7 @@ const WorkProjectRoute: React.FC = () => {
   const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
 
   if (idx === -1) {
-    navigate('/trabajo', { replace: true });
+    navigate('/', { replace: true });
     return null;
   }
 
@@ -49,7 +49,7 @@ const WorkProjectRoute: React.FC = () => {
   return (
     <HotelDetail
       story={story}
-      onBack={() => navigate('/trabajo')}
+      onBack={() => navigate('/')}
       onNavigateStory={(direction) =>
         navigate(`/trabajo/${direction === 'next' ? nextStory.id : prevStory.id}`)
       }
@@ -63,6 +63,7 @@ const AppShell: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isInquiryOpen, setIsInquiryOpen] = useState<boolean>(false);
+  const [isWorkOpen, setIsWorkOpen] = useState<boolean>(false);
   const [pendingTransition, setPendingTransition] = useState<HotelStory | null>(null);
   // The intro plays once per full page load. Internal SPA navigation (e.g.
   // returning to Home from a hotel detail) does not re-trigger it -- a
@@ -95,6 +96,7 @@ const AppShell: React.FC = () => {
   };
 
   const openAvailability = () => setIsInquiryOpen(true);
+  const openWork = () => setIsWorkOpen(true);
 
   return (
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans antialiased selection:bg-[#1a1918] selection:text-[#f5f3ed]">
@@ -111,7 +113,7 @@ const AppShell: React.FC = () => {
           escarcha. */}
       <div
         className={`transition-[filter,transform,opacity] duration-[620ms] ease-[cubic-bezier(.22,1,.36,1)] ${
-          isInquiryOpen ? 'scale-[.994] opacity-60 blur-[20px]' : ''
+          isInquiryOpen || isWorkOpen ? 'scale-[.994] opacity-60 blur-[20px]' : ''
         }`}
       >
         <main>
@@ -123,13 +125,13 @@ const AppShell: React.FC = () => {
                   introDone={introPlayed}
                   onNavigate={handleNavigate}
                   onOpenAvailability={openAvailability}
+                  onOpenWork={openWork}
                   onSelectStory={handleSelectStory}
                 />
               }
             />
             <Route path="/acerca-de" element={<About onOpenAvailability={openAvailability} />} />
             <Route path="/contacto" element={<Contact onOpen={openAvailability} />} />
-            <Route path="/trabajo" element={<WorkPage />} />
             <Route path="/trabajo/:id" element={<WorkProjectRoute />} />
             <Route path="/proyecto/:id" element={<ProjectCaseStudy />} />
             <Route
@@ -139,6 +141,7 @@ const AppShell: React.FC = () => {
                   introDone={introPlayed}
                   onNavigate={handleNavigate}
                   onOpenAvailability={openAvailability}
+                  onOpenWork={openWork}
                   onSelectStory={handleSelectStory}
                 />
               }
@@ -155,6 +158,10 @@ const AppShell: React.FC = () => {
           Contacto, el del bloque de valor, el del cierre de Inicio, el de
           Acerca de y "Consultar disponibilidad" del menu. */}
       <InquiryModal open={isInquiryOpen} onClose={() => setIsInquiryOpen(false)} />
+
+      {/* Trabajo: ventana emergente igual que InquiryModal -- nunca cambia de
+          ruta, así que cerrarla deja al visitante exactamente donde estaba. */}
+      <WorkModal open={isWorkOpen} onClose={() => setIsWorkOpen(false)} />
 
       {/* Entry transition: clicked photo zooms full-screen into the story page */}
       {pendingTransition && (
