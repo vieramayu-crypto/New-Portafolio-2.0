@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
+import { HotelStory } from '../types';
 import { useSiteContent } from '../src/lib/content';
 
 interface WorkModalProps {
@@ -9,14 +10,118 @@ interface WorkModalProps {
   onClose: () => void;
 }
 
+const ArrowIcon: React.FC<{ direction: 'left' | 'right' }> = ({ direction }) => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 sm:h-[18px] sm:w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d={direction === 'left' ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'} />
+  </svg>
+);
+
+interface HotelCarouselProps {
+  stories: HotelStory[];
+  active: number;
+  onNavigate: (direction: 'prev' | 'next') => void;
+}
+
+/** Carrusel con profundidad: el hotel activo va grande y nítido al centro;
+ *  el anterior y el siguiente asoman más pequeños y difusos a los lados; el
+ *  resto queda invisible pero sigue montado (nunca se desmonta), para que
+ *  cada cambio de índice anime con una transición CSS -- nunca un salto
+ *  seco. Las nueve miniaturas en fila no se distinguían entre sí; esto deja
+ *  claro cuál es cuál y cómo pasar de una a otra (flechas o deslizando). */
+const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNavigate }) => {
+  const total = stories.length;
+  const touchStartX = useRef<number | null>(null);
+  // Un deslizar que empieza justo sobre la miniatura lateral también
+  // dispara su clic (tap) al soltar: este candado evita contar el cambio
+  // de hotel dos veces.
+  const justSwiped = useRef(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) {
+      justSwiped.current = true;
+      onNavigate(delta > 0 ? 'prev' : 'next');
+      setTimeout(() => {
+        justSwiped.current = false;
+      }, 400);
+    }
+    touchStartX.current = null;
+  };
+
+  return (
+    <div
+      className="relative h-[210px] w-full select-none overflow-hidden sm:h-[260px]"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {stories.map((story, i) => {
+        let diff = i - active;
+        if (diff > total / 2) diff -= total;
+        if (diff < -total / 2) diff += total;
+
+        const isCenter = diff === 0;
+        const isSide = Math.abs(diff) === 1;
+        const scale = isCenter ? 1 : isSide ? 0.56 : 0.5;
+        const opacity = isCenter ? 1 : isSide ? 0.75 : 0;
+        const blur = isCenter ? 0 : isSide ? 2 : 4;
+        const zIndex = isCenter ? 20 : isSide ? 10 : 0;
+        const leftPercent = 50 + diff * 27;
+
+        return (
+          <button
+            key={story.id}
+            onClick={() => {
+              if (justSwiped.current) return;
+              if (diff === -1) onNavigate('prev');
+              else if (diff === 1) onNavigate('next');
+            }}
+            aria-label={isCenter ? undefined : `Ver ${story.hotelName}`}
+            aria-hidden={isCenter || undefined}
+            tabIndex={isCenter || Math.abs(diff) > 1 ? -1 : 0}
+            style={{
+              left: `${leftPercent}%`,
+              zIndex,
+              opacity,
+              filter: `blur(${blur}px)`,
+              transform: `translate(-50%, -50%) scale(${scale})`,
+              pointerEvents: isCenter || Math.abs(diff) > 1 ? 'none' : 'auto',
+            }}
+            className="absolute top-1/2 aspect-[4/3] h-[150px] overflow-hidden rounded-[8px] shadow-[0_10px_30px_rgba(26,25,24,0.22)] transition-[transform,opacity,filter,left] duration-500 ease-out sm:h-[190px]"
+          >
+            <img src={story.coverImage} alt={story.hotelName} className="h-full w-full object-cover" />
+          </button>
+        );
+      })}
+
+      <button
+        onClick={() => onNavigate('prev')}
+        aria-label="Hotel anterior"
+        className="absolute left-1 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/70 text-[#1a1918] shadow-sm backdrop-blur-sm transition-colors hover:bg-white sm:left-2 sm:h-10 sm:w-10"
+      >
+        <ArrowIcon direction="left" />
+      </button>
+      <button
+        onClick={() => onNavigate('next')}
+        aria-label="Siguiente hotel"
+        className="absolute right-1 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/70 text-[#1a1918] shadow-sm backdrop-blur-sm transition-colors hover:bg-white sm:right-2 sm:h-10 sm:w-10"
+      >
+        <ArrowIcon direction="right" />
+      </button>
+    </div>
+  );
+};
+
 /** "Trabajo": misma ventana emergente que la de Contacto -- mismo velo, mismo
  *  borde de cristal, misma X -- no una página propia. Cerrarla deja al
  *  visitante exactamente donde estaba (nunca recarga Inicio), porque nunca
  *  cambia de ruta: solo alterna un booleano en AppShell, igual que
- *  InquiryModal. La foto de portada del hotel activo ocupa solo la franja
- *  superior de la tarjeta; debajo, el selector de miniaturas superpuestas
- *  (comprimido para no romper la elegancia con nueve fotos en fila) y el
- *  botón que sí navega de verdad, a la ficha completa del hotel. */
+ *  InquiryModal. Adentro, el carrusel con profundidad reemplaza la fila de
+ *  miniaturas (que no se distinguía) y el "Ver portafolio" sí navega de
+ *  verdad, a la ficha completa del hotel. */
 export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
   const { hotels: hotelContent } = useSiteContent();
@@ -32,11 +137,18 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
   );
 
   const current = stories[active];
+  const total = stories.length;
+
+  const navigateCarousel = (direction: 'prev' | 'next') => {
+    setActive((i) => (direction === 'next' ? (i + 1) % total : (i - 1 + total) % total));
+  };
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') navigateCarousel('prev');
+      if (e.key === 'ArrowRight') navigateCarousel('next');
     };
     document.addEventListener('keydown', onKey);
     const previous = document.body.style.overflow;
@@ -45,6 +157,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = previous;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, onClose]);
 
   // El hotel activo se reinicia en Ritz-Carlton Abama cada vez que se abre,
@@ -85,7 +198,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.982 }}
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-glass mt-glass-light pointer-events-auto relative flex max-h-full w-full flex-col overflow-hidden rounded-lg text-[#1a1918] md:max-h-[min(800px,calc(100svh-80px))] md:w-[min(760px,100%)] md:rounded-[10px]"
+              className="mt-glass mt-glass-light pointer-events-auto relative flex max-h-full w-full flex-col overflow-hidden rounded-lg text-[#1a1918] md:max-h-[min(860px,calc(100svh-80px))] md:w-[min(1140px,100%)] md:rounded-[10px]"
             >
               {/* Un solo hijo directo de `.mt-glass`: esa clase fuerza
                   `position: relative` en sus hijos directos (para que ganen al
@@ -100,55 +213,20 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                   ×
                 </button>
 
-                {/* Foto del hotel activo: solo la franja superior de la tarjeta. */}
-                <div className="relative h-[26vh] max-h-[260px] w-full shrink-0 overflow-hidden">
-                  <img
-                    key={current.id}
-                    src={current.coverImage}
-                    alt={current.hotelName}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#faf8f2] to-transparent" />
-                </div>
+                <div className="px-6 pb-10 pt-14 text-center md:px-12 md:pb-14 md:pt-16">
+                  <HotelCarousel stories={stories} active={active} onNavigate={navigateCarousel} />
 
-                <div className="px-6 pb-9 pt-6 text-center md:px-12 md:pb-11 md:pt-7">
                   <h2
                     id="work-modal-title"
                     key={current.id + '-name'}
-                    className="font-serif text-2xl md:text-3xl"
+                    className="mt-7 font-serif text-2xl md:mt-9 md:text-3xl"
                   >
                     {current.hotelName}
                   </h2>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
-                    {current.leftTag ? `${current.leftTag} · ` : ''}
-                    {current.location}, {current.country}
-                  </p>
-
-                  {/* Selector superpuesto: cada miniatura se monta sobre la
-                      anterior; la activa y la que se pasa por encima se
-                      agrandan y suben de plano. Miniaturas grandes a
-                      propósito -- las primeras eran ilegibles. */}
-                  <div className="no-scrollbar mt-8 flex items-center justify-center overflow-x-auto py-2 md:mt-10 md:overflow-visible">
-                    {stories.map((story, i) => (
-                      <button
-                        key={story.id}
-                        onClick={() => setActive(i)}
-                        aria-label={`Ver ${story.hotelName}`}
-                        style={{ marginLeft: i === 0 ? 0 : -28, zIndex: i === active ? 20 : i }}
-                        className={`group relative shrink-0 overflow-hidden rounded-[4px] border-2 border-[#faf8f2] shadow-[0_3px_14px_rgba(26,25,24,0.2)] transition-all duration-300 ease-out hover:z-30 hover:scale-125 ${
-                          i === active ? 'w-20 scale-110 md:w-24' : 'w-16 scale-100 md:w-[72px]'
-                        }`}
-                      >
-                        <span className="block aspect-video w-full">
-                          <img src={story.coverImage} alt="" className="h-full w-full object-cover" />
-                        </span>
-                      </button>
-                    ))}
-                  </div>
 
                   <button
                     onClick={openPortfolio}
-                    className="mt-9 inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+                    className="mt-8 inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:mt-9 md:px-10 md:py-[1.15rem] md:text-xs"
                   >
                     Ver portafolio
                   </button>
