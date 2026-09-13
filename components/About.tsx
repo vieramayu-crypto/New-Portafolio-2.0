@@ -28,6 +28,44 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
         </motion.h1>
       </section>
 
+      {/* Franja de apertura: tesis de trabajo concreta + 4 datos rápidos,
+          sustituye la lectura puramente emotiva por una que un gerente de
+          marketing puede escanear en cinco segundos (pág. 13 de la auditoría). */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.7 }}
+        className="mx-auto max-w-5xl px-6 pb-24 text-center md:px-12 md:pb-32"
+      >
+        <h2 className="font-serif text-3xl leading-[1.15] text-[#1a1918] sm:text-4xl md:text-5xl">
+          {content.about.overview.heading}
+        </h2>
+        <p className="mx-auto mt-6 max-w-[62ch] text-sm leading-relaxed text-[#5a5854] md:text-base">
+          {content.about.overview.paragraph}
+        </p>
+
+        <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:gap-5">
+          {content.about.overview.boxes.map((box) => (
+            <div key={box.label} className="mt-glass mt-glass-light rounded-lg p-5 text-left md:p-6">
+              <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
+                {box.label}
+              </div>
+              <div className="mt-1.5 font-serif text-lg text-[#1a1918] md:text-xl">{box.value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 md:mt-12">
+          <button
+            onClick={() => document.getElementById('roles')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+          >
+            {content.about.overview.ctaLabel}
+          </button>
+        </div>
+      </motion.section>
+
       {/* Intro paragraph — its own full-screen section, generous breathing room */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -58,7 +96,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 md:px-12 pb-24">
+      <div id="roles" className="max-w-6xl mx-auto px-6 md:px-12 pb-24 scroll-mt-24">
         {/* Mayu profile */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20">
           <motion.div
@@ -86,6 +124,9 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
             className="lg:col-span-7 space-y-4"
           >
             <h2 className="font-serif text-3xl md:text-4xl text-[#1a1918]">{content.about.mayurlin.name}</h2>
+            <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
+              {content.about.mayurlin.role}
+            </div>
             <p className="text-sm md:text-base text-[#5a5854] leading-relaxed">{content.about.mayurlin.bio}</p>
           </motion.div>
         </div>
@@ -117,13 +158,22 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
             className="lg:col-span-7 space-y-4 order-2 lg:order-1"
           >
             <h2 className="font-serif text-3xl md:text-4xl text-[#1a1918]">{content.about.yerfran.name}</h2>
+            <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
+              {content.about.yerfran.role}
+            </div>
             <p className="text-sm md:text-base text-[#5a5854] leading-relaxed">{content.about.yerfran.bio}</p>
           </motion.div>
         </div>
 
         {/* Together */}
         <div className="min-h-[70vh] md:min-h-[85vh] flex flex-col items-center justify-center text-center px-2 py-20 mb-32 md:mb-40">
-          <p className="font-serif text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.38] md:text-[3.25rem] md:leading-[1.34] mx-auto max-w-4xl text-center text-[#1a1918]">
+          <span className="text-[10px] font-sans uppercase tracking-[0.28em] text-[#5a5854] md:text-xs">
+            {content.about.together.heading}
+          </span>
+          <p className="mt-6 font-serif text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.38] md:text-[3.25rem] md:leading-[1.34] mx-auto max-w-4xl text-center text-[#1a1918]">
+            {content.about.together.description}
+          </p>
+          <p className="mt-8 font-serif text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.38] md:text-[3.25rem] md:leading-[1.34] mx-auto max-w-4xl text-center text-[#1a1918]">
             {content.about.closingStatement}
           </p>
           <div className="pt-16">

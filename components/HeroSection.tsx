@@ -145,12 +145,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             </div>
           ))}
 
-          <button
-            onClick={onOpenAvailability}
-            className="hidden text-right uppercase tracking-[0.18em] text-white/90 transition-opacity hover:opacity-100 md:block"
-          >
-            {hero.ctaLabel}
-          </button>
+          <div className="hidden flex-col items-end gap-1 text-right md:flex">
+            <button
+              onClick={onOpenAvailability}
+              className="uppercase tracking-[0.18em] text-white/90 transition-opacity hover:opacity-100"
+            >
+              {hero.ctaLabel}
+            </button>
+            {/* Ruta secundaria: nunca compite en peso con el CTA comercial,
+                solo baja a Trabajo para quien todavia quiere ver el portafolio. */}
+            <button
+              onClick={() =>
+                document.getElementById('hotel-section')?.scrollIntoView({ behavior: 'smooth' })
+              }
+              className="uppercase tracking-[0.18em] text-white/55 transition-opacity hover:text-white/85"
+            >
+              {hero.secondaryLabel}
+            </button>
+          </div>
         </div>
       </motion.div>
     </section>

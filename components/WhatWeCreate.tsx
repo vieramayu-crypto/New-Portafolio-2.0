@@ -11,12 +11,16 @@ const rise = (delay: number) => ({
   transition: { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const, delay },
 });
 
+interface WhatWeCreateProps {
+  onOpenAvailability: () => void;
+}
+
 /** "Qué creamos" — hueco comercial más importante de la Home (pág. 5 del
  *  documento de estrategia): antes de las nueve historias de hotel, el
  *  visitante ya sabe qué puede contratar. Cuatro tarjetas, sin lista de
  *  veinte servicios. Reutiliza el mismo cristal que el modal de Contacto y
  *  el selector de hoteles, no un estilo de tarjeta nuevo. */
-export const WhatWeCreate: React.FC = () => {
+export const WhatWeCreate: React.FC<WhatWeCreateProps> = ({ onOpenAvailability }) => {
   const { whatWeCreate } = useSiteContent();
 
   return (
@@ -43,6 +47,15 @@ export const WhatWeCreate: React.FC = () => {
             </motion.div>
           ))}
         </div>
+
+        <motion.div {...rise(0.3)} className="mt-12 text-center md:mt-14">
+          <button
+            onClick={onOpenAvailability}
+            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+          >
+            {whatWeCreate.ctaLabel}
+          </button>
+        </motion.div>
       </div>
     </section>
   );

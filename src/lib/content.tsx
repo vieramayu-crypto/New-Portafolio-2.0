@@ -31,15 +31,14 @@ export interface FaqEntry {
   answer: string;
 }
 
-export interface CreateItem {
+export interface TitledItem {
   title: string;
   description: string;
 }
 
-export interface WayToWorkItem {
-  number: string;
-  title: string;
-  description: string;
+export interface OverviewBox {
+  label: string;
+  value: string;
 }
 
 export interface SiteContent {
@@ -53,29 +52,34 @@ export interface SiteContent {
     subline: string;
     /** Etiqueta a la izquierda de la banda glass inferior. */
     glassLabel: string;
-    /** CTA comercial de la banda glass: abre el formulario de solicitud. */
+    /** CTA comercial principal de la banda glass: abre el formulario. */
     ctaLabel: string;
+    /** Ruta secundaria junto al CTA principal: baja a Trabajo. */
+    secondaryLabel: string;
   };
   whatWeCreate: {
     eyebrow: string;
     heading: string;
-    items: CreateItem[];
+    items: TitledItem[];
+    ctaLabel: string;
   };
   whyUs: {
     eyebrow: string;
     heading: string;
     intro: string;
-    items: string[];
+    items: TitledItem[];
+    ctaLabel: string;
   };
   waysToWork: {
     eyebrow: string;
     heading: string;
     intro: string;
-    items: WayToWorkItem[];
+    items: TitledItem[];
+    ctaLabel: string;
   };
   valueBlock: {
     claim: string;
-    /** Titular de cada una de las dos formas de generar valor. */
+    /** Titular de cada una de las dos capas de valor. */
     benefits: string[];
     /** Párrafo de apoyo de cada una, en el mismo orden que `benefits`. */
     benefitDetails: string[];
@@ -90,8 +94,16 @@ export interface SiteContent {
     flipWords: string[];
     introStatement: string;
     legacyQuote: string;
-    mayurlin: { name: string; bio: string };
-    yerfran: { name: string; bio: string };
+    /** Franja de apertura de Acerca de: tesis de trabajo concreta + 4 datos. */
+    overview: {
+      heading: string;
+      paragraph: string;
+      boxes: OverviewBox[];
+      ctaLabel: string;
+    };
+    mayurlin: { name: string; role: string; bio: string };
+    yerfran: { name: string; role: string; bio: string };
+    together: { heading: string; description: string };
     closingStatement: string;
   };
   contact: {
@@ -139,75 +151,85 @@ export const DEFAULT_CONTENT: SiteContent = {
     eyebrow: 'PRODUCCIÓN VISUAL · HOTELERÍA DE LUJO',
     titleLead: 'Producción visual para',
     titleEmphasis: 'hoteles de lujo.',
-    subline: 'Fotografía y cine para hoteles que quieren vender la experiencia, no solo mostrarla.',
+    subline:
+      'Fotografía, film y contenido social-first creados alrededor de la experiencia que vende cada propiedad.',
     glassLabel: 'ESTUDIO DE PRODUCCIÓN VISUAL',
     ctaLabel: 'Iniciar un proyecto',
+    secondaryLabel: 'Ver trabajo',
   },
   whatWeCreate: {
     eyebrow: 'Qué producimos',
     heading: 'Qué creamos',
     items: [
       {
-        title: 'Fotografía de hotel',
-        description: 'Arquitectura, interiores, lifestyle y gastronomía.',
+        title: 'Fotografía hotelera',
+        description: 'Arquitectura · interiores · gastronomía · lifestyle.',
       },
       {
-        title: 'Cine de hotelería',
-        description: 'Vídeos de marca, films de propiedad y montajes de campaña.',
+        title: 'Film hospitality',
+        description: 'Brand films · property films · campaña.',
       },
       {
         title: 'Contenido social-first',
-        description: 'Librería vertical, reels y piezas listas para paid media.',
+        description: 'Piezas verticales y variaciones.',
       },
       {
-        title: 'Dirección creativa y librerías de activos',
-        description: 'Producción planificada según la necesidad real de cada hotel.',
+        title: 'Dirección y biblioteca visual',
+        description: 'Assets coherentes para uso multicanal.',
       },
     ],
+    ctaLabel: 'Cuéntanos qué necesita la propiedad',
   },
   whyUs: {
     eyebrow: 'Diferenciación',
     heading: 'Por qué Mayu Travel',
-    intro: 'Dos personas, un mismo estándar en cada rodaje.',
+    intro: 'Fotografía y cinematografía dentro de una unidad compacta.',
     items: [
-      'Foto y cine en una sola producción.',
-      'Talento lifestyle e integrado en cámara cuando el concepto lo pide.',
-      'Bajo impacto: mínima interrupción en espacios de huéspedes.',
-      'Experiencia específica en producción hotelera.',
-      'Ejecución senior — Mayurlin y Yerfran, sin traspaso a junior.',
+      { title: 'Fotografía + Dirección', description: 'Mayurlin Viera.' },
+      { title: 'Film + Cinematografía', description: 'Yerfran.' },
+      {
+        title: 'Talento integrado',
+        description: 'Guest experience y lifestyle cuando el concepto lo requiere.',
+      },
+      {
+        title: 'Unidad compacta',
+        description: 'Dos especialistas · una producción · baja huella operativa.',
+      },
     ],
+    ctaLabel: 'Conocer al equipo',
   },
   waysToWork: {
     eyebrow: 'Cómo empezar',
     heading: 'Formas de trabajar juntos',
-    intro:
-      'Reduce la incertidumbre sin cerrar el precio. El hotel entiende qué puede contratar antes de pedir una propuesta.',
+    intro: 'El alcance se define después del briefing; estas modalidades orientan sin cerrar precio ni entregables.',
     items: [
       {
-        number: '01',
-        title: 'Producción puntual',
-        description: 'Necesidad concreta: renovación de propiedad, nueva suite, F&B, spa, lanzamiento o campaña.',
+        title: 'Campaña o lanzamiento',
+        description: 'Producción puntual con objetivo y fecha.',
       },
       {
-        number: '02',
-        title: 'Campaña de temporada',
-        description: 'Rodaje más amplio para construir una librería de activos visuales de temporada.',
+        title: 'Biblioteca de contenido',
+        description: 'Assets para web, social, OTAs y paid.',
       },
       {
-        number: '03',
-        title: 'Producción continua',
-        description: 'Relación recurrente para propiedades o grupos con necesidad constante.',
+        title: 'Producción recurrente',
+        description: 'Temporadas, aperturas y necesidades continuas.',
+      },
+      {
+        title: 'Distribución editorial',
+        description: 'Capa opcional cuando existe encaje.',
       },
     ],
+    ctaLabel: 'Definir el proyecto',
   },
   valueBlock: {
-    claim: 'Una producción. Múltiples usos comerciales.',
+    claim: 'Una producción. Dos capas de valor.',
     benefits: ['Activos para tu marca.', 'Distribución, cuando encaja.'],
     benefitDetails: [
       'Fotografía y cine listos para tu web, campañas, canales sociales y publicidad paga. El alcance y los derechos de uso se definen en cada propuesta, según lo que necesite la propiedad.',
       'Cuando encaja con el objetivo del proyecto, sumamos cobertura y publicación para una audiencia internacional interesada en viajes y hotelería. No es un requisito de la producción: es una capa adicional.',
     ],
-    ctaLabel: 'Consultar sobre tu producción',
+    ctaLabel: 'Consultar producción',
   },
   closingCta: {
     heading: 'Hablemos de tu propiedad.',
@@ -220,13 +242,32 @@ export const DEFAULT_CONTENT: SiteContent = {
       'Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.',
     legacyQuote:
       'No hacemos esto para llenar un feed. Lo hacemos porque cada hotel tiene un alma que merece verse tal como se siente estar ahí.',
+    overview: {
+      heading: 'Dirección creativa, fotografía y film para hotelería.',
+      paragraph:
+        'Mayu Travel es un estudio formado por Mayurlin Viera y Yerfran. Primero identificamos qué hace deseable una propiedad; después construimos la producción alrededor de su identidad, su experiencia y sus usos de marketing.',
+      boxes: [
+        { label: 'Especialización', value: 'Hotelería de lujo' },
+        { label: 'Criterio', value: 'Propiedad antes que fórmula' },
+        { label: 'Modelo', value: 'Dos profesionales · ejecución directa' },
+        { label: 'Resultado', value: 'Assets coherentes y utilizables' },
+      ],
+      ctaLabel: 'Conocer nuestros roles',
+    },
     mayurlin: {
       name: 'Mayurlin Viera',
+      role: 'Fotografía y dirección creativa',
       bio: 'Mayurlin dirige la producción creativa de Mayu Travel: define el concepto de cada rodaje, aparece en cámara para mostrar la experiencia desde la perspectiva del huésped, y lleva la distribución editorial en @mayurlintravel cuando el proyecto lo pide. Crear contenido fue su sueño mucho antes de tener los medios para hacerlo, y trabajar con los mejores hoteles del mundo fue, desde el principio, su objetivo número uno. Seis años y más de 35 propiedades después, sigue mirando cada hotel nuevo como miró el primero.',
     },
     yerfran: {
       name: 'Yerfran',
+      role: 'Film y cinematografía',
       bio: 'Yerfran dirige la cinematografía, la fotografía y la producción técnica de cada rodaje. Llegó a la fotografía por un camino distinto: capturar lo que una persona siente en un lugar, no solo cómo se ve. Años de prestar atención se convirtieron en un estilo propio — fotografías con alma, hechas con cuidado. Hoy dirige la producción visual de Mayu Travel junto a Mayurlin, en hoteles de España, Portugal, Grecia, Suiza y Países Bajos.',
+    },
+    together: {
+      heading: 'Un equipo, una producción',
+      description:
+        'Dos especialistas trabajando bajo una misma dirección creativa, capaces de producir fotografía y film dentro de un mismo proyecto, con una estructura pequeña y poco invasiva para la operación del hotel.',
     },
     closingStatement:
       'Fotografía y cine en una sola producción, ejecutada siempre por nosotros dos, sin traspaso a equipos junior. Nos atraen especialmente las propiedades con una identidad fuerte: arquitectura, paisaje, gastronomía, bienestar, servicio, y proyectos donde la sostenibilidad es una parte real de la experiencia.',
@@ -419,22 +460,21 @@ function isFaqEntry(v: unknown): v is FaqEntry {
   );
 }
 
-function isCreateItem(v: unknown): v is CreateItem {
+function isTitledItem(v: unknown): v is TitledItem {
   return (
     !!v &&
     typeof v === 'object' &&
-    isNonEmptyString((v as CreateItem).title) &&
-    isNonEmptyString((v as CreateItem).description)
+    isNonEmptyString((v as TitledItem).title) &&
+    isNonEmptyString((v as TitledItem).description)
   );
 }
 
-function isWayToWorkItem(v: unknown): v is WayToWorkItem {
+function isOverviewBox(v: unknown): v is OverviewBox {
   return (
     !!v &&
     typeof v === 'object' &&
-    isNonEmptyString((v as WayToWorkItem).number) &&
-    isNonEmptyString((v as WayToWorkItem).title) &&
-    isNonEmptyString((v as WayToWorkItem).description)
+    isNonEmptyString((v as OverviewBox).label) &&
+    isNonEmptyString((v as OverviewBox).value)
   );
 }
 
@@ -478,6 +518,9 @@ function mergeContent(fetched: unknown): SiteContent {
       ? (value as string[])
       : fallback;
 
+  const titledList = (value: unknown, fallback: TitledItem[]): TitledItem[] =>
+    Array.isArray(value) && value.length > 0 && value.every(isTitledItem) ? (value as TitledItem[]) : fallback;
+
   const benefits = stringList(f.valueBlock?.benefits, DEFAULT_CONTENT.valueBlock.benefits);
 
   // Cada titular necesita su párrafo: si el JSON trae menos de los que hay
@@ -487,15 +530,16 @@ function mergeContent(fetched: unknown): SiteContent {
     DEFAULT_CONTENT.valueBlock.benefitDetails
   );
 
-  const createItems =
-    Array.isArray(f.whatWeCreate?.items) && f.whatWeCreate!.items.every(isCreateItem) && f.whatWeCreate!.items.length > 0
-      ? f.whatWeCreate!.items
-      : DEFAULT_CONTENT.whatWeCreate.items;
+  const createItems = titledList(f.whatWeCreate?.items, DEFAULT_CONTENT.whatWeCreate.items);
+  const whyUsItems = titledList(f.whyUs?.items, DEFAULT_CONTENT.whyUs.items);
+  const wayToWorkItems = titledList(f.waysToWork?.items, DEFAULT_CONTENT.waysToWork.items);
 
-  const wayToWorkItems =
-    Array.isArray(f.waysToWork?.items) && f.waysToWork!.items.every(isWayToWorkItem) && f.waysToWork!.items.length > 0
-      ? f.waysToWork!.items
-      : DEFAULT_CONTENT.waysToWork.items;
+  const overviewBoxes =
+    Array.isArray(f.about?.overview?.boxes) &&
+    f.about!.overview!.boxes.every(isOverviewBox) &&
+    f.about!.overview!.boxes.length > 0
+      ? f.about!.overview!.boxes
+      : DEFAULT_CONTENT.about.overview.boxes;
 
   return {
     hero: {
@@ -513,6 +557,9 @@ function mergeContent(fetched: unknown): SiteContent {
       ctaLabel: isNonEmptyString(f.hero?.ctaLabel)
         ? f.hero!.ctaLabel
         : DEFAULT_CONTENT.hero.ctaLabel,
+      secondaryLabel: isNonEmptyString(f.hero?.secondaryLabel)
+        ? f.hero!.secondaryLabel
+        : DEFAULT_CONTENT.hero.secondaryLabel,
     },
     whatWeCreate: {
       eyebrow: isNonEmptyString(f.whatWeCreate?.eyebrow)
@@ -522,12 +569,16 @@ function mergeContent(fetched: unknown): SiteContent {
         ? f.whatWeCreate!.heading
         : DEFAULT_CONTENT.whatWeCreate.heading,
       items: createItems,
+      ctaLabel: isNonEmptyString(f.whatWeCreate?.ctaLabel)
+        ? f.whatWeCreate!.ctaLabel
+        : DEFAULT_CONTENT.whatWeCreate.ctaLabel,
     },
     whyUs: {
       eyebrow: isNonEmptyString(f.whyUs?.eyebrow) ? f.whyUs!.eyebrow : DEFAULT_CONTENT.whyUs.eyebrow,
       heading: isNonEmptyString(f.whyUs?.heading) ? f.whyUs!.heading : DEFAULT_CONTENT.whyUs.heading,
       intro: isNonEmptyString(f.whyUs?.intro) ? f.whyUs!.intro : DEFAULT_CONTENT.whyUs.intro,
-      items: stringList(f.whyUs?.items, DEFAULT_CONTENT.whyUs.items),
+      items: whyUsItems,
+      ctaLabel: isNonEmptyString(f.whyUs?.ctaLabel) ? f.whyUs!.ctaLabel : DEFAULT_CONTENT.whyUs.ctaLabel,
     },
     waysToWork: {
       eyebrow: isNonEmptyString(f.waysToWork?.eyebrow)
@@ -538,6 +589,9 @@ function mergeContent(fetched: unknown): SiteContent {
         : DEFAULT_CONTENT.waysToWork.heading,
       intro: isNonEmptyString(f.waysToWork?.intro) ? f.waysToWork!.intro : DEFAULT_CONTENT.waysToWork.intro,
       items: wayToWorkItems,
+      ctaLabel: isNonEmptyString(f.waysToWork?.ctaLabel)
+        ? f.waysToWork!.ctaLabel
+        : DEFAULT_CONTENT.waysToWork.ctaLabel,
     },
     valueBlock: {
       claim: isNonEmptyString(f.valueBlock?.claim) ? f.valueBlock!.claim : DEFAULT_CONTENT.valueBlock.claim,
@@ -567,13 +621,35 @@ function mergeContent(fetched: unknown): SiteContent {
         ? f.about!.introStatement
         : DEFAULT_CONTENT.about.introStatement,
       legacyQuote: isNonEmptyString(f.about?.legacyQuote) ? f.about!.legacyQuote : DEFAULT_CONTENT.about.legacyQuote,
+      overview: {
+        heading: isNonEmptyString(f.about?.overview?.heading)
+          ? f.about!.overview!.heading
+          : DEFAULT_CONTENT.about.overview.heading,
+        paragraph: isNonEmptyString(f.about?.overview?.paragraph)
+          ? f.about!.overview!.paragraph
+          : DEFAULT_CONTENT.about.overview.paragraph,
+        boxes: overviewBoxes,
+        ctaLabel: isNonEmptyString(f.about?.overview?.ctaLabel)
+          ? f.about!.overview!.ctaLabel
+          : DEFAULT_CONTENT.about.overview.ctaLabel,
+      },
       mayurlin: {
         name: isNonEmptyString(f.about?.mayurlin?.name) ? f.about!.mayurlin.name : DEFAULT_CONTENT.about.mayurlin.name,
+        role: isNonEmptyString(f.about?.mayurlin?.role) ? f.about!.mayurlin.role : DEFAULT_CONTENT.about.mayurlin.role,
         bio: isNonEmptyString(f.about?.mayurlin?.bio) ? f.about!.mayurlin.bio : DEFAULT_CONTENT.about.mayurlin.bio,
       },
       yerfran: {
         name: isNonEmptyString(f.about?.yerfran?.name) ? f.about!.yerfran.name : DEFAULT_CONTENT.about.yerfran.name,
+        role: isNonEmptyString(f.about?.yerfran?.role) ? f.about!.yerfran.role : DEFAULT_CONTENT.about.yerfran.role,
         bio: isNonEmptyString(f.about?.yerfran?.bio) ? f.about!.yerfran.bio : DEFAULT_CONTENT.about.yerfran.bio,
+      },
+      together: {
+        heading: isNonEmptyString(f.about?.together?.heading)
+          ? f.about!.together!.heading
+          : DEFAULT_CONTENT.about.together.heading,
+        description: isNonEmptyString(f.about?.together?.description)
+          ? f.about!.together!.description
+          : DEFAULT_CONTENT.about.together.description,
       },
       closingStatement: isNonEmptyString(f.about?.closingStatement)
         ? f.about!.closingStatement

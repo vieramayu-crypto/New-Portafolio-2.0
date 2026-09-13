@@ -9,11 +9,14 @@ const rise = (delay: number) => ({
   transition: { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const, delay },
 });
 
-/** "Formas de trabajar juntos" (pág. 7): tres categorías, no un paquete
- *  cerrado -- reduce la incertidumbre del hotel sin publicar precio. Mismo
- *  cristal que el modal de Contacto; la cifra reutiliza el mismo tratamiento
- *  serif-cursiva que ya usan el bloque de valor y "El proceso". */
-export const WaysToWork: React.FC = () => {
+interface WaysToWorkProps {
+  onOpenAvailability: () => void;
+}
+
+/** "Formas de trabajar juntos" (pág. 8): cuatro modalidades con nombre, no
+ *  paquetes cerrados -- reduce la incertidumbre del hotel sin publicar
+ *  precio. Mismo cristal que el resto de bloques nuevos de la Home. */
+export const WaysToWork: React.FC<WaysToWorkProps> = ({ onOpenAvailability }) => {
   const { waysToWork } = useSiteContent();
 
   return (
@@ -26,15 +29,14 @@ export const WaysToWork: React.FC = () => {
           <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-6xl">{waysToWork.heading}</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-7">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
           {waysToWork.items.map((item, i) => (
             <motion.div
-              key={item.number}
-              {...rise(0.08 * (i + 1))}
+              key={item.title}
+              {...rise(0.06 * (i + 1))}
               className="mt-glass mt-glass-light rounded-lg p-7 md:p-9"
             >
-              <div className="font-serif text-2xl italic text-[#1a1918]/50 md:text-3xl">{item.number}</div>
-              <h3 className="mt-4 font-serif text-xl text-[#1a1918] md:text-2xl">{item.title}</h3>
+              <h3 className="font-serif text-xl text-[#1a1918] md:text-2xl">{item.title}</h3>
               <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[15px]">
                 {item.description}
               </p>
@@ -43,11 +45,20 @@ export const WaysToWork: React.FC = () => {
         </div>
 
         <motion.p
-          {...rise(0.3)}
+          {...rise(0.26)}
           className="mx-auto mt-10 max-w-[54ch] text-center font-sans text-[12.5px] leading-relaxed text-[#5a5854] md:mt-12 md:text-sm"
         >
           {waysToWork.intro}
         </motion.p>
+
+        <motion.div {...rise(0.32)} className="mt-8 text-center md:mt-10">
+          <button
+            onClick={onOpenAvailability}
+            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+          >
+            {waysToWork.ctaLabel}
+          </button>
+        </motion.div>
       </div>
     </section>
   );
