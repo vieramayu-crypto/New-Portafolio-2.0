@@ -4,8 +4,17 @@ import { TESTIMONIALS } from '../data/collaborations';
 
 const AUTO_ADVANCE_MS = 9000;
 
+/** El carrusel abre por GPRO, no por la primera cita de la lista: es el
+ *  cliente que ha repetido tres veces, y su testimonio habla de
+ *  profesionalidad y continuidad -- la prueba más fuerte que hay publicada.
+ *  Ocho citas rotando dejaban esa lectura al azar. */
+const OPENING_TESTIMONIAL_ID = 't-gpro';
+
 export const Testimonials: React.FC = () => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => {
+    const i = TESTIMONIALS.findIndex((t) => t.id === OPENING_TESTIMONIAL_ID);
+    return i === -1 ? 0 : i;
+  });
 
   useEffect(() => {
     if (TESTIMONIALS.length <= 1) return;

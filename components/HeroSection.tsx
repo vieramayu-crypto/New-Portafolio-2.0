@@ -101,7 +101,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         <motion.h1
           {...rise(0.18)}
           animate={animate}
-          className="m-0 max-w-[7.7ch] font-serif text-[clamp(52px,14.85vw,74px)] font-normal leading-[1.16] tracking-[-0.045em] md:max-w-[8.7ch] md:text-[clamp(64px,7.3vw,116px)]"
+          // El titular pasó de "Producción visual para hoteles de lujo" a
+          // nombrar los dos servicios, y con la medida anterior salían seis
+          // renglones: se comía la pantalla, se cortaba bajo el logo y el
+          // subtítulo acababa debajo de la banda de cristal. Medida más ancha
+          // y cuerpo menor para que entre en cuatro o cinco renglones.
+          className="m-0 max-w-[12ch] font-serif text-[clamp(34px,9.6vw,46px)] font-normal leading-[1.16] tracking-[-0.045em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)]"
         >
           {hero.titleLead} <i>{hero.titleEmphasis}</i>
         </motion.h1>
@@ -114,6 +119,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         >
           {hero.subline}
         </motion.p>
+
+        {/* El CTA vivía solo dentro de la banda de cristal, y esa banda
+            esconde su columna de acción por debajo de 768px: en móvil no
+            había ninguna forma de contactar desde la primera pantalla. Aquí
+            va el botón para ese tamaño; en escritorio manda el de la banda. */}
+        <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
+          <button
+            onClick={onOpenAvailability}
+            className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-white"
+          >
+            {hero.ctaLabel}
+          </button>
+        </motion.div>
       </div>
 
       {/* Banda de cristal. Se centra con `mx-auto`, no con `translate`: Framer

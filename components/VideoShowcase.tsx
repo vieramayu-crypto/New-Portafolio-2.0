@@ -182,12 +182,18 @@ export const VideoShowcase: React.FC = () => {
             apagar del todo el vídeo de fondo. */}
         <motion.div style={{ opacity: veilOpacity }} className="pointer-events-none absolute inset-0 bg-black" />
 
-        <motion.h2
+        <motion.div
           style={{ opacity: headingOpacity }}
-          className="pointer-events-none absolute inset-x-0 top-[14%] z-20 text-center font-serif text-4xl text-white md:text-6xl"
+          className="pointer-events-none absolute inset-x-0 top-[12%] z-20 px-6 text-center"
         >
-          El hotel en movimiento
-        </motion.h2>
+          <h2 className="font-serif text-3xl leading-[1.15] text-white md:text-5xl">
+            Vídeos para mostrar la experiencia de tu hotel
+          </h2>
+          <p className="mx-auto mt-4 max-w-[46ch] text-[13px] leading-[1.7] text-white/75 md:mt-5 md:text-sm">
+            Desde una presentación de la propiedad hasta reels centrados en sus espacios,
+            gastronomía o servicio.
+          </p>
+        </motion.div>
 
         {stories.map((story, i) => (
           <VerticalCard

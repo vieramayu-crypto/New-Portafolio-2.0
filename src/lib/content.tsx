@@ -13,6 +13,10 @@ export interface HotelContent {
   coupleName: string;
   description: string;
   quote: string;
+  /** Una línea que dice qué capacidad demuestra este proyecto. Solo la usan
+   *  los destacados de Inicio: tres nombres de hotel no bastaban para que el
+   *  comprador entendiera qué prueba cada uno. Opcional. */
+  featuredLine?: string;
 }
 
 export interface MilestoneItem {
@@ -164,14 +168,14 @@ export interface SiteContent {
 // in content.json once it's fetched.
 export const DEFAULT_CONTENT: SiteContent = {
   hero: {
-    eyebrow: 'PRODUCCIÓN VISUAL · HOTELERÍA DE LUJO',
-    titleLead: 'Producción visual para',
+    eyebrow: 'ESTUDIO · HOTELERÍA',
+    titleLead: 'Fotografía y producción audiovisual para',
     titleEmphasis: 'hoteles de lujo.',
     subline:
-      'Fotografía, cine y contenido para redes sociales creados alrededor de la experiencia que vende cada propiedad.',
+      'Creamos fotografías, vídeos de marca y piezas verticales para mostrar los espacios, el servicio y la experiencia de tu hotel.',
     glassLabel: 'ESTUDIO DE PRODUCCIÓN VISUAL',
     ctaLabel: 'Iniciar un proyecto',
-    secondaryLabel: 'Ver trabajo',
+    secondaryLabel: 'Ver proyectos',
   },
   whatWeCreate: {
     eyebrow: 'Qué producimos',
@@ -179,37 +183,43 @@ export const DEFAULT_CONTENT: SiteContent = {
     items: [
       {
         title: 'Fotografía hotelera',
-        description: 'Arquitectura · interiores · gastronomía · lifestyle.',
+        description: 'Arquitectura, interiores, gastronomía y experiencia del huésped.',
       },
       {
-        title: 'Cine hotelero',
-        description: 'Vídeos de marca · vídeos de propiedad · montajes de campaña.',
+        title: 'Vídeos de marca',
+        description: 'Producciones audiovisuales para presentar tu hotel.',
       },
       {
-        title: 'Contenido para redes sociales',
-        description: 'Piezas verticales y variaciones.',
+        title: 'Reels y vídeos verticales',
+        description: 'Piezas para redes sociales, adaptadas al formato acordado.',
       },
       {
-        title: 'Dirección y biblioteca visual',
-        description: 'Activos coherentes para uso multicanal.',
+        title: 'Banco de imágenes y vídeos',
+        description: 'Contenido organizado para tu web, redes y campañas.',
       },
     ],
-    ctaLabel: 'Cuéntanos qué necesita la propiedad',
+    ctaLabel: 'Iniciar un proyecto',
   },
   whyUs: {
     eyebrow: 'Diferenciación',
     heading: 'Por qué Mayu Travel',
-    intro: 'Fotografía y cinematografía dentro de una unidad compacta.',
+    intro: 'Dos personas, cada una con una responsabilidad clara.',
     items: [
-      { title: 'Fotografía + Dirección', description: 'Mayurlin Viera.' },
-      { title: 'Film + Cinematografía', description: 'Yerfran.' },
       {
-        title: 'Talento integrado',
-        description: 'Guest experience y lifestyle cuando el concepto lo requiere.',
+        title: 'Fotografía y dirección creativa',
+        description: 'Mayurlin define el estilo visual y dirige la fotografía.',
       },
       {
-        title: 'Unidad compacta',
-        description: 'Dos especialistas · una producción · baja huella operativa.',
+        title: 'Producción audiovisual',
+        description: 'Yerfran se encarga de la grabación y edición de vídeo.',
+      },
+      {
+        title: 'Presencia en cámara',
+        description: 'Mayurlin puede aparecer en las escenas acordadas.',
+      },
+      {
+        title: 'Trato directo',
+        description: 'Trabajáis con nosotros durante todo el proyecto.',
       },
     ],
     ctaLabel: 'Conocer al equipo',
@@ -217,85 +227,86 @@ export const DEFAULT_CONTENT: SiteContent = {
   waysToWork: {
     eyebrow: 'Cómo empezar',
     heading: 'Formas de trabajar juntos',
-    intro: 'El alcance se define después del briefing; estas modalidades orientan sin cerrar precio ni entregables.',
+    intro: 'Definimos el contenido, los usos y el presupuesto contigo.',
     items: [
       {
-        title: 'Campaña o lanzamiento',
-        description: 'Producción puntual con objetivo y fecha.',
+        title: 'Campañas y lanzamientos',
+        description: 'Fotografías y vídeos para una campaña, apertura o novedad.',
       },
       {
-        title: 'Biblioteca de contenido',
-        description: 'Activos para web, redes, OTA y publicidad paga.',
+        title: 'Renovación de contenido',
+        description: 'Un banco de imágenes y vídeos para actualizar la comunicación del hotel.',
       },
       {
-        title: 'Producción recurrente',
-        description: 'Temporadas, aperturas y necesidades continuas.',
-      },
-      {
-        title: 'Distribución editorial',
-        description: 'Capa opcional cuando existe encaje.',
+        title: 'Producciones periódicas',
+        description: 'Nuevas sesiones según la temporada y las necesidades del hotel.',
       },
     ],
-    ctaLabel: 'Definir el proyecto',
+    ctaLabel: 'Iniciar un proyecto',
   },
   valueBlock: {
     claim: 'Una producción. Dos capas de valor.',
-    benefits: ['Activos para tu marca.', 'Distribución, cuando encaja.'],
-    benefitDetails: [
-      'Fotografía y cine listos para tu web, campañas, canales sociales y publicidad paga. El alcance y los derechos de uso se definen en cada propuesta, según lo que necesite la propiedad.',
-      'Cuando encaja con el objetivo del proyecto, sumamos cobertura y publicación para una audiencia internacional interesada en viajes y hotelería. No es un requisito de la producción: es una capa adicional.',
+    benefits: [
+      'Contenido para los canales de tu hotel.',
+      'Publicaciones en @mayurlintravel, como servicio adicional.',
     ],
-    ctaLabel: 'Consultar producción',
+    benefitDetails: [
+      'Fotografías y vídeos con los formatos y derechos de uso definidos en la propuesta.',
+      'Podemos incluirlas cuando el proyecto encaje con nuestra audiencia. Su alcance se acuerda por separado.',
+    ],
+    ctaLabel: 'Iniciar un proyecto',
   },
   closingCta: {
-    heading: 'Hablemos de tu propiedad.',
-    ctaLabel: 'Consultar disponibilidad',
-    secondaryLabel: 'Conócenos',
+    heading: 'Empecemos por lo que necesitas mostrar.',
+    ctaLabel: 'Iniciar un proyecto',
+    secondaryLabel: 'Ver proyectos',
   },
   about: {
-    flipWords: ['Dirección', 'Distribución'],
+    flipWords: ['Dirección', 'Producción'],
     introStatement:
       'Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.',
     legacyQuote:
       'No hacemos esto para llenar un feed. Lo hacemos porque cada hotel tiene un alma que merece verse tal como se siente estar ahí.',
     overview: {
-      heading: 'Dirección creativa, fotografía y film para hotelería.',
+      heading: 'Un estudio de fotografía y producción audiovisual para hoteles.',
       paragraph:
-        'Mayu Travel es un estudio formado por Mayurlin Viera y Yerfran. Primero identificamos qué hace deseable una propiedad; después construimos la producción alrededor de su identidad, su experiencia y sus usos de marketing.',
+        'Somos Mayurlin Viera y Yerfran. Planificamos y producimos contenido que muestra los espacios, los detalles y la experiencia de cada hotel, con un estilo visual coherente con su marca.',
       boxes: [
         { label: 'Especialización', value: 'Hotelería de lujo' },
         { label: 'Criterio', value: 'Propiedad antes que fórmula' },
         { label: 'Modelo', value: 'Dos profesionales · ejecución directa' },
         { label: 'Resultado', value: 'Activos coherentes y utilizables' },
       ],
-      ctaLabel: 'Conocer nuestros roles',
+      ctaLabel: 'Conoce al equipo',
     },
     mayurlin: {
       name: 'Mayurlin Viera',
       role: 'Fotografía y dirección creativa',
-      bio: 'Mayurlin dirige la producción creativa de Mayu Travel: define el concepto de cada rodaje, aparece en cámara para mostrar la experiencia desde la perspectiva del huésped, y lleva la distribución editorial en @mayurlintravel cuando el proyecto lo pide. Crear contenido fue su sueño mucho antes de tener los medios para hacerlo, y trabajar con los mejores hoteles del mundo fue, desde el principio, su objetivo número uno. Seis años y más de 35 propiedades después, sigue mirando cada hotel nuevo como miró el primero.',
+      bio:
+        'Define el concepto visual y dirige la fotografía. Participa en cámara cuando las escenas acordadas lo requieren.',
     },
     yerfran: {
       name: 'Yerfran',
-      role: 'Film y cinematografía',
-      bio: 'Yerfran dirige la cinematografía, la fotografía y la producción técnica de cada rodaje. Llegó a la fotografía por un camino distinto: capturar lo que una persona siente en un lugar, no solo cómo se ve. Años de prestar atención se convirtieron en un estilo propio, fotografías con alma, hechas con cuidado. Hoy dirige la producción visual de Mayu Travel junto a Mayurlin, en hoteles de España, Portugal, Grecia, Suiza y Países Bajos.',
+      role: 'Producción audiovisual',
+      bio:
+        'Se encarga de la planificación técnica, la grabación y la edición de vídeo, desde el rodaje hasta las versiones finales.',
     },
     together: {
-      heading: 'Un equipo, una producción',
+      heading: 'Un equipo reducido, coordinado con tu hotel',
       description:
-        'Dos especialistas trabajando bajo una misma dirección creativa, capaces de producir fotografía y film dentro de un mismo proyecto, con una estructura pequeña y poco invasiva para la operación del hotel.',
+        'Planificamos las sesiones, los espacios y los horarios con tu equipo para reducir las molestias a huéspedes y personal.',
     },
     closingStatement:
-      'Fotografía y cine en una sola producción, ejecutada siempre por nosotros dos, sin traspaso a equipos junior. Nos atraen especialmente las propiedades con una identidad fuerte: arquitectura, paisaje, gastronomía, bienestar, servicio, y proyectos donde la sostenibilidad es una parte real de la experiencia.',
+      'Mayurlin y Yerfran dirigen la producción. La participación en cámara y los apoyos necesarios se acuerdan para cada proyecto.',
   },
   contact: {
-    headingLines: ['Hablemos', 'de tu', 'propiedad.'],
-    introMain: 'Cuéntanos qué necesitas producir, dónde y cuándo.',
+    headingLines: ['Hablemos', 'de tu', 'hotel.'],
+    introMain: 'Cuéntanos qué fotografías o vídeos necesitas, dónde y para cuándo.',
     introSub:
       'Si encaja, te respondemos con disponibilidad y los próximos pasos. No hace falta que traigas un briefing completo.',
     ctaLabel: 'Iniciar un proyecto',
     emailAddress: 'mayuviera@gmail.com',
-    directLabel: 'O escríbenos directamente a',
+    directLabel: 'O escríbenos a',
     modalKicker: 'Consulta de proyecto',
     modalTitle: 'Cuéntanos lo esencial.',
     modalCopy: 'Con esto nos basta para valorar si encajamos, revisar disponibilidad y proponerte los próximos pasos.',
@@ -318,27 +329,23 @@ export const DEFAULT_CONTENT: SiteContent = {
     steps: [
       {
         number: '01',
-        title: 'Primer contacto y encaje',
-        description:
-          'Nos escribes por el formulario o por email. En una llamada breve conocemos la propiedad, la temporada y cómo piensas usar el material.',
+        title: 'Definimos el proyecto',
+        description: 'Qué necesitas mostrar, a quién y en qué canales.',
       },
       {
         number: '02',
-        title: 'Plan visual',
-        description:
-          'Antes de viajar preparamos un brief creativo, un shot list y un guion para la pieza de vídeo. Lo afinamos con el equipo del hotel para que no falte nada.',
+        title: 'Preparamos la producción',
+        description: 'Estilo visual, escenas y horarios con tu equipo.',
       },
       {
         number: '03',
-        title: 'Rodaje en sitio',
-        description:
-          'De dos a cinco días en el hotel, con el alcance que marquen la temporada y las actividades disponibles. Cubrimos la propiedad en vivo mientras rodamos.',
+        title: 'Fotografiamos y grabamos',
+        description: 'Seguimos el plan acordado con el hotel.',
       },
       {
         number: '04',
-        title: 'Edición y entrega',
-        description:
-          'Corrección de color, edición y entrega en aproximadamente tres semanas, organizados para uso inmediato en tu web, redes sociales y publicidad.',
+        title: 'Editamos y entregamos',
+        description: 'Fotografías y vídeos en los formatos y plazos definidos.',
       },
     ],
   },
@@ -366,6 +373,16 @@ export const DEFAULT_CONTENT: SiteContent = {
         answer:
           'No. Producción y distribución son capas separadas. Cuando hay encaje entre la propiedad, la campaña y nuestra audiencia, podemos sumar publicación y cobertura como parte adicional de la propuesta.',
       },
+      {
+        question: '¿Cómo se calcula el presupuesto?',
+        answer:
+          'Depende de las jornadas, las fotografías y vídeos, los formatos, los derechos de uso y los desplazamientos. La propuesta detalla lo que incluye.',
+      },
+      {
+        question: '¿Trabajáis con agencias y equipos de marketing?',
+        answer:
+          'Sí. Podemos coordinar la producción con vuestro equipo o agencia y acordar cómo se revisa y aprueba el contenido.',
+      },
     ],
   },
   projects: {
@@ -386,31 +403,34 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'THE RITZ-CARLTON TENERIFE, ABAMA',
       coupleName: 'Arquitectura morisca',
       description:
-        'Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte.',
+        'Arquitectura, jardines, spa y gastronomía en una selección visual del resort. Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte.',
       quote: 'Terracota, océano y jardín: tres tonos que se encuentran en cada rincón de Abama.',
+      featuredLine: 'Arquitectura y experiencia en un resort de lujo.',
     },
     {
       seccion: 2,
       hotelName: 'INTERCONTINENTAL LISBOA',
       coupleName: 'Altura urbana',
       description:
-        'Arquitectura contemporánea sobre una de las siete colinas de Lisboa, frente al Parque Eduardo VII, con el skyline y el Tajo de fondo.',
+        'Interiores, servicio en la habitación y experiencia urbana en Lisboa. Arquitectura contemporánea sobre una de las siete colinas de la ciudad, frente al Parque Eduardo VII, con el skyline y el Tajo de fondo.',
       quote: 'Toda Lisboa se despliega desde lo alto de esta colina.',
+      featuredLine: 'El hotel y la experiencia de ciudad.',
     },
     {
       seccion: 3,
       hotelName: 'VESTIGE COLLECTION, BINIDUFÀ',
       coupleName: 'Herencia menorquina',
       description:
-        'Una possessió del siglo XVIII, restaurada dentro de una finca privada de 800 hectáreas en el norte de Menorca: piedra, barro y silencio agrícola.',
+        'Los espacios, los materiales y el paisaje rural de Menorca. Una possessió del siglo XVIII restaurada en el norte de la isla, que comparte con Son Ermità un entorno de 800 hectáreas: piedra, barro y silencio agrícola.',
       quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
+      featuredLine: 'Patrimonio y paisaje de Menorca.',
     },
     {
       seccion: 4,
       hotelName: 'DELTAPARK VITALRESORT',
       coupleName: 'Bienestar alpino',
       description:
-        'Arquitectura alpina contemporánea a orillas del lago Thun, entre dos reservas del delta del Kander, con un spa de 2.000 m².',
+        'Habitación, spa y lago: un recorrido visual por la experiencia de bienestar. Arquitectura alpina contemporánea a orillas del lago Thun, entre dos reservas del delta del Kander, con un spa de 2.000 m².',
       quote: 'El silencio de los Alpes, reflejado entero en el lago Thun.',
     },
     {
@@ -418,7 +438,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'HONEYMOON PETRA VILLAS',
       coupleName: 'Acantilado del Egeo',
       description:
-        'Tallada en roca volcánica sobre la caldera de Santorini, con una de las piscinas más codiciadas del Egeo suspendida sobre el mar.',
+        'Arquitectura volcánica y experiencia de estancia frente a la caldera. Tallada en roca sobre la caldera de Santorini, con la piscina suspendida sobre el mar.',
       quote: 'Roca volcánica y un horizonte infinito. Así amanece sobre la caldera.',
     },
     {
@@ -426,15 +446,16 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'GPRO VALPARAÍSO PALACE & SPA',
       coupleName: 'Spa mediterráneo',
       description:
-        'Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
+        'Fotografías de habitaciones, jardines y spa realizadas en 2023, 2024 y 2026, según el registro del estudio. Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
       quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
+      featuredLine: 'Tres producciones para un mismo hotel.',
     },
     {
       seccion: 7,
       hotelName: 'HOTEL ESPLÉNDIDO',
       coupleName: 'Bahía y piedra',
       description:
-        'Piedra caliza y terrazas frente a la Bahía de Sóller, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
+        'Estancia, servicio y vida junto a la Bahía de Sóller. Piedra caliza y terrazas frente a la bahía, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
       quote: 'Piedra, mar y el eco del tranvía sobre los adoquines de Sóller.',
     },
     {
@@ -442,7 +463,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'DISTRICT HIVE',
       coupleName: 'Fuera de la red, en el desierto',
       description:
-        'Una cápsula de cristal y acero suspendida sobre el paisaje de Gorafe, con arquitectura que vive fuera de la red: agua extraída del aire y energía del sol.',
+        'Arquitectura y experiencia de estancia en el paisaje de Gorafe. Una cápsula de cristal y acero suspendida sobre el desierto granadino.',
       quote: 'Todo el cielo como techo, todo el paisaje como horizonte.',
     },
     {
@@ -450,7 +471,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'WELMOON VILLAS PAISAJE',
       coupleName: 'Bajo las estrellas',
       description:
-        'Villas abovedadas entre los pinares de Caravaca de la Cruz, diseñadas para dormir bajo el cielo sin filtrar de la sierra murciana.',
+        'Interiores, bosque y experiencia nocturna en una estancia singular. Villas abovedadas entre los pinares de Caravaca de la Cruz, diseñadas para dormir bajo el cielo sin filtrar de la sierra murciana.',
       quote: 'Un techo de estrellas y el silencio de la sierra murciana.',
     },
   ],
@@ -522,6 +543,7 @@ function mergeContent(fetched: unknown): SiteContent {
           coupleName: isNonEmptyString(h.coupleName) ? h.coupleName : defaultHotel.coupleName,
           description: isNonEmptyString(h.description) ? h.description : defaultHotel.description,
           quote: isNonEmptyString(h.quote) ? h.quote : defaultHotel.quote,
+          featuredLine: isNonEmptyString(h.featuredLine) ? h.featuredLine : defaultHotel.featuredLine,
         };
       })
     : DEFAULT_CONTENT.hotels;

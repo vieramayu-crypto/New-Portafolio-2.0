@@ -41,11 +41,19 @@ const BrandLogo: React.FC<{ brand: (typeof BRANDS)[number] }> = ({ brand }) => (
   </div>
 );
 
-export const BrandsMarquee: React.FC = () => {
+interface BrandsMarqueeProps {
+  /** Cuántas marcas pintar. Inicio muestra solo las primeras: veintidós
+   *  nombres seguidos se leen como ruido y no se recuerda ninguno. La lista
+   *  entera se conserva en Proyectos. */
+  limit?: number;
+}
+
+export const BrandsMarquee: React.FC<BrandsMarqueeProps> = ({ limit }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const drag = useRef({ startX: 0, startScrollLeft: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const { milestones } = useSiteContent();
+  const brands = limit ? BRANDS.slice(0, limit) : BRANDS;
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     const el = scrollRef.current;
@@ -106,7 +114,7 @@ export const BrandsMarquee: React.FC = () => {
         <div className="animate-marquee-slow whitespace-nowrap">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex items-center">
-              {BRANDS.map((brand) => (
+              {brands.map((brand) => (
                 <BrandLogo key={`${copy}-${brand.name}`} brand={brand} />
               ))}
             </div>

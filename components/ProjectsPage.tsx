@@ -5,6 +5,7 @@ import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { useSiteContent } from '../src/lib/content';
 import { toTitleCase } from '../src/lib/hotelName';
+import { BrandsMarquee } from './BrandsMarquee';
 
 interface ProjectsPageProps {
   onOpenAvailability: () => void;
@@ -161,6 +162,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
           })}
         </div>
       </section>
+
+      <div className="h-px w-full bg-[#1a1918]/12" />
+
+      {/* La lista completa de marcas vive aquí: en Inicio solo van las
+          primeras, porque veintidós nombres seguidos no se recuerdan. */}
+      <BrandsMarquee />
 
       <div className="h-px w-full bg-[#1a1918]/12" />
 

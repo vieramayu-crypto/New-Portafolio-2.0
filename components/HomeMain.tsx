@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { HotelStory, Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -13,13 +14,20 @@ import { ClosingCta } from './ClosingCta';
 import { Testimonials } from './Testimonials';
 import { BrandsMarquee } from './BrandsMarquee';
 import { useSiteContent } from '../src/lib/content';
+import { toTitleCase } from '../src/lib/hotelName';
+import { CASE_STUDIES } from '../data/caseStudies';
 
-/** Inicio muestra solo las propiedades insignia (Ritz-Carlton Abama, GPRO
- *  Valparaíso, Vestige Binidufà -- las mismas que elige la auditoría). Las
- *  nueve siguen intactas y visibles en la ventana emergente de Trabajo
- *  (onOpenWork); aquí solo se reduce la vitrina de Inicio, nunca se borra
- *  ningún hotel. */
-const FLAGSHIP_IDS = ['ritz-carlton-abama', 'gpro-valparaiso', 'vestige-binidufa'];
+/** Inicio muestra solo las propiedades insignia. Cada una responde a una
+ *  objeción distinta (auditoría, p. 11): Abama prueba el nivel de resort de
+ *  lujo, GPRO la relación que se repite, Vestige la identidad boutique e
+ *  InterContinental el hotel urbano de cadena. Las nueve siguen intactas en
+ *  /proyectos; aquí solo se reduce la vitrina, nunca se borra ningún hotel. */
+const FLAGSHIP_IDS = [
+  'ritz-carlton-abama',
+  'gpro-valparaiso',
+  'vestige-binidufa',
+  'intercontinental-lisboa',
+];
 
 interface HomeMainProps {
   /** El hero no anima hasta que el video de intro se va: si no, la entrada se
@@ -73,6 +81,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
         coupleName: hotelContent[i]?.coupleName ?? story.coupleName,
         description: hotelContent[i]?.description ?? story.description,
         quote: hotelContent[i]?.quote ?? story.quote,
+        featuredLine: hotelContent[i]?.featuredLine,
       })),
     [hotelContent]
   );
@@ -221,20 +230,73 @@ export const HomeMain: React.FC<HomeMainProps> = ({
             )}
           </AnimatePresence>
 
-          {/* Vitrina de Inicio: solo las propiedades insignia (sin líneas divisorias) */}
-          {flagshipStories.map((story, index) => (
-            <HotelSectionBlock key={story.id} story={story} index={index} onSelectStory={onSelectStory} />
-          ))}
+          {/* Cabecera de la vitrina: sin ella, cuatro bloques de fotos
+              seguidos no decían qué eran ni por qué estaban ahí. */}
+          <motion.div
+            initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true, margin: '-90px' }}
+            transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
+            className="mx-auto max-w-3xl px-6 pb-4 text-center md:pb-10"
+          >
+            <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
+              Selección
+            </div>
+            <h2 className="mt-4 font-serif text-3xl leading-[1.15] md:mt-5 md:text-[2.9rem]">
+              Proyectos destacados
+            </h2>
+          </motion.div>
 
-          {/* CTA hacia el portafolio completo -- abre la ventana emergente de
-              Trabajo (misma lógica que el modal de Contacto), no una página. */}
+          {/* Vitrina de Inicio: solo las propiedades insignia (sin líneas divisorias) */}
+          {flagshipStories.map((story, index) => {
+            const caseStudy = CASE_STUDIES.find((c) => c.hotelId === story.id);
+            return (
+              <React.Fragment key={story.id}>
+                <HotelSectionBlock story={story} index={index} onSelectStory={onSelectStory} />
+
+                {/* Ficha bajo cada bloque: el nombre solo no decía qué
+                    capacidad prueba cada proyecto, ni había manera de entrar
+                    al caso documentado desde aquí. Va fuera del lienzo de
+                    fotos, que no se toca. */}
+                <div className="mx-auto -mt-6 max-w-3xl px-6 pb-20 text-center md:-mt-10 md:pb-28">
+                  <h3 className="font-serif text-xl leading-[1.25] md:text-2xl">
+                    {toTitleCase(story.hotelName)}
+                  </h3>
+                  {story.featuredLine && (
+                    <p className="mx-auto mt-3 max-w-[40ch] text-[13px] leading-[1.7] text-[#5a5854] md:text-sm">
+                      {story.featuredLine}
+                    </p>
+                  )}
+                  <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+                    {caseStudy && (
+                      <Link
+                        to={`/proyecto/${caseStudy.slug}`}
+                        className="border-b border-[#1a1918]/65 pb-1.5 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                      >
+                        Ver proyecto
+                      </Link>
+                    )}
+                    <Link
+                      to={`/trabajo/${story.id}`}
+                      className="border-b border-[#1a1918]/65 pb-1.5 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                    >
+                      Ver galería
+                    </Link>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          })}
+
+          {/* Salida al portafolio completo: ahora es una página con URL propia
+              (/proyectos), que es lo que se puede enviar por correo. */}
           <div className="flex justify-center pt-4 pb-4">
-            <button
-              onClick={onOpenWork}
+            <Link
+              to="/proyectos"
               className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
-              Ver todo el trabajo
-            </button>
+              Ver todos los proyectos
+            </Link>
           </div>
 
           {/* Bottom Floating Button: only appears once the first photo section is reached */}
@@ -251,7 +313,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                   onClick={() => setIsHotelSelectorOpen(!isHotelSelectorOpen)}
                   className="mt-glass mt-glass-light pointer-events-auto relative overflow-hidden rounded-md px-5 py-2 flex items-center gap-3 text-sm md:text-base font-serif tracking-[0.25em] font-medium text-[#1a1918] hover:bg-[#1a1918] hover:text-[#f5f3ed] transition-all duration-300 shadow-[0_2px_20px_rgba(26,25,24,0.14)]"
                 >
-                  <span>Ver trabajo ({flagshipStories.length})</span>
+                  <span>Proyectos ({flagshipStories.length})</span>
                   <span className="text-xs">{isHotelSelectorOpen ? '▼' : '▲'}</span>
                 </button>
 
@@ -323,14 +385,14 @@ export const HomeMain: React.FC<HomeMainProps> = ({
               lo que hay que leer aqui. */}
           <div className="mb-14 text-center">
             <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-              Lo que dicen los equipos
+              Lo que dicen los equipos con los que trabajamos
             </span>
           </div>
           <Testimonials />
         </div>
       </section>
 
-      <BrandsMarquee />
+      <BrandsMarquee limit={10} />
 
       <ClosingCta onOpenAvailability={onOpenAvailability} onNavigate={onNavigate} />
     </div>
