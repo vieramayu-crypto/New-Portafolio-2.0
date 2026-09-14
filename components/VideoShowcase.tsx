@@ -2,127 +2,61 @@ import React from 'react';
 import { motion } from 'motion/react';
 
 const rise = (delay: number) => ({
-  initial: { opacity: 0, y: 22, filter: 'blur(8px)' },
-  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
-  viewport: { once: true, margin: '-90px' },
-  transition: { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const, delay },
+  initial: { opacity: 0, y: 48 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.15 as const },
+  transition: { duration: 1, ease: 'easeOut' as const, delay },
 });
 
-/** Marcador de posición de vídeo: mismo tratamiento visual que el reproductor
- *  real (GalleryVideo en HotelDetail.tsx) -- fondo oscuro, sombra, botón de
- *  reproducción circular -- para que Mayurlin vea el hueco exacto (tamaño,
- *  proporción, sombra) antes de tener el archivo final. El texto "VÍDEO"
- *  ocupa el lugar del vídeo real; se sustituye por el <video> cuando llegue
- *  el material (mismo patrón que ya usa GalleryVideo, con poster + mp4/webm).
- *  Llena siempre la caja que le da su contenedor (h-full w-full): la forma
- *  la decide el bento de fuera, no una relación de aspecto propia. */
-const VideoPlaceholder: React.FC<{ label: string; caption: string; big?: boolean }> = ({
-  label,
-  caption,
-  big,
-}) => (
-  <div className="group relative h-full w-full overflow-hidden rounded-[10px] bg-[#1a1918] shadow-2xl">
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-3 text-center md:gap-3">
-      <span className={`font-serif italic text-white/25 ${big ? 'text-3xl md:text-6xl' : 'text-lg md:text-2xl'}`}>
-        VÍDEO
-      </span>
-      <span
-        className={`font-sans uppercase tracking-[0.22em] text-white/45 ${
-          big ? 'text-[10px] md:text-xs' : 'text-[8px] md:text-[10px]'
-        }`}
-      >
-        {label}
-      </span>
-    </div>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <span
-        className={`flex items-center justify-center rounded-full bg-white/95 shadow-lg transition-transform group-hover:scale-105 ${
-          big ? 'h-16 w-16 md:h-20 md:w-20' : 'h-9 w-9 md:h-12 md:w-12'
-        }`}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          className={`translate-x-[2px] text-[#1a1918] ${big ? 'h-6 w-6 md:h-7 md:w-7' : 'h-4 w-4 md:h-5 md:w-5'}`}
-          fill="currentColor"
-        >
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </span>
-    </div>
-    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 pb-2 pt-6 text-center md:px-4 md:pb-3">
-      <span
-        className={`font-sans uppercase tracking-[0.18em] text-white/70 ${big ? 'text-[9px] md:text-[10px]' : 'text-[7px] md:text-[9px]'}`}
-      >
-        {caption}
-      </span>
-    </div>
-  </div>
-);
+const VIDEO_SLOTS = ['Vídeo horizontal 1', 'Vídeo horizontal 2', 'Vídeo horizontal 3'];
 
 /** Sección "El hotel en movimiento" (pág. 9 de la auditoría): la web afirma
  *  que se produce film, pero hoy no hay ni un solo vídeo visible en Inicio.
- *  Estos son marcadores de posición -- ocupan exactamente el espacio, la
- *  proporción y el tratamiento visual que tendrá cada pieza real, para
- *  decidir la distribución antes de tener el material. Se reemplazan por
- *  <video> real (con poster + mp4/webm, ver HotelDetail.tsx) en cuanto
- *  llegue el archivo.
  *
- *  Ni el horizontal ni el vertical muestran una sola pieza a pantalla
- *  completa: eso frena el scroll y concentra la atención en el vídeo en vez
- *  de en el texto que debe llevar al visitante a la sección siguiente. Con
- *  varias piezas en un bento asimétrico, el ojo capta que hay film sin que
- *  ninguna lo atrape sesenta segundos -- misma lógica en las dos escenas
- *  (horizontal y vertical), cada una ocupando su propia pantalla. */
+ *  Tres columnas a pantalla completa, sin ningún texto sobre el vídeo -- solo
+ *  el botón de cristal (mismo mt-glass, letra y forma que "Ver trabajo" de
+ *  Inicio) marca dónde va cada pieza. El ícono de reproducción, no texto, es
+ *  lo que dice "aquí va un vídeo"; se sustituye por un <video> real (con
+ *  poster + mp4/webm, ver HotelDetail.tsx) en cuanto llegue el material. */
 export const VideoShowcase: React.FC = () => {
   return (
     <section className="w-full bg-[#fbfaf6] py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-6 md:px-12">
-        <motion.div {...rise(0)} className="mb-12 text-center md:mb-16">
-          <h2 className="font-serif text-4xl text-[#1a1918] md:text-6xl">El hotel en movimiento</h2>
-        </motion.div>
+      <div className="mx-auto mb-12 max-w-6xl px-6 text-center md:mb-16 md:px-12">
+        <motion.h2 {...rise(0)} className="font-serif text-4xl text-[#1a1918] md:text-6xl">
+          El hotel en movimiento
+        </motion.h2>
+      </div>
 
-        {/* Escena horizontal: misma cuadrícula de 3 columnas × 2 filas de la
-            referencia (columna 1 entera + columnas 2 y 3 partidas en dos),
-            con las dos celdas que ahí llevaban texto ("Client Voice",
-            "Reach Me") simplemente vacías -- hueco real, no otro vídeo ahí --
-            que es lo que le da su asimetría, no una caja gigante inventada. */}
-        <motion.div
-          {...rise(0.08)}
-          className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4 sm:h-[64vh] sm:max-h-[560px] md:gap-5"
-        >
-          <div className="h-[38vh] sm:col-start-1 sm:row-start-1 sm:row-span-2 sm:h-auto">
-            <VideoPlaceholder big label="Vídeo horizontal 1" caption="Showreel · 30 a 45 segundos" />
-          </div>
-          <div className="h-[22vh] sm:col-start-3 sm:row-start-1 sm:h-auto">
-            <VideoPlaceholder label="Vídeo horizontal 2" caption="Campaña · 20 a 30 segundos" />
-          </div>
-          <div className="h-[22vh] sm:col-start-2 sm:row-start-2 sm:h-auto">
-            <VideoPlaceholder label="Vídeo horizontal 3" caption="Campaña · 20 a 30 segundos" />
-          </div>
-        </motion.div>
+      <div className="grid grid-cols-1 md:grid-cols-3">
+        {VIDEO_SLOTS.map((label, i) => (
+          <motion.div
+            key={label}
+            {...rise(0.1 + i * 0.15)}
+            className="group relative flex min-h-[400px] flex-col items-center justify-end overflow-hidden bg-[#1a1918] p-6 sm:min-h-[500px] sm:p-8 md:min-h-[750px] md:p-12"
+          >
+            <div
+              aria-hidden
+              className="absolute inset-0 flex items-center justify-center transition-transform duration-700 ease-out group-hover:scale-105"
+            >
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-lg md:h-20 md:w-20">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-6 w-6 translate-x-[2px] text-[#1a1918] md:h-7 md:w-7"
+                  fill="currentColor"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+            </div>
 
-        {/* Escena vertical: misma lógica de cuadrícula, en zigzag -- dos filas
-            reales (no alturas inventadas): impares arriba, pares abajo. El
-            ancho lo da la columna del grid y el alto lo calcula
-            `aspect-[9/16]` a partir de ese ancho, así la proporción es
-            siempre 9:16 real en cualquier pantalla. */}
-        <motion.div
-          {...rise(0.16)}
-          className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-4 sm:gap-4 md:mt-10 md:gap-5"
-        >
-          <div className="aspect-[9/16] sm:row-start-1">
-            <VideoPlaceholder label="Vídeo vertical 1" caption="Redes sociales · 8 a 20 segundos" />
-          </div>
-          <div className="aspect-[9/16] mt-9 sm:mt-0 sm:row-start-2">
-            <VideoPlaceholder label="Vídeo vertical 2" caption="Redes sociales · 8 a 20 segundos" />
-          </div>
-          <div className="aspect-[9/16] sm:row-start-1">
-            <VideoPlaceholder label="Vídeo vertical 3" caption="Redes sociales · 8 a 20 segundos" />
-          </div>
-          <div className="aspect-[9/16] mt-9 sm:mt-0 sm:row-start-2">
-            <VideoPlaceholder label="Vídeo vertical 4" caption="Redes sociales · 8 a 20 segundos" />
-          </div>
-        </motion.div>
+            <button
+              aria-label={label}
+              className="mt-glass mt-glass-light relative z-10 overflow-hidden rounded-md px-5 py-2 text-sm font-serif font-medium tracking-[0.25em] text-[#1a1918] shadow-[0_2px_20px_rgba(26,25,24,0.14)] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] md:text-base"
+            >
+              Ver vídeo
+            </button>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
