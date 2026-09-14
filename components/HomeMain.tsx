@@ -169,7 +169,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   };
 
   return (
-    <div className="relative min-h-screen bg-[#fbfaf6] text-[#1a1918] select-none font-sans overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#fbfaf6] text-[#1a1918] select-none font-sans overflow-x-clip">
       {/* Hero Section */}
       <HeroSection introDone={introDone} onOpenAvailability={onOpenAvailability} />
 
