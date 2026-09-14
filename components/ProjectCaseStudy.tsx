@@ -16,14 +16,18 @@ const rise = (delay: number) => ({
  *  contexto real -- sin inventar métricas de conversión que no existen. Solo
  *  GPRO por ahora (data/caseStudies.ts); se replica esta misma plantilla para
  *  InterContinental y Vestige cuando se prioricen. */
-export const ProjectCaseStudy: React.FC = () => {
+interface ProjectCaseStudyProps {
+  onOpenAvailability: () => void;
+}
+
+export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvailability }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const caseStudy = CASE_STUDIES.find((c) => c.slug === id);
   const hotel = caseStudy ? HOTEL_STORIES.find((h) => h.id === caseStudy.hotelId) : undefined;
 
   if (!caseStudy || !hotel) {
-    navigate('/trabajo', { replace: true });
+    navigate('/proyectos', { replace: true });
     return null;
   }
 
@@ -59,10 +63,18 @@ export const ProjectCaseStudy: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-14 text-center md:mt-16">
+        {/* El caso cerraba sin salida: se podía leer y no había forma de
+            contratar ni de volver al resto del portafolio. */}
+        <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-16">
+          <button
+            onClick={onOpenAvailability}
+            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+          >
+            Iniciar un proyecto
+          </button>
           <Link
             to={`/trabajo/${hotel.id}`}
-            className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
           >
             Ver galería completa
           </Link>

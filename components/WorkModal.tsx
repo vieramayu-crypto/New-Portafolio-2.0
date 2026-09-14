@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
+import { CASE_STUDIES } from '../data/caseStudies';
 import { HotelStory } from '../types';
 import { useSiteContent } from '../src/lib/content';
 
@@ -177,6 +178,8 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
     onClose();
   };
 
+  const currentCase = CASE_STUDIES.find((c) => c.hotelId === current.id);
+
   return (
     <AnimatePresence>
       {open && (
@@ -232,12 +235,28 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                     </h2>
                   </div>
 
-                  <button
-                    onClick={openPortfolio}
-                    className="mt-8 inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:mt-9 md:px-10 md:py-[1.15rem] md:text-xs"
-                  >
-                    Ver portafolio
-                  </button>
+                  <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-9">
+                    <button
+                      onClick={openPortfolio}
+                      className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+                    >
+                      Ver galería
+                    </button>
+                    {/* Solo los hoteles con caso documentado ofrecen la
+                        segunda salida: llamar "proyecto" a una galería sin
+                        contexto es justo lo que pedía evitar la auditoría. */}
+                    {currentCase && (
+                      <button
+                        onClick={() => {
+                          navigate(`/proyecto/${currentCase.slug}`);
+                          onClose();
+                        }}
+                        className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                      >
+                        Ver proyecto
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.aside>

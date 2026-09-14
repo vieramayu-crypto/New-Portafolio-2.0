@@ -1,6 +1,9 @@
 import React, { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { HotelStory, PhotoItem } from '../types';
+import { CASE_STUDIES } from '../data/caseStudies';
+import { toTitleCase } from '../src/lib/hotelName';
 
 interface HotelDetailProps {
   story: HotelStory;
@@ -17,15 +20,6 @@ interface GalleryPhotoProps {
   widthClass: string;
   offsetClass?: string;
   bleed?: boolean;
-}
-
-/** Los nombres viven en mayusculas en los datos y aqui se pasan a caja de
- *  titulo. Hay que capitalizar tambien detras de un guion o una barra, no solo
- *  detras de un espacio: THE RITZ-CARLTON salia como "The Ritz-carlton". */
-function toTitleCase(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/(^|[\s\-–—/(])(\S)/g, (_, antes, letra) => antes + letra.toUpperCase());
 }
 
 const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widthClass, offsetClass, bleed }) => (
@@ -886,6 +880,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   nextStory,
 }) => {
   const [creditsOpen, setCreditsOpen] = useState(false);
+  const caseStudy = CASE_STUDIES.find((c) => c.hotelId === story.id);
   const [heroLoaded, setHeroLoaded] = useState(false);
 
   // STRICT CONSTRAINT: Maximum 14 photos in the gallery
@@ -1040,12 +1035,25 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
             >
               <div className="pt-6 space-y-1.5 text-xs sm:text-sm text-[#5a5854] font-sans">
                 <div>Fotografía y dirección creativa · Mayurlin Viera</div>
-                <div>Film y producción · Yerfran</div>
+                <div>Producción audiovisual · Yerfran</div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
+        {/* Cuando el hotel tiene caso documentado, esta galería es la puerta
+            de entrada: el caso existía pero no se enlazaba desde ningún
+            sitio, así que solo llegaba quien supiera la URL de memoria. */}
+        {caseStudy && (
+          <div className="mt-14 md:mt-16">
+            <Link
+              to={`/proyecto/${caseStudy.slug}`}
+              className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            >
+              Ver el proyecto completo
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* GALLERY — max 10 photos, masonry mix with shared parallax movement */}

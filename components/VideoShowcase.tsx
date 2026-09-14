@@ -7,7 +7,7 @@ import { useSiteContent, publicImage } from '../src/lib/content';
 /** Los cuatro hoteles con los que se ejemplifica el bloque -- los mismos
  *  cuatro que pidió Mayurlin por nombre (Ritz-Carlton, GPRO, InterContinental,
  *  Deltapark). El botón de cada tarjeta ya lleva a su portafolio real. */
-const FEATURED_IDS = ['ritz-carlton-abama', 'hotel-danieli-venezia', 'aman-venice', 'hotel-caruso-belmond'];
+const FEATURED_IDS = ['ritz-carlton-abama', 'gpro-valparaiso', 'intercontinental-lisboa', 'deltapark-vitalresort'];
 
 /** Foto real de la web como fondo -- mientras no haya vídeo, es la única
  *  forma de ver que el desenfoque funciona (difuminar un color plano no se

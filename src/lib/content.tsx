@@ -140,6 +140,22 @@ export interface SiteContent {
     heading: string;
     questions: FaqEntry[];
   };
+  /** Página Proyectos: la vista completa del portafolio, con su propia URL
+   *  para poder enviarla en un correo de outreach sin obligar a recorrer
+   *  Inicio entero. */
+  projects: {
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    /** Distingue el caso documentado de las galerías: el comprador no debe
+     *  esperar el mismo nivel de detalle en las nueve. */
+    caseLabel: string;
+    galleryLabel: string;
+    caseLinkLabel: string;
+    galleryLinkLabel: string;
+    closingHeading: string;
+    ctaLabel: string;
+  };
   hotels: HotelContent[];
 }
 
@@ -351,6 +367,18 @@ export const DEFAULT_CONTENT: SiteContent = {
           'No. Producción y distribución son capas separadas. Cuando hay encaje entre la propiedad, la campaña y nuestra audiencia, podemos sumar publicación y cobertura como parte adicional de la propuesta.',
       },
     ],
+  },
+  projects: {
+    eyebrow: 'Portafolio',
+    heading: 'Proyectos',
+    intro:
+      'Fotografía y producción audiovisual para hoteles y alojamientos con identidad propia.',
+    caseLabel: 'Caso completo',
+    galleryLabel: 'Selección de imágenes',
+    caseLinkLabel: 'Ver proyecto',
+    galleryLinkLabel: 'Ver galería',
+    closingHeading: 'Cada proyecto empieza con una conversación.',
+    ctaLabel: 'Iniciar un proyecto',
   },
   hotels: [
     {
@@ -707,6 +735,33 @@ function mergeContent(fetched: unknown): SiteContent {
       eyebrow: isNonEmptyString(f.faq?.eyebrow) ? f.faq!.eyebrow : DEFAULT_CONTENT.faq.eyebrow,
       heading: isNonEmptyString(f.faq?.heading) ? f.faq!.heading : DEFAULT_CONTENT.faq.heading,
       questions: faqQuestions,
+    },
+    projects: {
+      eyebrow: isNonEmptyString(f.projects?.eyebrow)
+        ? f.projects!.eyebrow
+        : DEFAULT_CONTENT.projects.eyebrow,
+      heading: isNonEmptyString(f.projects?.heading)
+        ? f.projects!.heading
+        : DEFAULT_CONTENT.projects.heading,
+      intro: isNonEmptyString(f.projects?.intro) ? f.projects!.intro : DEFAULT_CONTENT.projects.intro,
+      caseLabel: isNonEmptyString(f.projects?.caseLabel)
+        ? f.projects!.caseLabel
+        : DEFAULT_CONTENT.projects.caseLabel,
+      galleryLabel: isNonEmptyString(f.projects?.galleryLabel)
+        ? f.projects!.galleryLabel
+        : DEFAULT_CONTENT.projects.galleryLabel,
+      caseLinkLabel: isNonEmptyString(f.projects?.caseLinkLabel)
+        ? f.projects!.caseLinkLabel
+        : DEFAULT_CONTENT.projects.caseLinkLabel,
+      galleryLinkLabel: isNonEmptyString(f.projects?.galleryLinkLabel)
+        ? f.projects!.galleryLinkLabel
+        : DEFAULT_CONTENT.projects.galleryLinkLabel,
+      closingHeading: isNonEmptyString(f.projects?.closingHeading)
+        ? f.projects!.closingHeading
+        : DEFAULT_CONTENT.projects.closingHeading,
+      ctaLabel: isNonEmptyString(f.projects?.ctaLabel)
+        ? f.projects!.ctaLabel
+        : DEFAULT_CONTENT.projects.ctaLabel,
     },
     hotels,
   };

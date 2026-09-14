@@ -19,7 +19,7 @@ export interface CaseStudy {
  *  (InterContinental, Vestige) cuando se prioricen. */
 export const CASE_STUDIES: CaseStudy[] = [
   {
-    hotelId: 'hotel-danieli-venezia',
+    hotelId: 'gpro-valparaiso',
     slug: 'gpro-valparaiso',
     hotelName: 'GPRO Valparaíso Palace & Spa',
     heading: 'GPRO Valparaíso: producción recurrente',

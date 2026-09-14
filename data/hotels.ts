@@ -114,7 +114,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'aman-venice',
+    id: 'intercontinental-lisboa',
     hotelName: 'INTERCONTINENTAL LISBOA',
     leftTag: 'HOTEL',
     coupleName: 'Altura urbana',
@@ -258,7 +258,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'villa-cimbrone-ravello',
+    id: 'vestige-binidufa',
     hotelName: 'VESTIGE COLLECTION, BINIDUFÀ',
     leftTag: 'FINCA',
     coupleName: 'Herencia menorquina',
@@ -386,7 +386,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'hotel-caruso-belmond',
+    id: 'deltapark-vitalresort',
     hotelName: 'DELTAPARK VITALRESORT',
     leftTag: 'COMPLEJO',
     coupleName: 'Bienestar alpino',
@@ -530,7 +530,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'borgo-egnazia-puglia',
+    id: 'honeymoon-petra-villas',
     hotelName: 'HONEYMOON PETRA VILLAS',
     leftTag: 'VILLAS',
     coupleName: 'Acantilado del Egeo',
@@ -674,7 +674,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'hotel-danieli-venezia',
+    id: 'gpro-valparaiso',
     hotelName: 'GPRO VALPARAÍSO PALACE & SPA',
     leftTag: 'PALACIO',
     coupleName: 'Spa mediterráneo',
@@ -826,7 +826,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'villa-deste-como',
+    id: 'hotel-esplendido',
     hotelName: 'HOTEL ESPLÉNDIDO',
     leftTag: 'HOTEL',
     coupleName: 'Bahía y piedra',
@@ -1098,7 +1098,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     ]
   },
   {
-    id: 'san-domenico-palace',
+    id: 'welmoon-villas',
     hotelName: 'WELMOON VILLAS PAISAJE',
     leftTag: 'GLAMPING',
     coupleName: 'Bajo las estrellas',

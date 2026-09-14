@@ -19,7 +19,7 @@ import { useSiteContent } from '../src/lib/content';
  *  nueve siguen intactas y visibles en la ventana emergente de Trabajo
  *  (onOpenWork); aquí solo se reduce la vitrina de Inicio, nunca se borra
  *  ningún hotel. */
-const FLAGSHIP_IDS = ['ritz-carlton-abama', 'hotel-danieli-venezia', 'villa-cimbrone-ravello'];
+const FLAGSHIP_IDS = ['ritz-carlton-abama', 'gpro-valparaiso', 'vestige-binidufa'];
 
 interface HomeMainProps {
   /** El hero no anima hasta que el video de intro se va: si no, la entrada se
