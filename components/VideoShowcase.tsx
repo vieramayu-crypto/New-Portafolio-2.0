@@ -19,26 +19,40 @@ interface CardSpec {
   top: number; // % del viewport
 }
 
-/** Posiciones y tamaño calculados por separado para cada formato -- pedido
- *  explícito de Mayurlin tras ver que compartir un solo % entre móvil y
- *  escritorio dejaba tarjetas cortadas por el borde. Cada set garantiza que
- *  ninguna tarjeta (con su alto real 9:16) se salga de la pantalla: el rango
- *  de `top` se dejó con margen para el alto máximo de la tarjeta. */
+/** Posiciones calcadas de los recuadros que Mayurlin dibujó sobre la web ya
+ *  publicada, medidas una a una y luego repartidas con márgenes simétricos.
+ *
+ *  Escritorio: las cuatro en FILA, no en cuadrícula -- repartidas de
+ *  izquierda a derecha y cada una a distinta altura (zigzag), que es lo que
+ *  decía el boceto original ("uno más abajo de otro", "de forma simétrica").
+ *  Margen lateral idéntico a izquierda y derecha, y la misma separación
+ *  entre tarjeta y tarjeta.
+ *
+ *  Móvil: dos columnas, la izquierda siempre más alta que la derecha.
+ *
+ *  El tamaño se define por ALTO (svh), no por ancho: con `aspect-[9/16]` el
+ *  ancho sale solo, y así el alto de la tarjeta ocupa siempre la misma
+ *  fracción de pantalla -- que es lo que decide si algo se sale por arriba o
+ *  por abajo. Con el ancho en `vw` una pantalla ancha hacía la tarjeta
+ *  altísima y se salía. */
 const DESKTOP_POSITIONS: CardSpec[] = [
-  { left: 13, top: 36 }, // arriba-izquierda
-  { left: 87, top: 32 }, // arriba-derecha, más alta
-  { left: 14, top: 70 }, // abajo-izquierda
-  { left: 86, top: 75 }, // abajo-derecha, más baja
+  { left: 15, top: 60 }, // 1ª, abajo
+  { left: 38.33, top: 42 }, // 2ª, arriba
+  { left: 61.67, top: 56 }, // 3ª, abajo (algo más alta que la 1ª)
+  { left: 85, top: 40 }, // 4ª, la más alta
 ];
-const DESKTOP_CARD_CLASS = 'w-[16vw] max-w-[230px]';
+/** 56svh de alto -> 31.5svh de ancho. Deja ~3% de margen lateral a cada lado
+ *  y ~3% entre tarjetas en 1440x900, y sigue entrando en 1024x768. */
+const DESKTOP_CARD_CLASS = 'h-[56svh] w-auto';
 
 const MOBILE_POSITIONS: CardSpec[] = [
-  { left: 22, top: 33 }, // arriba-izquierda
-  { left: 78, top: 25 }, // arriba-derecha, más alta
-  { left: 20, top: 68 }, // abajo-izquierda
-  { left: 80, top: 80 }, // abajo-derecha, más baja
+  { left: 26, top: 28 }, // arriba-izquierda (la más alta)
+  { left: 74, top: 36 }, // arriba-derecha, un escalón más abajo
+  { left: 26, top: 63 }, // abajo-izquierda
+  { left: 74, top: 71 }, // abajo-derecha, la más baja
 ];
-const MOBILE_CARD_CLASS = 'w-[35vw] max-w-[165px]';
+/** 32svh de alto -> 18svh de ancho (~39% de un móvil de 390px). */
+const MOBILE_CARD_CLASS = 'h-[32svh] w-auto';
 
 const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -184,7 +198,7 @@ export const VideoShowcase: React.FC = () => {
             scrollYProgress={scrollYProgress}
             pos={DESKTOP_POSITIONS[i]}
             sizeClassName={DESKTOP_CARD_CLASS}
-            visibilityClassName="hidden md:block"
+            visibilityClassName="hidden lg:block"
           />
         ))}
         {stories.map((story, i) => (
@@ -196,7 +210,7 @@ export const VideoShowcase: React.FC = () => {
             scrollYProgress={scrollYProgress}
             pos={MOBILE_POSITIONS[i]}
             sizeClassName={MOBILE_CARD_CLASS}
-            visibilityClassName="md:hidden"
+            visibilityClassName="lg:hidden"
           />
         ))}
       </div>
