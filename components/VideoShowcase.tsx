@@ -81,57 +81,46 @@ export const VideoShowcase: React.FC = () => {
           <h2 className="font-serif text-4xl text-[#1a1918] md:text-6xl">El hotel en movimiento</h2>
         </motion.div>
 
-        {/* Escena horizontal: una pieza grande + dos más pequeñas, asimétrico. */}
+        {/* Escena horizontal: misma cuadrícula de 3 columnas × 2 filas de la
+            referencia (columna 1 entera + columnas 2 y 3 partidas en dos),
+            con las dos celdas que ahí llevaban texto ("Client Voice",
+            "Reach Me") simplemente vacías -- hueco real, no otro vídeo ahí --
+            que es lo que le da su asimetría, no una caja gigante inventada. */}
         <motion.div
           {...rise(0.08)}
           className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4 sm:h-[64vh] sm:max-h-[560px] md:gap-5"
         >
-          <div className="h-[38vh] sm:col-span-2 sm:row-span-2 sm:h-auto">
+          <div className="h-[38vh] sm:col-start-1 sm:row-start-1 sm:row-span-2 sm:h-auto">
             <VideoPlaceholder big label="Vídeo horizontal 1" caption="Showreel · 30 a 45 segundos" />
           </div>
-          <div className="h-[22vh] sm:col-span-1 sm:row-span-1 sm:h-auto">
+          <div className="h-[22vh] sm:col-start-3 sm:row-start-1 sm:h-auto">
             <VideoPlaceholder label="Vídeo horizontal 2" caption="Campaña · 20 a 30 segundos" />
           </div>
-          <div className="h-[22vh] sm:col-span-1 sm:row-span-1 sm:h-auto">
+          <div className="h-[22vh] sm:col-start-2 sm:row-start-2 sm:h-auto">
             <VideoPlaceholder label="Vídeo horizontal 3" caption="Campaña · 20 a 30 segundos" />
           </div>
         </motion.div>
 
-        {/* Escena vertical: piezas en fila con alturas desiguales (escritorio) o
-            en mosaico escalonado de dos columnas (móvil) -- nunca una sola
-            pieza ocupando el ancho completo. */}
-        <motion.div {...rise(0.16)} className="mt-6 sm:mt-8 md:mt-10">
-          <div className="hidden items-end justify-center gap-4 sm:flex sm:h-[58vh] sm:max-h-[460px] md:gap-6">
-            <div style={{ height: '68%' }} className="aspect-[9/16] shrink-0">
-              <VideoPlaceholder label="Vídeo vertical 1" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
-            <div style={{ height: '92%' }} className="aspect-[9/16] shrink-0">
-              <VideoPlaceholder label="Vídeo vertical 2" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
-            <div style={{ height: '78%' }} className="aspect-[9/16] shrink-0">
-              <VideoPlaceholder label="Vídeo vertical 3" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
-            <div style={{ height: '58%' }} className="aspect-[9/16] shrink-0">
-              <VideoPlaceholder label="Vídeo vertical 4" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
+        {/* Escena vertical: misma lógica de cuadrícula, en zigzag -- dos filas
+            reales (no alturas inventadas): impares arriba, pares abajo. El
+            ancho lo da la columna del grid y el alto lo calcula
+            `aspect-[9/16]` a partir de ese ancho, así la proporción es
+            siempre 9:16 real en cualquier pantalla. */}
+        <motion.div
+          {...rise(0.16)}
+          className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-4 sm:gap-4 md:mt-10 md:gap-5"
+        >
+          <div className="aspect-[9/16] sm:row-start-1">
+            <VideoPlaceholder label="Vídeo vertical 1" caption="Redes sociales · 8 a 20 segundos" />
           </div>
-
-          {/* Móvil: el ancho lo da la columna del grid, el alto lo calcula
-              `aspect-[9/16]` a partir de ese ancho -- así la proporción es
-              siempre 9:16 real, nunca una altura fija adivinada. */}
-          <div className="grid grid-cols-2 gap-3 sm:hidden">
-            <div className="aspect-[9/16]">
-              <VideoPlaceholder label="Vídeo vertical 1" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
-            <div className="mt-7 aspect-[9/16]">
-              <VideoPlaceholder label="Vídeo vertical 2" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
-            <div className="aspect-[9/16]">
-              <VideoPlaceholder label="Vídeo vertical 3" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
-            <div className="mt-7 aspect-[9/16]">
-              <VideoPlaceholder label="Vídeo vertical 4" caption="Redes sociales · 8 a 20 segundos" />
-            </div>
+          <div className="aspect-[9/16] mt-9 sm:mt-0 sm:row-start-2">
+            <VideoPlaceholder label="Vídeo vertical 2" caption="Redes sociales · 8 a 20 segundos" />
+          </div>
+          <div className="aspect-[9/16] sm:row-start-1">
+            <VideoPlaceholder label="Vídeo vertical 3" caption="Redes sociales · 8 a 20 segundos" />
+          </div>
+          <div className="aspect-[9/16] mt-9 sm:mt-0 sm:row-start-2">
+            <VideoPlaceholder label="Vídeo vertical 4" caption="Redes sociales · 8 a 20 segundos" />
           </div>
         </motion.div>
       </div>
