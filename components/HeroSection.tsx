@@ -94,19 +94,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
           // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
           // lateral lo sostiene y puede seguir apagado.
-          className="mb-[15px] text-[9px] uppercase tracking-[0.28em] text-white/[.72]"
+          // El rótulo se queda como está; lo que cambia es el aire que tiene
+          // debajo. En escritorio se separa más del titular, que es donde
+          // todo se veía apretado.
+          className="mb-[15px] text-[9px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
         >
           {hero.eyebrow}
         </motion.p>
         <motion.h1
           {...rise(0.18)}
           animate={animate}
-          // El titular pasó de "Producción visual para hoteles de lujo" a
-          // nombrar los dos servicios, y con la medida anterior salían seis
-          // renglones: se comía la pantalla, se cortaba bajo el logo y el
-          // subtítulo acababa debajo de la banda de cristal. Medida más ancha
-          // y cuerpo menor para que entre en cuatro o cinco renglones.
-          className="m-0 max-w-[12ch] font-serif text-[clamp(34px,9.6vw,46px)] font-normal leading-[1.16] tracking-[-0.045em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)]"
+          // Interlineado apretado a propósito: el problema no era el cuerpo de
+          // la letra sino el aire ENTRE renglones, que estiraba el titular
+          // hasta comerse la pantalla. Con 1.05 el bloque ocupa lo mismo que
+          // la persona de la foto en móvil, y en escritorio lo que se recorta
+          // aquí se devuelve como separación arriba y abajo.
+          className="m-0 max-w-[12ch] font-serif text-[clamp(38px,11vw,52px)] font-normal leading-[1.05] tracking-[-0.045em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)]"
         >
           {hero.titleLead} <i>{hero.titleEmphasis}</i>
         </motion.h1>
@@ -115,7 +118,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         <motion.p
           {...rise(0.26)}
           animate={animate}
-          className="mt-3 max-w-[26ch] text-[13px] leading-snug text-white/80 md:mt-4 md:max-w-[34ch] md:text-[15px]"
+          // En móvil va a todo el ancho del bloque: con la medida estrecha
+          // anterior caía en cuatro renglones y los dos últimos quedaban
+          // detrás de la banda de cristal, ilegibles. A lo ancho ocupa dos y
+          // no llega a tocarla. En escritorio mantiene su medida corta y gana
+          // separación respecto al titular.
+          className="mt-4 text-[13px] leading-snug text-white/80 md:mt-10 md:max-w-[34ch] md:text-[15px]"
         >
           {hero.subline}
         </motion.p>
