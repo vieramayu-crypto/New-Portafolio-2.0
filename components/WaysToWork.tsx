@@ -9,14 +9,10 @@ const rise = (delay: number) => ({
   transition: { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const, delay },
 });
 
-interface WaysToWorkProps {
-  onOpenAvailability: () => void;
-}
-
 /** "Formas de trabajar juntos" (pág. 8): cuatro modalidades con nombre, no
  *  paquetes cerrados -- reduce la incertidumbre del hotel sin publicar
  *  precio. Mismo cristal que el resto de bloques nuevos de la Home. */
-export const WaysToWork: React.FC<WaysToWorkProps> = ({ onOpenAvailability }) => {
+export const WaysToWork: React.FC = () => {
   const { waysToWork } = useSiteContent();
 
   return (
@@ -29,7 +25,7 @@ export const WaysToWork: React.FC<WaysToWorkProps> = ({ onOpenAvailability }) =>
           <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-6xl">{waysToWork.heading}</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7 lg:grid-cols-3">
+        <div className="mt-glass-async grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7 lg:grid-cols-3">
           {waysToWork.items.map((item, i) => (
             <motion.div
               key={item.title}
@@ -50,15 +46,6 @@ export const WaysToWork: React.FC<WaysToWorkProps> = ({ onOpenAvailability }) =>
         >
           {waysToWork.intro}
         </motion.p>
-
-        <motion.div {...rise(0.32)} className="mt-8 text-center md:mt-10">
-          <button
-            onClick={onOpenAvailability}
-            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
-          >
-            {waysToWork.ctaLabel}
-          </button>
-        </motion.div>
       </div>
     </section>
   );

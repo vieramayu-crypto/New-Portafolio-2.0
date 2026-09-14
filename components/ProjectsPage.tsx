@@ -48,14 +48,15 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
       {/* Apertura */}
       <section className="mx-auto max-w-4xl px-6 pt-32 pb-16 text-center md:px-12 md:pt-44 md:pb-24">
+        {/* El rótulo decía "Portafolio" justo encima de un titular que decía
+            "Proyectos": las dos palabras aparecían juntas sin que nada
+            explicara en qué se diferencian. Ahora el titular las nombra a las
+            dos y el párrafo dice exactamente qué es cada una. */}
         <motion.div {...rise(0)}>
-          <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
-            {projects.eyebrow}
-          </div>
-          <h1 className="mt-5 font-serif text-[15vw] leading-[1.04] tracking-[-0.03em] sm:text-[10vw] md:mt-6 md:text-[5.4vw]">
+          <h1 className="font-serif text-[13vw] leading-[1.04] tracking-[-0.03em] sm:text-[9vw] md:text-[5vw]">
             {projects.heading}
           </h1>
-          <p className="mx-auto mt-6 max-w-[52ch] text-[13px] leading-[1.7] text-[#5a5854] md:mt-8 md:text-sm">
+          <p className="mx-auto mt-7 max-w-[58ch] text-[13px] leading-[1.75] text-[#5a5854] md:mt-9 md:text-sm">
             {projects.intro}
           </p>
         </motion.div>
@@ -66,6 +67,17 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
 
       {/* Caso documentado: foto a sangre y ficha debajo, para que se distinga
           de un vistazo de las galerías que vienen después. */}
+      {featuredStories.length > 0 && (
+        <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-12 pt-16 text-center md:px-12 md:pb-16 md:pt-20">
+          <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[11px]">
+            {projects.caseSectionLabel}
+          </div>
+          <p className="mx-auto mt-4 max-w-[46ch] font-serif text-lg leading-[1.45] text-[#1a1918] md:text-xl">
+            {projects.caseSectionLine}
+          </p>
+        </motion.div>
+      )}
+
       {featuredStories.map((featured, idx) => {
         const featuredCase = caseByHotel.get(featured.id)!;
         // El primer caso abre a sangre completa; los siguientes bajan de
@@ -125,8 +137,19 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
 
       <div className="h-px w-full bg-[#1a1918]/12" />
 
+      {/* A partir de aquí cambia lo que se está mirando, y hay que decirlo:
+          una galería sin el relato del encargo detrás no es un proyecto. */}
+      <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-4 pt-16 text-center md:px-12 md:pt-20">
+        <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[11px]">
+          {projects.gallerySectionLabel}
+        </div>
+        <p className="mx-auto mt-4 max-w-[46ch] font-serif text-lg leading-[1.45] text-[#1a1918] md:text-xl">
+          {projects.gallerySectionLine}
+        </p>
+      </motion.div>
+
       {/* Galerías: filas alternas, foto grande y ficha al lado. */}
-      <section className="mx-auto max-w-6xl px-6 py-20 md:px-12 md:py-28">
+      <section className="mx-auto max-w-6xl px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16">
         <div className="space-y-20 md:space-y-32">
           {rest.map((story, i) => {
             const photoFirst = i % 2 === 0;

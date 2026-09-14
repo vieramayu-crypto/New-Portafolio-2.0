@@ -235,7 +235,11 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                     </h2>
                   </div>
 
-                  <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-9">
+                  {/* Alto reservado, no dependiente del contenido: por debajo de `sm` los
+                      dos botones se apilan, y los hoteles sin proyecto documentado
+                      dejaban de dibujar el segundo — la ventana encogía y crecía al
+                      pasar de un hotel a otro. El hueco se reserva siempre. */}
+                  <div className="mt-8 flex min-h-[94px] flex-col items-center justify-start gap-4 sm:min-h-0 sm:flex-row sm:justify-center md:mt-9">
                     <button
                       onClick={openPortfolio}
                       className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"

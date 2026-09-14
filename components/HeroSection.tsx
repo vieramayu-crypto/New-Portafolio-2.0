@@ -85,9 +85,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         }}
       />
 
-      {/* Bloque editorial, a media altura sobre el margen izquierdo en los dos
-          tamanos. */}
-      <div className="absolute inset-x-5 top-1/2 z-[3] -translate-y-1/2 md:right-auto md:left-[clamp(22px,3.4vw,54px)] md:-translate-y-[52%]">
+      {/* Bloque editorial. En escritorio va a media altura sobre el margen
+          izquierdo; en movil se ancla arriba y deja de estar centrado, porque
+          centrarlo ataba las cuatro piezas entre si (mover una movia las otras
+          tres) y hacia falta colocarlas una a una: rotulo arriba del todo,
+          titular a la altura de la persona de la foto, subtitulo y boton bien
+          separados abajo. Las separaciones van en `svh` para que la
+          proporcion aguante igual en un movil corto y en uno largo. */}
+      <div className="absolute inset-x-5 top-[10svh] z-[3] md:right-auto md:left-[clamp(22px,3.4vw,54px)] md:top-1/2 md:-translate-y-[52%]">
         <motion.p
           {...rise(0.1)}
           animate={animate}
@@ -97,7 +102,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           // El rótulo se queda como está; lo que cambia es el aire que tiene
           // debajo. En escritorio se separa más del titular, que es donde
           // todo se veía apretado.
-          className="mb-[15px] text-[9px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
+          className="mb-[17svh] text-[9px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
         >
           {hero.eyebrow}
         </motion.p>
@@ -123,7 +128,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           // detrás de la banda de cristal, ilegibles. A lo ancho ocupa dos y
           // no llega a tocarla. En escritorio mantiene su medida corta y gana
           // separación respecto al titular.
-          className="mt-4 text-[13px] leading-snug text-white/80 md:mt-10 md:max-w-[34ch] md:text-[15px]"
+          className="mt-[8svh] text-[13px] leading-snug text-white/80 md:mt-10 md:max-w-[34ch] md:text-[15px]"
         >
           {hero.subline}
         </motion.p>
@@ -132,10 +137,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             esconde su columna de acción por debajo de 768px: en móvil no
             había ninguna forma de contactar desde la primera pantalla. Aquí
             va el botón para ese tamaño; en escritorio manda el de la banda. */}
-        <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
+        <motion.div {...rise(0.34)} animate={animate} className="mt-[6.5svh] md:hidden">
+          {/* `font-semibold` solo aqui: es el unico boton de la web que se lee
+              sobre una foto a pleno sol, y con el peso medio se deshacia. */}
           <button
             onClick={onOpenAvailability}
-            className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-white"
+            className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
           >
             {hero.ctaLabel}
           </button>

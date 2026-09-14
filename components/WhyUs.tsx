@@ -34,7 +34,7 @@ export const WhyUs: React.FC<WhyUsProps> = ({ onNavigate }) => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
+        <div className="mt-glass-async grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
           {whyUs.items.map((item, i) => (
             <motion.div
               key={item.title}

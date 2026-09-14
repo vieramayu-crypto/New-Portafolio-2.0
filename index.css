@@ -217,6 +217,71 @@ body {
   z-index: 1;
 }
 
+/* Reflejos que NO van a la vez.
+
+   Cuando varias cajas de cristal comparten pantalla, todas arrancan el mismo
+   barrido en el mismo instante: los cuatro reflejos se alinean y se leen como
+   una sola franja vertical cruzando el bloque entero, no como la luz de cada
+   pieza. Es justo lo contrario de lo que debe parecer.
+
+   Esta clase va en el CONTENEDOR (el grid, no las cajas) y le da a cada hijo
+   su propio reloj: duraciones primas entre si — 19, 23, 27 y 31 segundos, que
+   no vuelven a coincidir en horas —, arranques desfasados, inclinaciones a un
+   lado y a otro, anchuras y desenfoques distintos. Cada cristal responde a su
+   propia logica y el conjunto deja de verse coreografiado. */
+.mt-glass-async > * {
+  --mt-sheen-dur: 22s;
+  --mt-sheen-delay: 0s;
+  --mt-sheen-tilt: 12deg;
+  --mt-sheen-width: 52%;
+  --mt-sheen-blur: 10px;
+}
+
+.mt-glass-async > *:nth-child(4n + 1) {
+  --mt-sheen-dur: 19s;
+  --mt-sheen-delay: -2s;
+  --mt-sheen-tilt: 9deg;
+  --mt-sheen-width: 46%;
+  --mt-sheen-blur: 12px;
+}
+
+.mt-glass-async > *:nth-child(4n + 2) {
+  --mt-sheen-dur: 23s;
+  --mt-sheen-delay: -11s;
+  --mt-sheen-tilt: -7deg;
+  --mt-sheen-width: 58%;
+  --mt-sheen-blur: 8px;
+}
+
+.mt-glass-async > *:nth-child(4n + 3) {
+  --mt-sheen-dur: 27s;
+  --mt-sheen-delay: -5s;
+  --mt-sheen-tilt: 14deg;
+  --mt-sheen-width: 40%;
+  --mt-sheen-blur: 14px;
+}
+
+.mt-glass-async > *:nth-child(4n + 4) {
+  --mt-sheen-dur: 31s;
+  --mt-sheen-delay: -17s;
+  --mt-sheen-tilt: -11deg;
+  --mt-sheen-width: 64%;
+  --mt-sheen-blur: 9px;
+}
+
+/* Longhand a proposito: el atajo `animation` de `.mt-glass::after` pondria el
+   delay a cero otra vez. */
+.mt-glass-async > *::after {
+  animation-name: mt-glass-reflection;
+  animation-duration: var(--mt-sheen-dur);
+  animation-delay: var(--mt-sheen-delay);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform: rotate(var(--mt-sheen-tilt));
+  width: var(--mt-sheen-width);
+  filter: blur(var(--mt-sheen-blur));
+}
+
 /* Variante clara: el modal de Contacto vive sobre crema, no sobre una foto. */
 .mt-glass-light {
   backdrop-filter: blur(30px) saturate(126%);

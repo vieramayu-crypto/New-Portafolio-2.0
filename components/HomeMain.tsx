@@ -182,8 +182,8 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       {/* Hero Section */}
       <HeroSection introDone={introDone} onOpenAvailability={onOpenAvailability} />
 
-      <WhatWeCreate onOpenAvailability={onOpenAvailability} />
-      <ValueBlock onOpenAvailability={onOpenAvailability} />
+      <WhatWeCreate />
+      <ValueBlock />
       <VideoShowcase />
 
       {/* Target for smooth scroll from Hero */}
@@ -313,7 +313,11 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                   onClick={() => setIsHotelSelectorOpen(!isHotelSelectorOpen)}
                   className="mt-glass mt-glass-light pointer-events-auto relative overflow-hidden rounded-md px-5 py-2 flex items-center gap-3 text-sm md:text-base font-serif tracking-[0.25em] font-medium text-[#1a1918] hover:bg-[#1a1918] hover:text-[#f5f3ed] transition-all duration-300 shadow-[0_2px_20px_rgba(26,25,24,0.14)]"
                 >
-                  <span>Proyectos ({flagshipStories.length})</span>
+                  {/* Decía "Proyectos", pero no abre proyectos: salta a la
+                      sección de un hotel. Con "proyecto" ya definido como el
+                      encargo contado entero, llamarle así aquí era una de las
+                      piezas que emborronaban las dos palabras. */}
+                  <span>Hoteles ({flagshipStories.length})</span>
                   <span className="text-xs">{isHotelSelectorOpen ? '▼' : '▲'}</span>
                 </button>
 
@@ -374,7 +378,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       </div>
 
       <WhyUs onNavigate={onNavigate} />
-      <WaysToWork onOpenAvailability={onOpenAvailability} />
+      <WaysToWork />
 
       {/* Autoridad, después de haber enseñado el trabajo entero: primero las
           voces de los equipos, después las marcas. Los dos bloques son los

@@ -2,10 +2,6 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { useSiteContent } from '../src/lib/content';
 
-interface ValueBlockProps {
-  onOpenAvailability: () => void;
-}
-
 /** Entrada compartida: desenfoque que se aclara y sube. Se reproduce una vez
  *  al entrar en pantalla y se queda fija, como pidió Mayurlin. */
 const rise = (delay: number) => ({
@@ -19,7 +15,7 @@ const rise = (delay: number) => ({
  *  segunda capa (distribución) pasaba desapercibida detrás de un selector de
  *  clic. Ahora las dos tarjetas se ven a la vez, sin interacción de por
  *  medio -- mismo cristal que "Qué creamos" y "Formas de trabajar juntos". */
-export const ValueBlock: React.FC<ValueBlockProps> = ({ onOpenAvailability }) => {
+export const ValueBlock: React.FC = () => {
   const { valueBlock } = useSiteContent();
 
   return (
@@ -32,7 +28,7 @@ export const ValueBlock: React.FC<ValueBlockProps> = ({ onOpenAvailability }) =>
           {valueBlock.claim}
         </motion.h2>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mt-16 md:gap-7">
+        <div className="mt-glass-async mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mt-16 md:gap-7">
           {valueBlock.benefits.map((benefit, i) => (
             <motion.div
               key={benefit}
@@ -48,15 +44,6 @@ export const ValueBlock: React.FC<ValueBlockProps> = ({ onOpenAvailability }) =>
             </motion.div>
           ))}
         </div>
-
-        <motion.div {...rise(0.3)} className="mt-12 text-center md:mt-14">
-          <button
-            onClick={onOpenAvailability}
-            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
-          >
-            {valueBlock.ctaLabel}
-          </button>
-        </motion.div>
       </div>
     </section>
   );
