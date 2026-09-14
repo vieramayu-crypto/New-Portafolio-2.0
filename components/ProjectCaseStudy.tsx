@@ -13,9 +13,9 @@ const rise = (delay: number) => ({
 
 /** "Proyecto" (pág. 12 de la auditoría): a diferencia de Trabajo (galería
  *  completa, las nueve propiedades), esta página cuenta el encargo con
- *  contexto real -- sin inventar métricas de conversión que no existen. Solo
- *  GPRO por ahora (data/caseStudies.ts); se replica esta misma plantilla para
- *  InterContinental y Vestige cuando se prioricen. */
+ *  contexto real -- sin inventar métricas de conversión que no existen. Los
+ *  casos documentados viven en data/caseStudies.ts (Abama, Binidufà y GPRO);
+ *  esta plantilla los sirve todos. */
 interface ProjectCaseStudyProps {
   onOpenAvailability: () => void;
 }

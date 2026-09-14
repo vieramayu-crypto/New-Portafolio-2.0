@@ -20,6 +20,7 @@ const PAGE_LABELS: Partial<Record<Page, string>> = {
  *  una URL del portafolio que enviar a un hotel. Ahora Proyectos es una
  *  página propia (/proyectos) y ocupa ese sitio. */
 const MENU_ITEMS: { page: Page; label: string; photo: string }[] = [
+  { page: 'home', label: 'Inicio', photo: PORTFOLIO_MENU_PHOTO },
   { page: 'projects', label: 'Proyectos', photo: PORTFOLIO_MENU_PHOTO },
   { page: 'about', label: 'Acerca de', photo: MENU_ABOUT_PHOTO },
   { page: 'contact', label: 'Contacto', photo: MAYU_PORTRAIT },

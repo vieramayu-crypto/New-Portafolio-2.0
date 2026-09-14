@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, MotionValue } from 'motion/react';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent, publicImage } from '../src/lib/content';
@@ -48,11 +48,25 @@ const DESKTOP_CARD_CLASS = 'h-[56svh] w-auto';
 const MOBILE_POSITIONS: CardSpec[] = [
   { left: 26, top: 28 }, // arriba-izquierda (la más alta)
   { left: 74, top: 36 }, // arriba-derecha, un escalón más abajo
-  { left: 26, top: 63 }, // abajo-izquierda
-  { left: 74, top: 71 }, // abajo-derecha, la más baja
+  { left: 26, top: 66.5 }, // abajo-izquierda
+  { left: 74, top: 74.5 }, // abajo-derecha, la más baja
 ];
-/** 32svh de alto -> 18svh de ancho (~39% de un móvil de 390px). */
-const MOBILE_CARD_CLASS = 'h-[32svh] w-auto';
+/** 37svh de alto -> 20.8svh de ancho. Un 15% más grande que las 32svh
+ *  anteriores, que es lo máximo que permite la pantalla: a 390px el ancho
+ *  de la tarjeta sale a ~176px y quedan ~13px de margen a cada lado y ~11px
+ *  entre columnas. Subir más se come el margen antes que el alto. */
+const MOBILE_CARD_CLASS = 'h-[37svh] w-auto';
+
+/** Umbrales de despliegue, con histéresis: una vez abiertas hace falta subir
+ *  bastante más para volver a cerrarlas, así una rueda de ratón que rebota en
+ *  el límite no las hace parpadear. */
+const DEPLOY_ON = 0.2;
+const DEPLOY_OFF = 0.12;
+
+/** Muelle blando a propósito: la animación ya no va pegada al dedo, se
+ *  dispara sola, así que puede permitirse inercia. Con un `ease` lineal se
+ *  veía robótica -- que es justo lo que pidió corregir Mayurlin. */
+const CARD_SPRING = { type: 'spring' as const, stiffness: 110, damping: 19, mass: 1 };
 
 const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -60,54 +74,67 @@ const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-/** `useTransform(progress, [a,b], [from,to])` (la forma de arrays) no pinta
- *  bien la opacidad en este entorno: el valor interno queda correcto pero lo
- *  que se dibuja en pantalla no, y sigue cambiando pasado el límite en vez de
- *  quedarse fijo. La forma con función (recalcular a mano en cada frame) sí
- *  pinta bien -- por eso toda opacidad de esta sección pasa por aquí en vez
- *  de por `useTransform` con arrays. */
-function useLinearOpacity(progress: MotionValue<number>, start: number, end: number, from: number, to: number) {
-  return useTransform(() => {
-    const t = Math.min(1, Math.max(0, (progress.get() - start) / (end - start)));
-    return from + (to - from) * t;
-  });
-}
-
 interface VerticalCardProps {
   hotelId: string;
   hotelName: string;
   index: number;
-  scrollYProgress: MotionValue<number>;
+  deployed: boolean;
   pos: CardSpec;
   sizeClassName: string;
   visibilityClassName: string;
 }
 
 /** Las cuatro tarjetas arrancan superpuestas en el centro -- con la misma
- *  posición y escala, así que aunque las cuatro estén montadas se leen como
- *  una sola -- y el scroll las separa hacia su lugar final. Nunca se
- *  desmontan: es el propio scroll el que las mueve, hacia abajo las reparte,
- *  hacia arriba las vuelve a juntar. */
+ *  posición y escala, así que se leen como una sola -- y al cruzar el umbral
+ *  salen disparadas a su sitio, cada una con un retardo distinto. Nunca se
+ *  desmontan: volver a subir invierte exactamente el mismo movimiento.
+ *
+ *  El desenfoque que las acompaña es el "motion blur": sube al arrancar,
+ *  baja al llegar. No es un desenfoque direccional real (CSS no lo tiene sin
+ *  filtros SVG), pero cumple la misma función -- tapa el salto y hace que el
+ *  movimiento se lea como inercia y no como un salto de coordenadas. */
 const VerticalCard: React.FC<VerticalCardProps> = ({
   hotelId,
   hotelName,
   index,
-  scrollYProgress,
+  deployed,
   pos,
   sizeClassName,
   visibilityClassName,
 }) => {
-  const start = 0.14 + index * 0.03;
-  const end = start + 0.36;
-
-  const left = useTransform(scrollYProgress, [start, end], ['50%', `${pos.left}%`]);
-  const top = useTransform(scrollYProgress, [start, end], ['50%', `${pos.top}%`]);
-  const scale = useTransform(scrollYProgress, [start, end], [0.86, 1]);
-  const opacity = useLinearOpacity(scrollYProgress, 0.08, 0.14, 0, 1);
+  const delay = index * 0.08;
 
   return (
     <motion.div
-      style={{ left, top, x: '-50%', y: '-50%', scale, opacity }}
+      // `initial={false}`: al montar debe estar ya recogida, sin reproducir
+      // la animación de cierre a espaldas del visitante.
+      initial={false}
+      animate={
+        deployed
+          ? {
+              left: `${pos.left}%`,
+              top: `${pos.top}%`,
+              scale: 1,
+              opacity: 1,
+              x: '-50%',
+              y: '-50%',
+              filter: ['blur(14px)', 'blur(7px)', 'blur(0px)'],
+            }
+          : {
+              left: '50%',
+              top: '50%',
+              scale: 0.86,
+              opacity: 0,
+              x: '-50%',
+              y: '-50%',
+              filter: ['blur(0px)', 'blur(7px)', 'blur(12px)'],
+            }
+      }
+      transition={{
+        default: { ...CARD_SPRING, delay },
+        opacity: { duration: 0.5, ease: 'easeOut', delay },
+        filter: { duration: 0.85, times: [0, 0.35, 1], ease: 'easeOut', delay },
+      }}
       className={`absolute z-10 aspect-[9/16] ${sizeClassName} ${visibilityClassName}`}
     >
       <div className="relative h-full w-full overflow-hidden rounded-[8px] bg-[#1a1918] shadow-2xl md:rounded-[10px]">
@@ -132,10 +159,13 @@ const VerticalCard: React.FC<VerticalCardProps> = ({
 /** Sección "El hotel en movimiento" (pág. 9 de la auditoría). Un vídeo
  *  horizontal a pantalla completa (sin margen, 16:9) que se reproduce solo al
  *  llegar; al seguir bajando, se difumina como el cristal de los modales y
- *  encima se reparten cuatro vídeos verticales -- arrancan superpuestos en
- *  el centro (se leen como uno) y el scroll los separa a su lugar. Subir
- *  invierte la animación. Misma mecánica en móvil, solo con tarjetas más
- *  chicas -- nunca una vertical a pantalla completa.
+ *  encima se reparten cuatro vídeos verticales.
+ *
+ *  El scroll ya NO dibuja la animación fotograma a fotograma: solo la
+ *  enciende y la apaga. Cruzar el umbral la dispara entera y ella sola
+ *  (muelle + desenfoque de movimiento); volver a subir la invierte igual.
+ *  Pedido explícito de Mayurlin -- ir pegada al dedo la hacía ver robótica y
+ *  dejaba las tarjetas congeladas a medio camino.
  *
  *  Móvil y escritorio usan cada uno su propio set de posiciones/tamaño
  *  (DESKTOP_POSITIONS / MOBILE_POSITIONS, alternados por CSS, no por JS) en
@@ -144,10 +174,15 @@ const VerticalCard: React.FC<VerticalCardProps> = ({
 export const VideoShowcase: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { hotels: hotelContent } = useSiteContent();
+  const [deployed, setDeployed] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
+  });
+
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    setDeployed((abierto) => (abierto ? p > DEPLOY_OFF : p >= DEPLOY_ON));
   });
 
   const stories = FEATURED_IDS.map((id) => {
@@ -156,22 +191,29 @@ export const VideoShowcase: React.FC = () => {
     return { id, hotelName: hotelContent[idx]?.hotelName ?? base.hotelName };
   });
 
-  const headingOpacity = useLinearOpacity(scrollYProgress, 0, 0.1, 1, 0);
-  const blurPx = useTransform(scrollYProgress, [0.1, 0.42], [0, 16]);
-  const filter = useTransform(blurPx, (b) => `blur(${b}px)`);
-  const veilOpacity = useLinearOpacity(scrollYProgress, 0.1, 0.42, 0, 0.45);
-  const bgIconOpacity = useLinearOpacity(scrollYProgress, 0.04, 0.16, 1, 0);
-
   return (
-    <section ref={containerRef} className="relative w-full bg-[#1a1918]" style={{ height: '280vh' }}>
+    // 220vh, no 280: el alto solo tiene que dar para llegar al umbral, ver la
+    // animación completa y quedarse un rato con las cuatro puestas. Ya no hay
+    // que reservar recorrido para "dibujarla".
+    <section ref={containerRef} className="relative w-full bg-[#1a1918]" style={{ height: '220vh' }}>
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         {/* Vídeo horizontal: de momento una foto real de la web (a sangre
             completa, sin margen) para poder ver el desenfoque -- sustituir
             por el <video> cuando Mayurlin entregue el material. */}
-        <motion.div style={{ filter }} className="absolute inset-0">
+        <motion.div
+          initial={false}
+          animate={{ filter: deployed ? 'blur(16px)' : 'blur(0px)', scale: deployed ? 1.06 : 1 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-0"
+        >
           <img src={BG_PLACEHOLDER} alt="" className="h-full w-full object-cover" />
         </motion.div>
-        <motion.div style={{ opacity: bgIconOpacity }} className="absolute inset-0 flex items-center justify-center">
+        <motion.div
+          initial={false}
+          animate={{ opacity: deployed ? 0 : 1, scale: deployed ? 0.9 : 1 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-lg md:h-20 md:w-20">
             <PlayIcon className="h-6 w-6 translate-x-[2px] text-[#1a1918] md:h-7 md:w-7" />
           </span>
@@ -180,10 +222,29 @@ export const VideoShowcase: React.FC = () => {
         {/* Velo que sube junto con el desenfoque, igual que detrás de las
             ventanas emergentes: sostiene la lectura de las tarjetas sin
             apagar del todo el vídeo de fondo. */}
-        <motion.div style={{ opacity: veilOpacity }} className="pointer-events-none absolute inset-0 bg-black" />
+        <motion.div
+          initial={false}
+          animate={{ opacity: deployed ? 0.45 : 0 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-none absolute inset-0 bg-black"
+        />
+
+        {/* Velo corto de arriba: el titular cae sobre la parte clara de la
+            fachada y el subtítulo se quedaba corto de contraste. Se va con la
+            misma animación que el titular. */}
+        <motion.div
+          aria-hidden
+          initial={false}
+          animate={{ opacity: deployed ? 0 : 1 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[52%]"
+          style={{ background: 'linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.24) 55%, transparent)' }}
+        />
 
         <motion.div
-          style={{ opacity: headingOpacity }}
+          initial={false}
+          animate={{ opacity: deployed ? 0 : 1, y: deployed ? -14 : 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
           className="pointer-events-none absolute inset-x-0 top-[12%] z-20 px-6 text-center"
         >
           <h2 className="font-serif text-3xl leading-[1.15] text-white md:text-5xl">
@@ -201,7 +262,7 @@ export const VideoShowcase: React.FC = () => {
             hotelId={story.id}
             hotelName={story.hotelName}
             index={i}
-            scrollYProgress={scrollYProgress}
+            deployed={deployed}
             pos={DESKTOP_POSITIONS[i]}
             sizeClassName={DESKTOP_CARD_CLASS}
             visibilityClassName="hidden lg:block"
@@ -213,7 +274,7 @@ export const VideoShowcase: React.FC = () => {
             hotelId={story.id}
             hotelName={story.hotelName}
             index={i}
-            scrollYProgress={scrollYProgress}
+            deployed={deployed}
             pos={MOBILE_POSITIONS[i]}
             sizeClassName={MOBILE_CARD_CLASS}
             visibilityClassName="lg:hidden"

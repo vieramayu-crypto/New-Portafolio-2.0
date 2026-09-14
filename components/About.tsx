@@ -34,55 +34,70 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
 
       {/* Franja de apertura: tesis de trabajo concreta + 4 datos rápidos,
           sustituye la lectura puramente emotiva por una que un gerente de
-          marketing puede escanear en cinco segundos (pág. 13 de la auditoría). */}
+          marketing puede escanear en cinco segundos (pág. 13 de la auditoría).
+
+          La foto de los dos era una banda aparte justo debajo. Unificadas:
+          la foto es ahora el fondo a sangre completa de este bloque, así que
+          quién lo dice y qué dice se leen a la vez, y Acerca de gana una
+          pantalla entera. Texto en blanco y velo oscuro encima de la foto —
+          el crema original sobre una foto en gris no se sostenía. */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.7 }}
-        className="mx-auto max-w-5xl px-6 pb-24 text-center md:px-12 md:pb-32"
+        className="relative left-1/2 right-1/2 -mx-[50vw] mb-24 w-screen overflow-hidden md:mb-32"
       >
-        <h2 className="font-serif text-3xl leading-[1.15] text-[#1a1918] sm:text-4xl md:text-5xl">
-          {content.about.overview.heading}
-        </h2>
-        <p className="mx-auto mt-6 max-w-[62ch] text-sm leading-relaxed text-[#5a5854] md:text-base">
-          {content.about.overview.paragraph}
-        </p>
-
-        <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:gap-5">
-          {content.about.overview.boxes.map((box) => (
-            <div key={box.label} className="mt-glass mt-glass-light rounded-lg p-5 text-left md:p-6">
-              <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
-                {box.label}
-              </div>
-              <div className="mt-1.5 font-serif text-lg text-[#1a1918] md:text-xl">{box.value}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-10 md:mt-12">
-          <button
-            onClick={() => document.getElementById('roles')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
-          >
-            {content.about.overview.ctaLabel}
-          </button>
-        </div>
-      </motion.section>
-
-      {/* Antes de los roles había dos pantallas completas más: un párrafo que
-          repetía la apertura y una cita a pantalla completa ("No hacemos esto
-          para llenar un feed"). El comprador tenía que atravesar tres muros de
-          texto para llegar a quién hace el trabajo. Queda la foto de los dos,
-          en una banda -- la humanidad se conserva, el bloque de venta no. */}
-      <div className="relative left-1/2 right-1/2 -mx-[50vw] mb-24 w-screen overflow-hidden md:mb-32">
         <img
           src={COUPLE_PHOTO}
           alt="Mayurlin y Yerfran"
           referrerPolicy="no-referrer"
-          className="h-[46vh] w-full object-cover grayscale contrast-110 md:h-[58vh]"
+          className="absolute inset-0 h-full w-full object-cover object-[50%_32%] grayscale contrast-110"
         />
-      </div>
+        {/* Velo plano + refuerzo arriba y abajo: la foto tiene cielo claro en
+            la mitad superior y ahí el titular se quedaba corto de contraste. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[#1a1918]/60"
+          style={{
+            backgroundImage:
+              'linear-gradient(180deg, rgba(26,25,24,.34), transparent 38%, transparent 62%, rgba(26,25,24,.30))',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-5xl px-6 py-20 text-center md:px-12 md:py-28">
+          <h2 className="font-serif text-3xl leading-[1.15] text-white sm:text-4xl md:text-5xl">
+            {content.about.overview.heading}
+          </h2>
+          <p className="mx-auto mt-6 max-w-[62ch] text-sm leading-relaxed text-white/80 md:text-base">
+            {content.about.overview.paragraph}
+          </p>
+
+          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:gap-5">
+            {content.about.overview.boxes.map((box) => (
+              // `mt-glass` a secas, no la variante clara: esta vive sobre una
+              // foto, no sobre crema. `relative` es obligatorio — los
+              // ::before/::after del cristal anclan contra la caja.
+              <div key={box.label} className="mt-glass relative rounded-lg bg-white/[.07] p-5 text-left md:p-6">
+                <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-white/70 md:text-[11px]">
+                  {box.label}
+                </div>
+                <div className="mt-1.5 font-serif text-lg text-white md:text-xl">{box.value}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 md:mt-12">
+            {/* Botón crema: el negro original se perdía sobre la foto oscura. */}
+            <button
+              onClick={() => document.getElementById('roles')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-white md:px-10 md:py-[1.15rem] md:text-xs"
+            >
+              {content.about.overview.ctaLabel}
+            </button>
+          </div>
+        </div>
+      </motion.section>
 
       <div id="roles" className="max-w-6xl mx-auto px-6 md:px-12 pb-24 scroll-mt-24">
         {/* Mayu profile */}

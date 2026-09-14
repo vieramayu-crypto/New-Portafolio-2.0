@@ -37,10 +37,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     description: hotelContent[i]?.description ?? story.description,
   }));
 
-  const caseBySlug = new Map(CASE_STUDIES.map((c) => [c.hotelId, c]));
-  const featured = stories.find((s) => caseBySlug.has(s.id));
-  const featuredCase = featured ? caseBySlug.get(featured.id) : undefined;
-  const rest = stories.filter((s) => s.id !== featured?.id);
+  // Todos los hoteles con caso documentado van arriba, en el bloque grande;
+  // el resto baja a las filas de galería. Antes solo subía el primero y los
+  // casos nuevos se quedaban invisibles en la página que debía enseñarlos.
+  const caseByHotel = new Map(CASE_STUDIES.map((c) => [c.hotelId, c]));
+  const featuredStories = stories.filter((s) => caseByHotel.has(s.id));
+  const rest = stories.filter((s) => !caseByHotel.has(s.id));
 
   return (
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
@@ -64,52 +66,62 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
 
       {/* Caso documentado: foto a sangre y ficha debajo, para que se distinga
           de un vistazo de las galerías que vienen después. */}
-      {featured && featuredCase && (
-        <section className="pb-20 md:pb-28">
-          <motion.div {...rise(0)}>
-            <Link to={`/proyecto/${featuredCase.slug}`} className="group block">
-              <div className="relative h-[58vh] min-h-[320px] w-full overflow-hidden bg-stone-200 md:h-[72vh]">
-                <img
-                  src={featured.coverImage}
-                  alt={toTitleCase(featured.hotelName)}
-                  className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-              </div>
-            </Link>
-
-            <div className="mx-auto max-w-4xl px-6 pt-10 text-center md:px-12 md:pt-14">
-              <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
-                {projects.caseLabel}
-              </div>
-              <h2 className="mt-4 font-serif text-3xl leading-[1.15] md:mt-5 md:text-[2.9rem]">
-                {toTitleCase(featured.hotelName)}
-              </h2>
-              <div className="mt-3 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
-                {featured.location} · {featured.country} · {featured.year}
-              </div>
-              <p className="mx-auto mt-6 max-w-[58ch] text-[13px] leading-[1.75] text-[#5a5854] md:text-sm">
-                {featured.description}
-              </p>
-
-              <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-11">
-                <Link
-                  to={`/proyecto/${featuredCase.slug}`}
-                  className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
-                >
-                  {projects.caseLinkLabel}
+      {featuredStories.map((featured, idx) => {
+        const featuredCase = caseByHotel.get(featured.id)!;
+        // El primer caso abre a sangre completa; los siguientes bajan de
+        // altura para que la página tenga jerarquía y no sean tres portadas
+        // idénticas seguidas.
+        const alturaFoto = idx === 0 ? 'h-[58vh] min-h-[320px] md:h-[72vh]' : 'h-[44vh] min-h-[260px] md:h-[56vh]';
+        return (
+          <React.Fragment key={featured.id}>
+            {idx > 0 && <div className="h-px w-full bg-[#1a1918]/12" />}
+            <section className="pb-20 md:pb-28">
+              <motion.div {...rise(0)}>
+                <Link to={`/proyecto/${featuredCase.slug}`} className="group block">
+                  <div className={`relative w-full overflow-hidden bg-stone-200 ${alturaFoto}`}>
+                    <img
+                      src={featured.coverImage}
+                      alt={toTitleCase(featured.hotelName)}
+                      className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+                  </div>
                 </Link>
-                <Link
-                  to={`/trabajo/${featured.id}`}
-                  className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
-                >
-                  {projects.galleryLinkLabel}
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-      )}
+
+                <div className="mx-auto max-w-4xl px-6 pt-10 text-center md:px-12 md:pt-14">
+                  <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
+                    {projects.caseLabel}
+                  </div>
+                  <h2 className="mt-4 font-serif text-3xl leading-[1.15] md:mt-5 md:text-[2.9rem]">
+                    {toTitleCase(featured.hotelName)}
+                  </h2>
+                  <div className="mt-3 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
+                    {featured.location} · {featured.country} · {featured.year}
+                  </div>
+                  <p className="mx-auto mt-6 max-w-[58ch] text-[13px] leading-[1.75] text-[#5a5854] md:text-sm">
+                    {featured.description}
+                  </p>
+
+                  <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-11">
+                    <Link
+                      to={`/proyecto/${featuredCase.slug}`}
+                      className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+                    >
+                      {projects.caseLinkLabel}
+                    </Link>
+                    <Link
+                      to={`/trabajo/${featured.id}`}
+                      className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                    >
+                      {projects.galleryLinkLabel}
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            </section>
+          </React.Fragment>
+        );
+      })}
 
       <div className="h-px w-full bg-[#1a1918]/12" />
 

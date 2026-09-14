@@ -15,7 +15,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     caseStudy: {
       season: 'Julio · Verano',
       duration: '4 días',
-      usage: 'Redes sociales · Campaña de temporada alta',
+      usage: 'Redes sociales',
     },
     coverImage: publicImage('sec1-portada.jpg'),
     description: 'Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte. Dentro, las arcadas, patios y fuentes escalonadas comparten un mismo lenguaje: piedra cálida, agua y sombra. Cada rincón de la propiedad cuenta una historia distinta, y juntas forman uno de los escenarios más completos que hemos rodado.',
@@ -270,7 +270,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     caseStudy: {
       season: 'Junio · Verano',
       duration: '3 días',
-      usage: 'Redes sociales · Campaña de temporada alta',
+      usage: 'Redes sociales',
     },
     coverImage: publicImage('sec2-portada.jpg'),
     description:

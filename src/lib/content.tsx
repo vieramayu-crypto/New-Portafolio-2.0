@@ -219,7 +219,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
       {
         title: 'Trato directo',
-        description: 'Trabajáis con nosotros durante todo el proyecto.',
+        description: 'Trabajas con nosotros durante todo el proyecto.',
       },
     ],
     ctaLabel: 'Conocer al equipo',
@@ -227,7 +227,7 @@ export const DEFAULT_CONTENT: SiteContent = {
   waysToWork: {
     eyebrow: 'Cómo empezar',
     heading: 'Formas de trabajar juntos',
-    intro: 'Definimos el contenido, los usos y el presupuesto contigo.',
+    intro: 'Definimos juntos el contenido y los usos.',
     items: [
       {
         title: 'Campañas y lanzamientos',
@@ -245,14 +245,11 @@ export const DEFAULT_CONTENT: SiteContent = {
     ctaLabel: 'Iniciar un proyecto',
   },
   valueBlock: {
-    claim: 'Una producción. Dos capas de valor.',
-    benefits: [
-      'Contenido para los canales de tu hotel.',
-      'Publicaciones en @mayurlintravel, como servicio adicional.',
-    ],
+    claim: 'Una producción, dos destinos.',
+    benefits: ['Los canales de tu hotel.', 'También nuestro canal.'],
     benefitDetails: [
-      'Fotografías y vídeos con los formatos y derechos de uso definidos en la propuesta.',
-      'Podemos incluirlas cuando el proyecto encaje con nuestra audiencia. Su alcance se acuerda por separado.',
+      'Fotografías y vídeos en los formatos y con los usos definidos en la propuesta.',
+      'Cuando el proyecto encaja con nuestra audiencia, parte del material se publica en @mayurlintravel, ante una comunidad internacional de viajes y hotelería.',
     ],
     ctaLabel: 'Iniciar un proyecto',
   },
@@ -275,7 +272,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         { label: 'Especialización', value: 'Hotelería de lujo' },
         { label: 'Criterio', value: 'Propiedad antes que fórmula' },
         { label: 'Modelo', value: 'Dos profesionales · ejecución directa' },
-        { label: 'Resultado', value: 'Activos coherentes y utilizables' },
+        { label: 'Resultado', value: 'Material listo para usar' },
       ],
       ctaLabel: 'Conoce al equipo',
     },
@@ -369,11 +366,6 @@ export const DEFAULT_CONTENT: SiteContent = {
           'Los derechos se definen según el uso previsto: web, redes sociales, boletines por correo, relaciones públicas, plataformas de reserva y campañas de publicidad paga, entre otros.',
       },
       {
-        question: '¿La distribución en @mayurlintravel es parte de todos los proyectos?',
-        answer:
-          'No. Producción y distribución son capas separadas. Cuando hay encaje entre la propiedad, la campaña y nuestra audiencia, podemos sumar publicación y cobertura como parte adicional de la propuesta.',
-      },
-      {
         question: '¿Cómo se calcula el presupuesto?',
         answer:
           'Depende de las jornadas, las fotografías y vídeos, los formatos, los derechos de uso y los desplazamientos. La propuesta detalla lo que incluye.',
@@ -381,7 +373,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         question: '¿Trabajáis con agencias y equipos de marketing?',
         answer:
-          'Sí. Podemos coordinar la producción con vuestro equipo o agencia y acordar cómo se revisa y aprueba el contenido.',
+          'Sí. Podemos coordinar la producción con tu equipo o tu agencia y acordar cómo se revisa y aprueba el contenido.',
       },
     ],
   },
