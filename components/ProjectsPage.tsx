@@ -47,7 +47,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
   return (
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
       {/* Apertura */}
-      <section className="mx-auto max-w-4xl px-6 pt-32 pb-16 text-center md:px-12 md:pt-44 md:pb-24">
+      <section className="mx-auto max-w-4xl px-6 pb-10 pt-32 text-center md:px-12 md:pb-14 md:pt-44">
         {/* El rótulo decía "Portafolio" justo encima de un titular que decía
             "Proyectos": las dos palabras aparecían juntas sin que nada
             explicara en qué se diferencian. Ahora el titular las nombra a las
@@ -56,7 +56,9 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
           <h1 className="font-serif text-[13vw] leading-[1.04] tracking-[-0.03em] sm:text-[9vw] md:text-[5vw]">
             {projects.heading}
           </h1>
-          <p className="mx-auto mt-7 max-w-[58ch] text-[13px] leading-[1.75] text-[#5a5854] md:mt-9 md:text-sm">
+          {/* Medida corta a propósito: son dos frases en paralelo y deben
+              caer en dos renglones, no en un párrafo. */}
+          <p className="mx-auto mt-7 max-w-[34ch] text-[14px] leading-[1.7] text-[#5a5854] md:mt-9 md:max-w-[42ch] md:text-[15px]">
             {projects.intro}
           </p>
         </motion.div>
@@ -68,7 +70,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
       {/* Caso documentado: foto a sangre y ficha debajo, para que se distinga
           de un vistazo de las galerías que vienen después. */}
       {featuredStories.length > 0 && (
-        <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-12 pt-16 text-center md:px-12 md:pb-16 md:pt-20">
+        <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-12 pt-10 text-center md:px-12 md:pb-16 md:pt-14">
           <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[11px]">
             {projects.caseSectionLabel}
           </div>
@@ -139,7 +141,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
 
       {/* A partir de aquí cambia lo que se está mirando, y hay que decirlo:
           una galería sin el relato del encargo detrás no es un proyecto. */}
-      <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-4 pt-16 text-center md:px-12 md:pt-20">
+      <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-4 pt-14 text-center md:px-12 md:pt-18">
         <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[11px]">
           {projects.gallerySectionLabel}
         </div>

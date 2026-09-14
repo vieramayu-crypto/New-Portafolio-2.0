@@ -73,7 +73,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         className="pointer-events-none absolute inset-0 md:hidden"
         style={{
           background:
-            'linear-gradient(90deg, rgba(0,0,0,.21), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.13), transparent 42%)',
+            'linear-gradient(90deg, rgba(0,0,0,.21), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.68), rgba(0,0,0,.56) 20%, rgba(0,0,0,.40) 34%, rgba(0,0,0,.15) 50%, transparent 64%)',
         }}
       />
       <div
@@ -85,68 +85,81 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         }}
       />
 
-      {/* Bloque editorial. En escritorio va a media altura sobre el margen
-          izquierdo; en movil se ancla arriba y deja de estar centrado, porque
-          centrarlo ataba las cuatro piezas entre si (mover una movia las otras
-          tres) y hacia falta colocarlas una a una: rotulo arriba del todo,
-          titular a la altura de la persona de la foto, subtitulo y boton bien
-          separados abajo. Las separaciones van en `svh` para que la
-          proporcion aguante igual en un movil corto y en uno largo. */}
-      <div className="absolute inset-x-5 top-[10svh] z-[3] md:right-auto md:left-[clamp(22px,3.4vw,54px)] md:top-1/2 md:-translate-y-[52%]">
-        <motion.p
-          {...rise(0.1)}
-          animate={animate}
-          // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
-          // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
-          // lateral lo sostiene y puede seguir apagado.
-          // El rótulo se queda como está; lo que cambia es el aire que tiene
-          // debajo. En escritorio se separa más del titular, que es donde
-          // todo se veía apretado.
-          className="mb-[17svh] text-[9px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
-        >
-          {hero.eyebrow}
-        </motion.p>
-        <motion.h1
-          {...rise(0.18)}
-          animate={animate}
-          // Interlineado apretado a propósito: el problema no era el cuerpo de
-          // la letra sino el aire ENTRE renglones, que estiraba el titular
-          // hasta comerse la pantalla. Con 1.05 el bloque ocupa lo mismo que
-          // la persona de la foto en móvil, y en escritorio lo que se recorta
-          // aquí se devuelve como separación arriba y abajo.
-          className="m-0 max-w-[12ch] font-serif text-[clamp(38px,11vw,52px)] font-normal leading-[1.05] tracking-[-0.045em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)]"
-        >
-          {hero.titleLead} <i>{hero.titleEmphasis}</i>
-        </motion.h1>
-        {/* Frase funcional: qué producimos y para qué sirve. Un solo renglón
-            discreto, nunca compite en tamaño con el titular. */}
-        <motion.p
-          {...rise(0.26)}
-          animate={animate}
-          // En móvil va a todo el ancho del bloque: con la medida estrecha
-          // anterior caía en cuatro renglones y los dos últimos quedaban
-          // detrás de la banda de cristal, ilegibles. A lo ancho ocupa dos y
-          // no llega a tocarla. En escritorio mantiene su medida corta y gana
-          // separación respecto al titular.
-          className="mt-[8svh] text-[13px] leading-snug text-white/80 md:mt-10 md:max-w-[34ch] md:text-[15px]"
-        >
-          {hero.subline}
-        </motion.p>
+      {/* Bloque editorial.
 
-        {/* El CTA vivía solo dentro de la banda de cristal, y esa banda
-            esconde su columna de acción por debajo de 768px: en móvil no
-            había ninguna forma de contactar desde la primera pantalla. Aquí
-            va el botón para ese tamaño; en escritorio manda el de la banda. */}
-        <motion.div {...rise(0.34)} animate={animate} className="mt-[6.5svh] md:hidden">
-          {/* `font-semibold` solo aqui: es el unico boton de la web que se lee
-              sobre una foto a pleno sol, y con el peso medio se deshacia. */}
-          <button
-            onClick={onOpenAvailability}
-            className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
+          En escritorio va a media altura sobre el margen izquierdo, en flujo
+          normal. En movil NO: cada pieza se coloca en su propio porcentaje de
+          pantalla, porque con margenes encadenados el sitio de una dependia
+          del alto de la anterior y nunca caia donde Mayurlin la marcaba. El
+          titular se centra con la figura de la persona de la foto (su centro
+          esta al 48% de la pantalla), el subtitulo arranca por debajo de los
+          pies y el boton cierra sin llegar a la banda de cristal.
+
+          Cada motion.* va envuelto en un div de posicion: Framer Motion
+          escribe su propio `transform` para animar y se llevaria por delante
+          cualquier `translate` que pusieramos en la misma etiqueta. */}
+      <div className="absolute inset-x-5 inset-y-0 z-[3] md:inset-y-auto md:right-auto md:left-[clamp(22px,3.4vw,54px)] md:top-1/2 md:-translate-y-[52%]">
+        <div className="absolute inset-x-0 top-[16%] md:static">
+          <motion.p
+            {...rise(0.1)}
+            animate={animate}
+            // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
+            // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
+            // lateral lo sostiene y puede seguir apagado.
+            className="m-0 text-[9px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
           >
-            {hero.ctaLabel}
-          </button>
-        </motion.div>
+            {hero.eyebrow}
+          </motion.p>
+        </div>
+
+        <div className="absolute inset-x-0 top-[48%] -translate-y-1/2 md:static md:translate-y-0">
+          <motion.h1
+            {...rise(0.18)}
+            animate={animate}
+            // Interlineado apretado a propósito: el problema no era el cuerpo
+            // de la letra sino el aire ENTRE renglones, que estiraba el
+            // titular hasta comerse la pantalla.
+            className="m-0 max-w-[12ch] font-serif text-[clamp(38px,11vw,52px)] font-normal leading-[1.05] tracking-[-0.045em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)]"
+          >
+            {hero.titleLead} <i>{hero.titleEmphasis}</i>
+          </motion.h1>
+        </div>
+
+        {/* Subtitulo y boton van juntos, y anclados por ABAJO, no por
+            porcentaje: la banda de cristal ocupa siempre los mismos 88px
+            finales, asi que en una pantalla corta un porcentaje fijo los metia
+            debajo de ella. Anclados asi, el grupo sube y baja con la banda y
+            conserva su aire en cualquier movil. El titular sigue por
+            porcentaje, porque lo que tiene que seguir es la persona de la
+            foto, no el borde inferior. */}
+        <div className="absolute inset-x-0 bottom-[118px] md:static md:bottom-auto">
+          {/* Frase funcional: qué producimos y para qué sirve. Nunca compite
+              en tamaño con el titular, pero en movil vive sobre la grava a
+              pleno sol: sube a 14px y a peso medio, y va en blanco puro sobre
+              el velo reforzado de abajo. Con 13px en .80 no se leia. */}
+          <motion.p
+            {...rise(0.26)}
+            animate={animate}
+            className="m-0 text-[14px] font-medium leading-snug text-white [text-shadow:0_1px_10px_rgba(0,0,0,.75)] md:mt-10 md:max-w-[34ch] md:text-[15px] md:font-normal md:text-white/80 md:[text-shadow:none]"
+          >
+            {hero.subline}
+          </motion.p>
+
+          {/* El CTA vivía solo dentro de la banda de cristal, y esa banda
+              esconde su columna de acción por debajo de 768px: en móvil no
+              había ninguna forma de contactar desde la primera pantalla. Aquí
+              va el botón para ese tamaño; en escritorio manda el de la banda. */}
+          <motion.div {...rise(0.34)} animate={animate} className="mt-6 md:hidden">
+            {/* `font-semibold` solo aqui: es el unico boton de la web que se
+                lee sobre una foto a pleno sol. */}
+            <button
+              onClick={onOpenAvailability}
+              className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
+            >
+              {hero.ctaLabel}
+            </button>
+          </motion.div>
+        </div>
       </div>
 
       {/* Banda de cristal. Se centra con `mx-auto`, no con `translate`: Framer
@@ -160,7 +173,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
             ("6 anos") y con el reparto original partia en dos lineas. */}
-        <div className="grid h-full grid-cols-3 items-center px-4 text-[6.5px] uppercase tracking-[0.18em] md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:whitespace-nowrap md:px-6 md:text-[8px]">
+        <div className="grid h-full grid-cols-3 items-center whitespace-nowrap px-4 text-[6.5px] uppercase tracking-[0.08em] md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:px-6 md:text-[8px] md:tracking-[0.18em]">
           {/* El rotulo y el enlace solo caben en escritorio. */}
           <div className="hidden md:block">{hero.glassLabel}</div>
 
