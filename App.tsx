@@ -7,6 +7,7 @@ import { HomeMain } from './components/HomeMain';
 import { About } from './components/About';
 import { Contact } from './components/Contact';
 import { WorkModal } from './components/WorkModal';
+import { ProjectsPage } from './components/ProjectsPage';
 import { ProjectCaseStudy } from './components/ProjectCaseStudy';
 import { InquiryModal } from './components/InquiryModal';
 import { Footer } from './components/Footer';
@@ -18,8 +19,33 @@ import { ContentProvider, useSiteContent } from './src/lib/content';
 /** Cada página real vive en su propia ruta (URL compartible), pero el resto
  *  de la web sigue hablando en términos de `Page` como antes: este mapa
  *  traduce entre los dos mundos sin tocar Navbar.tsx ni Footer.tsx. */
-const PATH_BY_PAGE: Record<Page, string> = { home: '/', about: '/acerca-de', contact: '/contacto' };
-const PAGE_BY_PATH: Partial<Record<string, Page>> = { '/': 'home', '/acerca-de': 'about', '/contacto': 'contact' };
+const PATH_BY_PAGE: Record<Page, string> = {
+  home: '/',
+  projects: '/proyectos',
+  about: '/acerca-de',
+  contact: '/contacto',
+};
+const PAGE_BY_PATH: Partial<Record<string, Page>> = {
+  '/': 'home',
+  '/proyectos': 'projects',
+  '/acerca-de': 'about',
+  '/contacto': 'contact',
+};
+
+/** Las rutas nacieron con nombres de hoteles que no eran los reales -- un
+ *  enlace a Deltapark decía "hotel-caruso-belmond", y compartirlo hacía
+ *  parecer que el trabajo era de otro estudio. Ya apuntan al hotel correcto;
+ *  este mapa mantiene vivos los enlaces antiguos que puedan estar
+ *  circulando, llevándolos al nuevo. */
+const LEGACY_HOTEL_IDS: Record<string, string> = {
+  'aman-venice': 'intercontinental-lisboa',
+  'villa-cimbrone-ravello': 'vestige-binidufa',
+  'hotel-caruso-belmond': 'deltapark-vitalresort',
+  'borgo-egnazia-puglia': 'honeymoon-petra-villas',
+  'hotel-danieli-venezia': 'gpro-valparaiso',
+  'villa-deste-como': 'hotel-esplendido',
+  'san-domenico-palace': 'welmoon-villas',
+};
 
 /** Ficha de un proyecto de Trabajo, alcanzable por URL propia
  *  (/trabajo/:id) además de por clic desde Inicio. */
@@ -30,7 +56,8 @@ const WorkProjectRoute: React.FC = () => {
   const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
 
   if (idx === -1) {
-    navigate('/', { replace: true });
+    const renamed = id ? LEGACY_HOTEL_IDS[id] : undefined;
+    navigate(renamed ? `/trabajo/${renamed}` : '/', { replace: true });
     return null;
   }
 
@@ -130,10 +157,11 @@ const AppShell: React.FC = () => {
                 />
               }
             />
+            <Route path="/proyectos" element={<ProjectsPage onOpenAvailability={openAvailability} />} />
             <Route path="/acerca-de" element={<About onOpenAvailability={openAvailability} />} />
             <Route path="/contacto" element={<Contact onOpen={openAvailability} />} />
             <Route path="/trabajo/:id" element={<WorkProjectRoute />} />
-            <Route path="/proyecto/:id" element={<ProjectCaseStudy />} />
+            <Route path="/proyecto/:id" element={<ProjectCaseStudy onOpenAvailability={openAvailability} />} />
             <Route
               path="*"
               element={

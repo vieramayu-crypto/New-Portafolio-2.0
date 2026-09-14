@@ -36,10 +36,22 @@
     "heading": "Por qué Mayu Travel",
     "intro": "Fotografía y cinematografía dentro de una unidad compacta.",
     "items": [
-      { "title": "Fotografía + Dirección", "description": "Mayurlin Viera." },
-      { "title": "Film + Cinematografía", "description": "Yerfran." },
-      { "title": "Talento integrado", "description": "Guest experience y lifestyle cuando el concepto lo requiere." },
-      { "title": "Unidad compacta", "description": "Dos especialistas · una producción · baja huella operativa." }
+      {
+        "title": "Fotografía + Dirección",
+        "description": "Mayurlin Viera."
+      },
+      {
+        "title": "Film + Cinematografía",
+        "description": "Yerfran."
+      },
+      {
+        "title": "Talento integrado",
+        "description": "Guest experience y lifestyle cuando el concepto lo requiere."
+      },
+      {
+        "title": "Unidad compacta",
+        "description": "Dos especialistas · una producción · baja huella operativa."
+      }
     ],
     "ctaLabel": "Conocer al equipo"
   },
@@ -95,10 +107,22 @@
       "heading": "Dirección creativa, fotografía y film para hotelería.",
       "paragraph": "Mayu Travel es un estudio formado por Mayurlin Viera y Yerfran. Primero identificamos qué hace deseable una propiedad; después construimos la producción alrededor de su identidad, su experiencia y sus usos de marketing.",
       "boxes": [
-        { "label": "Especialización", "value": "Hotelería de lujo" },
-        { "label": "Criterio", "value": "Propiedad antes que fórmula" },
-        { "label": "Modelo", "value": "Dos profesionales · ejecución directa" },
-        { "label": "Resultado", "value": "Activos coherentes y utilizables" }
+        {
+          "label": "Especialización",
+          "value": "Hotelería de lujo"
+        },
+        {
+          "label": "Criterio",
+          "value": "Propiedad antes que fórmula"
+        },
+        {
+          "label": "Modelo",
+          "value": "Dos profesionales · ejecución directa"
+        },
+        {
+          "label": "Resultado",
+          "value": "Activos coherentes y utilizables"
+        }
       ],
       "ctaLabel": "Conocer nuestros roles"
     },
@@ -199,6 +223,17 @@
         "answer": "No. Producción y distribución son capas separadas. Cuando hay encaje entre la propiedad, la campaña y nuestra audiencia, podemos sumar publicación y cobertura como parte adicional de la propuesta."
       }
     ]
+  },
+  "projects": {
+    "eyebrow": "Portafolio",
+    "heading": "Proyectos",
+    "intro": "Fotografía y producción audiovisual para hoteles y alojamientos con identidad propia.",
+    "caseLabel": "Caso completo",
+    "galleryLabel": "Selección de imágenes",
+    "caseLinkLabel": "Ver proyecto",
+    "galleryLinkLabel": "Ver galería",
+    "closingHeading": "Cada proyecto empieza con una conversación.",
+    "ctaLabel": "Iniciar un proyecto"
   },
   "hotels": [
     {
