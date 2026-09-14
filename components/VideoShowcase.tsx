@@ -2,23 +2,43 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
-import { useSiteContent } from '../src/lib/content';
+import { useSiteContent, publicImage } from '../src/lib/content';
 
 /** Los cuatro hoteles con los que se ejemplifica el bloque -- los mismos
  *  cuatro que pidió Mayurlin por nombre (Ritz-Carlton, GPRO, InterContinental,
  *  Deltapark). El botón de cada tarjeta ya lleva a su portafolio real. */
 const FEATURED_IDS = ['ritz-carlton-abama', 'hotel-danieli-venezia', 'aman-venice', 'hotel-caruso-belmond'];
 
-/** Posición final de cada tarjeta (% del viewport), asimétrica y a distinta
- *  altura -- calcada del boceto: dos arriba (una más alta que la otra), dos
- *  abajo, ninguna alineada con su pareja. Mismos porcentajes en móvil y
- *  escritorio: lo que cambia de tamaño es la tarjeta, no su ubicación. */
-const POSITIONS: { left: number; top: number }[] = [
-  { left: 22, top: 24 }, // arriba-izquierda
-  { left: 68, top: 16 }, // arriba-derecha, más alta
-  { left: 20, top: 64 }, // abajo-izquierda
-  { left: 72, top: 70 }, // abajo-derecha, más baja
+/** Foto real de la web como fondo -- mientras no haya vídeo, es la única
+ *  forma de ver que el desenfoque funciona (difuminar un color plano no se
+ *  nota). Sustituir por el vídeo horizontal cuando Mayurlin lo entregue. */
+const BG_PLACEHOLDER = publicImage('sec6-gal01-fachada-noche-h.jpg');
+
+interface CardSpec {
+  left: number; // % del viewport
+  top: number; // % del viewport
+}
+
+/** Posiciones y tamaño calculados por separado para cada formato -- pedido
+ *  explícito de Mayurlin tras ver que compartir un solo % entre móvil y
+ *  escritorio dejaba tarjetas cortadas por el borde. Cada set garantiza que
+ *  ninguna tarjeta (con su alto real 9:16) se salga de la pantalla: el rango
+ *  de `top` se dejó con margen para el alto máximo de la tarjeta. */
+const DESKTOP_POSITIONS: CardSpec[] = [
+  { left: 13, top: 36 }, // arriba-izquierda
+  { left: 87, top: 32 }, // arriba-derecha, más alta
+  { left: 14, top: 70 }, // abajo-izquierda
+  { left: 86, top: 75 }, // abajo-derecha, más baja
 ];
+const DESKTOP_CARD_CLASS = 'w-[16vw] max-w-[230px]';
+
+const MOBILE_POSITIONS: CardSpec[] = [
+  { left: 22, top: 33 }, // arriba-izquierda
+  { left: 78, top: 25 }, // arriba-derecha, más alta
+  { left: 20, top: 68 }, // abajo-izquierda
+  { left: 80, top: 80 }, // abajo-derecha, más baja
+];
+const MOBILE_CARD_CLASS = 'w-[35vw] max-w-[165px]';
 
 const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -44,6 +64,9 @@ interface VerticalCardProps {
   hotelName: string;
   index: number;
   scrollYProgress: MotionValue<number>;
+  pos: CardSpec;
+  sizeClassName: string;
+  visibilityClassName: string;
 }
 
 /** Las cuatro tarjetas arrancan superpuestas en el centro -- con la misma
@@ -51,8 +74,15 @@ interface VerticalCardProps {
  *  una sola -- y el scroll las separa hacia su lugar final. Nunca se
  *  desmontan: es el propio scroll el que las mueve, hacia abajo las reparte,
  *  hacia arriba las vuelve a juntar. */
-const VerticalCard: React.FC<VerticalCardProps> = ({ hotelId, hotelName, index, scrollYProgress }) => {
-  const pos = POSITIONS[index];
+const VerticalCard: React.FC<VerticalCardProps> = ({
+  hotelId,
+  hotelName,
+  index,
+  scrollYProgress,
+  pos,
+  sizeClassName,
+  visibilityClassName,
+}) => {
   const start = 0.14 + index * 0.03;
   const end = start + 0.36;
 
@@ -64,7 +94,7 @@ const VerticalCard: React.FC<VerticalCardProps> = ({ hotelId, hotelName, index, 
   return (
     <motion.div
       style={{ left, top, x: '-50%', y: '-50%', scale, opacity }}
-      className="absolute z-10 aspect-[9/16] w-[30vw] max-w-[150px] sm:w-[24vw] sm:max-w-[190px] md:max-w-[220px]"
+      className={`absolute z-10 aspect-[9/16] ${sizeClassName} ${visibilityClassName}`}
     >
       <div className="relative h-full w-full overflow-hidden rounded-[8px] bg-[#1a1918] shadow-2xl md:rounded-[10px]">
         <div className="absolute inset-0 flex items-center justify-center">
@@ -91,7 +121,12 @@ const VerticalCard: React.FC<VerticalCardProps> = ({ hotelId, hotelName, index, 
  *  encima se reparten cuatro vídeos verticales -- arrancan superpuestos en
  *  el centro (se leen como uno) y el scroll los separa a su lugar. Subir
  *  invierte la animación. Misma mecánica en móvil, solo con tarjetas más
- *  chicas -- nunca una vertical a pantalla completa. */
+ *  chicas -- nunca una vertical a pantalla completa.
+ *
+ *  Móvil y escritorio usan cada uno su propio set de posiciones/tamaño
+ *  (DESKTOP_POSITIONS / MOBILE_POSITIONS, alternados por CSS, no por JS) en
+ *  vez de un solo % compartido: compartirlo dejaba tarjetas cortadas por el
+ *  borde en un formato al ajustar el otro. */
 export const VideoShowcase: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { hotels: hotelContent } = useSiteContent();
@@ -116,8 +151,12 @@ export const VideoShowcase: React.FC = () => {
   return (
     <section ref={containerRef} className="relative w-full bg-[#1a1918]" style={{ height: '280vh' }}>
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-        {/* Vídeo horizontal: placeholder oscuro a sangre completa, sin margen. */}
-        <motion.div style={{ filter }} className="absolute inset-0 bg-[#1a1918]" />
+        {/* Vídeo horizontal: de momento una foto real de la web (a sangre
+            completa, sin margen) para poder ver el desenfoque -- sustituir
+            por el <video> cuando Mayurlin entregue el material. */}
+        <motion.div style={{ filter }} className="absolute inset-0">
+          <img src={BG_PLACEHOLDER} alt="" className="h-full w-full object-cover" />
+        </motion.div>
         <motion.div style={{ opacity: bgIconOpacity }} className="absolute inset-0 flex items-center justify-center">
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-lg md:h-20 md:w-20">
             <PlayIcon className="h-6 w-6 translate-x-[2px] text-[#1a1918] md:h-7 md:w-7" />
@@ -138,11 +177,26 @@ export const VideoShowcase: React.FC = () => {
 
         {stories.map((story, i) => (
           <VerticalCard
-            key={story.id}
+            key={`desktop-${story.id}`}
             hotelId={story.id}
             hotelName={story.hotelName}
             index={i}
             scrollYProgress={scrollYProgress}
+            pos={DESKTOP_POSITIONS[i]}
+            sizeClassName={DESKTOP_CARD_CLASS}
+            visibilityClassName="hidden md:block"
+          />
+        ))}
+        {stories.map((story, i) => (
+          <VerticalCard
+            key={`mobile-${story.id}`}
+            hotelId={story.id}
+            hotelName={story.hotelName}
+            index={i}
+            scrollYProgress={scrollYProgress}
+            pos={MOBILE_POSITIONS[i]}
+            sizeClassName={MOBILE_CARD_CLASS}
+            visibilityClassName="md:hidden"
           />
         ))}
       </div>
