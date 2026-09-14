@@ -13,6 +13,10 @@ export interface HotelContent {
   coupleName: string;
   description: string;
   quote: string;
+  /** Una línea que dice qué capacidad demuestra este proyecto. Solo la usan
+   *  los destacados de Inicio: tres nombres de hotel no bastaban para que el
+   *  comprador entendiera qué prueba cada uno. Opcional. */
+  featuredLine?: string;
 }
 
 export interface MilestoneItem {
@@ -164,14 +168,14 @@ export interface SiteContent {
 // in content.json once it's fetched.
 export const DEFAULT_CONTENT: SiteContent = {
   hero: {
-    eyebrow: 'PRODUCCIÓN VISUAL · HOTELERÍA DE LUJO',
-    titleLead: 'Producción visual para',
+    eyebrow: 'ESTUDIO · HOTELERÍA',
+    titleLead: 'Fotografía y producción audiovisual para',
     titleEmphasis: 'hoteles de lujo.',
     subline:
-      'Fotografía, cine y contenido para redes sociales creados alrededor de la experiencia que vende cada propiedad.',
+      'Creamos fotografías, vídeos de marca y piezas verticales para mostrar los espacios, el servicio y la experiencia de tu hotel.',
     glassLabel: 'ESTUDIO DE PRODUCCIÓN VISUAL',
     ctaLabel: 'Iniciar un proyecto',
-    secondaryLabel: 'Ver trabajo',
+    secondaryLabel: 'Ver proyectos',
   },
   whatWeCreate: {
     eyebrow: 'Qué producimos',
@@ -179,37 +183,43 @@ export const DEFAULT_CONTENT: SiteContent = {
     items: [
       {
         title: 'Fotografía hotelera',
-        description: 'Arquitectura · interiores · gastronomía · lifestyle.',
+        description: 'Arquitectura, interiores, gastronomía y experiencia del huésped.',
       },
       {
-        title: 'Cine hotelero',
-        description: 'Vídeos de marca · vídeos de propiedad · montajes de campaña.',
+        title: 'Vídeos de marca',
+        description: 'Producciones audiovisuales para presentar tu hotel.',
       },
       {
-        title: 'Contenido para redes sociales',
-        description: 'Piezas verticales y variaciones.',
+        title: 'Reels y vídeos verticales',
+        description: 'Piezas para redes sociales, adaptadas al formato acordado.',
       },
       {
-        title: 'Dirección y biblioteca visual',
-        description: 'Activos coherentes para uso multicanal.',
+        title: 'Banco de imágenes y vídeos',
+        description: 'Contenido organizado para tu web, redes y campañas.',
       },
     ],
-    ctaLabel: 'Cuéntanos qué necesita la propiedad',
+    ctaLabel: 'Iniciar un proyecto',
   },
   whyUs: {
     eyebrow: 'Diferenciación',
     heading: 'Por qué Mayu Travel',
-    intro: 'Fotografía y cinematografía dentro de una unidad compacta.',
+    intro: 'Dos personas, cada una con una responsabilidad clara.',
     items: [
-      { title: 'Fotografía + Dirección', description: 'Mayurlin Viera.' },
-      { title: 'Film + Cinematografía', description: 'Yerfran.' },
       {
-        title: 'Talento integrado',
-        description: 'Guest experience y lifestyle cuando el concepto lo requiere.',
+        title: 'Fotografía y dirección creativa',
+        description: 'Mayurlin define el estilo visual y dirige la fotografía.',
       },
       {
-        title: 'Unidad compacta',
-        description: 'Dos especialistas · una producción · baja huella operativa.',
+        title: 'Producción audiovisual',
+        description: 'Yerfran se encarga de la grabación y edición de vídeo.',
+      },
+      {
+        title: 'Presencia en cámara',
+        description: 'Mayurlin puede aparecer en las escenas acordadas.',
+      },
+      {
+        title: 'Trato directo',
+        description: 'Trabajáis con nosotros durante todo el proyecto.',
       },
     ],
     ctaLabel: 'Conocer al equipo',
@@ -217,40 +227,39 @@ export const DEFAULT_CONTENT: SiteContent = {
   waysToWork: {
     eyebrow: 'Cómo empezar',
     heading: 'Formas de trabajar juntos',
-    intro: 'El alcance se define después del briefing; estas modalidades orientan sin cerrar precio ni entregables.',
+    intro: 'Definimos el contenido, los usos y el presupuesto contigo.',
     items: [
       {
-        title: 'Campaña o lanzamiento',
-        description: 'Producción puntual con objetivo y fecha.',
+        title: 'Campañas y lanzamientos',
+        description: 'Fotografías y vídeos para una campaña, apertura o novedad.',
       },
       {
-        title: 'Biblioteca de contenido',
-        description: 'Activos para web, redes, OTA y publicidad paga.',
+        title: 'Renovación de contenido',
+        description: 'Un banco de imágenes y vídeos para actualizar la comunicación del hotel.',
       },
       {
-        title: 'Producción recurrente',
-        description: 'Temporadas, aperturas y necesidades continuas.',
-      },
-      {
-        title: 'Distribución editorial',
-        description: 'Capa opcional cuando existe encaje.',
+        title: 'Producciones periódicas',
+        description: 'Nuevas sesiones según la temporada y las necesidades del hotel.',
       },
     ],
-    ctaLabel: 'Definir el proyecto',
+    ctaLabel: 'Iniciar un proyecto',
   },
   valueBlock: {
     claim: 'Una producción. Dos capas de valor.',
-    benefits: ['Activos para tu marca.', 'Distribución, cuando encaja.'],
-    benefitDetails: [
-      'Fotografía y cine listos para tu web, campañas, canales sociales y publicidad paga. El alcance y los derechos de uso se definen en cada propuesta, según lo que necesite la propiedad.',
-      'Cuando encaja con el objetivo del proyecto, sumamos cobertura y publicación para una audiencia internacional interesada en viajes y hotelería. No es un requisito de la producción: es una capa adicional.',
+    benefits: [
+      'Contenido para los canales de tu hotel.',
+      'Publicaciones en @mayurlintravel, como servicio adicional.',
     ],
-    ctaLabel: 'Consultar producción',
+    benefitDetails: [
+      'Fotografías y vídeos con los formatos y derechos de uso definidos en la propuesta.',
+      'Podemos incluirlas cuando el proyecto encaje con nuestra audiencia. Su alcance se acuerda por separado.',
+    ],
+    ctaLabel: 'Iniciar un proyecto',
   },
   closingCta: {
-    heading: 'Hablemos de tu propiedad.',
-    ctaLabel: 'Consultar disponibilidad',
-    secondaryLabel: 'Conócenos',
+    heading: 'Empecemos por lo que necesitas mostrar.',
+    ctaLabel: 'Iniciar un proyecto',
+    secondaryLabel: 'Ver proyectos',
   },
   about: {
     flipWords: ['Dirección', 'Distribución'],
@@ -388,6 +397,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       description:
         'Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte.',
       quote: 'Terracota, océano y jardín: tres tonos que se encuentran en cada rincón de Abama.',
+      featuredLine: 'Arquitectura y experiencia en un resort de lujo.',
     },
     {
       seccion: 2,
@@ -396,6 +406,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       description:
         'Arquitectura contemporánea sobre una de las siete colinas de Lisboa, frente al Parque Eduardo VII, con el skyline y el Tajo de fondo.',
       quote: 'Toda Lisboa se despliega desde lo alto de esta colina.',
+      featuredLine: 'El hotel y la experiencia de ciudad.',
     },
     {
       seccion: 3,
@@ -404,6 +415,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       description:
         'Una possessió del siglo XVIII, restaurada dentro de una finca privada de 800 hectáreas en el norte de Menorca: piedra, barro y silencio agrícola.',
       quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
+      featuredLine: 'Patrimonio y paisaje de Menorca.',
     },
     {
       seccion: 4,
@@ -428,6 +440,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       description:
         'Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
       quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
+      featuredLine: 'Tres producciones para un mismo hotel.',
     },
     {
       seccion: 7,
@@ -522,6 +535,7 @@ function mergeContent(fetched: unknown): SiteContent {
           coupleName: isNonEmptyString(h.coupleName) ? h.coupleName : defaultHotel.coupleName,
           description: isNonEmptyString(h.description) ? h.description : defaultHotel.description,
           quote: isNonEmptyString(h.quote) ? h.quote : defaultHotel.quote,
+          featuredLine: isNonEmptyString(h.featuredLine) ? h.featuredLine : defaultHotel.featuredLine,
         };
       })
     : DEFAULT_CONTENT.hotels;

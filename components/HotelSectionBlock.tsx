@@ -97,14 +97,13 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
       data-hotel-id={story.id}
       className="hotel-section-block relative w-full py-16 md:py-28 px-4 md:px-12 lg:px-20 overflow-hidden min-h-[1050px] md:min-h-[1380px]"
     >
-      {/* Mobile Header Label */}
-      <div className="md:hidden w-full max-w-md mx-auto mb-8 text-center space-y-1">
+      {/* El nombre del hotel lo pone ahora la ficha que va debajo del bloque
+          (en HomeMain), la misma en móvil y en escritorio. Aquí se repetía
+          justo encima, en mayúsculas, y en móvil se leían los dos seguidos. */}
+      <div className="md:hidden w-full max-w-md mx-auto mb-8 text-center">
         <span className="text-[10px] font-sans tracking-[0.25em] text-[#5a5854] uppercase block">
           {story.leftTag || 'HOTEL'}
         </span>
-        <h3 className="font-serif text-lg tracking-wider text-[#1a1918] font-light uppercase">
-          {story.hotelName}
-        </h3>
       </div>
 
 

@@ -29,7 +29,7 @@ export const WaysToWork: React.FC<WaysToWorkProps> = ({ onOpenAvailability }) =>
           <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-6xl">{waysToWork.heading}</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7 lg:grid-cols-3">
           {waysToWork.items.map((item, i) => (
             <motion.div
               key={item.title}
