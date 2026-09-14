@@ -9,7 +9,6 @@ import { useSiteContent } from '../src/lib/content';
  *  desplegar aparecen todas, y cada una conserva su propio acordeón. */
 export const FAQ: React.FC = () => {
   const { faq } = useSiteContent();
-  const [expanded, setExpanded] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -20,33 +19,13 @@ export const FAQ: React.FC = () => {
             {faq.eyebrow}
           </span>
 
-          <button
-            onClick={() => setExpanded((prev) => !prev)}
-            aria-expanded={expanded}
-            className="group mx-auto mt-4 flex flex-col items-center gap-6 md:gap-7"
-          >
-            <h2 className="font-serif text-4xl text-[#1a1918] md:text-5xl">{faq.heading}</h2>
-            <span
-              aria-hidden
-              className={`flex h-9 w-9 items-center justify-center rounded-full border border-[#1a1918]/30 text-[#1a1918] transition-all duration-300 group-hover:border-[#1a1918] md:h-10 md:w-10 ${
-                expanded ? 'rotate-180' : ''
-              }`}
-            >
-              &darr;
-            </span>
-          </button>
+          {/* Las preguntas se leen de entrada. Antes vivían todas detrás de un
+              primer desplegable, y cada respuesta pedía otro clic: dos clics
+              para saber qué derechos de uso incluye la entrega. */}
+          <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-5xl">{faq.heading}</h2>
         </div>
 
-        <AnimatePresence initial={false}>
-          {expanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
-              className="overflow-hidden"
-            >
-              <div className="mt-12 divide-y divide-[#1a1918]/10 md:mt-16">
+        <div className="mt-12 divide-y divide-[#1a1918]/10 md:mt-16">
                 {faq.questions.map((entry, i) => {
                   const isOpen = openIndex === i;
                   return (
@@ -86,10 +65,7 @@ export const FAQ: React.FC = () => {
                     </div>
                   );
                 })}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </div>
       </div>
     </section>
   );

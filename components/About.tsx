@@ -66,34 +66,18 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
         </div>
       </motion.section>
 
-      {/* Intro paragraph — its own full-screen section, generous breathing room */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.7 }}
-        className="min-h-[100dvh] w-full flex items-center justify-center px-6 py-24"
-      >
-        <p className="font-serif text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.38] md:text-[3.25rem] md:leading-[1.34] mx-auto max-w-4xl text-center text-[#1a1918]">
-          {content.about.introStatement}
-        </p>
-      </motion.section>
-
-      {/* Legacy statement — full-width photo background, text overlaid */}
-      <div className="relative left-1/2 right-1/2 -mx-[50vw] w-screen min-h-[90vh] md:min-h-[100dvh] mb-24 md:mb-32 overflow-hidden">
+      {/* Antes de los roles había dos pantallas completas más: un párrafo que
+          repetía la apertura y una cita a pantalla completa ("No hacemos esto
+          para llenar un feed"). El comprador tenía que atravesar tres muros de
+          texto para llegar a quién hace el trabajo. Queda la foto de los dos,
+          en una banda -- la humanidad se conserva, el bloque de venta no. */}
+      <div className="relative left-1/2 right-1/2 -mx-[50vw] mb-24 w-screen overflow-hidden md:mb-32">
         <img
           src={COUPLE_PHOTO}
-          alt="Mayurlin and Yerfran"
+          alt="Mayurlin y Yerfran"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover grayscale contrast-110"
+          className="h-[46vh] w-full object-cover grayscale contrast-110 md:h-[58vh]"
         />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10" />
-        <div className="relative min-h-[90vh] md:min-h-[100dvh] flex items-center justify-center px-6 md:px-16">
-          <p className="font-serif text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.38] md:text-[3.25rem] md:leading-[1.34] mx-auto max-w-4xl text-center text-white">
-            &ldquo;{content.about.legacyQuote}&rdquo;
-          </p>
-        </div>
       </div>
 
       <div id="roles" className="max-w-6xl mx-auto px-6 md:px-12 pb-24 scroll-mt-24">

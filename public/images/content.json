@@ -95,13 +95,13 @@
   "about": {
     "flipWords": [
       "Dirección",
-      "Distribución"
+      "Producción"
     ],
     "introStatement": "Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.",
     "legacyQuote": "No hacemos esto para llenar un feed. Lo hacemos porque cada hotel tiene un alma que merece verse tal como se siente estar ahí.",
     "overview": {
-      "heading": "Dirección creativa, fotografía y film para hotelería.",
-      "paragraph": "Mayu Travel es un estudio formado por Mayurlin Viera y Yerfran. Primero identificamos qué hace deseable una propiedad; después construimos la producción alrededor de su identidad, su experiencia y sus usos de marketing.",
+      "heading": "Un estudio de fotografía y producción audiovisual para hoteles.",
+      "paragraph": "Somos Mayurlin Viera y Yerfran. Planificamos y producimos contenido que muestra los espacios, los detalles y la experiencia de cada hotel, con un estilo visual coherente con su marca.",
       "boxes": [
         {
           "label": "Especialización",
@@ -120,35 +120,35 @@
           "value": "Activos coherentes y utilizables"
         }
       ],
-      "ctaLabel": "Conocer nuestros roles"
+      "ctaLabel": "Conoce al equipo"
     },
     "mayurlin": {
       "name": "Mayurlin Viera",
       "role": "Fotografía y dirección creativa",
-      "bio": "Mayurlin dirige la producción creativa de Mayu Travel: define el concepto de cada rodaje, aparece en cámara para mostrar la experiencia desde la perspectiva del huésped, y lleva la distribución editorial en @mayurlintravel cuando el proyecto lo pide. Crear contenido fue su sueño mucho antes de tener los medios para hacerlo, y trabajar con los mejores hoteles del mundo fue, desde el principio, su objetivo número uno. Seis años y más de 35 propiedades después, sigue mirando cada hotel nuevo como miró el primero."
+      "bio": "Define el concepto visual y dirige la fotografía. Participa en cámara cuando las escenas acordadas lo requieren."
     },
     "yerfran": {
       "name": "Yerfran",
-      "role": "Film y cinematografía",
-      "bio": "Yerfran dirige la cinematografía, la fotografía y la producción técnica de cada rodaje. Llegó a la fotografía por un camino distinto: capturar lo que una persona siente en un lugar, no solo cómo se ve. Años de prestar atención se convirtieron en un estilo propio, fotografías con alma, hechas con cuidado. Hoy dirige la producción visual de Mayu Travel junto a Mayurlin, en hoteles de España, Portugal, Grecia, Suiza y Países Bajos."
+      "role": "Producción audiovisual",
+      "bio": "Se encarga de la planificación técnica, la grabación y la edición de vídeo, desde el rodaje hasta las versiones finales."
     },
     "together": {
-      "heading": "Un equipo, una producción",
-      "description": "Dos especialistas trabajando bajo una misma dirección creativa, capaces de producir fotografía y film dentro de un mismo proyecto, con una estructura pequeña y poco invasiva para la operación del hotel."
+      "heading": "Un equipo reducido, coordinado con tu hotel",
+      "description": "Planificamos las sesiones, los espacios y los horarios con tu equipo para reducir las molestias a huéspedes y personal."
     },
-    "closingStatement": "Fotografía y cine en una sola producción, ejecutada siempre por nosotros dos, sin traspaso a equipos junior. Nos atraen especialmente las propiedades con una identidad fuerte: arquitectura, paisaje, gastronomía, bienestar, servicio, y proyectos donde la sostenibilidad es una parte real de la experiencia."
+    "closingStatement": "Mayurlin y Yerfran dirigen la producción. La participación en cámara y los apoyos necesarios se acuerdan para cada proyecto."
   },
   "contact": {
     "headingLines": [
       "Hablemos",
       "de tu",
-      "propiedad."
+      "hotel."
     ],
-    "introMain": "Cuéntanos qué necesitas producir, dónde y cuándo.",
-    "introSub": "Si encaja, te respondemos con disponibilidad y los próximos pasos. No hace falta que traigas un briefing completo.",
+    "introMain": "Cuéntanos qué fotografías o vídeos necesitas, dónde y para cuándo.",
+    "introSub": "No hace falta tener el proyecto completamente definido.",
     "ctaLabel": "Iniciar un proyecto",
     "emailAddress": "mayuviera@gmail.com",
-    "directLabel": "O escríbenos directamente a",
+    "directLabel": "O escríbenos a",
     "modalKicker": "Consulta de proyecto",
     "modalTitle": "Cuéntanos lo esencial.",
     "modalCopy": "Con esto nos basta para valorar si encajamos, revisar disponibilidad y proponerte los próximos pasos."
@@ -178,23 +178,23 @@
     "steps": [
       {
         "number": "01",
-        "title": "Primer contacto y encaje",
-        "description": "Nos escribes por el formulario o por email. En una llamada breve conocemos la propiedad, la temporada y cómo piensas usar el material."
+        "title": "Definimos el proyecto",
+        "description": "Qué necesitas mostrar, a quién y en qué canales."
       },
       {
         "number": "02",
-        "title": "Plan visual",
-        "description": "Antes de viajar preparamos un brief creativo, un shot list y un guion para la pieza de vídeo. Lo afinamos con el equipo del hotel para que no falte nada."
+        "title": "Preparamos la producción",
+        "description": "Estilo visual, escenas y horarios con tu equipo."
       },
       {
         "number": "03",
-        "title": "Rodaje en sitio",
-        "description": "De dos a cinco días en el hotel, con el alcance que marquen la temporada y las actividades disponibles. Cubrimos la propiedad en vivo mientras rodamos."
+        "title": "Fotografiamos y grabamos",
+        "description": "Seguimos el plan acordado con el hotel."
       },
       {
         "number": "04",
-        "title": "Edición y entrega",
-        "description": "Corrección de color, edición y entrega en aproximadamente tres semanas, organizados para uso inmediato en tu web, redes sociales y publicidad."
+        "title": "Editamos y entregamos",
+        "description": "Fotografías y vídeos en los formatos y plazos definidos."
       }
     ]
   },
@@ -217,6 +217,14 @@
       {
         "question": "¿La distribución en @mayurlintravel es parte de todos los proyectos?",
         "answer": "No. Producción y distribución son capas separadas. Cuando hay encaje entre la propiedad, la campaña y nuestra audiencia, podemos sumar publicación y cobertura como parte adicional de la propuesta."
+      },
+      {
+        "question": "¿Cómo se calcula el presupuesto?",
+        "answer": "Depende de las jornadas, las fotografías y vídeos, los formatos, los derechos de uso y los desplazamientos. La propuesta detalla lo que incluye."
+      },
+      {
+        "question": "¿Trabajáis con agencias y equipos de marketing?",
+        "answer": "Sí. Podemos coordinar la producción con vuestro equipo o agencia y acordar cómo se revisa y aprueba el contenido."
       }
     ]
   },

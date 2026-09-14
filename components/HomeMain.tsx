@@ -385,7 +385,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
               lo que hay que leer aqui. */}
           <div className="mb-14 text-center">
             <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-              Lo que dicen los equipos
+              Lo que dicen los equipos con los que trabajamos
             </span>
           </div>
           <Testimonials />
