@@ -102,31 +102,34 @@ export const VideoShowcase: React.FC = () => {
             pieza ocupando el ancho completo. */}
         <motion.div {...rise(0.16)} className="mt-6 sm:mt-8 md:mt-10">
           <div className="hidden items-end justify-center gap-4 sm:flex sm:h-[58vh] sm:max-h-[460px] md:gap-6">
-            <div style={{ height: '68%' }} className="aspect-[9/16]">
+            <div style={{ height: '68%' }} className="aspect-[9/16] shrink-0">
               <VideoPlaceholder label="Vídeo vertical 1" caption="Redes sociales · 8 a 20 segundos" />
             </div>
-            <div style={{ height: '92%' }} className="aspect-[9/16]">
+            <div style={{ height: '92%' }} className="aspect-[9/16] shrink-0">
               <VideoPlaceholder label="Vídeo vertical 2" caption="Redes sociales · 8 a 20 segundos" />
             </div>
-            <div style={{ height: '78%' }} className="aspect-[9/16]">
+            <div style={{ height: '78%' }} className="aspect-[9/16] shrink-0">
               <VideoPlaceholder label="Vídeo vertical 3" caption="Redes sociales · 8 a 20 segundos" />
             </div>
-            <div style={{ height: '58%' }} className="aspect-[9/16]">
+            <div style={{ height: '58%' }} className="aspect-[9/16] shrink-0">
               <VideoPlaceholder label="Vídeo vertical 4" caption="Redes sociales · 8 a 20 segundos" />
             </div>
           </div>
 
+          {/* Móvil: el ancho lo da la columna del grid, el alto lo calcula
+              `aspect-[9/16]` a partir de ese ancho -- así la proporción es
+              siempre 9:16 real, nunca una altura fija adivinada. */}
           <div className="grid grid-cols-2 gap-3 sm:hidden">
-            <div className="h-[30vh]">
+            <div className="aspect-[9/16]">
               <VideoPlaceholder label="Vídeo vertical 1" caption="Redes sociales · 8 a 20 segundos" />
             </div>
-            <div className="mt-7 h-[30vh]">
+            <div className="mt-7 aspect-[9/16]">
               <VideoPlaceholder label="Vídeo vertical 2" caption="Redes sociales · 8 a 20 segundos" />
             </div>
-            <div className="h-[30vh]">
+            <div className="aspect-[9/16]">
               <VideoPlaceholder label="Vídeo vertical 3" caption="Redes sociales · 8 a 20 segundos" />
             </div>
-            <div className="mt-7 h-[30vh]">
+            <div className="mt-7 aspect-[9/16]">
               <VideoPlaceholder label="Vídeo vertical 4" caption="Redes sociales · 8 a 20 segundos" />
             </div>
           </div>
