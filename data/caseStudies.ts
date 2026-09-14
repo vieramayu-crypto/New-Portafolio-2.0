@@ -51,8 +51,10 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
       {
         number: '06',
-        title: 'Galería y film',
-        body: 'La galería completa de GPRO Valparaíso, con las trece fotografías del rodaje, está en Trabajo.',
+        // "Galería y film" prometía una pieza de vídeo que no existe: la
+        // etiqueta nombra ahora solo lo que se puede abrir y revisar.
+        title: 'Galería',
+        body: 'La galería completa de GPRO Valparaíso, con las trece fotografías del rodaje, está en Proyectos.',
       },
     ],
   },

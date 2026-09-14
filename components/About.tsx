@@ -13,7 +13,11 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
   const content = useSiteContent();
 
   return (
-    <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
+    // `overflow-x-clip`, no `hidden`: los retratos entran desplazados 30px a
+    // un lado y en móvil eso asomaba fuera de la pantalla. `hidden` recorta
+    // igual pero convierte el div en contenedor de scroll y rompe cualquier
+    // `position: sticky` que haya debajo.
+    <div className="min-h-screen overflow-x-clip bg-[#f5f3ed] text-[#1a1918] font-sans">
       {/* Flip-words opening statement — full viewport, brutalist scale */}
       <section className="min-h-[100dvh] w-full flex flex-col items-center justify-center text-center px-6">
         <motion.h1

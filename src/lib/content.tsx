@@ -403,7 +403,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'THE RITZ-CARLTON TENERIFE, ABAMA',
       coupleName: 'Arquitectura morisca',
       description:
-        'Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte.',
+        'Arquitectura, jardines, spa y gastronomía en una selección visual del resort. Una finca morisca de muros de terracota sobre los acantilados de Guía de Isora, con jardines subtropicales que descienden hasta el Atlántico y La Gomera en el horizonte.',
       quote: 'Terracota, océano y jardín: tres tonos que se encuentran en cada rincón de Abama.',
       featuredLine: 'Arquitectura y experiencia en un resort de lujo.',
     },
@@ -412,7 +412,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'INTERCONTINENTAL LISBOA',
       coupleName: 'Altura urbana',
       description:
-        'Arquitectura contemporánea sobre una de las siete colinas de Lisboa, frente al Parque Eduardo VII, con el skyline y el Tajo de fondo.',
+        'Interiores, servicio en la habitación y experiencia urbana en Lisboa. Arquitectura contemporánea sobre una de las siete colinas de la ciudad, frente al Parque Eduardo VII, con el skyline y el Tajo de fondo.',
       quote: 'Toda Lisboa se despliega desde lo alto de esta colina.',
       featuredLine: 'El hotel y la experiencia de ciudad.',
     },
@@ -421,7 +421,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'VESTIGE COLLECTION, BINIDUFÀ',
       coupleName: 'Herencia menorquina',
       description:
-        'Una possessió del siglo XVIII, restaurada dentro de una finca privada de 800 hectáreas en el norte de Menorca: piedra, barro y silencio agrícola.',
+        'Los espacios, los materiales y el paisaje rural de Menorca. Una possessió del siglo XVIII restaurada en el norte de la isla, que comparte con Son Ermità un entorno de 800 hectáreas: piedra, barro y silencio agrícola.',
       quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
       featuredLine: 'Patrimonio y paisaje de Menorca.',
     },
@@ -430,7 +430,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'DELTAPARK VITALRESORT',
       coupleName: 'Bienestar alpino',
       description:
-        'Arquitectura alpina contemporánea a orillas del lago Thun, entre dos reservas del delta del Kander, con un spa de 2.000 m².',
+        'Habitación, spa y lago: un recorrido visual por la experiencia de bienestar. Arquitectura alpina contemporánea a orillas del lago Thun, entre dos reservas del delta del Kander, con un spa de 2.000 m².',
       quote: 'El silencio de los Alpes, reflejado entero en el lago Thun.',
     },
     {
@@ -438,7 +438,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'HONEYMOON PETRA VILLAS',
       coupleName: 'Acantilado del Egeo',
       description:
-        'Tallada en roca volcánica sobre la caldera de Santorini, con una de las piscinas más codiciadas del Egeo suspendida sobre el mar.',
+        'Arquitectura volcánica y experiencia de estancia frente a la caldera. Tallada en roca sobre la caldera de Santorini, con la piscina suspendida sobre el mar.',
       quote: 'Roca volcánica y un horizonte infinito. Así amanece sobre la caldera.',
     },
     {
@@ -446,7 +446,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'GPRO VALPARAÍSO PALACE & SPA',
       coupleName: 'Spa mediterráneo',
       description:
-        'Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
+        'Fotografías de habitaciones, jardines y spa realizadas en 2023, 2024 y 2026, según el registro del estudio. Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
       quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
       featuredLine: 'Tres producciones para un mismo hotel.',
     },
@@ -455,7 +455,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'HOTEL ESPLÉNDIDO',
       coupleName: 'Bahía y piedra',
       description:
-        'Piedra caliza y terrazas frente a la Bahía de Sóller, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
+        'Estancia, servicio y vida junto a la Bahía de Sóller. Piedra caliza y terrazas frente a la bahía, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
       quote: 'Piedra, mar y el eco del tranvía sobre los adoquines de Sóller.',
     },
     {
@@ -463,7 +463,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'DISTRICT HIVE',
       coupleName: 'Fuera de la red, en el desierto',
       description:
-        'Una cápsula de cristal y acero suspendida sobre el paisaje de Gorafe, con arquitectura que vive fuera de la red: agua extraída del aire y energía del sol.',
+        'Arquitectura y experiencia de estancia en el paisaje de Gorafe. Una cápsula de cristal y acero suspendida sobre el desierto granadino.',
       quote: 'Todo el cielo como techo, todo el paisaje como horizonte.',
     },
     {
@@ -471,7 +471,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'WELMOON VILLAS PAISAJE',
       coupleName: 'Bajo las estrellas',
       description:
-        'Villas abovedadas entre los pinares de Caravaca de la Cruz, diseñadas para dormir bajo el cielo sin filtrar de la sierra murciana.',
+        'Interiores, bosque y experiencia nocturna en una estancia singular. Villas abovedadas entre los pinares de Caravaca de la Cruz, diseñadas para dormir bajo el cielo sin filtrar de la sierra murciana.',
       quote: 'Un techo de estrellas y el silencio de la sierra murciana.',
     },
   ],
