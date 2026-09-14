@@ -192,9 +192,32 @@ export const VideoShowcase: React.FC = () => {
   });
 
   return (
-    // 220vh, no 280: el alto solo tiene que dar para llegar al umbral, ver la
-    // animación completa y quedarse un rato con las cuatro puestas. Ya no hay
-    // que reservar recorrido para "dibujarla".
+    <>
+      {/* El titular vivía ENCIMA del vídeo. Con una foto fija se leía bien,
+          pero el vídeo va a reproducirse solo y en bucle: un bloque de texto
+          fijo sobre la imagen en movimiento le quita la pantalla justo cuando
+          hay algo que ver. Sale fuera, a su propia cabecera sobre el fondo
+          oscuro, y el vídeo se queda limpio. */}
+      <section className="w-full bg-[#1a1918] px-6 pb-14 pt-20 text-center md:pb-20 md:pt-28">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+        >
+          <h2 className="mx-auto max-w-[20ch] font-serif text-3xl leading-[1.15] text-white md:max-w-none md:text-5xl">
+            Vídeos para mostrar la experiencia de tu hotel
+          </h2>
+          <p className="mx-auto mt-4 max-w-[46ch] text-[13px] leading-[1.7] text-white/70 md:mt-5 md:text-sm">
+            Desde una presentación de la propiedad hasta reels centrados en sus espacios,
+            gastronomía o servicio.
+          </p>
+        </motion.div>
+      </section>
+
+    {/* 220vh, no 280: el alto solo tiene que dar para llegar al umbral, ver la
+        animación completa y quedarse un rato con las cuatro puestas. Ya no hay
+        que reservar recorrido para "dibujarla". */}
     <section ref={containerRef} className="relative w-full bg-[#1a1918]" style={{ height: '220vh' }}>
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         {/* Vídeo horizontal: de momento una foto real de la web (a sangre
@@ -229,33 +252,6 @@ export const VideoShowcase: React.FC = () => {
           className="pointer-events-none absolute inset-0 bg-black"
         />
 
-        {/* Velo corto de arriba: el titular cae sobre la parte clara de la
-            fachada y el subtítulo se quedaba corto de contraste. Se va con la
-            misma animación que el titular. */}
-        <motion.div
-          aria-hidden
-          initial={false}
-          animate={{ opacity: deployed ? 0 : 1 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[52%]"
-          style={{ background: 'linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.24) 55%, transparent)' }}
-        />
-
-        <motion.div
-          initial={false}
-          animate={{ opacity: deployed ? 0 : 1, y: deployed ? -14 : 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="pointer-events-none absolute inset-x-0 top-[12%] z-20 px-6 text-center"
-        >
-          <h2 className="font-serif text-3xl leading-[1.15] text-white md:text-5xl">
-            Vídeos para mostrar la experiencia de tu hotel
-          </h2>
-          <p className="mx-auto mt-4 max-w-[46ch] text-[13px] leading-[1.7] text-white/75 md:mt-5 md:text-sm">
-            Desde una presentación de la propiedad hasta reels centrados en sus espacios,
-            gastronomía o servicio.
-          </p>
-        </motion.div>
-
         {stories.map((story, i) => (
           <VerticalCard
             key={`desktop-${story.id}`}
@@ -282,5 +278,6 @@ export const VideoShowcase: React.FC = () => {
         ))}
       </div>
     </section>
+    </>
   );
 };

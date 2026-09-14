@@ -148,11 +148,16 @@ export interface SiteContent {
    *  para poder enviarla en un correo de outreach sin obligar a recorrer
    *  Inicio entero. */
   projects: {
-    eyebrow: string;
     heading: string;
     intro: string;
-    /** Distingue el caso documentado de las galerías: el comprador no debe
-     *  esperar el mismo nivel de detalle en las nueve. */
+    /** Distingue el proyecto documentado de la galería: el comprador no debe
+     *  esperar el mismo nivel de detalle en las nueve propiedades. Los dos
+     *  rótulos de sección separan físicamente una cosa de la otra, porque
+     *  "proyecto" y "portafolio" no se distinguen solos. */
+    caseSectionLabel: string;
+    caseSectionLine: string;
+    gallerySectionLabel: string;
+    gallerySectionLine: string;
     caseLabel: string;
     galleryLabel: string;
     caseLinkLabel: string;
@@ -378,11 +383,14 @@ export const DEFAULT_CONTENT: SiteContent = {
     ],
   },
   projects: {
-    eyebrow: 'Portafolio',
-    heading: 'Proyectos',
+    heading: 'Proyectos y portafolio',
     intro:
-      'Fotografía y producción audiovisual para hoteles y alojamientos con identidad propia.',
-    caseLabel: 'Caso completo',
+      'Un proyecto es un encargo contado entero: el contexto de la propiedad, la dirección visual, los días de rodaje y lo que se entregó. El portafolio es la selección de imágenes de cada hotel, sin ese relato detrás.',
+    caseSectionLabel: 'Proyectos',
+    caseSectionLine: 'Encargos contados de principio a fin.',
+    gallerySectionLabel: 'Portafolio',
+    gallerySectionLine: 'El resto de propiedades, en imágenes.',
+    caseLabel: 'Proyecto',
     galleryLabel: 'Selección de imágenes',
     caseLinkLabel: 'Ver proyecto',
     galleryLinkLabel: 'Ver galería',
@@ -751,9 +759,18 @@ function mergeContent(fetched: unknown): SiteContent {
       questions: faqQuestions,
     },
     projects: {
-      eyebrow: isNonEmptyString(f.projects?.eyebrow)
-        ? f.projects!.eyebrow
-        : DEFAULT_CONTENT.projects.eyebrow,
+      caseSectionLabel: isNonEmptyString(f.projects?.caseSectionLabel)
+        ? f.projects!.caseSectionLabel
+        : DEFAULT_CONTENT.projects.caseSectionLabel,
+      caseSectionLine: isNonEmptyString(f.projects?.caseSectionLine)
+        ? f.projects!.caseSectionLine
+        : DEFAULT_CONTENT.projects.caseSectionLine,
+      gallerySectionLabel: isNonEmptyString(f.projects?.gallerySectionLabel)
+        ? f.projects!.gallerySectionLabel
+        : DEFAULT_CONTENT.projects.gallerySectionLabel,
+      gallerySectionLine: isNonEmptyString(f.projects?.gallerySectionLine)
+        ? f.projects!.gallerySectionLine
+        : DEFAULT_CONTENT.projects.gallerySectionLine,
       heading: isNonEmptyString(f.projects?.heading)
         ? f.projects!.heading
         : DEFAULT_CONTENT.projects.heading,

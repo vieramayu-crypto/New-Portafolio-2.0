@@ -73,7 +73,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
             {content.about.overview.paragraph}
           </p>
 
-          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:gap-5">
+          <div className="mt-glass-async mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:gap-5">
             {content.about.overview.boxes.map((box) => (
               // `mt-glass` a secas, no la variante clara: esta vive sobre una
               // foto, no sobre crema. `relative` es obligatorio — los
