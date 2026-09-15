@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSiteContent } from "../src/lib/content";
-import { openInquiryMail } from "../src/lib/inquiry";
+import { sendInquiry, type InquiryOutcome } from "../src/lib/inquiry";
 
 /** Los campos comparten el hairline del resto del sitio: sin caja, sin relleno,
  *  sin sombra. Serif grande para lo que el visitante escribe. */
@@ -63,7 +63,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 }) => {
   const { contact } = useSiteContent();
   const [submitted, setSubmitted] = useState(false);
-  const [composed, setComposed] = useState("");
+  const [sending, setSending] = useState(false);
+  const [outcome, setOutcome] = useState<InquiryOutcome>("enviado");
+  const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -90,12 +92,16 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     };
   }, [open, onClose]);
 
-  // El sitio es estático: la consulta se entrega abriendo el correo del
-  // visitante con el mensaje ya redactado, y se deja copiable por si no
-  // tiene cliente de correo configurado.
-  const handleSubmit = (e: React.FormEvent) => {
+  // La consulta se entrega a Web3Forms, que la reenvía al correo de Mayurlin.
+  // Si eso falla por lo que sea, `sendInquiry` cae al correo del visitante con
+  // el mensaje ya escrito y lo dice, para no fingir un envío que no ocurrió.
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setComposed(openInquiryMail(contact.emailAddress, form));
+    if (sending) return;
+    setSending(true);
+    const resultado = await sendInquiry(contact.emailAddress, form, file);
+    setOutcome(resultado);
+    setSending(false);
     setSubmitted(true);
   };
 
@@ -158,34 +164,55 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         ✓
                       </div>
                       <h2 className="font-serif text-3xl text-[#1a1918] md:text-4xl">
-                        Tu consulta está lista
+                        {outcome === "correo" ? "Tu consulta está lista" : "Consulta enviada"}
                       </h2>
-                      <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                        Gracias,{" "}
-                        <span className="font-medium text-[#1a1918]">
-                          {form.name}
-                        </span>
-                        . Hemos abierto tu cliente de correo con la consulta para{" "}
-                        <span className="font-medium text-[#1a1918]">
-                          {form.propertyName || "tu propiedad"}
-                        </span>{" "}
-                        ya redactada, solo falta enviarla.
-                      </p>
-                      <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                        ¿No se abrió tu cliente de correo? Copia el mensaje y
-                        escríbenos a{" "}
-                        <a
-                          href={`mailto:${contact.emailAddress}`}
-                          className="font-medium text-[#1a1918] underline underline-offset-4"
-                        >
-                          {contact.emailAddress}
-                        </a>
-                        .
-                      </p>
-                      {composed && (
-                        <pre className="mx-auto max-h-56 max-w-md overflow-auto whitespace-pre-wrap bg-white/40 p-4 text-left text-xs leading-relaxed text-[#5a5854]">
-                          {composed}
-                        </pre>
+                      {outcome === "correo" ? (
+                        <>
+                          {/* Sin fingir: el envío no salió, así que se dice y se
+                              le da la vía alternativa ya preparada. */}
+                          <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
+                            No hemos podido enviarla desde aquí, así que hemos abierto tu cliente de
+                            correo con la consulta para{" "}
+                            <span className="font-medium text-[#1a1918]">
+                              {form.propertyName || "tu propiedad"}
+                            </span>{" "}
+                            ya redactada. Solo falta que la envíes.
+                          </p>
+                          <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
+                            ¿No se abrió? Escríbenos a{" "}
+                            <a
+                              href={`mailto:${contact.emailAddress}`}
+                              className="font-medium text-[#1a1918] underline underline-offset-4"
+                            >
+                              {contact.emailAddress}
+                            </a>
+                            .
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
+                            Gracias,{" "}
+                            <span className="font-medium text-[#1a1918]">{form.name}</span>. Hemos
+                            recibido tu consulta para{" "}
+                            <span className="font-medium text-[#1a1918]">
+                              {form.propertyName || "tu propiedad"}
+                            </span>{" "}
+                            y te respondemos al correo que nos has dejado.
+                          </p>
+                          {outcome === "enviado-sin-adjunto" && (
+                            <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
+                              El archivo que adjuntaste no se pudo enviar. Mándanoslo respondiendo a{" "}
+                              <a
+                                href={`mailto:${contact.emailAddress}`}
+                                className="font-medium text-[#1a1918] underline underline-offset-4"
+                              >
+                                {contact.emailAddress}
+                              </a>
+                              .
+                            </p>
+                          )}
+                        </>
                       )}
                       <button
                         onClick={() => setSubmitted(false)}
@@ -323,20 +350,44 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             placeholder="Tu objetivo, fechas aproximadas y cualquier contexto que creas útil."
                             className={`${fieldClass} h-48 min-h-[190px] resize-y`}
                           />
-                          {/* El envío abre el correo del visitante con todo
-                              escrito, así que el briefing se adjunta ahí. Se
-                              dice explícitamente porque si no, nadie lo hace. */}
-                          <p className="mt-3 font-sans text-[12px] leading-[1.6] text-[#5a5854]">
-                            Si ya tienes un briefing, puedes adjuntarlo al correo que se abrirá al enviar.
-                          </p>
+                        </Field>
+
+                        {/* Adjunto opcional. El estilo no es el del navegador:
+                            el `input` real se esconde y la etiqueta hace de
+                            botón, para que no rompa el hairline del resto. */}
+                        <Field label="Briefing (opcional)" wide>
+                          <div className="flex flex-wrap items-center gap-4">
+                            <label className="cursor-pointer border-b border-[#1a1918]/65 pb-1.5 font-sans text-[12px] uppercase tracking-[0.2em] text-[#1a1918] transition-colors hover:border-[#1a1918]">
+                              {file ? "Cambiar archivo" : "Adjuntar archivo"}
+                              <input
+                                type="file"
+                                accept=".pdf,.doc,.docx,.ppt,.pptx,.key,.pages,.txt,.rtf,.odt,image/*"
+                                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                                className="hidden"
+                              />
+                            </label>
+                            {file && (
+                              <span className="font-sans text-[13px] text-[#5a5854]">
+                                {file.name}
+                                <button
+                                  type="button"
+                                  onClick={() => setFile(null)}
+                                  className="ml-3 underline underline-offset-4"
+                                >
+                                  quitar
+                                </button>
+                              </span>
+                            )}
+                          </div>
                         </Field>
 
                         <div className="flex justify-center pt-4 md:col-span-2">
                           <button
                             type="submit"
-                            className="border-b border-[#1a1918]/65 pb-3 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918]"
+                            disabled={sending}
+                            className="border-b border-[#1a1918]/65 pb-3 text-[12px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] disabled:opacity-50"
                           >
-                            Enviar consulta →
+                            {sending ? "Enviando…" : "Enviar consulta →"}
                           </button>
                         </div>
                       </form>
