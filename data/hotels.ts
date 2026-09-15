@@ -12,6 +12,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Luxury Hotel',
     layoutVariant: 0,
+    publishedByHotel: true,
     caseStudy: {
       season: 'Julio · Verano',
       duration: '4 días',
@@ -123,6 +124,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Luxury Hotel',
     layoutVariant: 6,
+    publishedByHotel: true,
     caseStudy: {
       season: 'Septiembre · Verano',
       duration: '3 días',
@@ -539,6 +541,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Luxury Hotel',
     layoutVariant: 3,
+    publishedByHotel: true,
     caseStudy: {
       season: 'Mayo · Primavera',
       duration: '4 días',
@@ -683,6 +686,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Luxury Hotel',
     layoutVariant: 4,
+    publishedByHotel: true,
     caseStudy: {
       season: 'Verano · 2023, 2024 y 2026',
       duration: '5 días',

@@ -34,6 +34,12 @@ export interface HotelStory {
   quote?: string;
   category: 'Luxury Hotel' | 'Destination Wedding' | 'Romantic Escape' | 'Historic Villa';
   layoutVariant?: number; // 0 to 7 unique layout variations
+  /** El hotel publica este material en sus propios canales. Es la prueba de
+   *  uso que la web no puede dar con métricas: el cliente lo usa de verdad.
+   *  Se marca sólo donde hay certeza, y a propósito en pocos hoteles: si
+   *  apareciera en todos dejaría de leerse como prueba. Nunca lleva cifras
+   *  de interacción ni captura de la red social. */
+  publishedByHotel?: boolean;
   /** Durable facts about the shoot, shown on the portfolio page. They turn the
    *  gallery from "nice photos" into demonstrable commercial work. Every field
    *  is optional -- each one renders only when we actually have the data. */

@@ -978,7 +978,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
 
         {/* Los datos del rodaje, en una sola línea al pie de la portada: se leen
             de un vistazo y no interrumpen a quien sólo viene a mirar fotos. */}
-        {story.caseStudy && (
+        {(story.caseStudy || story.publishedByHotel) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={heroLoaded ? { opacity: 1 } : { opacity: 0 }}
@@ -986,9 +986,10 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
             className="pointer-events-none absolute inset-x-0 bottom-0 px-6 pb-6 sm:px-10 sm:pb-8 md:px-16"
           >
             <div className="flex flex-wrap items-baseline justify-center gap-x-6 gap-y-1 text-[10px] font-sans uppercase tracking-[0.2em] text-white/85 md:gap-x-12 md:text-[11px]">
-              {story.caseStudy.season && <span>{story.caseStudy.season}</span>}
-              {story.caseStudy.duration && <span>{story.caseStudy.duration}</span>}
-              {story.caseStudy.usage && <span>{story.caseStudy.usage}</span>}
+              {story.caseStudy?.season && <span>{story.caseStudy.season}</span>}
+              {story.caseStudy?.duration && <span>{story.caseStudy.duration}</span>}
+              {story.caseStudy?.usage && <span>{story.caseStudy.usage}</span>}
+              {story.publishedByHotel && <span>Publicado por el hotel</span>}
             </div>
           </motion.div>
         )}
