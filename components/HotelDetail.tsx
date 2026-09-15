@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'mot
 import { HotelStory, PhotoItem } from '../types';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
+import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
 
 interface HotelDetailProps {
   story: HotelStory;
@@ -34,13 +35,16 @@ const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widt
       bleed ? '' : 'shadow-2xl'
     } group overflow-hidden bg-stone-200`}
   >
-    <img
-      src={photo.url}
-      alt={photo.alt}
-      className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-        photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
-      }`}
-    />
+    <picture>
+      <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />
+      <img
+        src={photo.url}
+        alt={photo.alt}
+        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+          photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
+        }`}
+      />
+    </picture>
   </motion.div>
 );
 
@@ -924,12 +928,15 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
     <div className="bg-[#f5f3ed] text-[#1a1918] font-sans">
       {/* HERO — full-screen horizontal cover photo */}
       <section className="relative h-[100dvh] w-full overflow-hidden bg-stone-200">
-        <img
-          src={story.coverImage}
-          alt={story.hotelName}
-          onLoad={() => setHeroLoaded(true)}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <picture>
+          <source media={MEDIA_MOVIL} srcSet={versionMovil(story.coverImage)} />
+          <img
+            src={story.coverImage}
+            alt={story.hotelName}
+            onLoad={() => setHeroLoaded(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </picture>
         {/* El titular vive centrado, y el degradado anterior era transparente
             justo ahi: sobre una portada clara (sec1) se perdia. Este recorre la
             imagen entera y nunca llega a transparente, asi que no hay ningun

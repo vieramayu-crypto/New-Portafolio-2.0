@@ -5,6 +5,7 @@ import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { useSiteContent } from '../src/lib/content';
 import { toTitleCase } from '../src/lib/hotelName';
+import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
 import { BrandsMarquee } from './BrandsMarquee';
 
 interface ProjectsPageProps {
@@ -89,11 +90,14 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
               <motion.div {...rise(0)}>
                 <Link to={`/proyecto/${featuredCase.slug}`} className="group block">
                   <div className={`relative w-full overflow-hidden bg-stone-200 ${alturaFoto}`}>
-                    <img
-                      src={featured.coverImage}
-                      alt={toTitleCase(featured.hotelName)}
-                      className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
-                    />
+                    <picture>
+                      <source media={MEDIA_MOVIL} srcSet={versionMovil(featured.coverImage)} />
+                      <img
+                        src={featured.coverImage}
+                        alt={toTitleCase(featured.hotelName)}
+                        className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
+                      />
+                    </picture>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                   </div>
                 </Link>
@@ -162,11 +166,14 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
                   className={`group block md:col-span-7 ${photoFirst ? '' : 'md:order-2'}`}
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-200">
-                    <img
-                      src={story.coverImage}
-                      alt={story.hotelName}
-                      className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
-                    />
+                    <picture>
+                      <source media={MEDIA_MOVIL} srcSet={versionMovil(story.coverImage)} />
+                      <img
+                        src={story.coverImage}
+                        alt={story.hotelName}
+                        className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
+                      />
+                    </picture>
                   </div>
                 </Link>
 

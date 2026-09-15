@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { HotelStory } from '../types';
+import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
 
 interface HotelSectionBlockProps {
   story: HotelStory;
@@ -131,13 +132,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -155,13 +159,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[34%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -179,13 +186,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute right-0 md:right-[2%] top-0 md:top-[58%] w-full md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -208,13 +218,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[36%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -232,13 +245,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -256,13 +272,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute left-0 md:left-[4%] top-0 md:top-[48%] w-full md:w-[46%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -285,13 +304,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -309,13 +331,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[38%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -333,13 +358,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute right-0 md:right-[2%] top-0 md:top-[58%] w-full md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -362,13 +390,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[4%] w-full md:w-[32%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-30"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -386,13 +417,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute left-0 md:left-[22%] top-0 md:top-[2%] w-full md:w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -410,13 +444,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[52%] w-full md:w-[44%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -439,13 +476,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[20%] top-0 md:top-[4%] w-full md:w-[60%] aspect-[16/9] shadow-xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -463,13 +503,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[26%] w-full md:w-[66%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-20"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -487,13 +530,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[44%] w-full md:w-[38%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -516,13 +562,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[4%] w-full md:w-[32%] aspect-square shadow-md group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -540,13 +589,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[58%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -564,13 +616,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute left-0 md:left-[2%] top-0 md:top-[48%] w-full md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -593,13 +648,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -617,13 +675,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[36%] aspect-[3/4] shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -641,13 +702,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute left-0 md:left-[30%] top-0 md:top-[56%] w-full md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
@@ -670,13 +734,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(0)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[32%] aspect-square shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[0].url}
-                  alt={photos[0].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
+                  <img
+                    src={photos[0].url}
+                    alt={photos[0].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -694,13 +761,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(1)}
                 className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
               >
-                <img
-                  src={photos[1].url}
-                  alt={photos[1].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
+                  <img
+                    src={photos[1].url}
+                    alt={photos[1].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
 
@@ -718,13 +788,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 onClick={() => handlePhotoClick(2)}
                 className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[56%] w-full md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
-                <img
-                  src={photos[2].url}
-                  alt={photos[2].alt}
-                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                  }`}
-                />
+                <picture>
+                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
+                  <img
+                    src={photos[2].url}
+                    alt={photos[2].alt}
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
+                    }`}
+                  />
+                </picture>
               </motion.div>
             )}
           </div>
