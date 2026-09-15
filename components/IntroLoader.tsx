@@ -6,6 +6,21 @@ import introVerticalWebm from '../src/assets/videos/intro-vertical.webm';
 
 const FAILSAFE_MS = 6000;
 
+/** Marca de "ya lo vio" dentro de la misma visita. Se borra al cerrar la
+ *  pestaña, así que quien vuelve otro día lo vuelve a ver entero: el efecto se
+ *  conserva para quien descubre la web, y deja de castigar a quien recarga o
+ *  navega y vuelve. Medido antes del cambio: 4,3 s hasta poder usar la web en
+ *  local, y 1,9 MB de vídeo descargados en cada carga. */
+const VISTA_EN_ESTA_SESION = 'mt-intro-visto';
+
+function yaVistoEnEstaSesion(): boolean {
+  try {
+    return sessionStorage.getItem(VISTA_EN_ESTA_SESION) === '1';
+  } catch {
+    return false; // navegación privada o almacenamiento bloqueado: se reproduce
+  }
+}
+
 function isMobileViewport(): boolean {
   return typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
 }
@@ -15,7 +30,9 @@ interface IntroLoaderProps {
 }
 
 export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
-  const [phase, setPhase] = useState<'playing' | 'fading' | 'done'>('playing');
+  const [phase, setPhase] = useState<'playing' | 'fading' | 'done'>(() =>
+    yaVistoEnEstaSesion() ? 'done' : 'playing'
+  );
   const [isVertical] = useState(isMobileViewport);
   // Cache-busting so every mount forces a fresh network fetch instead of
   // relying on the browser's disk cache, which can corrupt playback of
@@ -28,13 +45,23 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
   const webmSrc = isVertical ? introVerticalWebm : introHorizontalWebm;
 
   const finish = () => {
+    try {
+      sessionStorage.setItem(VISTA_EN_ESTA_SESION, '1');
+    } catch {
+      /* si no se puede guardar, el vídeo simplemente se repetirá */
+    }
     setPhase((current) => (current === 'playing' ? 'fading' : current));
   };
 
   useEffect(() => {
+    if (phase === 'done') {
+      onDone?.();
+      return;
+    }
     // Never let a stalled or undelivered video block the site indefinitely.
     const failsafe = window.setTimeout(finish, FAILSAFE_MS);
     return () => window.clearTimeout(failsafe);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -58,6 +85,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
     // without automatically falling back to a sibling <source> -- automatic
     // fallback only applies during the initial resource-selection step.
     // Setting src directly lets handleError below retry with the webm copy.
+    if (phase === 'done') return;
     const video = videoRef.current;
     if (!video) return;
     triedFallbackRef.current = false;
@@ -68,7 +96,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
       // Still blocked (e.g. Low Power Mode) -- the failsafe timeout above
       // moves past the intro regardless.
     });
-  }, [isVertical, cacheBust, mp4Src]);
+  }, [isVertical, cacheBust, mp4Src, phase]);
 
   const handleError = () => {
     const video = videoRef.current;
@@ -85,7 +113,17 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-[#f5f3ed] transition-opacity duration-500 ${
+      // Pulsar en cualquier sitio lo salta. No lleva botón visible: el rótulo
+      // encima del vídeo rompería la entrada, y quien tiene prisa toca la
+      // pantalla por instinto antes de buscar una cruz.
+      role="button"
+      tabIndex={0}
+      aria-label="Saltar la introducción"
+      onClick={finish}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') finish();
+      }}
+      className={`fixed inset-0 z-[100] cursor-pointer bg-[#f5f3ed] transition-opacity duration-500 ${
         phase === 'fading' ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >

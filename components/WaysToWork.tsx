@@ -46,6 +46,36 @@ export const WaysToWork: React.FC = () => {
         >
           {waysToWork.intro}
         </motion.p>
+
+        {/* El alcance en cifras, justo antes del último botón: es donde alguien
+            decide y donde quiere saber la escala. Misma pieza que la banda de
+            trayectoria del hero — cifra en serif cursiva sobre rótulo pequeño,
+            separadas por hairline — para no introducir un formato nuevo. */}
+        <motion.div {...rise(0.32)} className="mx-auto mt-14 max-w-[52rem] md:mt-18">
+          <div className="border-t border-[#1a1918]/12 pt-9 text-center md:pt-11">
+            <div className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
+              {waysToWork.scopeLabel}
+            </div>
+            <div className="mt-8 grid grid-cols-3 md:mt-10">
+              {waysToWork.scopeItems.map((item, i) => (
+                <div
+                  key={item.label}
+                  className={`px-2 ${i === 0 ? '' : 'border-l border-[#1a1918]/12'}`}
+                >
+                  <div className="font-serif text-[30px] font-normal italic leading-none text-[#1a1918] md:text-[40px]">
+                    {item.value}
+                  </div>
+                  <div className="mx-auto mt-3 max-w-[14ch] font-sans text-[11px] uppercase leading-[1.35] tracking-[0.14em] text-[#5a5854] md:text-[12px]">
+                    {item.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mx-auto mt-9 max-w-[48ch] font-sans text-[13px] leading-relaxed text-[#5a5854] md:mt-10 md:text-[14px]">
+              {waysToWork.scopeNote}
+            </p>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

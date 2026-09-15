@@ -8,6 +8,11 @@ import { toTitleCase } from '../src/lib/hotelName';
 interface HotelDetailProps {
   story: HotelStory;
   onBack: () => void;
+  /** La galería era el único sitio de la web sin ninguna salida comercial, y
+   *  es donde el visitante pasa más tiempo: siete a nueve pantallas de fotos
+   *  y ni un botón. Quien terminaba de verlas convencido tenía que volver al
+   *  menú a buscar por dónde escribir. */
+  onOpenAvailability?: () => void;
   onNavigateStory?: (direction: 'prev' | 'next') => void;
   prevStory?: HotelStory | null;
   nextStory?: HotelStory | null;
@@ -878,6 +883,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   onNavigateStory,
   prevStory,
   nextStory,
+  onOpenAvailability,
 }) => {
   const [creditsOpen, setCreditsOpen] = useState(false);
   const caseStudy = CASE_STUDIES.find((c) => c.hotelId === story.id);
@@ -1066,6 +1072,31 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
           return <Layout photos={photos} y={yTransforms} video={story.galleryVideo} />;
         })()}
       </section>
+
+      {/* Salida comercial al final de la galería. Mismo par de acciones que
+          cierra un caso de estudio: botón negro y enlace subrayado, sin
+          inventar nada nuevo. */}
+      {onOpenAvailability && (
+        <section className="mx-auto max-w-[1600px] px-6 pb-20 text-center md:px-10 md:pb-28 lg:px-16">
+          <h2 className="mx-auto max-w-[22ch] font-serif text-3xl leading-[1.15] text-[#1a1918] md:max-w-none md:text-[2.6rem]">
+            ¿Buscas algo así para tu hotel?
+          </h2>
+          <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-11">
+            <button
+              onClick={onOpenAvailability}
+              className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            >
+              Iniciar un proyecto
+            </button>
+            <Link
+              to="/proyectos"
+              className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
+            >
+              Ver todo el trabajo
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Navigation between hotel portfolios — no re-load, no intro re-play */}
       {onNavigateStory && (prevStory || nextStory) && (
