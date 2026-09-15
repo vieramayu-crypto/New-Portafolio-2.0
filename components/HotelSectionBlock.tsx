@@ -96,7 +96,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
       ref={sectionRef}
       id={`hotel-${story.id}`}
       data-hotel-id={story.id}
-      className="hotel-section-block relative w-full py-16 md:py-28 px-4 md:px-12 lg:px-20 overflow-hidden min-h-[1050px] md:min-h-[1380px]"
+      className="hotel-section-block relative w-full py-16 md:py-28 px-4 md:px-12 lg:px-20 overflow-hidden md:min-h-[1380px]"
     >
       {/* El nombre del hotel lo pone ahora la ficha que va debajo del bloque
           (en HomeMain), la misma en móvil y en escritorio. Aquí se repetía
@@ -113,11 +113,11 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
           - Expanded height (1320px) gives generous breathing space for each photo.
           - Side padding ensures photos never collide with sticky side labels.
          ========================================================= */}
-      <div className="max-w-[1380px] xl:max-w-[1520px] mx-auto pl-6 md:pl-28 lg:pl-36 pr-6 md:pr-28 lg:pr-36 min-h-[980px] md:min-h-[1320px] relative">
+      <div className="relative mx-auto aspect-[124/165] max-w-[1380px] pl-4 pr-4 md:aspect-auto md:min-h-[1320px] md:pl-28 md:pr-28 lg:pl-36 lg:pr-36 xl:max-w-[1520px]">
         
         {/* VARIANT 0: Giant Hero VERTICAL (left ~68%) + Top-Right Floating + Bottom-Right Overlap (~48%) */}
         {variant === 0 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Giant Hero VERTICAL */}
             {photos[0] && (
               <motion.div
@@ -130,7 +130,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -157,7 +157,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[34%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute right-[0%] top-[2%] w-[34%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -184,7 +184,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute right-0 md:right-[2%] top-0 md:top-[58%] w-full md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute right-[2%] top-[58%] w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -203,7 +203,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 1: Giant Hero SQUARE (right ~68%) + Top-Left Detail + Bottom-Left Overlap (~46%) */}
         {variant === 1 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Top-Left Floating Detail */}
             {photos[0] && (
               <motion.div
@@ -216,7 +216,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[36%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[0%] top-[2%] w-[36%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -243,7 +243,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute right-[0%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -270,7 +270,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute left-0 md:left-[4%] top-0 md:top-[48%] w-full md:w-[46%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute left-[4%] top-[48%] w-[46%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -289,7 +289,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 2: Giant Hero VERTICAL (left ~68%) + Top-Right Landscape + Bottom-Right Portrait (~42%) */}
         {variant === 2 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Giant Hero VERTICAL */}
             {photos[0] && (
               <motion.div
@@ -302,7 +302,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -329,7 +329,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[38%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute right-[0%] top-[2%] w-[38%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -356,7 +356,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute right-0 md:right-[2%] top-0 md:top-[58%] w-full md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute right-[2%] top-[58%] w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -375,7 +375,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 3: Giant Hero SQUARE (center/right ~68%) + Left Top Floating + Bottom Right Overlap (~44%) */}
         {variant === 3 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Left Top Floating Portrait */}
             {photos[0] && (
               <motion.div
@@ -388,7 +388,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[4%] w-full md:w-[32%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-30"
+                className="absolute left-[0%] top-[4%] w-[32%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-30"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -415,7 +415,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute left-0 md:left-[22%] top-0 md:top-[2%] w-full md:w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[22%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -442,7 +442,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[52%] w-full md:w-[44%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute right-[0%] top-[52%] w-[44%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -461,7 +461,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 4: Top Floating + Giant Hero VERTICAL (bottom left ~66%) + Bottom-Right Floating (~38%) */}
         {variant === 4 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Top Floating Landscape */}
             {photos[0] && (
               <motion.div
@@ -474,7 +474,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[20%] top-0 md:top-[4%] w-full md:w-[60%] aspect-[16/9] shadow-xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[20%] top-[4%] w-[60%] aspect-[16/9] shadow-xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -501,7 +501,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[26%] w-full md:w-[66%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-20"
+                className="absolute left-[0%] top-[26%] w-[66%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -528,7 +528,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[44%] w-full md:w-[38%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10"
+                className="absolute right-[0%] top-[44%] w-[38%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -547,7 +547,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 5: Giant Hero VERTICAL (right ~58%) + Top-Left Detail + Bottom-Left Landscape (~48%) */}
         {variant === 5 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Top-Left Floating Detail */}
             {photos[0] && (
               <motion.div
@@ -560,7 +560,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[4%] w-full md:w-[32%] aspect-square shadow-md group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[0%] top-[4%] w-[32%] aspect-square shadow-md group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -587,7 +587,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[58%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute right-[0%] top-[2%] w-[58%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -614,7 +614,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute left-0 md:left-[2%] top-0 md:top-[48%] w-full md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute left-[2%] top-[48%] w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -633,7 +633,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 6: Giant Hero VERTICAL (left ~68%) + Right Top Floating + Bottom Center Portrait (~42%) */}
         {variant === 6 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Giant Hero VERTICAL (~68% width) */}
             {photos[0] && (
               <motion.div
@@ -646,7 +646,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -673,7 +673,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[36%] aspect-[3/4] shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute right-[0%] top-[2%] w-[36%] aspect-[3/4] shadow-lg group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -700,7 +700,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute left-0 md:left-[30%] top-0 md:top-[56%] w-full md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute left-[30%] top-[56%] w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
@@ -719,7 +719,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
         {/* VARIANT 7: Giant Hero SQUARE (right ~68%) + Top Left Floating + Bottom Left Landscape (~48%) */}
         {variant === 7 && (
-          <div className="relative w-full h-full min-h-[980px] md:min-h-[1320px] flex flex-col md:block">
+          <div className="relative block h-full w-full md:min-h-[1320px]">
             {/* Photo 1: Top Left Floating Detail */}
             {photos[0] && (
               <motion.div
@@ -732,7 +732,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[2%] w-full md:w-[32%] aspect-square shadow-lg group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute left-[0%] top-[2%] w-[32%] aspect-square shadow-lg group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
@@ -759,7 +759,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="relative md:absolute right-0 md:right-[0%] top-0 md:top-[2%] w-full md:w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 mb-8 md:mb-0 z-10"
+                className="absolute right-[0%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
@@ -786,7 +786,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="relative md:absolute left-0 md:left-[0%] top-0 md:top-[56%] w-full md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className="absolute left-[0%] top-[56%] w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
               >
                 <picture>
                   <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
