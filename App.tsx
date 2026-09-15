@@ -49,7 +49,7 @@ const LEGACY_HOTEL_IDS: Record<string, string> = {
 
 /** Ficha de un proyecto de Trabajo, alcanzable por URL propia
  *  (/trabajo/:id) además de por clic desde Inicio. */
-const WorkProjectRoute: React.FC = () => {
+const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpenAvailability }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { hotels: hotelContent } = useSiteContent();
@@ -82,6 +82,7 @@ const WorkProjectRoute: React.FC = () => {
       }
       prevStory={prevStory}
       nextStory={nextStory}
+      onOpenAvailability={onOpenAvailability}
     />
   );
 };
@@ -160,7 +161,7 @@ const AppShell: React.FC = () => {
             <Route path="/proyectos" element={<ProjectsPage onOpenAvailability={openAvailability} />} />
             <Route path="/acerca-de" element={<About onOpenAvailability={openAvailability} />} />
             <Route path="/contacto" element={<Contact onOpen={openAvailability} />} />
-            <Route path="/trabajo/:id" element={<WorkProjectRoute />} />
+            <Route path="/trabajo/:id" element={<WorkProjectRoute onOpenAvailability={openAvailability} />} />
             <Route path="/proyecto/:id" element={<ProjectCaseStudy onOpenAvailability={openAvailability} />} />
             <Route
               path="*"

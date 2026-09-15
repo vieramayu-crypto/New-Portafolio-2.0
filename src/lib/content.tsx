@@ -77,6 +77,13 @@ export interface SiteContent {
     heading: string;
     intro: string;
     items: TitledItem[];
+    /** El alcance real de un rodaje, en cifras. En toda la web no había ni un
+     *  dato de entrega: el comprador no podía imaginarse el paquete, y quien no
+     *  se lo imagina no pide presupuesto. El dato ya existía, enterrado en el
+     *  paso 03 de dos casos de estudio. */
+    scopeLabel: string;
+    scopeNote: string;
+    scopeItems: MilestoneItem[];
     ctaLabel: string;
   };
   valueBlock: {
@@ -201,23 +208,23 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   whyUs: {
     heading: 'Por qué Mayu Travel',
-    intro: 'Dos personas, cada una con una responsabilidad clara.',
+    intro: 'Cuatro cosas que no salen en las fotos.',
     items: [
       {
-        title: 'Fotografía y dirección creativa',
-        description: 'Mayurlin define el estilo visual y dirige la fotografía.',
+        title: 'Sin intermediarios',
+        description: 'Los dos que ves aquí son los dos que llegan a tu hotel. Nada se subcontrata.',
       },
       {
-        title: 'Producción audiovisual',
-        description: 'Yerfran se encarga de la grabación y edición de vídeo.',
+        title: 'Espacios con alguien dentro',
+        description: 'La diferencia entre enseñar una habitación y enseñar una estancia. Es lo que hace que alguien reserve.',
       },
       {
-        title: 'Presencia en cámara',
-        description: 'Mayurlin puede aparecer en las escenas acordadas.',
+        title: 'Un hotel en marcha',
+        description: 'Treinta y cinco propiedades nos han enseñado a rodar sin interrumpir el servicio ni a los huéspedes.',
       },
       {
-        title: 'Trato directo',
-        description: 'Trabajas con nosotros durante todo el proyecto.',
+        title: 'Vuelven a llamarnos',
+        description: 'Cuatro hoteles han repetido. GPRO Valparaíso, tres veces.',
       },
     ],
     ctaLabel: 'Conocer al equipo',
@@ -241,6 +248,13 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
     ],
     ctaLabel: 'Iniciar un proyecto',
+    scopeLabel: 'Un rodaje tipo',
+    scopeNote: 'Para hacerte una idea antes de escribir. Cada proyecto se ajusta a lo que el hotel necesita.',
+    scopeItems: [
+      { value: '3–5', label: 'días en la propiedad' },
+      { value: '40–50', label: 'fotografías' },
+      { value: '3', label: 'piezas de vídeo vertical' },
+    ],
   },
   valueBlock: {
     claim: 'Una producción, dos destinos.',
@@ -624,6 +638,18 @@ function mergeContent(fetched: unknown): SiteContent {
         : DEFAULT_CONTENT.waysToWork.heading,
       intro: isNonEmptyString(f.waysToWork?.intro) ? f.waysToWork!.intro : DEFAULT_CONTENT.waysToWork.intro,
       items: wayToWorkItems,
+      scopeLabel: isNonEmptyString(f.waysToWork?.scopeLabel)
+        ? f.waysToWork!.scopeLabel
+        : DEFAULT_CONTENT.waysToWork.scopeLabel,
+      scopeNote: isNonEmptyString(f.waysToWork?.scopeNote)
+        ? f.waysToWork!.scopeNote
+        : DEFAULT_CONTENT.waysToWork.scopeNote,
+      scopeItems:
+        Array.isArray(f.waysToWork?.scopeItems) &&
+        f.waysToWork!.scopeItems.every(isMilestoneItem) &&
+        f.waysToWork!.scopeItems.length > 0
+          ? f.waysToWork!.scopeItems
+          : DEFAULT_CONTENT.waysToWork.scopeItems,
       ctaLabel: isNonEmptyString(f.waysToWork?.ctaLabel)
         ? f.waysToWork!.ctaLabel
         : DEFAULT_CONTENT.waysToWork.ctaLabel,

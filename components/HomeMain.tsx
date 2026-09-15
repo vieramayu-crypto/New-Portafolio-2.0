@@ -371,12 +371,11 @@ export const HomeMain: React.FC<HomeMainProps> = ({
         </div>
       </div>
 
-      <WhyUs onNavigate={onNavigate} />
-      <WaysToWork />
-
-      {/* Autoridad, después de haber enseñado el trabajo entero: primero las
-          voces de los equipos, después las marcas. Los dos bloques son los
-          originales — sólo cambian de sitio, desde Contacto hasta aquí. */}
+      {/* Prueba social justo después de la vitrina de hoteles. Estaba en la
+          pantalla 15 de 17,6 y casi nadie llegaba: quien acaba de ver el
+          trabajo se pregunta quién más los ha contratado, y esa pregunta se
+          contesta aquí y no seis pantallas más abajo. Primero las voces de los
+          equipos, después las marcas. */}
       <section className="w-full bg-[#fbfaf6] pt-8 pb-16 md:pt-12 md:pb-24">
         <div className="mx-auto max-w-6xl px-6 md:px-12">
           {/* Sin titular grande: competia en tamano con la propia cita, que es
@@ -391,6 +390,11 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       </section>
 
       <BrandsMarquee limit={10} />
+
+      {/* El argumento cierra la página: por qué nosotros y cómo se trabaja,
+          pegados al último botón, que es donde alguien decide. */}
+      <WhyUs onNavigate={onNavigate} />
+      <WaysToWork />
 
       <ClosingCta onOpenAvailability={onOpenAvailability} onNavigate={onNavigate} />
     </div>

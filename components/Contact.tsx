@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { FAQ } from './FAQ';
+import { BrandsMarquee } from './BrandsMarquee';
 import { useSiteContent } from '../src/lib/content';
 
 interface ContactProps {
@@ -82,6 +83,12 @@ export const Contact: React.FC<ContactProps> = ({ onOpen }) => {
             </motion.div>
           </div>
         </section>
+
+      {/* Quien llega aquí ya está decidido: solo falta quitarle la última duda.
+          La página tenía 29 palabras y ningún argumento. La banda de marcas ya
+          existe y es la prueba más compacta que hay — con quién se ha
+          trabajado, sin añadir una línea de texto más que leer. */}
+      <BrandsMarquee />
 
       <FAQ />
     </div>
