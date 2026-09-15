@@ -1,10 +1,19 @@
-/** Composición del correo de solicitud.
+/** Entrega de la solicitud.
  *
- *  El sitio es estático (GitHub Pages): no hay servidor que reciba un POST,
- *  así que la solicitud se entrega abriendo el cliente de correo del visitante
- *  con todo el mensaje ya escrito. Antes de esto los dos formularios sólo
- *  marcaban un estado local y el mensaje se perdía sin que nadie lo recibiera.
+ *  El sitio es estático y no tiene servidor propio, así que el formulario se
+ *  entrega a Web3Forms, que lo reenvía al correo de Mayurlin. La clave de
+ *  acceso va a la vista en el código del navegador: es así por diseño, no es
+ *  una contraseña de la cuenta, sólo identifica a qué formulario pertenece el
+ *  envío, y se puede regenerar desde su panel.
+ *
+ *  Si el envío falla por lo que sea -- sin red, el formulario restringido a
+ *  otro dominio, el servicio caído -- se cae al `mailto:` de siempre, que abre
+ *  el correo del visitante con todo escrito. Así no se pierde ninguna consulta
+ *  mientras el dominio definitivo no esté puesto.
  */
+
+const WEB3FORMS_KEY = '9b7fed74-124f-416b-ad48-57237c33b3f7';
+const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
 
 export interface InquiryFields {
   name: string;
@@ -50,6 +59,39 @@ export function buildInquiryMailto(to: string, f: InquiryFields): string {
   return `mailto:${to}?subject=${encodeURIComponent(buildInquirySubject(f))}&body=${encodeURIComponent(
     buildInquiryBody(f)
   )}`;
+}
+
+export type InquiryOutcome = 'enviado' | 'enviado-sin-adjunto' | 'correo';
+
+/** Entrega la consulta. Devuelve por qué vía se fue, para poder decírselo al
+ *  visitante sin mentirle. */
+export async function sendInquiry(
+  to: string,
+  f: InquiryFields,
+  file?: File | null
+): Promise<InquiryOutcome> {
+  const post = async (conAdjunto: boolean): Promise<boolean> => {
+    const datos = new FormData();
+    datos.append('access_key', WEB3FORMS_KEY);
+    datos.append('subject', buildInquirySubject(f));
+    datos.append('from_name', f.name.trim() || 'Consulta desde la web');
+    datos.append('replyto', f.email.trim());
+    datos.append('message', buildInquiryBody(f));
+    if (conAdjunto && file) datos.append('attachment', file);
+    try {
+      const r = await fetch(WEB3FORMS_URL, { method: 'POST', body: datos });
+      return r.ok;
+    } catch {
+      return false;
+    }
+  };
+
+  if (await post(true)) return file ? 'enviado' : 'enviado';
+  // Un adjunto puede pasarse de tamaño o no estar cubierto por el plan: antes
+  // de darlo por perdido se reintenta sin él, que es lo que de verdad importa.
+  if (file && (await post(false))) return 'enviado-sin-adjunto';
+  openInquiryMail(to, f);
+  return 'correo';
 }
 
 /** Abre el cliente de correo. Devuelve el texto compuesto para poder mostrarlo

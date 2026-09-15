@@ -31,27 +31,62 @@ interface HotelCarouselProps {
  *  claro cuál es cuál y cómo pasar de una a otra (flechas o deslizando). */
 const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNavigate }) => {
   const total = stories.length;
-  const touchStartX = useRef<number | null>(null);
+  const pistaRef = useRef<HTMLDivElement>(null);
+  const arrastreX = useRef<number | null>(null);
   // Un deslizar que empieza justo sobre la miniatura lateral también
   // dispara su clic (tap) al soltar: este candado evita contar el cambio
   // de hotel dos veces.
   const justSwiped = useRef(false);
+  // El gesto de dos dedos del trackpad llega en muchos eventos pequeños, no en
+  // uno grande: hay que sumarlos hasta el umbral o el carrusel saltaría cinco
+  // hoteles de un solo gesto.
+  const ruedaAcumulada = useRef(0);
+  const ruedaBloqueada = useRef(false);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+  const navegar = (dir: 'prev' | 'next') => {
+    justSwiped.current = true;
+    onNavigate(dir);
+    window.setTimeout(() => {
+      justSwiped.current = false;
+    }, 400);
   };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const delta = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(delta) > 40) {
-      justSwiped.current = true;
-      onNavigate(delta > 0 ? 'prev' : 'next');
-      setTimeout(() => {
-        justSwiped.current = false;
-      }, 400);
-    }
-    touchStartX.current = null;
+
+  // Arrastre con el dedo y con el ratón, en el mismo sitio: Pointer Events
+  // cubre los dos y evita tener dos caminos que mantener.
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    arrastreX.current = e.clientX;
   };
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (arrastreX.current === null) return;
+    const delta = e.clientX - arrastreX.current;
+    if (Math.abs(delta) > 40) navegar(delta > 0 ? 'prev' : 'next');
+    arrastreX.current = null;
+  };
+
+  // `wheel` va con `addEventListener` y no como prop de React porque hace falta
+  // `passive: false` para poder cortar el gesto: sin eso, Safari y Chrome se
+  // llevan el deslizamiento horizontal como "volver atrás" en el historial y el
+  // visitante se sale de la web sin querer.
+  useEffect(() => {
+    const nodo = pistaRef.current;
+    if (!nodo) return;
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // scroll vertical: no es para nosotros
+      e.preventDefault();
+      if (ruedaBloqueada.current) return;
+      ruedaAcumulada.current += e.deltaX;
+      if (Math.abs(ruedaAcumulada.current) < 45) return;
+      navegar(ruedaAcumulada.current > 0 ? 'next' : 'prev');
+      ruedaAcumulada.current = 0;
+      ruedaBloqueada.current = true;
+      window.setTimeout(() => {
+        ruedaBloqueada.current = false;
+      }, 320);
+    };
+    nodo.addEventListener('wheel', onWheel, { passive: false });
+    return () => nodo.removeEventListener('wheel', onWheel);
+  }, [onNavigate]);
 
   return (
     // `isolation: isolate` + capa propia por miniatura: en Safari de iOS
@@ -63,9 +98,15 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
     // apilado y dar a cada miniatura su propia capa desde el principio es el
     // remedio conocido para ese fallo.
     <div
-      className="relative h-[230px] w-full select-none overflow-hidden [isolation:isolate] sm:h-[290px]"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      ref={pistaRef}
+      // `touch-action: pan-y` deja pasar el scroll vertical de la página y se
+      // queda con el horizontal, que es el que mueve el carrusel.
+      className="relative h-[230px] w-full cursor-grab touch-pan-y select-none overflow-hidden [isolation:isolate] active:cursor-grabbing sm:h-[290px]"
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => {
+        arrastreX.current = null;
+      }}
     >
       {stories.map((story, i) => {
         let diff = i - active;
