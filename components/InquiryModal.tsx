@@ -69,6 +69,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     email: "",
     propertyName: "",
     location: "",
+    link: "",
     scope: "",
     budget: "",
     message: "",
@@ -261,6 +262,21 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
+                        {/* Instagram y web en una sola casilla: quien contesta
+                            va a abrir una cosa o la otra, y pedir las dos por
+                            separado es una casilla más sin ganar nada. Único
+                            campo opcional del formulario. */}
+                        <Field label="Instagram o web (opcional)" wide>
+                          <input
+                            value={form.link}
+                            onChange={(e) =>
+                              setForm({ ...form, link: e.target.value })
+                            }
+                            placeholder="@tuhotel o tuhotel.com"
+                            className={fieldClass}
+                          />
+                        </Field>
+
                         <Field label="Qué necesitas">
                           <select
                             required
@@ -307,6 +323,12 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             placeholder="Tu objetivo, fechas aproximadas y cualquier contexto que creas útil."
                             className={`${fieldClass} h-48 min-h-[190px] resize-y`}
                           />
+                          {/* El envío abre el correo del visitante con todo
+                              escrito, así que el briefing se adjunta ahí. Se
+                              dice explícitamente porque si no, nadie lo hace. */}
+                          <p className="mt-3 font-sans text-[12px] leading-[1.6] text-[#5a5854]">
+                            Si ya tienes un briefing, puedes adjuntarlo al correo que se abrirá al enviar.
+                          </p>
                         </Field>
 
                         <div className="flex justify-center pt-4 md:col-span-2">

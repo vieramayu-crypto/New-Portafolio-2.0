@@ -171,10 +171,10 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
                 </Link>
 
                 <div className={`md:col-span-5 ${photoFirst ? '' : 'md:order-1'}`}>
-                  <div className="font-sans text-[10px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[11px]">
-                    {projects.galleryLabel}
-                  </div>
-                  <h2 className="mt-3 font-serif text-2xl leading-[1.2] md:mt-4 md:text-[2rem]">
+                  {/* Sin rótulo: la sección de arriba ya dice que esto es el
+                      portafolio, y "Selección de imágenes" encima de cada foto
+                      solo repetía lo evidente. */}
+                  <h2 className="font-serif text-2xl leading-[1.2] md:text-[2rem]">
                     {toTitleCase(story.hotelName)}
                   </h2>
                   <div className="mt-2.5 font-sans text-[12px] uppercase tracking-[0.2em] text-[#5a5854]">

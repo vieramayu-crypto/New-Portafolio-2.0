@@ -16,6 +16,10 @@ export interface InquiryFields {
   availabilityDate?: string;
   phone?: string;
   location?: string;
+  /** Instagram o web de la propiedad, en un solo campo: quien contesta va a
+   *  mirar una cosa o la otra, y pedir las dos por separado es una casilla
+   *  más que rellenar sin ganar nada. */
+  link?: string;
   scope?: string;
   budget?: string;
   message?: string;
@@ -34,6 +38,7 @@ export function buildInquiryBody(f: InquiryFields): string {
   if (f.phone?.trim()) lines.push(`Teléfono: ${f.phone.trim()}`);
   lines.push(`Propiedad: ${f.propertyName.trim()}`);
   if (f.location?.trim()) lines.push(`Ubicación: ${f.location.trim()}`);
+  if (f.link?.trim()) lines.push(`Instagram o web: ${f.link.trim()}`);
   if (f.scope?.trim()) lines.push(`Servicio: ${f.scope.trim()}`);
   if (f.budget?.trim()) lines.push(`Presupuesto estimado: ${f.budget.trim()}`);
   if (f.availabilityDate?.trim()) lines.push(`Fechas en consideración: ${f.availabilityDate.trim()}`);
