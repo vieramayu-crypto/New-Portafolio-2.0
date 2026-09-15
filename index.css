@@ -234,7 +234,7 @@ body {
   --mt-sheen-delay: 0s;
   --mt-sheen-tilt: 12deg;
   --mt-sheen-width: 52%;
-  --mt-sheen-blur: 10px;
+  --mt-sheen-blur: 24px;
 }
 
 .mt-glass-async > *:nth-child(4n + 1) {
@@ -242,7 +242,7 @@ body {
   --mt-sheen-delay: -2s;
   --mt-sheen-tilt: 9deg;
   --mt-sheen-width: 46%;
-  --mt-sheen-blur: 12px;
+  --mt-sheen-blur: 22px;
 }
 
 .mt-glass-async > *:nth-child(4n + 2) {
@@ -250,7 +250,7 @@ body {
   --mt-sheen-delay: -11s;
   --mt-sheen-tilt: -7deg;
   --mt-sheen-width: 58%;
-  --mt-sheen-blur: 8px;
+  --mt-sheen-blur: 26px;
 }
 
 .mt-glass-async > *:nth-child(4n + 3) {
@@ -258,7 +258,7 @@ body {
   --mt-sheen-delay: -5s;
   --mt-sheen-tilt: 14deg;
   --mt-sheen-width: 40%;
-  --mt-sheen-blur: 14px;
+  --mt-sheen-blur: 20px;
 }
 
 .mt-glass-async > *:nth-child(4n + 4) {
@@ -266,11 +266,19 @@ body {
   --mt-sheen-delay: -17s;
   --mt-sheen-tilt: -11deg;
   --mt-sheen-width: 64%;
-  --mt-sheen-blur: 9px;
+  --mt-sheen-blur: 28px;
 }
 
 /* Longhand a proposito: el atajo `animation` de `.mt-glass::after` pondria el
-   delay a cero otra vez. */
+   delay a cero otra vez.
+
+   Y el reflejo se rehace entero para estas cajas. El de `.mt-glass` esta
+   calibrado para la banda del hero: 74px de alto, muy ancha, y el destello la
+   cruza en un instante. En una tarjeta de 100x340 ese mismo destello ocupa la
+   caja de arriba abajo y con un nucleo al 92% de blanco se lee como una barra
+   de luz solida, no como un reflejo. Aqui el nucleo baja a .34 y el desenfoque
+   sube por encima de los 20px: pasa a ser un resplandor que atraviesa el
+   cristal, que es lo que tiene que parecer. */
 .mt-glass-async > *::after {
   animation-name: mt-glass-reflection;
   animation-duration: var(--mt-sheen-dur);
@@ -280,6 +288,16 @@ body {
   transform: rotate(var(--mt-sheen-tilt));
   width: var(--mt-sheen-width);
   filter: blur(var(--mt-sheen-blur));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(255, 255, 255, 0.13) 38%,
+    rgba(255, 255, 255, 0.34) 50%,
+    rgba(255, 255, 255, 0.13) 62%,
+    rgba(255, 255, 255, 0.03) 80%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 /* Variante clara: el modal de Contacto vive sobre crema, no sobre una foto. */

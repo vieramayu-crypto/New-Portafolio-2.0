@@ -143,10 +143,15 @@ const VerticalCard: React.FC<VerticalCardProps> = ({
             <PlayIcon className="h-3.5 w-3.5 translate-x-[1px] text-[#1a1918] sm:h-5 sm:w-5" />
           </span>
         </div>
-        <div className="absolute inset-x-0 bottom-0 flex justify-center p-2 sm:p-3 md:p-4">
+        {/* La caja del nombre mide siempre lo mismo en las cuatro tarjetas:
+            ancho completo del hueco y alto reservado para dos renglones. Antes
+            se ajustaba al texto, y como unos nombres caben en una línea y
+            otros en dos, las cuatro cajas salían de tamaños distintos y el
+            conjunto se veía descuadrado. */}
+        <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 md:p-4">
           <Link
             to={`/trabajo/${hotelId}`}
-            className="mt-glass mt-glass-light relative overflow-hidden rounded-md px-2.5 py-1.5 text-center text-[8px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:px-4 sm:py-2 sm:text-[11px] sm:tracking-[0.15em] md:text-xs"
+            className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[8px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[11px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs"
           >
             {hotelName}
           </Link>
