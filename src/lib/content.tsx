@@ -155,7 +155,6 @@ export interface SiteContent {
     gallerySectionLabel: string;
     gallerySectionLine: string;
     caseLabel: string;
-    galleryLabel: string;
     caseLinkLabel: string;
     galleryLinkLabel: string;
     closingHeading: string;
@@ -382,7 +381,6 @@ export const DEFAULT_CONTENT: SiteContent = {
     gallerySectionLabel: 'Portafolio',
     gallerySectionLine: 'El resto del trabajo, en imágenes.',
     caseLabel: 'Proyecto',
-    galleryLabel: 'Selección de imágenes',
     caseLinkLabel: 'Ver proyecto',
     galleryLinkLabel: 'Ver galería',
     closingHeading: 'Cada proyecto empieza con una conversación.',
@@ -763,9 +761,6 @@ function mergeContent(fetched: unknown): SiteContent {
       caseLabel: isNonEmptyString(f.projects?.caseLabel)
         ? f.projects!.caseLabel
         : DEFAULT_CONTENT.projects.caseLabel,
-      galleryLabel: isNonEmptyString(f.projects?.galleryLabel)
-        ? f.projects!.galleryLabel
-        : DEFAULT_CONTENT.projects.galleryLabel,
       caseLinkLabel: isNonEmptyString(f.projects?.caseLinkLabel)
         ? f.projects!.caseLinkLabel
         : DEFAULT_CONTENT.projects.caseLinkLabel,
