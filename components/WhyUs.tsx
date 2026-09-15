@@ -25,10 +25,7 @@ export const WhyUs: React.FC<WhyUsProps> = ({ onNavigate }) => {
     <section className="w-full bg-[#fbfaf6] py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6 md:px-12">
         <motion.div {...rise(0)} className="mb-14 text-center md:mb-16">
-          <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-            {whyUs.eyebrow}
-          </span>
-          <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-6xl">{whyUs.heading}</h2>
+          <h2 className="font-serif text-4xl text-[#1a1918] md:text-6xl">{whyUs.heading}</h2>
           <p className="mx-auto mt-5 max-w-[48ch] font-serif text-xl leading-snug text-[#1a1918]/80 md:text-2xl">
             {whyUs.intro}
           </p>
@@ -42,7 +39,7 @@ export const WhyUs: React.FC<WhyUsProps> = ({ onNavigate }) => {
               className="mt-glass mt-glass-light relative overflow-hidden rounded-lg p-7 md:p-9"
             >
               <h3 className="font-serif text-xl text-[#1a1918] md:text-2xl">{item.title}</h3>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[15px]">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[16px]">
                 {item.description}
               </p>
             </motion.div>
@@ -52,7 +49,7 @@ export const WhyUs: React.FC<WhyUsProps> = ({ onNavigate }) => {
         <motion.div {...rise(0.3)} className="mt-12 text-center md:mt-14">
           <button
             onClick={() => onNavigate('about')}
-            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
           >
             {whyUs.ctaLabel}
           </button>

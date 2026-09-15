@@ -81,7 +81,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-honeymoon-petra',
     quote:
-      'Their unique perspective and use of captivating imagery have been invaluable in sharing our story and reaching new audiences. Their positive outlook has captured the essence of our brand.',
+      'Su mirada y sus imágenes nos han ayudado muchísimo a contar nuestra historia y a llegar a públicos nuevos. Han sabido capturar la esencia de la marca.',
     author: 'Aias Mavrikis',
     role: 'Equipo de Marketing',
     brandName: 'Honeymoon Petra Villas',
@@ -90,7 +90,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-gpro',
     quote:
-      'Thank you both for, as always, the professionalism and craft you have shown throughout. And what can we say about the outstanding material you have left us. It will be a pleasure to have you back in our house.',
+      'Gracias a los dos, como siempre, por el profesionalismo y el oficio que han demostrado en todo momento. Y qué decir del material tan bueno que nos han dejado. Será un placer teneros de vuelta en nuestra casa.',
     author: 'Francisco Dominguez',
     role: 'Director de Marketing',
     brandName: 'GPRO Valparaíso Palace & Spa',
@@ -100,7 +100,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-ritz-carlton',
     quote:
-      'On behalf of the department, I would like to thank her for her interest in the whole Ritz-Carlton, Abama project and in our gastronomic offering, and for the wonderful content she created during her stay. We hope to have her back with us in the future.',
+      'En nombre del departamento, quiero agradecerle el interés por todo el proyecto de Ritz-Carlton, Abama y por nuestra propuesta gastronómica, y el contenido tan bonito que creó durante su estancia. Esperamos tenerla de vuelta con nosotros.',
     author: 'Jose Lorente',
     role: 'Equipo de Marketing',
     brandName: 'The Ritz-Carlton Tenerife, Abama',
@@ -109,7 +109,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-costa-magica',
     quote:
-      'Thank you so much for your work. The photos and videos are simply incredible. We gained a great many new followers.',
+      'Muchísimas gracias por vuestro trabajo. Las fotos y los vídeos son increíbles. Hemos ganado muchísimos seguidores nuevos.',
     author: 'Katerina',
     role: 'Community Manager',
     brandName: 'Costa Mágica',
@@ -118,7 +118,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-numa',
     quote:
-      'We have just reviewed the content and it is absolutely beautiful. Thank you for all the effort, the care and the love you put into it.',
+      'Acabamos de ver el contenido y es precioso. Gracias por todo el esfuerzo, el cuidado y el cariño que le habéis puesto.',
     author: 'Luna Nemeth',
     role: 'Equipo de Marketing',
     brandName: 'Numa',
@@ -128,7 +128,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-welmoon',
     quote:
-      'Incredible content. You are true professionals. You will go far putting this much care into what you do. We would be delighted to welcome you again.',
+      'Un contenido increíble. Sois unos verdaderos profesionales. Vais a llegar lejos poniendo este cuidado en lo que hacéis. Nos encantaría recibiros otra vez.',
     author: 'Juan',
     role: 'Equipo de Marketing',
     brandName: 'Welmoon Villas Paisaje',
@@ -137,7 +137,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-holiday-inn',
     quote:
-      'We are very happy with how the content turned out. Very pleased with the quality and with the results of their creativity.',
+      'Estamos muy contentos con cómo ha quedado el contenido. Muy satisfechos con la calidad y con el resultado de su creatividad.',
     author: 'Zara',
     role: 'Equipo de Marketing',
     brandName: 'Holiday Inn Express Amsterdam',
@@ -146,7 +146,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 't-coeo',
     quote:
-      'The photos are beautiful, and as content for all our channels they work extremely well. You will be seeing them everywhere.',
+      'Las fotos son preciosas, y como contenido para todos nuestros canales funcionan estupendamente. Las vais a ver por todas partes.',
     author: 'María Andrea',
     role: 'Equipo de Marketing',
     brandName: 'COEO Stay & Share',

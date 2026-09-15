@@ -18,7 +18,7 @@ export const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaborat
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(circle_at_30%_20%,#f5f3ed,#e8e5dc)] px-6 text-center">
             <span className="font-serif text-3xl text-[#1a1918]/25">MV</span>
-            <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#5a5854]">
+            <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-[#5a5854]">
               Material en preparación
             </span>
           </div>

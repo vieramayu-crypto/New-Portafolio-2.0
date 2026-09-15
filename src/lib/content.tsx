@@ -62,13 +62,11 @@ export interface SiteContent {
     secondaryLabel: string;
   };
   whatWeCreate: {
-    eyebrow: string;
     heading: string;
     items: TitledItem[];
     ctaLabel: string;
   };
   whyUs: {
-    eyebrow: string;
     heading: string;
     intro: string;
     items: TitledItem[];
@@ -140,7 +138,6 @@ export interface SiteContent {
     steps: HowWeWorkStep[];
   };
   faq: {
-    eyebrow: string;
     heading: string;
     questions: FaqEntry[];
   };
@@ -149,7 +146,6 @@ export interface SiteContent {
    *  Inicio entero. */
   projects: {
     heading: string;
-    intro: string;
     /** Distingue el proyecto documentado de la galería: el comprador no debe
      *  esperar el mismo nivel de detalle en las nueve propiedades. Los dos
      *  rótulos de sección separan físicamente una cosa de la otra, porque
@@ -183,7 +179,6 @@ export const DEFAULT_CONTENT: SiteContent = {
     secondaryLabel: 'Ver proyectos',
   },
   whatWeCreate: {
-    eyebrow: 'Qué producimos',
     heading: 'Qué creamos',
     items: [
       {
@@ -206,7 +201,6 @@ export const DEFAULT_CONTENT: SiteContent = {
     ctaLabel: 'Iniciar un proyecto',
   },
   whyUs: {
-    eyebrow: 'Diferenciación',
     heading: 'Por qué Mayu Travel',
     intro: 'Dos personas, cada una con una responsabilidad clara.',
     items: [
@@ -352,7 +346,6 @@ export const DEFAULT_CONTENT: SiteContent = {
     ],
   },
   faq: {
-    eyebrow: 'Información práctica',
     heading: 'Preguntas frecuentes.',
     questions: [
       {
@@ -384,11 +377,10 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   projects: {
     heading: 'Proyectos y portafolio',
-    intro: 'Los proyectos enseñan cómo trabajamos. El portafolio, qué hacemos.',
     caseSectionLabel: 'Proyectos',
-    caseSectionLine: 'Cómo trabajamos, contado de principio a fin.',
+    caseSectionLine: 'Un rodaje contado de principio a fin.',
     gallerySectionLabel: 'Portafolio',
-    gallerySectionLine: 'Qué hacemos, en imágenes.',
+    gallerySectionLine: 'El resto del trabajo, en imágenes.',
     caseLabel: 'Proyecto',
     galleryLabel: 'Selección de imágenes',
     caseLinkLabel: 'Ver proyecto',
@@ -611,9 +603,6 @@ function mergeContent(fetched: unknown): SiteContent {
         : DEFAULT_CONTENT.hero.secondaryLabel,
     },
     whatWeCreate: {
-      eyebrow: isNonEmptyString(f.whatWeCreate?.eyebrow)
-        ? f.whatWeCreate!.eyebrow
-        : DEFAULT_CONTENT.whatWeCreate.eyebrow,
       heading: isNonEmptyString(f.whatWeCreate?.heading)
         ? f.whatWeCreate!.heading
         : DEFAULT_CONTENT.whatWeCreate.heading,
@@ -623,7 +612,6 @@ function mergeContent(fetched: unknown): SiteContent {
         : DEFAULT_CONTENT.whatWeCreate.ctaLabel,
     },
     whyUs: {
-      eyebrow: isNonEmptyString(f.whyUs?.eyebrow) ? f.whyUs!.eyebrow : DEFAULT_CONTENT.whyUs.eyebrow,
       heading: isNonEmptyString(f.whyUs?.heading) ? f.whyUs!.heading : DEFAULT_CONTENT.whyUs.heading,
       intro: isNonEmptyString(f.whyUs?.intro) ? f.whyUs!.intro : DEFAULT_CONTENT.whyUs.intro,
       items: whyUsItems,
@@ -753,7 +741,6 @@ function mergeContent(fetched: unknown): SiteContent {
       steps: howWeWorkSteps,
     },
     faq: {
-      eyebrow: isNonEmptyString(f.faq?.eyebrow) ? f.faq!.eyebrow : DEFAULT_CONTENT.faq.eyebrow,
       heading: isNonEmptyString(f.faq?.heading) ? f.faq!.heading : DEFAULT_CONTENT.faq.heading,
       questions: faqQuestions,
     },
@@ -773,7 +760,6 @@ function mergeContent(fetched: unknown): SiteContent {
       heading: isNonEmptyString(f.projects?.heading)
         ? f.projects!.heading
         : DEFAULT_CONTENT.projects.heading,
-      intro: isNonEmptyString(f.projects?.intro) ? f.projects!.intro : DEFAULT_CONTENT.projects.intro,
       caseLabel: isNonEmptyString(f.projects?.caseLabel)
         ? f.projects!.caseLabel
         : DEFAULT_CONTENT.projects.caseLabel,

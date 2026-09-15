@@ -239,10 +239,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
             transition={{ duration: 0.75, ease: [0.4, 0, 0.2, 1] }}
             className="mx-auto max-w-3xl px-6 pb-4 text-center md:pb-10"
           >
-            <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
-              Selección
-            </div>
-            <h2 className="mt-4 font-serif text-3xl leading-[1.15] md:mt-5 md:text-[2.9rem]">
+            <h2 className="font-serif text-3xl leading-[1.15] md:text-[2.9rem]">
               Proyectos destacados
             </h2>
           </motion.div>
@@ -263,7 +260,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                     {toTitleCase(story.hotelName)}
                   </h3>
                   {story.featuredLine && (
-                    <p className="mx-auto mt-3 max-w-[40ch] text-[13px] leading-[1.7] text-[#5a5854] md:text-sm">
+                    <p className="mx-auto mt-3 max-w-[40ch] text-[14px] leading-[1.7] text-[#5a5854] md:text-sm">
                       {story.featuredLine}
                     </p>
                   )}
@@ -271,14 +268,14 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                     {caseStudy && (
                       <Link
                         to={`/proyecto/${caseStudy.slug}`}
-                        className="border-b border-[#1a1918]/65 pb-1.5 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                        className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                       >
                         Ver proyecto
                       </Link>
                     )}
                     <Link
                       to={`/trabajo/${story.id}`}
-                      className="border-b border-[#1a1918]/65 pb-1.5 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                      className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                     >
                       Ver galería
                     </Link>
@@ -293,7 +290,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
           <div className="flex justify-center pt-4 pb-4">
             <Link
               to="/proyectos"
-              className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+              className="inline-block bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
               Ver todos los proyectos
             </Link>
@@ -336,14 +333,14 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                           cristal acababa cruzando la lista como una linea
                           blanca. */}
                       <div className="no-scrollbar max-h-80 space-y-1 overflow-y-auto p-3">
-                      <div className="mb-1 border-b border-[#1a1918]/15 px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854]">
-                        Ir a hotel / cliente ({flagshipStories.length})
+                      <div className="mb-1 border-b border-[#1a1918]/15 px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]">
+                        Ir a un hotel
                       </div>
                       {flagshipStories.map((hotel) => (
                         <button
                           key={hotel.id}
                           onClick={() => scrollToHotel(hotel.id)}
-                          className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between text-xs font-sans transition-colors ${
+                          className={`w-full rounded-lg px-3 py-2.5 text-left font-sans text-xs transition-colors ${
                             currentStory.id === hotel.id
                               ? 'bg-[#1a1918] text-[#fbfaf6] font-medium'
                               : 'text-[#1a1918] hover:bg-white/45'
@@ -351,11 +348,8 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                         >
                           <div>
                             <div className="font-serif text-sm tracking-wide font-medium">{hotel.hotelName}</div>
-                            <div className="text-[10px] text-[#5a5854]">{hotel.location} &bull; {hotel.coupleName}</div>
+                            <div className="text-[11px] text-[#5a5854]">{hotel.location} &bull; {hotel.coupleName}</div>
                           </div>
-                          <span className="text-[10px] tracking-wider uppercase font-mono text-[#5a5854]">
-                            [{hotel.year}]
-                          </span>
                         </button>
                       ))}
                       </div>
@@ -364,9 +358,9 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                           setIsHotelSelectorOpen(false);
                           onOpenWork();
                         }}
-                        className="block w-full border-t border-[#1a1918]/15 px-3 py-3 text-center font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854] transition-colors hover:bg-white/45 hover:text-[#1a1918]"
+                        className="block w-full border-t border-[#1a1918]/15 px-3 py-3 text-center font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854] transition-colors hover:bg-white/45 hover:text-[#1a1918]"
                       >
-                        Ver las nueve propiedades →
+                        Ver todas las propiedades →
                       </button>
                     </motion.div>
                   )}
@@ -388,7 +382,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
           {/* Sin titular grande: competia en tamano con la propia cita, que es
               lo que hay que leer aqui. */}
           <div className="mb-14 text-center">
-            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
+            <span className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
               Lo que dicen los equipos con los que trabajamos
             </span>
           </div>

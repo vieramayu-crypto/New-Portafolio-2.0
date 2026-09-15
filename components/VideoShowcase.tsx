@@ -151,7 +151,7 @@ const VerticalCard: React.FC<VerticalCardProps> = ({
         <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 md:p-4">
           <Link
             to={`/trabajo/${hotelId}`}
-            className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[8px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[11px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs"
+            className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[9px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[12px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs"
           >
             {hotelName}
           </Link>
@@ -213,7 +213,7 @@ export const VideoShowcase: React.FC = () => {
           <h2 className="mx-auto max-w-[20ch] font-serif text-3xl leading-[1.15] text-white md:max-w-none md:text-5xl">
             Vídeos para mostrar la experiencia de tu hotel
           </h2>
-          <p className="mx-auto mt-4 max-w-[46ch] text-[13px] leading-[1.7] text-white/70 md:mt-5 md:text-sm">
+          <p className="mx-auto mt-4 max-w-[46ch] text-[14px] leading-[1.7] text-white/70 md:mt-5 md:text-sm">
             Desde una presentación de la propiedad hasta reels centrados en sus espacios,
             gastronomía o servicio.
           </p>

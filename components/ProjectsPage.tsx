@@ -48,19 +48,15 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
       {/* Apertura */}
       <section className="mx-auto max-w-4xl px-6 pb-10 pt-32 text-center md:px-12 md:pb-14 md:pt-44">
-        {/* El rótulo decía "Portafolio" justo encima de un titular que decía
-            "Proyectos": las dos palabras aparecían juntas sin que nada
-            explicara en qué se diferencian. Ahora el titular las nombra a las
-            dos y el párrafo dice exactamente qué es cada una. */}
+        {/* Solo el titular. Debajo había un párrafo que explicaba qué era un
+            proyecto y qué el portafolio, y las dos secciones de más abajo lo
+            volvían a decir cada una en su sitio: se leía lo mismo tres veces
+            antes de llegar a una foto. La explicación se queda donde hace
+            falta, pegada a lo que nombra. */}
         <motion.div {...rise(0)}>
           <h1 className="font-serif text-[13vw] leading-[1.04] tracking-[-0.03em] sm:text-[9vw] md:text-[5vw]">
             {projects.heading}
           </h1>
-          {/* Medida corta a propósito: son dos frases en paralelo y deben
-              caer en dos renglones, no en un párrafo. */}
-          <p className="mx-auto mt-7 max-w-[34ch] text-[14px] leading-[1.7] text-[#5a5854] md:mt-9 md:max-w-[42ch] md:text-[15px]">
-            {projects.intro}
-          </p>
         </motion.div>
       </section>
 
@@ -71,7 +67,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
           de un vistazo de las galerías que vienen después. */}
       {featuredStories.length > 0 && (
         <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-12 pt-10 text-center md:px-12 md:pb-16 md:pt-14">
-          <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[11px]">
+          <div className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[12px]">
             {projects.caseSectionLabel}
           </div>
           <p className="mx-auto mt-4 max-w-[46ch] font-serif text-lg leading-[1.45] text-[#1a1918] md:text-xl">
@@ -103,29 +99,29 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
                 </Link>
 
                 <div className="mx-auto max-w-4xl px-6 pt-10 text-center md:px-12 md:pt-14">
-                  <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
+                  <div className="font-sans text-[10px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[11px]">
                     {projects.caseLabel}
                   </div>
                   <h2 className="mt-4 font-serif text-3xl leading-[1.15] md:mt-5 md:text-[2.9rem]">
                     {toTitleCase(featured.hotelName)}
                   </h2>
-                  <div className="mt-3 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
+                  <div className="mt-3 font-sans text-[12px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
                     {featured.location} · {featured.country} · {featured.year}
                   </div>
-                  <p className="mx-auto mt-6 max-w-[58ch] text-[13px] leading-[1.75] text-[#5a5854] md:text-sm">
+                  <p className="mx-auto mt-6 max-w-[58ch] text-[14px] leading-[1.75] text-[#5a5854] md:text-sm">
                     {featured.description}
                   </p>
 
                   <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-11">
                     <Link
                       to={`/proyecto/${featuredCase.slug}`}
-                      className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+                      className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
                     >
                       {projects.caseLinkLabel}
                     </Link>
                     <Link
                       to={`/trabajo/${featured.id}`}
-                      className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                      className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                     >
                       {projects.galleryLinkLabel}
                     </Link>
@@ -142,7 +138,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
       {/* A partir de aquí cambia lo que se está mirando, y hay que decirlo:
           una galería sin el relato del encargo detrás no es un proyecto. */}
       <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-4 pt-14 text-center md:px-12 md:pt-18">
-        <div className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[11px]">
+        <div className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[12px]">
           {projects.gallerySectionLabel}
         </div>
         <p className="mx-auto mt-4 max-w-[46ch] font-serif text-lg leading-[1.45] text-[#1a1918] md:text-xl">
@@ -175,21 +171,21 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
                 </Link>
 
                 <div className={`md:col-span-5 ${photoFirst ? '' : 'md:order-1'}`}>
-                  <div className="font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
+                  <div className="font-sans text-[10px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[11px]">
                     {projects.galleryLabel}
                   </div>
                   <h2 className="mt-3 font-serif text-2xl leading-[1.2] md:mt-4 md:text-[2rem]">
                     {toTitleCase(story.hotelName)}
                   </h2>
-                  <div className="mt-2.5 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]">
+                  <div className="mt-2.5 font-sans text-[12px] uppercase tracking-[0.2em] text-[#5a5854]">
                     {story.location} · {story.country}
                   </div>
-                  <p className="mt-5 max-w-[46ch] text-[13px] leading-[1.75] text-[#5a5854]">
+                  <p className="mt-5 max-w-[46ch] text-[14px] leading-[1.75] text-[#5a5854]">
                     {story.description}
                   </p>
                   <Link
                     to={`/trabajo/${story.id}`}
-                    className="mt-6 inline-block border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                    className="mt-6 inline-block border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                   >
                     {projects.galleryLinkLabel}
                   </Link>
@@ -216,7 +212,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
           </h2>
           <button
             onClick={onOpenAvailability}
-            className="mt-9 bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:mt-11 md:px-10 md:py-[1.15rem] md:text-xs"
+            className="mt-9 bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:mt-11 md:px-10 md:py-[1.15rem] md:text-xs"
           >
             {projects.ctaLabel}
           </button>

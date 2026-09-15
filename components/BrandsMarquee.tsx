@@ -36,7 +36,7 @@ const BrandLogo: React.FC<{ brand: (typeof BRANDS)[number] }> = ({ brand }) => (
   <div className="flex flex-col items-center justify-center px-10 md:px-14 shrink-0 text-[#1a1918]/70">
     <span className={brand.className}>{brand.name}</span>
     {brand.sub && (
-      <span className="mt-1 text-[10px] font-sans uppercase tracking-[0.3em] text-[#5a5854]">{brand.sub}</span>
+      <span className="mt-1 text-[11px] font-sans uppercase tracking-[0.3em] text-[#5a5854]">{brand.sub}</span>
     )}
   </div>
 );
@@ -91,13 +91,13 @@ export const BrandsMarquee: React.FC<BrandsMarqueeProps> = ({ limit }) => {
           para caber en una sola: la frase de grupos se queda estrecha con su
           propio ancho y sigue centrada. */}
       <div className="mx-auto mb-11 max-w-4xl px-6 text-center md:mb-16 md:px-12">
-        <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
+        <span className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
           {milestones.eyebrow}
         </span>
-        <p className="mx-auto mt-5 max-w-[46ch] text-balance font-serif text-[17px] font-light leading-[1.5] text-[#1a1918] md:mt-6 md:max-w-[62ch] md:text-[21px] md:leading-[1.45]">
+        <p className="mx-auto mt-5 max-w-[46ch] text-balance font-serif text-[18px] font-light leading-[1.5] text-[#1a1918] md:mt-6 md:max-w-[62ch] md:text-[22px] md:leading-[1.45]">
           {milestones.affiliations}
         </p>
-        <p className="mx-auto mt-4 max-w-[52ch] text-balance font-sans text-[11px] leading-relaxed text-[#5a5854] md:mt-5 md:max-w-none md:text-xs">
+        <p className="mx-auto mt-4 max-w-[52ch] text-balance font-sans text-[12px] leading-relaxed text-[#5a5854] md:mt-5 md:max-w-none md:text-xs">
           {milestones.footnote}
         </p>
       </div>

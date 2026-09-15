@@ -972,7 +972,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
             transition={{ duration: 0.9, ease: 'easeOut', delay: 0.5 }}
             className="pointer-events-none absolute inset-x-0 bottom-0 px-6 pb-6 sm:px-10 sm:pb-8 md:px-16"
           >
-            <div className="flex flex-wrap items-baseline justify-center gap-x-6 gap-y-1 text-[9px] font-sans uppercase tracking-[0.2em] text-white/85 md:gap-x-12 md:text-[10px]">
+            <div className="flex flex-wrap items-baseline justify-center gap-x-6 gap-y-1 text-[10px] font-sans uppercase tracking-[0.2em] text-white/85 md:gap-x-12 md:text-[11px]">
               {story.caseStudy.season && <span>{story.caseStudy.season}</span>}
               {story.caseStudy.duration && <span>{story.caseStudy.duration}</span>}
               {story.caseStudy.usage && <span>{story.caseStudy.usage}</span>}
@@ -989,7 +989,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
 
         <div className="grid grid-cols-3 gap-3 md:gap-6 mt-16 md:mt-20">
           <div>
-            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Propiedad</span>
+            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Propiedad</span>
             <a
               href={venueMapUrl}
               target="_blank"
@@ -1000,13 +1000,13 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
             </a>
           </div>
           <div>
-            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Ubicación</span>
+            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Ubicación</span>
             <span className="text-xs sm:text-sm md:text-base font-sans text-[#1a1918]">
               {story.location}
             </span>
           </div>
           <div>
-            <span className="block text-[11px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Créditos</span>
+            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Créditos</span>
             <button
               onClick={() => setCreditsOpen((v) => !v)}
               aria-expanded={creditsOpen}
@@ -1048,7 +1048,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
           <div className="mt-14 md:mt-16">
             <Link
               to={`/proyecto/${caseStudy.slug}`}
-              className="inline-block bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+              className="inline-block bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
               Ver el proyecto completo
             </Link>
@@ -1079,7 +1079,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
                 onClick={() => onNavigateStory('prev')}
                 className="group flex flex-col items-start text-left flex-1 max-w-[46%] hover:opacity-70 transition-opacity"
               >
-                <span className="text-[10px] md:text-xs font-sans tracking-[0.25em] uppercase text-[#5a5854] flex items-center gap-2">
+                <span className="text-[11px] md:text-xs font-sans tracking-[0.25em] uppercase text-[#5a5854] flex items-center gap-2">
                   <span aria-hidden="true" className="transition-transform group-hover:-translate-x-1">
                     &larr;
                   </span>
@@ -1098,7 +1098,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
                 onClick={() => onNavigateStory('next')}
                 className="group flex flex-col items-end text-right flex-1 max-w-[46%] hover:opacity-70 transition-opacity"
               >
-                <span className="text-[10px] md:text-xs font-sans tracking-[0.25em] uppercase text-[#5a5854] flex items-center gap-2">
+                <span className="text-[11px] md:text-xs font-sans tracking-[0.25em] uppercase text-[#5a5854] flex items-center gap-2">
                   Siguiente
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
                     &rarr;

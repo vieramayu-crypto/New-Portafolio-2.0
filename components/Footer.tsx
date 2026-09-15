@@ -20,7 +20,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Links */}
         <div className="md:col-span-4 space-y-3">
-          <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#f5f3ed]/60 block mb-2">
+          <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-[#f5f3ed]/60 block mb-2">
             Navegación
           </span>
           <div className="flex flex-col space-y-2 text-xs font-sans tracking-wider uppercase text-[#f5f3ed]/80">
@@ -41,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Contact & Social */}
         <div className="md:col-span-4 space-y-3">
-          <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#f5f3ed]/60 block mb-2">
+          <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-[#f5f3ed]/60 block mb-2">
             Contacto y redes
           </span>
           <p className="text-xs text-[#f5f3ed]/80">
@@ -63,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       </div>
 
       {/* Copyright */}
-      <div className="max-w-7xl mx-auto pt-8 text-center text-[11px] font-sans text-[#f5f3ed]/50 tracking-wider">
+      <div className="max-w-7xl mx-auto pt-8 text-center text-[12px] font-sans text-[#f5f3ed]/50 tracking-wider">
         <span>&copy; {new Date().getFullYear()} Mayurlin Viera. Todos los derechos reservados.</span>
       </div>
     </footer>

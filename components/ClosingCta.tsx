@@ -36,13 +36,13 @@ export const ClosingCta: React.FC<ClosingCtaProps> = ({ onOpenAvailability, onNa
         >
           <button
             onClick={onOpenAvailability}
-            className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-[#f5f3ed]/80 md:px-10 md:py-[1.15rem] md:text-xs"
+            className="bg-[#f5f3ed] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-[#f5f3ed]/80 md:px-10 md:py-[1.15rem] md:text-xs"
           >
             {closingCta.ctaLabel}
           </button>
           <button
             onClick={() => onNavigate('about')}
-            className="border border-[#f5f3ed]/50 px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:border-[#f5f3ed] hover:bg-[#f5f3ed] hover:text-[#1a1918] md:px-10 md:py-[1.15rem] md:text-xs"
+            className="border border-[#f5f3ed]/50 px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:border-[#f5f3ed] hover:bg-[#f5f3ed] hover:text-[#1a1918] md:px-10 md:py-[1.15rem] md:text-xs"
           >
             {closingCta.secondaryLabel}
           </button>
