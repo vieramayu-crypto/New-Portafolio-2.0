@@ -33,7 +33,7 @@ export const ValueBlock: React.FC = () => {
             <motion.div
               key={benefit}
               {...rise(0.08 * (i + 1))}
-              className="mt-glass mt-glass-light rounded-lg p-7 md:p-9"
+              className="mt-glass mt-glass-light relative overflow-hidden rounded-lg p-7 md:p-9"
             >
               <h3 className="font-serif text-xl text-[#1a1918] md:text-2xl">{benefit}</h3>
               {valueBlock.benefitDetails[i] && (

@@ -78,7 +78,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
               // `mt-glass` a secas, no la variante clara: esta vive sobre una
               // foto, no sobre crema. `relative` es obligatorio — los
               // ::before/::after del cristal anclan contra la caja.
-              <div key={box.label} className="mt-glass relative rounded-lg bg-white/[.07] p-5 text-left md:p-6">
+              <div key={box.label} className="mt-glass relative overflow-hidden rounded-lg bg-white/[.07] p-5 text-left md:p-6">
                 <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-white/70 md:text-[11px]">
                   {box.label}
                 </div>

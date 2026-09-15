@@ -30,7 +30,7 @@ export const WaysToWork: React.FC = () => {
             <motion.div
               key={item.title}
               {...rise(0.06 * (i + 1))}
-              className="mt-glass mt-glass-light rounded-lg p-7 md:p-9"
+              className="mt-glass mt-glass-light relative overflow-hidden rounded-lg p-7 md:p-9"
             >
               <h3 className="font-serif text-xl text-[#1a1918] md:text-2xl">{item.title}</h3>
               <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[15px]">

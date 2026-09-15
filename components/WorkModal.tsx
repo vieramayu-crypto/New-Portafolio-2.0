@@ -54,8 +54,16 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
   };
 
   return (
+    // `isolation: isolate` + capa propia por miniatura: en Safari de iOS
+    // aparecía una franja de color cruzando el carrusel al pasar de un hotel
+    // a otro. No se reproduce en Chromium, así que no es un elemento que
+    // estemos dibujando: es el compositor de Safari reutilizando un búfer
+    // sucio al mezclar `filter: blur()` animado dentro de un contenedor con
+    // `backdrop-filter` (el cristal de la ventana). Aislar el contexto de
+    // apilado y dar a cada miniatura su propia capa desde el principio es el
+    // remedio conocido para ese fallo.
     <div
-      className="relative h-[230px] w-full select-none overflow-hidden sm:h-[290px]"
+      className="relative h-[230px] w-full select-none overflow-hidden [isolation:isolate] sm:h-[290px]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -94,8 +102,10 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
               zIndex,
               opacity,
               filter: `blur(${blur}px)`,
-              transform: `translate(-50%, -50%) scale(${scale})`,
+              transform: `translate(-50%, -50%) scale(${scale}) translateZ(0)`,
               pointerEvents: clickable ? 'auto' : 'none',
+              willChange: 'transform, opacity, filter',
+              backfaceVisibility: 'hidden',
             }}
             className="absolute top-1/2 aspect-[4/3] h-[180px] overflow-hidden rounded-[8px] shadow-[0_10px_30px_rgba(26,25,24,0.22)] transition-[transform,opacity,filter,left] duration-500 ease-out sm:h-[240px]"
           >
