@@ -37,7 +37,7 @@ export const ValueBlock: React.FC = () => {
             >
               <h3 className="font-serif text-xl text-[#1a1918] md:text-2xl">{benefit}</h3>
               {valueBlock.benefitDetails[i] && (
-                <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[15px]">
+                <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[16px]">
                   {valueBlock.benefitDetails[i]}
                 </p>
               )}

@@ -37,7 +37,7 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
         <img src={hotel.coverImage} alt={hotel.hotelName} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 px-6 pb-10 text-center md:px-12 md:pb-14">
-          <span className="text-[10px] font-sans uppercase tracking-[0.28em] text-white/75 md:text-xs">
+          <span className="text-[11px] font-sans uppercase tracking-[0.28em] text-white/75 md:text-xs">
             Caso de estudio
           </span>
           <h1 className="mt-3 font-serif text-3xl text-white sm:text-4xl md:text-5xl">{caseStudy.heading}</h1>
@@ -54,7 +54,7 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
                 </div>
                 <div>
                   <h2 className="font-serif text-xl text-[#1a1918] md:text-2xl">{section.title}</h2>
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[15px]">
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[16px]">
                     {section.body}
                   </p>
                 </div>
@@ -68,13 +68,13 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
         <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-16">
           <button
             onClick={onOpenAvailability}
-            className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
           >
             Iniciar un proyecto
           </button>
           <Link
             to={`/trabajo/${hotel.id}`}
-            className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+            className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
           >
             Ver galería completa
           </Link>

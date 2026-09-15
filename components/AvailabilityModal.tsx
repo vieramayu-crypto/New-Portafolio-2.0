@@ -85,7 +85,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                   </a>
                 </p>
                 {composed && (
-                  <pre className="max-h-40 overflow-auto whitespace-pre-wrap bg-[#fbfaf6] p-3 text-left text-[11px] leading-relaxed text-[#5a5854]">
+                  <pre className="max-h-40 overflow-auto whitespace-pre-wrap bg-[#fbfaf6] p-3 text-left text-[12px] leading-relaxed text-[#5a5854]">
                     {composed}
                   </pre>
                 )}
@@ -99,7 +99,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
             ) : (
               <div className="space-y-6">
                 <div>
-                  <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#5a5854] block mb-1">
+                  <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-[#5a5854] block mb-1">
                     Atención rápida
                   </span>
                   <h3 className="font-serif text-2xl text-[#1a1918]">Consultar disponibilidad</h3>
@@ -107,7 +107,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-sans tracking-widest uppercase text-[#5a5854] block">
+                    <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
                       Nombre
                     </label>
                     <input
@@ -121,7 +121,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-sans tracking-widest uppercase text-[#5a5854] block">
+                    <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
                       Correo
                     </label>
                     <input
@@ -135,7 +135,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-sans tracking-widest uppercase text-[#5a5854] block">
+                    <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
                       Propiedad / Marca
                     </label>
                     <input
@@ -149,7 +149,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-sans tracking-widest uppercase text-[#5a5854] block">
+                    <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
                       Fechas de disponibilidad
                     </label>
                     <input

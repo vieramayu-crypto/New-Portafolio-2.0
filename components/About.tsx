@@ -79,7 +79,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
               // foto, no sobre crema. `relative` es obligatorio — los
               // ::before/::after del cristal anclan contra la caja.
               <div key={box.label} className="mt-glass relative overflow-hidden rounded-lg bg-white/[.07] p-5 text-left md:p-6">
-                <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-white/70 md:text-[11px]">
+                <div className="text-[11px] font-sans uppercase tracking-[0.22em] text-white/70 md:text-[12px]">
                   {box.label}
                 </div>
                 <div className="mt-1.5 font-serif text-lg text-white md:text-xl">{box.value}</div>
@@ -91,7 +91,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
             {/* Botón crema: el negro original se perdía sobre la foto oscura. */}
             <button
               onClick={() => document.getElementById('roles')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-white md:px-10 md:py-[1.15rem] md:text-xs"
+              className="bg-[#f5f3ed] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#1a1918] transition-colors hover:bg-white md:px-10 md:py-[1.15rem] md:text-xs"
             >
               {content.about.overview.ctaLabel}
             </button>
@@ -127,7 +127,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
             className="lg:col-span-7 space-y-4"
           >
             <h2 className="font-serif text-3xl md:text-4xl text-[#1a1918]">{content.about.mayurlin.name}</h2>
-            <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
+            <div className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[12px]">
               {content.about.mayurlin.role}
             </div>
             <p className="text-sm md:text-base text-[#5a5854] leading-relaxed">{content.about.mayurlin.bio}</p>
@@ -161,7 +161,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
             className="lg:col-span-7 space-y-4 order-2 lg:order-1"
           >
             <h2 className="font-serif text-3xl md:text-4xl text-[#1a1918]">{content.about.yerfran.name}</h2>
-            <div className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
+            <div className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[12px]">
               {content.about.yerfran.role}
             </div>
             <p className="text-sm md:text-base text-[#5a5854] leading-relaxed">{content.about.yerfran.bio}</p>
@@ -170,7 +170,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
 
         {/* Together */}
         <div className="min-h-[70vh] md:min-h-[85vh] flex flex-col items-center justify-center text-center px-2 py-20 mb-32 md:mb-40">
-          <span className="text-[10px] font-sans uppercase tracking-[0.28em] text-[#5a5854] md:text-xs">
+          <span className="text-[11px] font-sans uppercase tracking-[0.28em] text-[#5a5854] md:text-xs">
             {content.about.together.heading}
           </span>
           <p className="mt-6 font-serif text-3xl leading-[1.4] sm:text-4xl sm:leading-[1.38] md:text-[3.25rem] md:leading-[1.34] mx-auto max-w-4xl text-center text-[#1a1918]">
@@ -182,7 +182,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
           <div className="pt-16">
             <button
               onClick={onOpenAvailability}
-              className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+              className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
               Consultar disponibilidad
             </button>

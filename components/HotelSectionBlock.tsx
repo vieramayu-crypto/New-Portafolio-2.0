@@ -101,7 +101,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
           (en HomeMain), la misma en móvil y en escritorio. Aquí se repetía
           justo encima, en mayúsculas, y en móvil se leían los dos seguidos. */}
       <div className="md:hidden w-full max-w-md mx-auto mb-8 text-center">
-        <span className="text-[10px] font-sans tracking-[0.25em] text-[#5a5854] uppercase block">
+        <span className="text-[11px] font-sans tracking-[0.25em] text-[#5a5854] uppercase block">
           {story.leftTag || 'HOTEL'}
         </span>
       </div>

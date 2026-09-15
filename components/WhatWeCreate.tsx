@@ -23,10 +23,7 @@ export const WhatWeCreate: React.FC = () => {
     <section className="w-full bg-[#fbfaf6] py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6 md:px-12">
         <motion.div {...rise(0)} className="mb-14 text-center md:mb-16">
-          <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-            {whatWeCreate.eyebrow}
-          </span>
-          <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-6xl">{whatWeCreate.heading}</h2>
+          <h2 className="font-serif text-4xl text-[#1a1918] md:text-6xl">{whatWeCreate.heading}</h2>
         </motion.div>
 
         <div className="mt-glass-async grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-7">
@@ -37,7 +34,7 @@ export const WhatWeCreate: React.FC = () => {
               className="mt-glass mt-glass-light relative overflow-hidden rounded-lg p-7 md:p-9"
             >
               <h3 className="font-serif text-xl text-[#1a1918] md:text-2xl">{item.title}</h3>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[15px]">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-[#5a5854] md:text-[16px]">
                 {item.description}
               </p>
             </motion.div>

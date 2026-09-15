@@ -78,12 +78,12 @@ export const Testimonials: React.FC = () => {
 
                 <div className="clear-left pt-8 md:pt-10">
                   <div className="font-serif text-xl text-[#1a1918] md:text-2xl">{t.author}</div>
-                  <div className="mt-1 text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-xs">
+                  <div className="mt-1 text-[11px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-xs">
                     {t.role ? `${t.role} · ` : ''}
                     {t.brandName}
                   </div>
                   {t.repeatNote && (
-                    <div className="mt-3 inline-block border border-[#1a1918]/30 px-3 py-1.5 text-[10px] font-sans uppercase tracking-[0.2em] text-[#1a1918] md:text-[11px]">
+                    <div className="mt-3 inline-block border border-[#1a1918]/30 px-3 py-1.5 text-[11px] font-sans uppercase tracking-[0.2em] text-[#1a1918] md:text-[12px]">
                       {t.repeatNote}
                     </div>
                   )}

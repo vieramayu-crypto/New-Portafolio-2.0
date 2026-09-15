@@ -52,7 +52,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpen }) => {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1], delay: 0.74 }}
-              className="mx-auto mt-8 max-w-[48ch] text-[13px] leading-[1.75] text-[#5a5854] md:mt-10 md:text-sm"
+              className="mx-auto mt-8 max-w-[48ch] text-[14px] leading-[1.75] text-[#5a5854] md:mt-10 md:text-sm"
             >
               {contact.introMain} {contact.introSub}
             </motion.p>
@@ -65,12 +65,12 @@ export const Contact: React.FC<ContactProps> = ({ onOpen }) => {
             >
               <button
                 onClick={onOpen}
-                className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans font-medium uppercase tracking-[0.22em] text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+                className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans font-medium uppercase tracking-[0.22em] text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
               >
                 {contact.ctaLabel}
               </button>
 
-              <div className="text-[10px] uppercase tracking-[0.14em] text-[#5a5854]">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-[#5a5854]">
                 {contact.directLabel}{' '}
                 <a
                   href={`mailto:${contact.emailAddress}`}

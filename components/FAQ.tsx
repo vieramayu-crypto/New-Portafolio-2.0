@@ -15,14 +15,10 @@ export const FAQ: React.FC = () => {
     <section className="w-full py-20 md:py-28">
       <div className="mx-auto max-w-3xl px-6 md:px-8">
         <div className="text-center">
-          <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-            {faq.eyebrow}
-          </span>
-
           {/* Las preguntas se leen de entrada. Antes vivían todas detrás de un
               primer desplegable, y cada respuesta pedía otro clic: dos clics
               para saber qué derechos de uso incluye la entrega. */}
-          <h2 className="mt-4 font-serif text-4xl text-[#1a1918] md:text-5xl">{faq.heading}</h2>
+          <h2 className="font-serif text-4xl text-[#1a1918] md:text-5xl">{faq.heading}</h2>
         </div>
 
         <div className="mt-12 divide-y divide-[#1a1918]/10 md:mt-16">

@@ -252,7 +252,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                   <div className="mt-8 flex min-h-[94px] flex-col items-center justify-start gap-4 sm:min-h-0 sm:flex-row sm:justify-center md:mt-9">
                     <button
                       onClick={openPortfolio}
-                      className="bg-[#1a1918] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+                      className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
                     >
                       Ver galería
                     </button>
@@ -265,7 +265,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                           navigate(`/proyecto/${currentCase.slug}`);
                           onClose();
                         }}
-                        className="border-b border-[#1a1918]/65 pb-2 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[11px]"
+                        className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                       >
                         Ver proyecto
                       </button>

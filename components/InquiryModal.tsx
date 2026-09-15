@@ -6,7 +6,7 @@ import { openInquiryMail } from "../src/lib/inquiry";
 /** Los campos comparten el hairline del resto del sitio: sin caja, sin relleno,
  *  sin sombra. Serif grande para lo que el visitante escribe. */
 const fieldClass =
-  "block w-full border-0 bg-transparent p-0 font-serif text-xl text-[#1a1918] outline-none placeholder:text-[#5a5854]/50 md:text-[22px]";
+  "block w-full border-0 bg-transparent p-0 font-serif text-xl text-[#1a1918] outline-none placeholder:text-[#5a5854]/50 md:text-[23px]";
 
 const SCOPE_OPTIONS = [
   "Fotografía",
@@ -34,7 +34,7 @@ const Field: React.FC<FieldProps> = ({ label, wide, children }) => (
   <div
     className={`border-b border-[#1a1918]/25 pb-4 pt-2 ${wide ? "md:col-span-2" : ""}`}
   >
-    <label className="mb-3 block font-sans text-[10px] uppercase tracking-[0.2em] text-[#5a5854]">
+    <label className="mb-3 block font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]">
       {label}
     </label>
     {children}
@@ -188,7 +188,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                       )}
                       <button
                         onClick={() => setSubmitted(false)}
-                        className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] underline underline-offset-4"
+                        className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] underline underline-offset-4"
                       >
                         Enviar otra consulta
                       </button>
@@ -196,7 +196,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                   ) : (
                     <>
                       <div className="mx-auto mb-10 max-w-[760px] text-center md:mb-14">
-                        <div className="mb-4 font-sans text-[9px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[10px]">
+                        <div className="mb-4 font-sans text-[10px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[11px]">
                           {contact.modalKicker}
                         </div>
                         <h2
@@ -205,7 +205,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         >
                           {contact.modalTitle}
                         </h2>
-                        <p className="mx-auto max-w-[58ch] text-[13px] leading-[1.65] text-[#5a5854] md:text-sm">
+                        <p className="mx-auto max-w-[58ch] text-[14px] leading-[1.65] text-[#5a5854] md:text-sm">
                           {contact.modalCopy}
                         </p>
                       </div>
@@ -312,7 +312,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         <div className="flex justify-center pt-4 md:col-span-2">
                           <button
                             type="submit"
-                            className="border-b border-[#1a1918]/65 pb-3 text-[10px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918]"
+                            className="border-b border-[#1a1918]/65 pb-3 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918]"
                           >
                             Enviar consulta →
                           </button>

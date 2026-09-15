@@ -9,7 +9,6 @@
     "secondaryLabel": "Ver proyectos"
   },
   "whatWeCreate": {
-    "eyebrow": "Qué producimos",
     "heading": "Qué creamos",
     "items": [
       {
@@ -32,7 +31,6 @@
     "ctaLabel": "Iniciar un proyecto"
   },
   "whyUs": {
-    "eyebrow": "Diferenciación",
     "heading": "Por qué Mayu Travel",
     "intro": "Dos personas, cada una con una responsabilidad clara.",
     "items": [
@@ -199,7 +197,6 @@
     ]
   },
   "faq": {
-    "eyebrow": "Información práctica",
     "heading": "Preguntas frecuentes.",
     "questions": [
       {
@@ -226,11 +223,10 @@
   },
   "projects": {
     "heading": "Proyectos y portafolio",
-    "intro": "Los proyectos enseñan cómo trabajamos. El portafolio, qué hacemos.",
     "caseSectionLabel": "Proyectos",
-    "caseSectionLine": "Cómo trabajamos, contado de principio a fin.",
+    "caseSectionLine": "Un rodaje contado de principio a fin.",
     "gallerySectionLabel": "Portafolio",
-    "gallerySectionLine": "Qué hacemos, en imágenes.",
+    "gallerySectionLine": "El resto del trabajo, en imágenes.",
     "caseLabel": "Proyecto",
     "galleryLabel": "Selección de imágenes",
     "caseLinkLabel": "Ver proyecto",

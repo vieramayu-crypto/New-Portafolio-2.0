@@ -52,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
         {/* Right: Page indicator + Minimal Two-Line Menu Icon */}
         <div className="flex items-center gap-4 md:gap-6">
           {pageLabel && !isMenuOpen && (
-            <span className="text-[10px] md:text-[11px] font-sans tracking-[0.25em] uppercase text-[#5a5854] pointer-events-none">
+            <span className="text-[11px] md:text-[12px] font-sans tracking-[0.25em] uppercase text-[#5a5854] pointer-events-none">
               {pageLabel}
             </span>
           )}
@@ -163,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                 className="flex items-center space-x-2 text-[#1a1918] hover:opacity-70 transition-opacity uppercase font-medium"
               >
                 <span>Consultar disponibilidad</span>
-                <span className="w-5 h-5 rounded-full bg-[#1a1918] text-[#f5f3ed] flex items-center justify-center text-[10px]">
+                <span className="w-5 h-5 rounded-full bg-[#1a1918] text-[#f5f3ed] flex items-center justify-center text-[11px]">
                   &rarr;
                 </span>
               </button>

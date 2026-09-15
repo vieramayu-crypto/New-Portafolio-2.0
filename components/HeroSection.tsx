@@ -106,7 +106,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
             // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
             // lateral lo sostiene y puede seguir apagado.
-            className="m-0 text-[9px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
+            className="m-0 text-[10px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
           >
             {hero.eyebrow}
           </motion.p>
@@ -140,7 +140,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           <motion.p
             {...rise(0.26)}
             animate={animate}
-            className="m-0 text-[14px] font-medium leading-snug text-white [text-shadow:0_1px_10px_rgba(0,0,0,.75)] md:mt-10 md:max-w-[34ch] md:text-[15px] md:font-normal md:text-white/80 md:[text-shadow:none]"
+            className="m-0 text-[15px] font-medium leading-snug text-white [text-shadow:0_1px_10px_rgba(0,0,0,.75)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:font-normal md:text-white/80 md:[text-shadow:none]"
           >
             {hero.subline}
           </motion.p>
@@ -154,7 +154,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 lee sobre una foto a pleno sol. */}
             <button
               onClick={onOpenAvailability}
-              className="bg-[#f5f3ed] px-8 py-4 text-[11px] font-sans uppercase tracking-[0.22em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
+              className="bg-[#f5f3ed] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
             >
               {hero.ctaLabel}
             </button>
@@ -173,7 +173,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
             ("6 anos") y con el reparto original partia en dos lineas. */}
-        <div className="grid h-full grid-cols-3 items-center whitespace-nowrap px-4 text-[6.5px] uppercase tracking-[0.08em] md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:px-6 md:text-[8px] md:tracking-[0.18em]">
+        <div className="grid h-full grid-cols-3 items-center px-4 text-[7.5px] uppercase tracking-[0.08em] md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:whitespace-nowrap md:px-6 md:text-[9px] md:tracking-[0.18em]">
           {/* El rotulo y el enlace solo caben en escritorio. */}
           <div className="hidden md:block">{hero.glassLabel}</div>
 
@@ -184,10 +184,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 i === 0 ? 'pl-0' : 'border-l border-white/[.14] pl-3'
               }`}
             >
-              <b className="mb-0.5 block font-serif text-[21px] font-normal italic tracking-normal md:mb-0 md:mr-[7px] md:inline">
+              <b className="mb-0.5 block font-serif text-[22px] font-normal italic tracking-normal md:mb-0 md:mr-[7px] md:inline">
                 {item.value}
               </b>
-              {item.label}
+              <span className="block min-h-[2.3em] leading-[1.15] md:inline md:min-h-0 md:leading-normal">
+                {item.label}
+              </span>
             </div>
           ))}
 

@@ -51,7 +51,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       {
         number: '05',
         title: 'Evidencia',
-        body: 'Jose Lorente, del equipo de marketing: “On behalf of the department, I would like to thank her for her interest in the whole Ritz-Carlton, Abama project and in our gastronomic offering, and for the wonderful content she created during her stay. We hope to have her back with us in the future.”',
+        body: 'Jose Lorente, del equipo de marketing: “En nombre del departamento, quiero agradecerle el interés por todo el proyecto de Ritz-Carlton, Abama y por nuestra propuesta gastronómica, y el contenido tan bonito que creó durante su estancia. Esperamos tenerla de vuelta con nosotros.”',
       },
       {
         number: '06',
