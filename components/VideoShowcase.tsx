@@ -33,12 +33,12 @@ const BG_PLACEHOLDER = publicImage('sec6-gal01-fachada-noche-h.jpg');
 const FONDO: { tipo: 'incrustado' | 'archivo'; src: string; enVivo: boolean } | null = {
   tipo: 'incrustado',
   src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1',
-  /* En false el vídeo NO sale en la web publicada: sólo abriendo la dirección
-     con ?video=1 delante de la almohadilla. Es una prueba sin riesgo -- un
-     iframe que no carga (dominio no autorizado, servicio caído) no se queda
-     transparente, pinta un rectángulo gris encima de todo, y eso es lo que
-     verían los hoteles. Cuando la prueba salga bien, esto pasa a true. */
-  enVivo: false,
+  /* Prueba superada en el navegador de Mayurlin: sondeo "responde", iframe
+     montado y cargado, caja de 1459x824 sobre una pantalla de 824 de alto
+     (el recorte a sangre completa cuadra). El vídeo pasa a verse para todos.
+     El modo ?video=1 y su recuadro de diagnóstico se quedan: no estorban a
+     nadie y son la forma de volver a mirar si algún día deja de cargar. */
+  enVivo: true,
 };
 
 /** ?video=1 antes de la almohadilla fuerza la prueba. Se lee una sola vez. */
@@ -373,16 +373,10 @@ export const VideoShowcase: React.FC = () => {
         >
           <FondoVideo activo={enPantalla} />
         </motion.div>
-        <motion.div
-          initial={false}
-          animate={{ opacity: deployed ? 0 : 1, scale: deployed ? 0.9 : 1 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-lg md:h-20 md:w-20">
-            <PlayIcon className="h-6 w-6 translate-x-[2px] text-[#1a1918] md:h-7 md:w-7" />
-          </span>
-        </motion.div>
+        {/* Aquí había un botón de reproducir grande y blanco. Tenía sentido
+            sobre la foto fija: decía "esto es un vídeo". Con el vídeo real
+            reproduciéndose solo es un botón que no hace nada, puesto encima
+            de algo que ya está en marcha. */}
 
         {/* Velo que sube junto con el desenfoque, igual que detrás de las
             ventanas emergentes: sostiene la lectura de las tarjetas sin
