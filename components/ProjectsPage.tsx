@@ -49,15 +49,20 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
       {/* Apertura */}
       <section className="mx-auto max-w-4xl px-6 pb-10 pt-32 text-center md:px-12 md:pb-14 md:pt-44">
-        {/* Solo el titular. Debajo había un párrafo que explicaba qué era un
-            proyecto y qué el portafolio, y las dos secciones de más abajo lo
-            volvían a decir cada una en su sitio: se leía lo mismo tres veces
-            antes de llegar a una foto. La explicación se queda donde hace
-            falta, pegada a lo que nombra. */}
+        {/* El titular y una sola línea de posicionamiento. Antes había aquí un
+            párrafo que explicaba qué era un proyecto y qué el portafolio, y las
+            dos secciones de más abajo lo volvían a decir cada una en su sitio:
+            se leía lo mismo tres veces antes de llegar a una foto. Esa
+            explicación se quedó donde hace falta, pegada a lo que nombra. Lo
+            que sí falta aquí es a quién se dirige el estudio, porque a esta
+            página se entra por un enlace suelto, sin haber pasado por Inicio. */}
         <motion.div {...rise(0)}>
           <h1 className="font-serif text-[13vw] leading-[1.04] tracking-[-0.03em] sm:text-[9vw] md:text-[5vw]">
             {projects.heading}
           </h1>
+          <p className="mx-auto mt-6 max-w-[44ch] font-sans text-[13px] leading-[1.6] text-[#5a5854] md:mt-7 md:text-sm">
+            {projects.subline}
+          </p>
         </motion.div>
       </section>
 

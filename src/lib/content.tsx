@@ -153,6 +153,12 @@ export interface SiteContent {
    *  Inicio entero. */
   projects: {
     heading: string;
+    /** Una línea de posicionamiento debajo del titular. No explica la
+     *  diferencia entre proyecto y portafolio -- eso ya lo dicen los dos
+     *  rótulos de sección, y repetirlo aquí era lo que hacía que se leyera
+     *  tres veces lo mismo. Dice a quién se dirige el estudio, que es lo
+     *  único que falta en esta página para quien entra por un enlace. */
+    subline: string;
     /** Distingue el proyecto documentado de la galería: el comprador no debe
      *  esperar el mismo nivel de detalle en las nueve propiedades. Los dos
      *  rótulos de sección separan físicamente una cosa de la otra, porque
@@ -232,7 +238,7 @@ export const DEFAULT_CONTENT: SiteContent = {
   waysToWork: {
     eyebrow: 'Cómo empezar',
     heading: 'Formas de trabajar juntos',
-    intro: 'Definimos juntos el contenido y los usos.',
+    intro: 'Definimos contigo el contenido, los usos y el presupuesto.',
     items: [
       {
         title: 'Campañas y lanzamientos',
@@ -258,7 +264,10 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   valueBlock: {
     claim: 'Una producción, dos destinos.',
-    benefits: ['Los canales de tu hotel.', 'También nuestro canal.'],
+    benefits: [
+      'Contenido para los canales de tu hotel.',
+      'Publicaciones en @mayurlintravel, como servicio adicional.',
+    ],
     benefitDetails: [
       'Fotografías y vídeos en los formatos y con los usos definidos en la propuesta.',
       'Cuando el proyecto encaja con nuestra audiencia, parte del material se publica en @mayurlintravel, ante una comunidad internacional de viajes y hotelería.',
@@ -390,6 +399,8 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   projects: {
     heading: 'Proyectos y portafolio',
+    subline:
+      'Fotografía y producción audiovisual para hoteles y alojamientos con identidad propia.',
     caseSectionLabel: 'Proyectos',
     caseSectionLine: 'Un rodaje contado de principio a fin.',
     gallerySectionLabel: 'Portafolio',
@@ -784,6 +795,9 @@ function mergeContent(fetched: unknown): SiteContent {
       heading: isNonEmptyString(f.projects?.heading)
         ? f.projects!.heading
         : DEFAULT_CONTENT.projects.heading,
+      subline: isNonEmptyString(f.projects?.subline)
+        ? f.projects!.subline
+        : DEFAULT_CONTENT.projects.subline,
       caseLabel: isNonEmptyString(f.projects?.caseLabel)
         ? f.projects!.caseLabel
         : DEFAULT_CONTENT.projects.caseLabel,

@@ -47,6 +47,17 @@ const LEGACY_HOTEL_IDS: Record<string, string> = {
   'san-domenico-palace': 'welmoon-villas',
 };
 
+/** Rutas que sí abren con la intro: Inicio y las tres páginas del menú. Un
+ *  enlace de difusión apunta a /trabajo/:id o /proyecto/:slug, y esos entran
+ *  directos al contenido. */
+function esRutaDeEntradaConIntro(): boolean {
+  if (typeof window === 'undefined') return true;
+  // HashRouter: la ruta vive detrás de la almohadilla.
+  const hash = window.location.hash.replace(/^#/, '');
+  const ruta = (hash.split('?')[0] || '/').replace(/\/+$/, '') || '/';
+  return ruta in PAGE_BY_PATH;
+}
+
 /** Ficha de un proyecto de Trabajo, alcanzable por URL propia
  *  (/trabajo/:id) además de por clic desde Inicio. */
 const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpenAvailability }) => {
@@ -93,10 +104,19 @@ const AppShell: React.FC = () => {
   const [isInquiryOpen, setIsInquiryOpen] = useState<boolean>(false);
   const [isWorkOpen, setIsWorkOpen] = useState<boolean>(false);
   const [pendingTransition, setPendingTransition] = useState<HotelStory | null>(null);
-  // The intro plays once per full page load. Internal SPA navigation (e.g.
-  // returning to Home from a hotel detail) does not re-trigger it -- a
-  // refresh does, because React state resets with the page.
-  const [introPlayed, setIntroPlayed] = useState<boolean>(false);
+  // La intro se reproduce una vez por carga completa. Navegar dentro de la web
+  // (volver a Inicio desde un hotel, por ejemplo) no la vuelve a lanzar; una
+  // recarga sí, porque el estado de React se reinicia con la página.
+  //
+  // Salvo si se entra directamente a una ficha o a un caso. Los enlaces que
+  // Mayurlin manda a un hotel apuntan a /trabajo/... o a /proyecto/..., y ahí
+  // el visitante viene a ver un trabajo concreto: seis segundos de vídeo antes
+  // de la primera foto son seis segundos para cerrar la pestaña. Se mira la
+  // ruta de entrada una sola vez, al montar, para que abrir Inicio y navegar
+  // después a un hotel no cambie nada.
+  const [introPlayed, setIntroPlayed] = useState<boolean>(
+    () => !esRutaDeEntradaConIntro(),
+  );
 
   const currentPage: Page = PAGE_BY_PATH[location.pathname] ?? 'home';
 

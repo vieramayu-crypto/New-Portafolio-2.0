@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSiteContent } from '../src/lib/content';
 
-/** Bloque de dudas, cerrado de entrada.
+/** Bloque de dudas.
  *
- *  En reposo sólo se ve la cabecera y una flecha centrada: quien viene a
- *  contratar no tropieza con una lista de preguntas antes de decidir. Al
- *  desplegar aparecen todas, y cada una conserva su propio acordeón. */
+ *  Las preguntas se leen todas de entrada y sólo se despliega la respuesta.
+ *  Antes vivían detrás de un primer desplegable y cada respuesta pedía otro
+ *  clic: dos clics para saber qué derechos de uso incluye la entrega, y ni
+ *  siquiera se veía que la pregunta estaba contestada. */
 export const FAQ: React.FC = () => {
   const { faq } = useSiteContent();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -29,6 +30,7 @@ export const FAQ: React.FC = () => {
                       <button
                         onClick={() => setOpenIndex(isOpen ? null : i)}
                         aria-expanded={isOpen}
+                        aria-controls={`faq-respuesta-${i}`}
                         className="group flex w-full items-center justify-between gap-6 py-5 text-left md:py-6"
                       >
                         <span className="font-serif text-lg leading-snug text-[#1a1918] md:text-2xl">
@@ -46,6 +48,7 @@ export const FAQ: React.FC = () => {
                       <AnimatePresence initial={false}>
                         {isOpen && (
                           <motion.div
+                            id={`faq-respuesta-${i}`}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}

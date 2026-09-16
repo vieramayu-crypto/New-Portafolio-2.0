@@ -26,7 +26,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     hotelId: 'ritz-carlton-abama',
     slug: 'ritz-carlton-abama',
     hotelName: 'The Ritz-Carlton Tenerife, Abama',
-    heading: 'Ritz-Carlton Abama: rodaje en temporada alta',
+    heading: 'Ritz-Carlton Abama: arquitectura y experiencia en un resort de lujo',
     sections: [
       {
         number: '01',
@@ -64,12 +64,12 @@ export const CASE_STUDIES: CaseStudy[] = [
     hotelId: 'vestige-binidufa',
     slug: 'vestige-binidufa',
     hotelName: 'Vestige Collection, Binidufà',
-    heading: 'Vestige Binidufà: una possessió del siglo XVIII',
+    heading: 'Vestige Binidufà: patrimonio y paisaje de Menorca',
     sections: [
       {
         number: '01',
         title: 'Contexto',
-        body: 'En un valle al norte de Menorca, dentro de una finca privada de 800 hectáreas, Vestige Collection, Binidufà restaura una possessió agrícola del siglo XVIII. El rodaje se hizo en junio, al principio de la temporada.',
+        body: 'En un valle al norte de Menorca, Vestige Collection, Binidufà restaura una possessió agrícola del siglo XVIII rodeada de finca agrícola en activo. El rodaje se hizo en junio, al principio de la temporada.',
       },
       {
         number: '02',
@@ -97,7 +97,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     hotelId: 'gpro-valparaiso',
     slug: 'gpro-valparaiso',
     hotelName: 'GPRO Valparaíso Palace & Spa',
-    heading: 'GPRO Valparaíso: producción recurrente',
+    heading: 'GPRO Valparaíso: tres producciones en la misma propiedad',
     sections: [
       {
         number: '01',
@@ -112,7 +112,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       {
         number: '03',
         title: 'Producción',
-        body: 'Cinco días de rodaje en sitio: fotografía de habitaciones, spa, restauración y jardines, más cobertura en vivo del equipo en @mayurlintravel durante la estancia.',
+        body: 'Cinco días de rodaje en sitio: fotografía de habitaciones, spa, restauración y jardines.',
       },
       {
         number: '04',

@@ -30,7 +30,9 @@ export interface InquiryFields {
    *  más que rellenar sin ganar nada. */
   link?: string;
   scope?: string;
-  budget?: string;
+  /** En qué punto está el proyecto. Sustituye al tramo de presupuesto: el
+   *  formulario ya no pregunta cifras. */
+  stage?: string;
   message?: string;
 }
 
@@ -49,7 +51,7 @@ export function buildInquiryBody(f: InquiryFields): string {
   if (f.location?.trim()) lines.push(`Ubicación: ${f.location.trim()}`);
   if (f.link?.trim()) lines.push(`Instagram o web: ${f.link.trim()}`);
   if (f.scope?.trim()) lines.push(`Servicio: ${f.scope.trim()}`);
-  if (f.budget?.trim()) lines.push(`Presupuesto estimado: ${f.budget.trim()}`);
+  if (f.stage?.trim()) lines.push(`Estado del proyecto: ${f.stage.trim()}`);
   if (f.availabilityDate?.trim()) lines.push(`Fechas en consideración: ${f.availabilityDate.trim()}`);
   if (f.message?.trim()) lines.push('', 'Detalles del proyecto:', f.message.trim());
   return lines.join('\n');
