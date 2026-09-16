@@ -59,7 +59,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           // `object-position` en el eje Y no hace nada y esta es la unica forma
           // de bajar a la persona hasta la altura del titular. El sobrante cae
           // detras de la banda.
-          className="absolute left-0 top-0 h-[105%] w-full object-cover object-[10%_50%] saturate-[.84] md:h-full md:object-[56%_28%]"
+          className="absolute left-0 top-0 h-[105%] w-full object-cover object-[10%_64%] saturate-[.84] md:h-full md:object-[56%_28%]"
         />
       </picture>
 
@@ -115,7 +115,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             sube o baja con la banda de cristal, pero por dentro no se mueve
             nada. En escritorio no cambia: los cuatro elementos ya iban en
             flujo normal y siguen en el mismo orden, con sus margenes md:. */}
-        <div className="absolute inset-x-0 bottom-[118px] md:static md:bottom-auto">
+        <div className="absolute inset-x-0 bottom-[158px] md:static md:bottom-auto">
           <motion.p
             {...rise(0.1)}
             animate={animate}
