@@ -289,42 +289,39 @@ de las 3 fotos del teaser de Inicio.
 
 ## Vídeos incrustados (regla fija — aplicar a todos los que vengan)
 
-Todos los vídeos de la web pasan por **`components/VideoNube.tsx`**. Un solo
-sitio: lo que se arregle una vez vale para todos. Nunca montar un iframe de
-vídeo a mano en otro componente.
+**Pegar el código del proveedor y no tocarlo.** Todos los vídeos pasan por
+`components/VideoNube.tsx`, que es literalmente el bloque que genera el
+servicio: caja de proporción por `padding`, iframe absoluto al 100 %, los
+atributos `allow` / `allowFullScreen` / `frameBorder` / `referrerPolicy` con
+sus valores, y **la dirección intacta**.
 
-**Lo que NO se debe volver a hacer** (cada punto costó una ronda con Mayurlin):
+**Ninguna de estas "mejoras" funcionó. Todas empeoraron la reproducción y
+costaron una ronda cada una:**
 
-- **No montar el iframe desde un `IntersectionObserver`.** Se hacía para no
-  cargar el vídeo antes de tiempo, pero el permiso de reproducción automática
-  silenciada no se reparte igual a un marco que nace con el documento que a uno
-  creado después por JavaScript. Va en el HTML desde el primer momento.
-- **No pedir la dirección del vídeo con `fetch` antes de montarlo.** El sondeo
-  `no-cors` que evitaba el rectángulo gris deja en caché una respuesta opaca de
-  esa misma dirección, y qué hace cada navegador con ella al cargar un
-  documento no está garantizado.
-- **No poner `pointer-events-none` en un vídeo que sea contenido.** Si el
-  navegador se niega a reproducir solo, el reproductor enseña su botón de play
-  y nadie puede pulsarlo. Sólo el fondo decorativo de Inicio va sin tocar
-  (`tocable={false}`), porque ocupa la pantalla entera y capturaría el gesto de
-  desplazar.
-- **`playsinline` siempre.** Lo añade `VideoNube` a la dirección, para que no
-  dependa de acordarse al pegar una nueva.
+| Lo que se añadió | Qué pasó |
+|---|---|
+| Montar el iframe con `IntersectionObserver` | Congelado en Chrome al volver a la sección |
+| Sondear la dirección con `fetch` antes de cargarla | Deja una respuesta opaca en caché de esa misma dirección |
+| `pointer-events-none` en el iframe | Si el reproductor pedía un toque, nadie podía dárselo |
+| Dos copias, una `md:hidden` y otra `hidden md:block` | Ocultar un iframe no impide que cargue: dos descargas y dos reproductores |
+| Añadir `playsinline=1` a la dirección | Dejó de reproducirse en **todos** los navegadores |
 
-**Preferir SIEMPRE el archivo directo (.mp4) al incrustado.** Con un `<video>`
-propio, el bucle, el silencio y el arranque son atributos nuestros:
-garantizados, iguales en todos los navegadores y verificables desde aquí. Con
-un iframe de otro dominio no hay acceso al reproductor — ni para consultarlo ni
-para forzarlo. `VideoNube` detecta la extensión y elige solo.
+Todas se propusieron sin poder verificarlas: **desde este entorno no hay
+acceso a dominios externos**, así que cualquier idea sobre el reproductor es
+una hipótesis, no una comprobación. Si un vídeo no se reproduce, mirar el
+panel del servicio antes que este código.
 
-El archivo debe ser **H.264**, no H.265: 10 bits no se reproduce en Chrome ni
-en Firefox.
+**Lo único que se hace desde fuera:**
 
-**Síntoma conocido:** vídeo que se reproduce una vez y se queda en negro, en
-todos los navegadores, sin controles para reiniciarlo. No es política de
-reproducción automática (esa falla desde el primer segundo): es que **el bucle
-no se está aplicando**. Con un iframe hay que resolverlo en el panel del
-servicio; con archivo directo no puede pasar.
+- Si hace falta recortar (el fondo de Inicio va a sangre completa), se ensancha
+  el **contenedor**, nunca se deforma el iframe. `177.78svh` de ancho hace que
+  la caja 16:9 mida `100svh` de alto.
+- `pointer-events-none`, si se necesita, va en ese contenedor y sólo en el
+  fondo decorativo de Inicio, que se tragaría el gesto de desplazar.
+- Una sola copia del iframe por página: elegir móvil o escritorio con
+  `useEsMovil()`, no con `hidden`.
+- El `title` es genérico, no el nombre del archivo (decía
+  "MASTER 4K SDR — H265 10BIT" y se publicaba en el HTML).
 
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
