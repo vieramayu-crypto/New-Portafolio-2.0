@@ -31,6 +31,11 @@ export interface HotelStory {
     url: string;
     poster: string;
   };
+  /** Vídeo incrustado del servicio en la nube, dentro del recorrido de la
+   *  galería. Se monta sólo cuando entra en pantalla y se desmonta al salir,
+   *  igual que el fondo de Inicio: es la única forma de pararlo sin depender
+   *  del SDK del proveedor. A sangre completa, en bucle y sin controles. */
+  galleryEmbed?: string;
   quote?: string;
   category: 'Luxury Hotel' | 'Destination Wedding' | 'Romantic Escape' | 'Historic Villa';
   layoutVariant?: number; // 0 to 7 unique layout variations

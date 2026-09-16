@@ -82,13 +82,14 @@ const MOBILE_POSITIONS: CardSpec[] = [
      El desorden es SÓLO lateral y en pasos pequeños. Con un escalonado mayor
      las de abajo subían tanto que tapaban la placa del nombre de las de
      arriba -- y el nombre es lo único que informa en cada tarjeta. Las
-     alturas están calculadas para que cada fila empiece justo donde termina
-     la de arriba, y para que la última acabe antes del aviso de salida (que
-     empieza a 776px sobre una pantalla de 844). */
+     alturas dejan ~9px de aire entre la fila de arriba y la de abajo (antes
+     se tocaban a hueso, que tampoco era la idea) y hacen que la última acabe
+     antes del aviso de salida, que empieza a 776px sobre una pantalla de
+     844. */
   { left: 26, top: 28 }, // arriba-izquierda (la más alta)
   { left: 74, top: 32 }, // arriba-derecha, un escalón por debajo
-  { left: 28, top: 65 }, // abajo-izquierda, corrida a la derecha respecto a la de arriba
-  { left: 73, top: 69 }, // abajo-derecha, corrida a la izquierda respecto a la de arriba
+  { left: 28, top: 66 }, // abajo-izquierda, corrida a la derecha respecto a la de arriba
+  { left: 73, top: 70 }, // abajo-derecha, corrida a la izquierda respecto a la de arriba
 ];
 /** 37svh de alto -> 20.8svh de ancho. Un 15% más grande que las 32svh
  *  anteriores, que es lo máximo que permite la pantalla: a 390px el ancho

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { HotelStory, PhotoItem } from '../types';
@@ -19,6 +19,55 @@ interface HotelDetailProps {
   nextStory?: HotelStory | null;
 }
 
+/** Vídeo incrustado dentro del recorrido de la galería, a sangre completa.
+ *
+ *  Mismo mecanismo que el fondo de Inicio: el iframe se monta al entrar en
+ *  pantalla y se desmonta al salir -- lo único que para de verdad un
+ *  reproductor ajeno sin su SDK -- y un sondeo `no-cors` decide si montarlo,
+ *  para no dejar nunca el rectángulo gris de un iframe que falla. Sin
+ *  parallax: es 16:9 en una caja 16:9 y se ve entero, igual que las fotos a
+ *  sangre completa. */
+const GalleryEmbed: React.FC<{ src: string }> = ({ src }) => {
+  const caja = useRef<HTMLDivElement>(null);
+  const [enPantalla, setEnPantalla] = useState(false);
+  const [responde, setResponde] = useState(false);
+
+  useEffect(() => {
+    const n = caja.current;
+    if (!n || typeof IntersectionObserver === 'undefined') return;
+    const obs = new IntersectionObserver(([e]) => setEnPantalla(e.isIntersecting), {
+      rootMargin: '200px 0px',
+    });
+    obs.observe(n);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!enPantalla || responde) return;
+    let vivo = true;
+    fetch(src, { mode: 'no-cors' })
+      .then(() => { if (vivo) setResponde(true); })
+      .catch(() => { /* sin respuesta: la caja se queda oscura, nunca en gris */ });
+    return () => { vivo = false; };
+  }, [enPantalla, responde, src]);
+
+  return (
+    <div ref={caja} className="relative w-full aspect-[16/9] overflow-hidden bg-[#1a1918]">
+      {enPantalla && responde && (
+        <iframe
+          src={src}
+          title=""
+          frameBorder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+          className="pointer-events-none absolute inset-0 h-full w-full border-0"
+        />
+      )}
+    </div>
+  );
+};
+
 interface GalleryPhotoProps {
   photo: PhotoItem;
   y: ReturnType<typeof useTransform<number, string>>;
@@ -28,24 +77,49 @@ interface GalleryPhotoProps {
   bleed?: boolean;
 }
 
+/** El parallax va en la FOTO, no en la caja.
+
+ *  Antes el desplazamiento se aplicaba al contenedor entero, y cada foto se
+ *  movía una cantidad distinta (de 40 a 110px). El resultado: el hueco entre
+ *  dos fotos vecinas se abría y se cerraba al hacer scroll. Medido en la
+ *  galería del Ritz-Carlton a 390x844, un mismo hueco barría de 71px a -6px
+ *  mientras se bajaba; al cruzar los valores pequeños asomaba el fondo crema
+ *  como una línea blanca fina, que es lo que se veía en pantalla.
+ *
+ *  Ahora la caja se queda quieta en el flujo -- los huecos del diseño no
+ *  cambian nunca -- y lo que se desplaza es la imagen dentro de ella. La capa
+ *  interior lleva 36px de holgura arriba y abajo para que al desplazarse no
+ *  destape el fondo de la caja. Por eso los recorridos bajan a ~30px como
+ *  máximo: moviendo la imagen dentro de un marco quieto, el efecto se percibe
+ *  igual o más con mucho menos recorrido. */
 const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widthClass, offsetClass, bleed }) => (
-  <motion.div
-    style={{ y }}
+  <div
     className={`relative ${widthClass} ${aspectClass} ${offsetClass || ''} ${
       bleed ? '' : 'shadow-2xl'
     } group overflow-hidden bg-stone-200`}
   >
-    <picture>
-      <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />
-      <img
-        src={photo.url}
-        alt={photo.alt}
-        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-          photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
-        }`}
-      />
-    </picture>
-  </motion.div>
+    {/* Las fotos a sangre completa no llevan parallax dentro: sus cajas son
+        16:9 y sus archivos también, así que se ven ENTERAS. Darles holgura
+        para desplazarlas obligaría a ampliar la imagen y recortarle los
+        lados -- en la del plato del restaurante serían 63px por lado, y esa
+        composición es justo la que hay que respetar. Al estar quietas
+        tampoco abren hueco con sus vecinas, que era el problema de origen. */}
+    <motion.div
+      style={{ y: bleed ? 0 : y }}
+      className={`absolute left-0 w-full ${bleed ? 'inset-y-0' : '-top-[24px] h-[calc(100%+48px)]'}`}
+    >
+      <picture>
+        <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />
+        <img
+          src={photo.url}
+          alt={photo.alt}
+          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+            photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
+          }`}
+        />
+      </picture>
+    </motion.div>
+  </div>
 );
 
 interface GalleryVideoProps {
@@ -63,8 +137,9 @@ const GalleryVideo: React.FC<GalleryVideoProps> = ({ video, y }) => {
   };
 
   return (
-    <motion.div style={{ y }} className="relative w-full aspect-[16/9] overflow-hidden bg-stone-200 group">
-      <video
+    <div className="relative w-full aspect-[16/9] overflow-hidden bg-stone-200 group">
+      <motion.video
+        style={{ y }}
         ref={videoRef}
         src={video.url}
         poster={video.poster}
@@ -72,7 +147,7 @@ const GalleryVideo: React.FC<GalleryVideoProps> = ({ video, y }) => {
         controls={isPlaying}
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
-        className="w-full h-full object-cover"
+        className="absolute -top-[36px] left-0 h-[calc(100%+72px)] w-full object-cover"
       />
       {!isPlaying && (
         <button
@@ -87,7 +162,7 @@ const GalleryVideo: React.FC<GalleryVideoProps> = ({ video, y }) => {
           </span>
         </button>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -95,6 +170,7 @@ interface GalleryLayoutProps {
   photos: PhotoItem[];
   y: ReturnType<typeof useTransform<number, string>>[];
   video?: { url: string; poster: string };
+  embed?: string;
 }
 
 const Bleed: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -111,7 +187,7 @@ const Bleed: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // 0 -- THE RITZ-CARLTON TENERIFE, ABAMA: a guided walk through the property --
   // facade, grounds + room, private cove, architecture + pool, spa, dining.
-  ({ photos, y, video }) => (
+  ({ photos, y, video, embed }) => (
     <>
       {photos[0] && (
         <div className="w-full flex justify-center">
@@ -133,6 +209,15 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
             />
           )}
         </div>
+      )}
+      {/* El vídeo va justo detrás de la segunda foto -- la de la persona
+          caminando frente a la fachada -- porque ahí el recorrido pasa de la
+          llegada al hotel a estar dentro, y el movimiento cuenta ese salto
+          mejor que otra foto fija. A sangre completa, como la del plato. */}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {video ? (
         <Bleed>
@@ -904,20 +989,20 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 70, damping: 22 });
 
   // Same parallax mechanism as the home page hotel sections, extended to 14 photos
-  const y0 = useTransform(smoothProgress, [0, 1], ['60px', '-60px']);
-  const y1 = useTransform(smoothProgress, [0, 1], ['110px', '-110px']);
-  const y2 = useTransform(smoothProgress, [0, 1], ['40px', '-40px']);
-  const y3 = useTransform(smoothProgress, [0, 1], ['70px', '-70px']);
-  const y4 = useTransform(smoothProgress, [0, 1], ['100px', '-100px']);
-  const y5 = useTransform(smoothProgress, [0, 1], ['50px', '-50px']);
-  const y6 = useTransform(smoothProgress, [0, 1], ['80px', '-80px']);
-  const y7 = useTransform(smoothProgress, [0, 1], ['90px', '-90px']);
-  const y8 = useTransform(smoothProgress, [0, 1], ['65px', '-65px']);
-  const y9 = useTransform(smoothProgress, [0, 1], ['55px', '-55px']);
-  const y10 = useTransform(smoothProgress, [0, 1], ['75px', '-75px']);
-  const y11 = useTransform(smoothProgress, [0, 1], ['95px', '-95px']);
-  const y12 = useTransform(smoothProgress, [0, 1], ['45px', '-45px']);
-  const y13 = useTransform(smoothProgress, [0, 1], ['85px', '-85px']);
+  const y0 = useTransform(smoothProgress, [0, 1], ['17px', '-17px']);
+  const y1 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y2 = useTransform(smoothProgress, [0, 1], ['11px', '-11px']);
+  const y3 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y4 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y5 = useTransform(smoothProgress, [0, 1], ['14px', '-14px']);
+  const y6 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y7 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y8 = useTransform(smoothProgress, [0, 1], ['18px', '-18px']);
+  const y9 = useTransform(smoothProgress, [0, 1], ['15px', '-15px']);
+  const y10 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y11 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
+  const y12 = useTransform(smoothProgress, [0, 1], ['13px', '-13px']);
+  const y13 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
   const yTransforms = [y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13];
 
   const venueMapUrl = `https://www.google.com/maps/search/${encodeURIComponent(
@@ -1077,7 +1162,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
       >
         {(() => {
           const Layout = GALLERY_LAYOUTS[(story.layoutVariant ?? 0) % GALLERY_LAYOUTS.length];
-          return <Layout photos={photos} y={yTransforms} video={story.galleryVideo} />;
+          return <Layout photos={photos} y={yTransforms} video={story.galleryVideo} embed={story.galleryEmbed} />;
         })()}
       </section>
 

@@ -12,6 +12,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Luxury Hotel',
     layoutVariant: 0,
+    galleryEmbed: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1',
     publishedByHotel: true,
     caseStudy: {
       season: 'Julio · Verano',
