@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { HotelStory, Page } from '../types';
@@ -66,6 +66,41 @@ export const HomeMain: React.FC<HomeMainProps> = ({
 }) => {
   const [activeStoryIndex, setActiveStoryIndex] = useState<number>(0);
   const [isHotelSelectorOpen, setIsHotelSelectorOpen] = useState<boolean>(false);
+
+  /* Cerrar el selector tocando fuera. Antes la única salida era volver a
+     pulsar la misma flecha que lo abrió: quien tocaba la pantalla veía que no
+     pasaba nada y tenía que deducir el camino de vuelta. `pointerdown` cubre
+     ratón y dedo a la vez, y el listener sólo existe mientras está abierto.
+     Escape hace lo mismo para quien navega con teclado. */
+  const selectorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isHotelSelectorOpen) return;
+    const fuera = (e: PointerEvent) => {
+      const n = selectorRef.current;
+      if (!n) return;
+      /* Por coordenadas, no con contains(): el contenedor es una banda de
+         ancho completo, así que un toque a 300px del botón seguiría estando
+         "dentro" de él. Sus hijos directos sí son cajas ajustadas -- el botón
+         y, si está abierto, el panel. */
+      const dentro = [...n.children].some((hijo) => {
+        const r = hijo.getBoundingClientRect();
+        return (
+          e.clientX >= r.left && e.clientX <= r.right &&
+          e.clientY >= r.top && e.clientY <= r.bottom
+        );
+      });
+      if (!dentro) setIsHotelSelectorOpen(false);
+    };
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsHotelSelectorOpen(false);
+    };
+    document.addEventListener('pointerdown', fuera);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', fuera);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [isHotelSelectorOpen]);
   const [showFixedLabels, setShowFixedLabels] = useState<boolean>(false);
   const [isValueBlockVisible, setIsValueBlockVisible] = useState<boolean>(false);
 
@@ -304,6 +339,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.3 }}
+                ref={selectorRef}
                 className="fixed bottom-8 inset-x-0 z-50 flex flex-col items-center px-4"
               >
                 <button

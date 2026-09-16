@@ -75,10 +75,20 @@ const DESKTOP_POSITIONS: CardSpec[] = [
 const DESKTOP_CARD_CLASS = 'h-[56svh] w-auto';
 
 const MOBILE_POSITIONS: CardSpec[] = [
+  /* Las cuatro iban en dos columnas perfectas (26 / 74 repetido) y a la misma
+     distancia, y eso se leía como una cuadrícula, no como una escena. Ahora
+     cada columna se desplaza un poco entre su tarjeta de arriba y la de
+     abajo, así que ningún borde se alinea con el de enfrente.
+     El desorden es SÓLO lateral y en pasos pequeños. Con un escalonado mayor
+     las de abajo subían tanto que tapaban la placa del nombre de las de
+     arriba -- y el nombre es lo único que informa en cada tarjeta. Las
+     alturas están calculadas para que cada fila empiece justo donde termina
+     la de arriba, y para que la última acabe antes del aviso de salida (que
+     empieza a 776px sobre una pantalla de 844). */
   { left: 26, top: 28 }, // arriba-izquierda (la más alta)
-  { left: 74, top: 36 }, // arriba-derecha, un escalón más abajo
-  { left: 26, top: 66.5 }, // abajo-izquierda
-  { left: 74, top: 74.5 }, // abajo-derecha, la más baja
+  { left: 74, top: 32 }, // arriba-derecha, un escalón por debajo
+  { left: 28, top: 65 }, // abajo-izquierda, corrida a la derecha respecto a la de arriba
+  { left: 73, top: 69 }, // abajo-derecha, corrida a la izquierda respecto a la de arriba
 ];
 /** 37svh de alto -> 20.8svh de ancho. Un 15% más grande que las 32svh
  *  anteriores, que es lo máximo que permite la pantalla: a 390px el ancho
@@ -92,13 +102,13 @@ const MOBILE_CARD_CLASS = 'h-[37svh] w-auto';
 const DEPLOY_ON = 0.2;
 const DEPLOY_OFF = 0.12;
 
-/** El aviso de que hay más abajo. No sale desde el principio a propósito: si
- *  estuviera puesto desde el primer fotograma se leería como parte del
- *  decorado y se pasaría por alto. Aparece pasada la mitad del bloque, con
- *  las cuatro tarjetas ya desplegadas, que es cuando el visitante puede creer
- *  que esto se acaba aquí. Mismo margen de histéresis que el despliegue. */
-const SALIDA_ON = 0.62;
-const SALIDA_OFF = 0.55;
+/** El aviso de que hay más abajo. No sale desde el primer fotograma -- ahí se
+ *  leería como parte del decorado y se pasaría por alto -- pero sí en cuanto
+ *  las cuatro tarjetas terminan de desplegarse (el despliegue arranca en
+ *  0.20). Antes esperaba al 62 % y obligaba a un segundo scroll para
+ *  descubrirlo: quien se paraba a mirar las tarjetas no lo veía nunca. */
+const SALIDA_ON = 0.26;
+const SALIDA_OFF = 0.18;
 
 /** Muelle blando a propósito: la animación ya no va pegada al dedo, se
  *  dispara sola, así que puede permitirse inercia. Con un `ease` lineal se
@@ -432,7 +442,7 @@ export const VideoShowcase: React.FC = () => {
             >
               <button
                 onClick={irAbajo}
-                className="mt-glass mt-glass-light relative flex items-center gap-3 overflow-hidden rounded-md px-5 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed] [text-shadow:0_1px_6px_rgba(26,25,24,0.85)] shadow-[0_2px_20px_rgba(26,25,24,0.14)] transition-colors duration-300 hover:bg-[#f5f3ed] hover:text-[#1a1918] md:text-xs"
+                className="mt-glass mt-glass-light relative flex items-center gap-3 overflow-hidden rounded-md px-5 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed] !shadow-[inset_0_1px_1px_rgba(255,255,255,0.72)] [text-shadow:0_1px_6px_rgba(26,25,24,0.85)] transition-colors duration-300 hover:bg-white/20 md:text-xs"
               >
                 <span>Ver los hoteles</span>
                 <motion.span
