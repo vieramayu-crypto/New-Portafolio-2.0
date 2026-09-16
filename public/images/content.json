@@ -56,7 +56,7 @@
   "waysToWork": {
     "eyebrow": "Cómo empezar",
     "heading": "Formas de trabajar juntos",
-    "intro": "Definimos juntos el contenido y los usos.",
+    "intro": "Definimos contigo el contenido, los usos y el presupuesto.",
     "items": [
       {
         "title": "Campañas y lanzamientos",
@@ -92,8 +92,8 @@
   "valueBlock": {
     "claim": "Una producción, dos destinos.",
     "benefits": [
-      "Los canales de tu hotel.",
-      "También nuestro canal."
+      "Contenido para los canales de tu hotel.",
+      "Publicaciones en @mayurlintravel, como servicio adicional."
     ],
     "benefitDetails": [
       "Fotografías y vídeos en los formatos y con los usos definidos en la propuesta.",
@@ -247,7 +247,8 @@
     "caseLinkLabel": "Ver proyecto",
     "galleryLinkLabel": "Ver galería",
     "closingHeading": "Cada proyecto empieza con una conversación.",
-    "ctaLabel": "Iniciar un proyecto"
+    "ctaLabel": "Iniciar un proyecto",
+    "subline": "Fotografía y producción audiovisual para hoteles y alojamientos con identidad propia."
   },
   "hotels": [
     {

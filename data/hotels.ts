@@ -76,8 +76,8 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'gt-gal-4',
         url: publicImage('sec1-gal4-playa-h.jpg'),
-        alt: 'Vista elevada de la cala privada de Abama con sombrillas y tumbonas',
-        caption: 'La cala privada del resort',
+        alt: 'Vista elevada de la cala de Abama con sombrillas y tumbonas',
+        caption: 'La cala del resort',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
       },
@@ -277,7 +277,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     },
     coverImage: publicImage('sec2-portada.jpg'),
     description:
-      'En un valle al norte de Menorca, dentro de una finca privada de 800 hectáreas, Vestige Binidufà restaura una possessió agrícola del siglo XVIII: piedra, barro y materiales naturales que toman su tono directamente del paisaje que los rodea, con la herencia morisca todavía presente en su nombre.',
+      'En un valle al norte de Menorca, Vestige Binidufà restaura una possessió agrícola del siglo XVIII, en un entorno de 800 hectáreas que comparte con Son Ermità: piedra, barro y materiales naturales que toman su tono directamente del paisaje que los rodea, con la herencia morisca todavía presente en su nombre.',
     quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
     photos: [
       {
@@ -550,7 +550,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     },
     coverImage: publicImage('sec4-portada.jpg'),
     description:
-      'Suspendida sobre los acantilados de Imerovigli, tallada en roca volcánica sobre la caldera de Santorini, Honeymoon Petra Villas ofrece una de las piscinas más codiciadas del Egeo, un balcón de piedra sobre el mar más azul de Grecia.',
+      'Suspendida sobre los acantilados de Imerovigli, tallada en roca volcánica sobre la caldera de Santorini, Honeymoon Petra Villas abre sus piscinas sobre la caldera como un balcón de piedra sobre el Egeo.',
     quote: 'Roca volcánica y un horizonte infinito. Así amanece sobre la caldera.',
     photos: [
       {
@@ -573,7 +573,7 @@ export const HOTEL_STORIES: HotelStory[] = [
         id: 'be-3',
         url: publicImage('sec4-foto3-h.jpg'),
         alt: 'Piscina infinita sobre los acantilados de Imerovigli',
-        caption: 'Una de las piscinas más codiciadas del Egeo',
+        caption: 'La piscina, un balcón de piedra sobre la caldera',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
       }
@@ -663,7 +663,7 @@ export const HOTEL_STORIES: HotelStory[] = [
         id: 'be-gal-11',
         url: publicImage('sec4-foto3-h.jpg'),
         alt: 'Piscina infinita sobre los acantilados de Imerovigli',
-        caption: 'Una de las piscinas más codiciadas del Egeo',
+        caption: 'La piscina, un balcón de piedra sobre la caldera',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
       },
@@ -999,7 +999,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     },
     coverImage: publicImage('sec9-foto1-v.jpg'),
     description:
-      'En pleno desierto de Gorafe, District Hive es una cápsula de cristal y acero suspendida sobre el paisaje de Granada, con arquitectura que vive fuera de la red y está diseñada para desaparecer en ella: agua extraída del aire, energía del sol, y el silencio absoluto del interior de Andalucía.',
+      'En pleno desierto de Gorafe, District Hive es una cápsula de cristal y acero suspendida sobre el paisaje de Granada, con una arquitectura pensada para dejar la menor huella posible y desaparecer en el paisaje, rodeada del silencio del interior de Andalucía.',
     quote: 'Todo el cielo como techo, todo el paisaje como horizonte.',
     photos: [
       {

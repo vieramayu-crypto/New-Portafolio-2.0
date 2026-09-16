@@ -323,6 +323,50 @@ panel del servicio antes que este código.
 - El `title` es genérico, no el nombre del archivo (decía
   "MASTER 4K SDR — H265 10BIT" y se publicaba en el HTML).
 
+## Auditoría externa (sept. 2026) — decisiones aplicadas
+
+Mayurlin encargó una auditoría externa de 134 puntos y marcó 92 como "sí" en
+un panel aparte. Casi todos ya estaban hechos: la auditoría revisó el commit
+`688628d` del 13.09 y la web había avanzado desde entonces. Lo que se aplicó
+en esta ronda, con el matiz que lleva cada uno:
+
+- **Formulario sin rangos de precio** (pt 101). Antes preguntaba "menos de
+  2.500€ / 2.500–5.000€ / …". Se cambió por "en qué punto está" (presupuesto
+  aprobado / pendiente / explorando), que califica igual sin anclar la
+  conversación en una cifra antes de saber qué necesita el hotel. El campo se
+  llama `stage` en `InquiryFields`, ya no `budget`.
+- **Sólo cuatro campos obligatorios** (pt 100): nombre, email, hotel o empresa
+  y proyecto. Ubicación, servicio y punto del proyecto son opcionales.
+- **"Hotel o empresa"**, no "Propiedad" (pt 97) — incluye a las agencias, que
+  son quienes escriben en la mitad de los casos.
+- **Foco encerrado en el cuadro del formulario** (pt 123): cada etiqueta va
+  unida a su campo por `htmlFor`/`id`, el foco entra al abrir, el Tab da la
+  vuelta dentro y vuelve al botón de origen al cerrar.
+- **La intro no se reproduce en enlaces directos** a `/trabajo/:id` ni a
+  `/proyecto/:slug` (pt 115). En Inicio y en las tres páginas del menú sigue
+  saliendo en cada carga, como ella pidió. Quien llega por un enlace que ella
+  manda a un hotel viene a ver ese trabajo, no seis segundos de vídeo.
+- **Afirmaciones sin respaldo fuera** (pts 63, 65, 68, 40): "una de las
+  piscinas más codiciadas del Egeo", "agua extraída del aire, energía del
+  sol", "cala privada", y las 800 ha pasaron a ser del conjunto Son Ermità +
+  Binidufà, que es lo correcto.
+- **Nada de cobertura en vivo como parte del servicio** (pts 88/127). Se
+  borró de `caseStudies.ts` y se eliminó `components/ProductionScope.tsx`,
+  que era código muerto y llevaba la promesa de "mínimo tres stories diarias".
+- **El titular de caso dice de qué va el rodaje** (pts 28/33/39). Ojo con el
+  pt 33: la auditoría proponía "GPRO Valparaíso: tres producciones, una
+  relación que continúa", y eso choca con su regla de que el caso cuenta el
+  TRABAJO, nunca el trato. Quedó "tres producciones en la misma propiedad".
+- **`VITE_BASE` por defecto** (pt 121): `vite.config.ts` apuntaba a
+  `/New-Portafolio/`, del repositorio viejo. Compilar a mano sin la variable
+  daba un sitio con todas las rutas rotas. Ahora por defecto vale
+  `/New-Portafolio-2.0/`, igual que `deploy.yml`.
+
+Pendientes porque hacen falta datos que sólo tiene ella: pt 35 (si los cinco
+días de GPRO son por rodaje o en total), pt 36 (galería publicada / total
+entregado / usos autorizados) y pt 106 (si el plazo de "dos a tres semanas"
+es real).
+
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
 - Logo actual: sin efecto de sombra/resplandor (el anterior sí lo tenía, ella

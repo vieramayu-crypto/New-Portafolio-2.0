@@ -9,7 +9,7 @@ export default defineConfig(({ command }) => {
     // compila con VITE_BASE, sin tocar este archivo:
     //   VITE_BASE=/ npm run build            -> raíz del dominio
     //   VITE_BASE=/portfolio/ npm run build  -> subcarpeta
-    base: process.env.VITE_BASE || (command === 'build' ? '/New-Portafolio/' : '/'),
+    base: process.env.VITE_BASE || (command === 'build' ? '/New-Portafolio-2.0/' : '/'),
     server: {
       port: 3000,
       host: '0.0.0.0',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSiteContent } from "../src/lib/content";
 import { sendInquiry, type InquiryOutcome } from "../src/lib/inquiry";
@@ -10,31 +10,41 @@ const fieldClass =
 
 const SCOPE_OPTIONS = [
   "Fotografía",
-  "Cine",
-  "Fotografía + cine",
-  "Librería de activos / campaña",
+  "Vídeo",
+  "Fotografía y vídeo",
+  "Banco de imágenes y vídeos",
   "Producción continua",
 ];
 
-const BUDGET_OPTIONS = [
-  "Menos de 2.500€",
-  "2.500€ – 5.000€",
-  "5.000€ – 10.000€",
-  "Más de 10.000€",
-  "Por definir",
+/** Antes aquí había tramos de precio (menos de 2.500€, 2.500-5.000€...). Se
+ *  quitaron: poner cifras en el primer contacto ancla la conversación en el
+ *  precio antes de saber qué necesita el hotel, y a quien tiene presupuesto
+ *  grande le da una señal equivocada. Lo que sí sirve para priorizar es en qué
+ *  punto está el proyecto, que es lo que se pregunta ahora. */
+const STAGE_OPTIONS = [
+  "Presupuesto aprobado",
+  "Pendiente de aprobación",
+  "Explorando opciones",
 ];
 
 interface FieldProps {
   label: string;
+  /** Id del campo que hay dentro. Une etiqueta y campo, para que un lector de
+   *  pantalla diga de qué es la casilla y para que al pulsar el rótulo se
+   *  enfoque el campo. */
+  htmlFor?: string;
   wide?: boolean;
   children: React.ReactNode;
 }
 
-const Field: React.FC<FieldProps> = ({ label, wide, children }) => (
+const Field: React.FC<FieldProps> = ({ label, htmlFor, wide, children }) => (
   <div
     className={`border-b border-[#1a1918]/25 pb-4 pt-2 ${wide ? "md:col-span-2" : ""}`}
   >
-    <label className="mb-3 block font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]">
+    <label
+      htmlFor={htmlFor}
+      className="mb-3 block font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]"
+    >
       {label}
     </label>
     {children}
@@ -62,6 +72,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
   onClose,
 }) => {
   const { contact } = useSiteContent();
+  const panelRef = useRef<HTMLElement | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [outcome, setOutcome] = useState<InquiryOutcome>("enviado");
@@ -73,15 +84,51 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     location: "",
     link: "",
     scope: "",
-    budget: "",
+    stage: "",
     message: "",
   });
 
-  // Cierre con Escape y bloqueo del scroll de fondo mientras el modal vive.
+  // Cierre con Escape, foco dentro del cuadro y bloqueo del scroll de fondo
+  // mientras el modal vive.
+  //
+  // El foco importa: sin esto, quien navega con el teclado abre el cuadro y el
+  // foco sigue en el botón de detrás, así que el primer Tab se va a los enlaces
+  // del menú -- que están tapados por el velo y no se ven -- en vez de al
+  // primer campo. Se lleva el foco al cuadro al abrir, se encierra el Tab
+  // dentro mientras está abierto, y se devuelve a donde estaba al cerrar.
   useEffect(() => {
     if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    panelRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const todos: HTMLElement[] = Array.prototype.slice.call(
+        panel.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      // `offsetParent` nulo = escondido: el campo de archivo real vive con
+      // `hidden` detrás de su etiqueta y no debe recibir el foco.
+      const focusables = todos.filter(
+        (el) => el.offsetParent !== null || el === document.activeElement,
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || active === panel)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     const previous = document.body.style.overflow;
@@ -89,6 +136,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previous;
+      previouslyFocused?.focus?.();
     };
   }, [open, onClose]);
 
@@ -142,6 +190,8 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.982 }}
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              ref={panelRef}
+              tabIndex={-1}
               className="mt-glass mt-glass-light pointer-events-auto relative flex max-h-full w-full flex-col overflow-hidden rounded-lg text-[#1a1918] md:max-h-[min(820px,calc(100svh-80px))] md:w-[min(1040px,100%)] md:rounded-[10px]"
             >
               {/* El scroll vive aqui dentro, no en la caja de cristal: un
@@ -242,8 +292,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         onSubmit={handleSubmit}
                         className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-[34px] md:gap-y-7"
                       >
-                        <Field label="Nombre">
+                        <Field label="Nombre" htmlFor="inq-name">
                           <input
+                            id="inq-name"
                             required
                             autoComplete="name"
                             value={form.name}
@@ -254,8 +305,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Email">
+                        <Field label="Email" htmlFor="inq-email">
                           <input
+                            id="inq-email"
                             required
                             type="email"
                             autoComplete="email"
@@ -267,8 +319,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Propiedad">
+                        <Field label="Hotel o empresa" htmlFor="inq-property">
                           <input
+                            id="inq-property"
                             required
                             value={form.propertyName}
                             onChange={(e) =>
@@ -278,9 +331,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Ubicación / país">
+                        <Field label="Ubicación (opcional)" htmlFor="inq-location">
                           <input
-                            required
+                            id="inq-location"
                             value={form.location}
                             onChange={(e) =>
                               setForm({ ...form, location: e.target.value })
@@ -291,10 +344,10 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
                         {/* Instagram y web en una sola casilla: quien contesta
                             va a abrir una cosa o la otra, y pedir las dos por
-                            separado es una casilla más sin ganar nada. Único
-                            campo opcional del formulario. */}
-                        <Field label="Instagram o web (opcional)" wide>
+                            separado es una casilla más sin ganar nada. */}
+                        <Field label="Instagram o web (opcional)" htmlFor="inq-link" wide>
                           <input
+                            id="inq-link"
                             value={form.link}
                             onChange={(e) =>
                               setForm({ ...form, link: e.target.value })
@@ -304,9 +357,9 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Qué necesitas">
+                        <Field label="¿Qué necesitas producir? (opcional)" htmlFor="inq-scope">
                           <select
-                            required
+                            id="inq-scope"
                             value={form.scope}
                             onChange={(e) =>
                               setForm({ ...form, scope: e.target.value })
@@ -322,17 +375,17 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           </select>
                         </Field>
 
-                        <Field label="Presupuesto estimado">
+                        <Field label="En qué punto está (opcional)" htmlFor="inq-stage">
                           <select
-                            required
-                            value={form.budget}
+                            id="inq-stage"
+                            value={form.stage}
                             onChange={(e) =>
-                              setForm({ ...form, budget: e.target.value })
+                              setForm({ ...form, stage: e.target.value })
                             }
                             className={fieldClass}
                           >
                             <option value="">Selecciona</option>
-                            {BUDGET_OPTIONS.map((option) => (
+                            {STAGE_OPTIONS.map((option) => (
                               <option key={option} value={option}>
                                 {option}
                               </option>
@@ -340,14 +393,15 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           </select>
                         </Field>
 
-                        <Field label="Proyecto" wide>
+                        <Field label="Proyecto" htmlFor="inq-message" wide>
                           <textarea
+                            id="inq-message"
                             required
                             value={form.message}
                             onChange={(e) =>
                               setForm({ ...form, message: e.target.value })
                             }
-                            placeholder="Tu objetivo, fechas aproximadas y cualquier contexto que creas útil."
+                            placeholder="Para cuándo lo necesitas, dónde se va a usar y cualquier contexto que creas útil."
                             className={`${fieldClass} h-48 min-h-[190px] resize-y`}
                           />
                         </Field>
