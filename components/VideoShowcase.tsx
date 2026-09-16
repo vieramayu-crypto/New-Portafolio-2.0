@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent, publicImage } from '../src/lib/content';
+import { VideoNube } from './VideoNube';
 
 /** Los cuatro hoteles con los que se ejemplifica el bloque -- los mismos
  *  cuatro que pidió Mayurlin por nombre (Ritz-Carlton, GPRO, InterContinental,
@@ -125,64 +126,35 @@ const CARD_SPRING = { type: 'spring' as const, stiffness: 110, damping: 19, mass
  *
  *  `activo` llega de fuera: sólo se monta cuando la sección está en pantalla.
  */
-const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
-  /* El sondeo con `no-cors` existe para no enseñar nunca el rectángulo gris de
-     un iframe que falla (`onLoad` no sirve: el navegador lo dispara igual
-     cuando la carga falla, porque su página de error también "carga").
-     Pero es una comprobación a ciegas, sin poder probarla contra el servicio
-     real. Si ese servicio rechaza la llamada, el sondeo diría "no responde"
-     de un vídeo que funciona.
-     Probado ya contra el servicio real y responde, así que manda: si algún
-     día deja de responder, se ve la foto y nunca el gris. */
-  const [sondeo, setSondeo] = useState<'en curso' | 'responde' | 'no responde'>('en curso');
-
-  useEffect(() => {
-    if (!MOSTRAR_VIDEO || !activo || !FONDO || sondeo !== 'en curso') return;
-    let vivo = true;
-    fetch(FONDO.src, { mode: 'no-cors' })
-      .then(() => { if (vivo) setSondeo('responde'); })
-      .catch(() => { if (vivo) setSondeo('no responde'); });
-    return () => { vivo = false; };
-  }, [activo, sondeo]);
-
-  const montar = MOSTRAR_VIDEO && activo && !!FONDO && sondeo === 'responde';
-
-  return (
-    <>
-      {/* La foto de respaldo se recorta igual que el vídeo en cada tamaño:
-          a sangre completa en escritorio, y en móvil como una banda 16:9
-          centrada, para que el bloque se vea igual con vídeo y sin él. */}
-      <img
-        src={BG_PLACEHOLDER}
-        alt=""
-        className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 object-cover md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0 md:translate-y-0"
+const FondoVideo: React.FC = () => (
+  <>
+    {/* La foto de respaldo se recorta como el vídeo: a sangre completa en
+        escritorio, y en móvil como banda 16:9 centrada, para que el bloque se
+        vea igual con vídeo y sin él. */}
+    <img
+      src={BG_PLACEHOLDER}
+      alt=""
+      className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 object-cover md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0 md:translate-y-0"
+    />
+    {FONDO && MOSTRAR_VIDEO && FONDO.tipo === 'incrustado' && (
+      <VideoNube
+        src={FONDO.src}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 border-0 md:h-[100svh] md:w-[177.78svh] md:min-h-[56.25vw] md:min-w-full"
       />
-      {montar && FONDO!.tipo === 'incrustado' && (
-        <iframe
-          src={FONDO!.src}
-          title=""
-          frameBorder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share"
-          allowFullScreen
-          referrerPolicy="strict-origin-when-cross-origin"
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 border-0 md:h-[100svh] md:w-[177.78svh] md:min-h-[56.25vw] md:min-w-full"
-        />
-      )}
-      {montar && FONDO!.tipo === 'archivo' && (
-        <video
-          src={FONDO!.src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster={BG_PLACEHOLDER}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
-
-    </>
-  );
-};
+    )}
+    {FONDO && MOSTRAR_VIDEO && FONDO.tipo === 'archivo' && (
+      <video
+        src={FONDO.src}
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={BG_PLACEHOLDER}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+    )}
+  </>
+);
 
 const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -317,22 +289,6 @@ export const VideoShowcase: React.FC = () => {
     window.scrollTo({ top: n.getBoundingClientRect().bottom + window.scrollY, behavior: 'smooth' });
   };
 
-  /* El vídeo sólo existe mientras la sección está en pantalla. Montar y
-     desmontar es la única forma de encenderlo y apagarlo que no depende del
-     reproductor del servicio externo. El margen de 200px lo arranca justo
-     antes de que se vea, para que no se note el primer fotograma. */
-  const [enPantalla, setEnPantalla] = useState(false);
-  useEffect(() => {
-    const nodo = containerRef.current;
-    if (!nodo || typeof IntersectionObserver === 'undefined') return;
-    const obs = new IntersectionObserver(
-      ([entrada]) => setEnPantalla(entrada.isIntersecting),
-      { rootMargin: '200px 0px' },
-    );
-    obs.observe(nodo);
-    return () => obs.disconnect();
-  }, []);
-
   const stories = FEATURED_IDS.map((id) => {
     const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
     const base = HOTEL_STORIES[idx];
@@ -378,7 +334,7 @@ export const VideoShowcase: React.FC = () => {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0 overflow-hidden"
         >
-          <FondoVideo activo={enPantalla} />
+          <FondoVideo />
         </motion.div>
         {/* Aquí había un botón de reproducir grande y blanco. Tenía sentido
             sobre la foto fija: decía "esto es un vídeo". Con el vídeo real

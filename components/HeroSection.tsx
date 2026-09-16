@@ -115,14 +115,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             sube o baja con la banda de cristal, pero por dentro no se mueve
             nada. En escritorio no cambia: los cuatro elementos ya iban en
             flujo normal y siguen en el mismo orden, con sus margenes md:. */}
-        <div className="absolute inset-x-0 bottom-[158px] md:static md:bottom-auto">
+        <div className="absolute inset-x-0 bottom-[112px] md:static md:bottom-auto">
           <motion.p
             {...rise(0.1)}
             animate={animate}
             // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
             // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
             // lateral lo sostiene y puede seguir apagado.
-            className="m-0 mb-6 text-[10px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
+            className="m-0 mb-14 text-[10px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
           >
             {hero.eyebrow}
           </motion.p>
@@ -145,7 +145,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           <motion.p
             {...rise(0.26)}
             animate={animate}
-            className="m-0 mt-6 text-[15px] font-medium leading-snug text-white [text-shadow:0_1px_16px_rgba(0,0,0,.52)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:font-normal md:text-white/80 md:[text-shadow:none]"
+            className="m-0 mt-14 text-[15px] font-medium leading-snug text-white [text-shadow:0_1px_16px_rgba(0,0,0,.52)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:font-normal md:text-white/80 md:[text-shadow:none]"
           >
             {hero.subline}
           </motion.p>
@@ -154,7 +154,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
               esconde su columna de acción por debajo de 768px: en móvil no
               había ninguna forma de contactar desde la primera pantalla. Aquí
               va el botón para ese tamaño; en escritorio manda el de la banda. */}
-          <motion.div {...rise(0.34)} animate={animate} className="mt-6 md:hidden">
+          <motion.div {...rise(0.34)} animate={animate} className="mt-11 md:hidden">
             {/* `font-semibold` solo aqui: es el unico boton de la web que se
                 lee sobre una foto a pleno sol. */}
             <button
