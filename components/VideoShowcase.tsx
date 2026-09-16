@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useMotionValueEvent } from 'motion/react';
+import { AnimatePresence, motion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent, publicImage } from '../src/lib/content';
@@ -41,11 +41,7 @@ const FONDO: { tipo: 'incrustado' | 'archivo'; src: string; enVivo: boolean } | 
   enVivo: true,
 };
 
-/** ?video=1 antes de la almohadilla fuerza la prueba. Se lee una sola vez. */
-const PRUEBA_VIDEO =
-  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('video');
-
-const MOSTRAR_VIDEO = !!FONDO && (FONDO.enVivo || PRUEBA_VIDEO);
+const MOSTRAR_VIDEO = !!FONDO && FONDO.enVivo;
 
 interface CardSpec {
   left: number; // % del viewport
@@ -96,6 +92,14 @@ const MOBILE_CARD_CLASS = 'h-[37svh] w-auto';
 const DEPLOY_ON = 0.2;
 const DEPLOY_OFF = 0.12;
 
+/** El aviso de que hay más abajo. No sale desde el principio a propósito: si
+ *  estuviera puesto desde el primer fotograma se leería como parte del
+ *  decorado y se pasaría por alto. Aparece pasada la mitad del bloque, con
+ *  las cuatro tarjetas ya desplegadas, que es cuando el visitante puede creer
+ *  que esto se acaba aquí. Mismo margen de histéresis que el despliegue. */
+const SALIDA_ON = 0.62;
+const SALIDA_OFF = 0.55;
+
 /** Muelle blando a propósito: la animación ya no va pegada al dedo, se
  *  dispara sola, así que puede permitirse inercia. Con un `ease` lineal se
  *  veía robótica -- que es justo lo que pidió corregir Mayurlin. */
@@ -117,13 +121,9 @@ const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
      Pero es una comprobación a ciegas, sin poder probarla contra el servicio
      real. Si ese servicio rechaza la llamada, el sondeo diría "no responde"
      de un vídeo que funciona.
-     Por eso en la web publicada el sondeo MANDA (mejor la foto que el gris),
-     y en modo prueba NO manda: el iframe se monta igual y el recuadro de
-     diagnóstico cuenta qué pasó en cada paso. */
+     Probado ya contra el servicio real y responde, así que manda: si algún
+     día deja de responder, se ve la foto y nunca el gris. */
   const [sondeo, setSondeo] = useState<'en curso' | 'responde' | 'no responde'>('en curso');
-  const [cargado, setCargado] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [caja, setCaja] = useState('');
 
   useEffect(() => {
     if (!MOSTRAR_VIDEO || !activo || !FONDO || sondeo !== 'en curso') return;
@@ -134,32 +134,27 @@ const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
     return () => { vivo = false; };
   }, [activo, sondeo]);
 
-  useEffect(() => {
-    if (!PRUEBA_VIDEO) return;
-    const n = iframeRef.current;
-    if (!n) { setCaja(''); return; }
-    const r = n.getBoundingClientRect();
-    setCaja(`${Math.round(r.width)}x${Math.round(r.height)}`);
-  }, [cargado, sondeo, activo]);
-
-  /* En prueba basta con estar en pantalla; en vivo hace falta que el sondeo
-     haya respondido. */
-  const montar = MOSTRAR_VIDEO && activo && !!FONDO && (PRUEBA_VIDEO || sondeo === 'responde');
+  const montar = MOSTRAR_VIDEO && activo && !!FONDO && sondeo === 'responde';
 
   return (
     <>
-      <img src={BG_PLACEHOLDER} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      {/* La foto de respaldo se recorta igual que el vídeo en cada tamaño:
+          a sangre completa en escritorio, y en móvil como una banda 16:9
+          centrada, para que el bloque se vea igual con vídeo y sin él. */}
+      <img
+        src={BG_PLACEHOLDER}
+        alt=""
+        className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 object-cover md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0 md:translate-y-0"
+      />
       {montar && FONDO!.tipo === 'incrustado' && (
         <iframe
-          ref={iframeRef}
           src={FONDO!.src}
           title=""
           frameBorder="0"
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share"
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
-          onLoad={() => setCargado(true)}
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[100svh] w-[177.78svh] min-h-[56.25vw] min-w-full -translate-x-1/2 -translate-y-1/2 border-0"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 border-0 md:h-[100svh] md:w-[177.78svh] md:min-h-[56.25vw] md:min-w-full"
         />
       )}
       {montar && FONDO!.tipo === 'archivo' && (
@@ -174,16 +169,6 @@ const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
         />
       )}
 
-      {/* Sólo en modo prueba: lo que no puedo medir desde aquí, medido en su
-          navegador. Con estas cuatro líneas se sabe en qué paso se rompe. */}
-      {PRUEBA_VIDEO && (
-        <div className="absolute left-3 top-3 z-50 rounded bg-black/80 px-3 py-2 font-mono text-[11px] leading-[1.6] text-white">
-          <div>sondeo: {sondeo}</div>
-          <div>iframe montado: {montar ? 'sí' : 'no'}</div>
-          <div>iframe cargado: {cargado ? 'sí' : 'no'}</div>
-          <div>tamaño: {caja || '-'}</div>
-        </div>
-      )}
     </>
   );
 };
@@ -306,9 +291,20 @@ export const VideoShowcase: React.FC = () => {
     offset: ['start start', 'end end'],
   });
 
+  const [salidaVisible, setSalidaVisible] = useState(false);
+
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setDeployed((abierto) => (abierto ? p > DEPLOY_OFF : p >= DEPLOY_ON));
+    setSalidaVisible((visible) => (visible ? p > SALIDA_OFF : p >= SALIDA_ON));
   });
+
+  /* Salta al final de esta sección, no a un id concreto: así el bloque no
+     tiene que saber qué viene detrás y sigue funcionando si se reordena. */
+  const irAbajo = () => {
+    const n = containerRef.current;
+    if (!n) return;
+    window.scrollTo({ top: n.getBoundingClientRect().bottom + window.scrollY, behavior: 'smooth' });
+  };
 
   /* El vídeo sólo existe mientras la sección está en pantalla. Montar y
      desmontar es la única forma de encenderlo y apagarlo que no depende del
@@ -412,6 +408,45 @@ export const VideoShowcase: React.FC = () => {
             visibilityClassName="lg:hidden"
           />
         ))}
+
+        {/* Aviso de salida. Este bloque es pegajoso y ocupa la pantalla
+            entera: sin una señal, al llegar a las cuatro tarjetas es
+            razonable pensar que la página se acaba aquí. Dice a dónde lleva
+            en vez de un "hay más abajo" genérico -- nombrar lo que viene es
+            también una razón para seguir. Mismo cristal que la banda
+            flotante de Inicio, pero con el texto en claro: ese cristal es
+            translúcido al 32 % y aquí vive sobre un vídeo oscurecido por el
+            velo, así que el texto casi negro de la banda de Inicio (que sí
+            funciona sobre crema) quedaba ilegible. Flecha moviéndose despacio
+            para que se vea sin gritar. La sombra del texto no es decorativa:
+            el fondo ya no es una foto fija sino vídeo, y un plano soleado
+            podría aclarar el cristal justo debajo de estas letras. */}
+        <AnimatePresence>
+          {salidaVisible && (
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 14 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              className="absolute inset-x-0 bottom-8 z-40 flex justify-center px-4"
+            >
+              <button
+                onClick={irAbajo}
+                className="mt-glass mt-glass-light relative flex items-center gap-3 overflow-hidden rounded-md px-5 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed] [text-shadow:0_1px_6px_rgba(26,25,24,0.85)] shadow-[0_2px_20px_rgba(26,25,24,0.14)] transition-colors duration-300 hover:bg-[#f5f3ed] hover:text-[#1a1918] md:text-xs"
+              >
+                <span>Ver los hoteles</span>
+                <motion.span
+                  aria-hidden
+                  animate={{ y: [0, 4, 0] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                  className="leading-none"
+                >
+                  &#8595;
+                </motion.span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
     </>
