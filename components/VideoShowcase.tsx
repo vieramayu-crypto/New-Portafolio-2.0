@@ -111,40 +111,55 @@ const CARD_SPRING = { type: 'spring' as const, stiffness: 110, damping: 19, mass
  *  `activo` llega de fuera: sólo se monta cuando la sección está en pantalla.
  */
 const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
-  /* `onLoad` NO sirve para saber si el vídeo está ahí: el navegador lo dispara
-     igual cuando la carga falla, porque su propia página de error también
-     "carga" (comprobado: opacidad 1 con el dominio bloqueado). Así que antes
-     de montar nada se llama a la dirección con `no-cors`, que no necesita
-     permiso del servidor y falla si el servicio no responde. Sólo si contesta
-     se monta el iframe. Si no, se queda la foto -- nunca el gris. */
-  const [alcanzable, setAlcanzable] = useState(false);
+  /* El sondeo con `no-cors` existe para no enseñar nunca el rectángulo gris de
+     un iframe que falla (`onLoad` no sirve: el navegador lo dispara igual
+     cuando la carga falla, porque su página de error también "carga").
+     Pero es una comprobación a ciegas, sin poder probarla contra el servicio
+     real. Si ese servicio rechaza la llamada, el sondeo diría "no responde"
+     de un vídeo que funciona.
+     Por eso en la web publicada el sondeo MANDA (mejor la foto que el gris),
+     y en modo prueba NO manda: el iframe se monta igual y el recuadro de
+     diagnóstico cuenta qué pasó en cada paso. */
+  const [sondeo, setSondeo] = useState<'en curso' | 'responde' | 'no responde'>('en curso');
   const [cargado, setCargado] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [caja, setCaja] = useState('');
 
   useEffect(() => {
-    if (!MOSTRAR_VIDEO || !activo || !FONDO || alcanzable) return;
+    if (!MOSTRAR_VIDEO || !activo || !FONDO || sondeo !== 'en curso') return;
     let vivo = true;
     fetch(FONDO.src, { mode: 'no-cors' })
-      .then(() => { if (vivo) setAlcanzable(true); })
-      .catch(() => { /* servicio caído o dominio bloqueado: se queda la foto */ });
+      .then(() => { if (vivo) setSondeo('responde'); })
+      .catch(() => { if (vivo) setSondeo('no responde'); });
     return () => { vivo = false; };
-  }, [activo, alcanzable]);
+  }, [activo, sondeo]);
 
-  const montar = MOSTRAR_VIDEO && activo && alcanzable && !!FONDO;
+  useEffect(() => {
+    if (!PRUEBA_VIDEO) return;
+    const n = iframeRef.current;
+    if (!n) { setCaja(''); return; }
+    const r = n.getBoundingClientRect();
+    setCaja(`${Math.round(r.width)}x${Math.round(r.height)}`);
+  }, [cargado, sondeo, activo]);
+
+  /* En prueba basta con estar en pantalla; en vivo hace falta que el sondeo
+     haya respondido. */
+  const montar = MOSTRAR_VIDEO && activo && !!FONDO && (PRUEBA_VIDEO || sondeo === 'responde');
 
   return (
     <>
       <img src={BG_PLACEHOLDER} alt="" className="absolute inset-0 h-full w-full object-cover" />
       {montar && FONDO!.tipo === 'incrustado' && (
         <iframe
+          ref={iframeRef}
           src={FONDO!.src}
           title=""
           frameBorder="0"
-          allow="autoplay; encrypted-media; picture-in-picture"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share"
+          allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
           onLoad={() => setCargado(true)}
-          className={`pointer-events-none absolute left-1/2 top-1/2 h-[100svh] w-[177.78svh] min-h-[56.25vw] min-w-full -translate-x-1/2 -translate-y-1/2 border-0 transition-opacity duration-700 ${
-            cargado ? 'opacity-100' : 'opacity-0'
-          }`}
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[100svh] w-[177.78svh] min-h-[56.25vw] min-w-full -translate-x-1/2 -translate-y-1/2 border-0"
         />
       )}
       {montar && FONDO!.tipo === 'archivo' && (
@@ -157,6 +172,17 @@ const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
           poster={BG_PLACEHOLDER}
           className="absolute inset-0 h-full w-full object-cover"
         />
+      )}
+
+      {/* Sólo en modo prueba: lo que no puedo medir desde aquí, medido en su
+          navegador. Con estas cuatro líneas se sabe en qué paso se rompe. */}
+      {PRUEBA_VIDEO && (
+        <div className="absolute left-3 top-3 z-50 rounded bg-black/80 px-3 py-2 font-mono text-[11px] leading-[1.6] text-white">
+          <div>sondeo: {sondeo}</div>
+          <div>iframe montado: {montar ? 'sí' : 'no'}</div>
+          <div>iframe cargado: {cargado ? 'sí' : 'no'}</div>
+          <div>tamaño: {caja || '-'}</div>
+        </div>
       )}
     </>
   );
