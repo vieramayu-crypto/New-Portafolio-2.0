@@ -136,21 +136,12 @@ const FondoVideo: React.FC = () => (
       alt=""
       className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 object-cover md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0 md:translate-y-0"
     />
-    {FONDO && MOSTRAR_VIDEO && FONDO.tipo === 'incrustado' && (
+    {FONDO && MOSTRAR_VIDEO && (
       <VideoNube
         src={FONDO.src}
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 border-0 md:h-[100svh] md:w-[177.78svh] md:min-h-[56.25vw] md:min-w-full"
-      />
-    )}
-    {FONDO && MOSTRAR_VIDEO && FONDO.tipo === 'archivo' && (
-      <video
-        src={FONDO.src}
-        autoPlay
-        loop
-        muted
-        playsInline
+        tocable={false}
         poster={BG_PLACEHOLDER}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 border-0 object-cover md:h-[100svh] md:w-[177.78svh] md:min-h-[56.25vw] md:min-w-full"
       />
     )}
   </>

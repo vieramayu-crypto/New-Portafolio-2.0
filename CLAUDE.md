@@ -287,6 +287,45 @@ de las 3 fotos del teaser de Inicio.
   propia secuencia: fachada → habitación → desayuno → spa → cena. Nunca
   agrupar por casualidad (p. ej. spa justo después de la cena sin razón).
 
+## Vídeos incrustados (regla fija — aplicar a todos los que vengan)
+
+Todos los vídeos de la web pasan por **`components/VideoNube.tsx`**. Un solo
+sitio: lo que se arregle una vez vale para todos. Nunca montar un iframe de
+vídeo a mano en otro componente.
+
+**Lo que NO se debe volver a hacer** (cada punto costó una ronda con Mayurlin):
+
+- **No montar el iframe desde un `IntersectionObserver`.** Se hacía para no
+  cargar el vídeo antes de tiempo, pero el permiso de reproducción automática
+  silenciada no se reparte igual a un marco que nace con el documento que a uno
+  creado después por JavaScript. Va en el HTML desde el primer momento.
+- **No pedir la dirección del vídeo con `fetch` antes de montarlo.** El sondeo
+  `no-cors` que evitaba el rectángulo gris deja en caché una respuesta opaca de
+  esa misma dirección, y qué hace cada navegador con ella al cargar un
+  documento no está garantizado.
+- **No poner `pointer-events-none` en un vídeo que sea contenido.** Si el
+  navegador se niega a reproducir solo, el reproductor enseña su botón de play
+  y nadie puede pulsarlo. Sólo el fondo decorativo de Inicio va sin tocar
+  (`tocable={false}`), porque ocupa la pantalla entera y capturaría el gesto de
+  desplazar.
+- **`playsinline` siempre.** Lo añade `VideoNube` a la dirección, para que no
+  dependa de acordarse al pegar una nueva.
+
+**Preferir SIEMPRE el archivo directo (.mp4) al incrustado.** Con un `<video>`
+propio, el bucle, el silencio y el arranque son atributos nuestros:
+garantizados, iguales en todos los navegadores y verificables desde aquí. Con
+un iframe de otro dominio no hay acceso al reproductor — ni para consultarlo ni
+para forzarlo. `VideoNube` detecta la extensión y elige solo.
+
+El archivo debe ser **H.264**, no H.265: 10 bits no se reproduce en Chrome ni
+en Firefox.
+
+**Síntoma conocido:** vídeo que se reproduce una vez y se queda en negro, en
+todos los navegadores, sin controles para reiniciarlo. No es política de
+reproducción automática (esa falla desde el primer segundo): es que **el bucle
+no se está aplicando**. Con un iframe hay que resolverlo en el panel del
+servicio; con archivo directo no puede pasar.
+
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
 - Logo actual: sin efecto de sombra/resplandor (el anterior sí lo tenía, ella
