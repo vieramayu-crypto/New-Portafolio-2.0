@@ -73,7 +73,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         className="pointer-events-none absolute inset-0 md:hidden"
         style={{
           background:
-            'linear-gradient(90deg, rgba(0,0,0,.21), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.68), rgba(0,0,0,.56) 20%, rgba(0,0,0,.40) 34%, rgba(0,0,0,.15) 50%, transparent 64%)',
+            'linear-gradient(90deg, rgba(0,0,0,.21), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.70), rgba(0,0,0,.62) 20%, rgba(0,0,0,.52) 34%, rgba(0,0,0,.28) 50%, transparent 64%)',
         }}
       />
       <div
@@ -99,20 +99,34 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           escribe su propio `transform` para animar y se llevaria por delante
           cualquier `translate` que pusieramos en la misma etiqueta. */}
       <div className="absolute inset-x-5 inset-y-0 z-[3] md:inset-y-auto md:right-auto md:left-[clamp(22px,3.4vw,54px)] md:top-1/2 md:-translate-y-[52%]">
-        <div className="absolute inset-x-0 top-[16%] md:static">
+        {/* UNA sola pila, anclada por ABAJO y con huecos en pixeles.
+
+            Antes el rotulo iba a top-16% y el titular a top-48%, mientras el
+            subtitulo y la banda de cristal iban anclados por pixeles desde
+            abajo. Dos sistemas a la vez: en cuanto el navegador colapsa su
+            barra de direcciones y la ventana crece, los porcentajes se mueven
+            y los pixeles no, asi que el reparto interior cambia solo. Medido
+            con la ventana pasando de 700 a 790 de alto: el hueco rotulo-
+            titular pasaba de 122 a 148px, y el titular-subtitulo de 23 a 67 --
+            casi el triple. En Safari de iPhone no se notaba porque su barra
+            va abajo y no cambia la altura igual.
+
+            Con todo anclado por abajo y los huecos en pixeles, la pila entera
+            sube o baja con la banda de cristal, pero por dentro no se mueve
+            nada. En escritorio no cambia: los cuatro elementos ya iban en
+            flujo normal y siguen en el mismo orden, con sus margenes md:. */}
+        <div className="absolute inset-x-0 bottom-[118px] md:static md:bottom-auto">
           <motion.p
             {...rise(0.1)}
             animate={animate}
             // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
             // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
             // lateral lo sostiene y puede seguir apagado.
-            className="m-0 text-[10px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
+            className="m-0 mb-6 text-[10px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
           >
             {hero.eyebrow}
           </motion.p>
-        </div>
 
-        <div className="absolute inset-x-0 top-[48%] -translate-y-1/2 md:static md:translate-y-0">
           <motion.h1
             {...rise(0.18)}
             animate={animate}
@@ -123,16 +137,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           >
             {hero.titleLead} <i>{hero.titleEmphasis}</i>
           </motion.h1>
-        </div>
 
-        {/* Subtitulo y boton van juntos, y anclados por ABAJO, no por
-            porcentaje: la banda de cristal ocupa siempre los mismos 88px
-            finales, asi que en una pantalla corta un porcentaje fijo los metia
-            debajo de ella. Anclados asi, el grupo sube y baja con la banda y
-            conserva su aire en cualquier movil. El titular sigue por
-            porcentaje, porque lo que tiene que seguir es la persona de la
-            foto, no el borde inferior. */}
-        <div className="absolute inset-x-0 bottom-[118px] md:static md:bottom-auto">
           {/* Frase funcional: qué producimos y para qué sirve. Nunca compite
               en tamaño con el titular, pero en movil vive sobre la grava a
               pleno sol: sube a 14px y a peso medio, y va en blanco puro sobre
@@ -140,7 +145,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           <motion.p
             {...rise(0.26)}
             animate={animate}
-            className="m-0 text-[15px] font-medium leading-snug text-white [text-shadow:0_1px_10px_rgba(0,0,0,.75)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:font-normal md:text-white/80 md:[text-shadow:none]"
+            className="m-0 mt-6 text-[15px] font-medium leading-snug text-white [text-shadow:0_1px_16px_rgba(0,0,0,.52)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:font-normal md:text-white/80 md:[text-shadow:none]"
           >
             {hero.subline}
           </motion.p>
@@ -154,7 +159,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 lee sobre una foto a pleno sol. */}
             <button
               onClick={onOpenAvailability}
-              className="bg-[#f5f3ed] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
+              className="bg-[#f5f3ed] px-6 py-3 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
             >
               {hero.ctaLabel}
             </button>
