@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { HotelStory, PhotoItem } from '../types';
+import { VideoNube } from './VideoNube';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
@@ -19,54 +20,14 @@ interface HotelDetailProps {
   nextStory?: HotelStory | null;
 }
 
-/** Vídeo incrustado dentro del recorrido de la galería, a sangre completa.
- *
- *  Mismo mecanismo que el fondo de Inicio: el iframe se monta al entrar en
- *  pantalla y se desmonta al salir -- lo único que para de verdad un
- *  reproductor ajeno sin su SDK -- y un sondeo `no-cors` decide si montarlo,
- *  para no dejar nunca el rectángulo gris de un iframe que falla. Sin
- *  parallax: es 16:9 en una caja 16:9 y se ve entero, igual que las fotos a
- *  sangre completa. */
-const GalleryEmbed: React.FC<{ src: string }> = ({ src }) => {
-  const caja = useRef<HTMLDivElement>(null);
-  const [enPantalla, setEnPantalla] = useState(false);
-  const [responde, setResponde] = useState(false);
-
-  useEffect(() => {
-    const n = caja.current;
-    if (!n || typeof IntersectionObserver === 'undefined') return;
-    const obs = new IntersectionObserver(([e]) => setEnPantalla(e.isIntersecting), {
-      rootMargin: '200px 0px',
-    });
-    obs.observe(n);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!enPantalla || responde) return;
-    let vivo = true;
-    fetch(src, { mode: 'no-cors' })
-      .then(() => { if (vivo) setResponde(true); })
-      .catch(() => { /* sin respuesta: la caja se queda oscura, nunca en gris */ });
-    return () => { vivo = false; };
-  }, [enPantalla, responde, src]);
-
-  return (
-    <div ref={caja} className="relative w-full aspect-[16/9] overflow-hidden bg-[#1a1918]">
-      {enPantalla && responde && (
-        <iframe
-          src={src}
-          title=""
-          frameBorder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share"
-          allowFullScreen
-          referrerPolicy="strict-origin-when-cross-origin"
-          className="pointer-events-none absolute inset-0 h-full w-full border-0"
-        />
-      )}
-    </div>
-  );
-};
+/** El vídeo de la galería, a sangre completa. Toda la lógica vive en
+ *  VideoNube, compartida con el fondo de Inicio: un solo sitio que arreglar.
+ *  Sin parallax, igual que las fotos a sangre completa. */
+const GalleryEmbed: React.FC<{ src: string }> = ({ src }) => (
+  <div className="relative w-full aspect-[16/9] overflow-hidden bg-[#1a1918]">
+    <VideoNube src={src} className="pointer-events-none absolute inset-0 h-full w-full border-0" />
+  </div>
+);
 
 interface GalleryPhotoProps {
   photo: PhotoItem;
@@ -199,6 +160,25 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           {photos[1] && (
             <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[62%]" />
           )}
+
+          {/* El vídeo va justo detrás de la foto de la persona caminando
+              frente a la fachada: ahí el recorrido pasa de llegar al hotel a
+              estar dentro, y el movimiento cuenta ese salto mejor que otra
+              foto fija.
+              En MÓVIL esta fila se apila, así que ponerlo detrás del bloque
+              entero lo dejaba debajo de la foto de la cama, compitiendo con
+              ella. Aquí dentro cae donde tiene que caer. En ESCRITORIO la
+              fila es de dos columnas y el vídeo debe ir debajo de las dos:
+              por eso esta copia sólo existe hasta md, y la de abajo a partir
+              de md. */}
+          {embed && (
+            <div className="w-full md:hidden">
+              <Bleed>
+                <GalleryEmbed src={embed} />
+              </Bleed>
+            </div>
+          )}
+
           {photos[2] && (
             <GalleryPhoto
               photo={photos[2]}
@@ -210,14 +190,12 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           )}
         </div>
       )}
-      {/* El vídeo va justo detrás de la segunda foto -- la de la persona
-          caminando frente a la fachada -- porque ahí el recorrido pasa de la
-          llegada al hotel a estar dentro, y el movimiento cuenta ese salto
-          mejor que otra foto fija. A sangre completa, como la del plato. */}
       {embed && (
-        <Bleed>
-          <GalleryEmbed src={embed} />
-        </Bleed>
+        <div className="hidden md:block">
+          <Bleed>
+            <GalleryEmbed src={embed} />
+          </Bleed>
+        </div>
       )}
       {video ? (
         <Bleed>
@@ -253,7 +231,11 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
       )}
       {photos[7] && (
         <Bleed>
-          <GalleryPhoto photo={photos[7]} y={y[7]} aspectClass="aspect-[16/9]" widthClass="w-full" bleed />
+          {/* 3:2, la proporción real del archivo. Estaba en 16:9 sobre una
+              copia ya recortada a 16:9 del original, así que al plato le
+              faltaba aire arriba y abajo -- justo lo que sostiene esa
+              composición cenital. */}
+          <GalleryPhoto photo={photos[7]} y={y[7]} aspectClass="aspect-[3/2]" widthClass="w-full" bleed />
         </Bleed>
       )}
       {photos[8] && (
