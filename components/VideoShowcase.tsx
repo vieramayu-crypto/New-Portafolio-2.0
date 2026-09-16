@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
@@ -9,10 +9,43 @@ import { useSiteContent, publicImage } from '../src/lib/content';
  *  Deltapark). El botón de cada tarjeta ya lleva a su portafolio real. */
 const FEATURED_IDS = ['ritz-carlton-abama', 'gpro-valparaiso', 'intercontinental-lisboa', 'deltapark-vitalresort'];
 
-/** Foto real de la web como fondo -- mientras no haya vídeo, es la única
- *  forma de ver que el desenfoque funciona (difuminar un color plano no se
- *  nota). Sustituir por el vídeo horizontal cuando Mayurlin lo entregue. */
+/** Foto real de la web. Ya no es sólo un marcador de posición: se queda
+ *  DEBAJO del vídeo como red de seguridad. Si el servicio de vídeo no
+ *  responde, no autoriza este dominio o tarda, la sección enseña esta foto
+ *  en vez de un rectángulo negro. */
 const BG_PLACEHOLDER = publicImage('sec6-gal01-fachada-noche-h.jpg');
+
+/** El vídeo horizontal del fondo.
+ *
+ *  `tipo: 'incrustado'` es el reproductor del servicio en la nube de
+ *  Mayurlin dentro de un <iframe>. Funciona sin tocar nada más, pero es una
+ *  caja cerrada: el reproductor es de ellos. Por eso el arranque y la parada
+ *  no se piden por API sino montando y desmontando el iframe según entra o
+ *  sale de pantalla -- al desmontarlo el vídeo se para de verdad, sin
+ *  depender de ningún SDK externo.
+ *
+ *  `tipo: 'archivo'` es la opción buena si el servicio da un enlace directo
+ *  al .mp4 (en H.264, no H.265: 10 bits no se reproduce en Chrome ni en
+ *  Firefox). Ahí recuperamos el control completo. Cambiar de una a otra es
+ *  cambiar estas dos líneas.
+ *
+ *  `null` vuelve a dejar sólo la foto. */
+const FONDO: { tipo: 'incrustado' | 'archivo'; src: string; enVivo: boolean } | null = {
+  tipo: 'incrustado',
+  src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1',
+  /* En false el vídeo NO sale en la web publicada: sólo abriendo la dirección
+     con ?video=1 delante de la almohadilla. Es una prueba sin riesgo -- un
+     iframe que no carga (dominio no autorizado, servicio caído) no se queda
+     transparente, pinta un rectángulo gris encima de todo, y eso es lo que
+     verían los hoteles. Cuando la prueba salga bien, esto pasa a true. */
+  enVivo: false,
+};
+
+/** ?video=1 antes de la almohadilla fuerza la prueba. Se lee una sola vez. */
+const PRUEBA_VIDEO =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('video');
+
+const MOSTRAR_VIDEO = !!FONDO && (FONDO.enVivo || PRUEBA_VIDEO);
 
 interface CardSpec {
   left: number; // % del viewport
@@ -67,6 +100,67 @@ const DEPLOY_OFF = 0.12;
  *  dispara sola, así que puede permitirse inercia. Con un `ease` lineal se
  *  veía robótica -- que es justo lo que pidió corregir Mayurlin. */
 const CARD_SPRING = { type: 'spring' as const, stiffness: 110, damping: 19, mass: 1 };
+
+/** El fondo a sangre completa: foto de seguridad abajo y, encima, el vídeo.
+ *
+ *  Un <iframe> no admite `object-fit: cover`, así que se recorta a mano con
+ *  el truco de sobredimensionar: 177.78svh de ancho es exactamente 16:9 sobre
+ *  la altura de la pantalla, y los `min-` toman el relevo cuando la pantalla
+ *  es más ancha que alta. Así el vídeo llena siempre, sin bandas.
+ *
+ *  `activo` llega de fuera: sólo se monta cuando la sección está en pantalla.
+ */
+const FondoVideo: React.FC<{ activo: boolean }> = ({ activo }) => {
+  /* `onLoad` NO sirve para saber si el vídeo está ahí: el navegador lo dispara
+     igual cuando la carga falla, porque su propia página de error también
+     "carga" (comprobado: opacidad 1 con el dominio bloqueado). Así que antes
+     de montar nada se llama a la dirección con `no-cors`, que no necesita
+     permiso del servidor y falla si el servicio no responde. Sólo si contesta
+     se monta el iframe. Si no, se queda la foto -- nunca el gris. */
+  const [alcanzable, setAlcanzable] = useState(false);
+  const [cargado, setCargado] = useState(false);
+
+  useEffect(() => {
+    if (!MOSTRAR_VIDEO || !activo || !FONDO || alcanzable) return;
+    let vivo = true;
+    fetch(FONDO.src, { mode: 'no-cors' })
+      .then(() => { if (vivo) setAlcanzable(true); })
+      .catch(() => { /* servicio caído o dominio bloqueado: se queda la foto */ });
+    return () => { vivo = false; };
+  }, [activo, alcanzable]);
+
+  const montar = MOSTRAR_VIDEO && activo && alcanzable && !!FONDO;
+
+  return (
+    <>
+      <img src={BG_PLACEHOLDER} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      {montar && FONDO!.tipo === 'incrustado' && (
+        <iframe
+          src={FONDO!.src}
+          title=""
+          frameBorder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          referrerPolicy="strict-origin-when-cross-origin"
+          onLoad={() => setCargado(true)}
+          className={`pointer-events-none absolute left-1/2 top-1/2 h-[100svh] w-[177.78svh] min-h-[56.25vw] min-w-full -translate-x-1/2 -translate-y-1/2 border-0 transition-opacity duration-700 ${
+            cargado ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
+      {montar && FONDO!.tipo === 'archivo' && (
+        <video
+          src={FONDO!.src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={BG_PLACEHOLDER}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+    </>
+  );
+};
 
 const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -190,6 +284,22 @@ export const VideoShowcase: React.FC = () => {
     setDeployed((abierto) => (abierto ? p > DEPLOY_OFF : p >= DEPLOY_ON));
   });
 
+  /* El vídeo sólo existe mientras la sección está en pantalla. Montar y
+     desmontar es la única forma de encenderlo y apagarlo que no depende del
+     reproductor del servicio externo. El margen de 200px lo arranca justo
+     antes de que se vea, para que no se note el primer fotograma. */
+  const [enPantalla, setEnPantalla] = useState(false);
+  useEffect(() => {
+    const nodo = containerRef.current;
+    if (!nodo || typeof IntersectionObserver === 'undefined') return;
+    const obs = new IntersectionObserver(
+      ([entrada]) => setEnPantalla(entrada.isIntersecting),
+      { rootMargin: '200px 0px' },
+    );
+    obs.observe(nodo);
+    return () => obs.disconnect();
+  }, []);
+
   const stories = FEATURED_IDS.map((id) => {
     const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
     const base = HOTEL_STORIES[idx];
@@ -225,16 +335,17 @@ export const VideoShowcase: React.FC = () => {
         que reservar recorrido para "dibujarla". */}
     <section ref={containerRef} className="relative w-full bg-[#1a1918]" style={{ height: '220vh' }}>
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-        {/* Vídeo horizontal: de momento una foto real de la web (a sangre
-            completa, sin margen) para poder ver el desenfoque -- sustituir
-            por el <video> cuando Mayurlin entregue el material. */}
+        {/* Vídeo horizontal a sangre completa. El desenfoque y el zoom van en
+            este contenedor, no en el vídeo: un filtro CSS sobre el padre
+            también afecta al iframe, así que la entrada se conserva igual
+            con vídeo incrustado que con archivo propio. */}
         <motion.div
           initial={false}
           animate={{ filter: deployed ? 'blur(16px)' : 'blur(0px)', scale: deployed ? 1.06 : 1 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0"
+          className="absolute inset-0 overflow-hidden"
         >
-          <img src={BG_PLACEHOLDER} alt="" className="h-full w-full object-cover" />
+          <FondoVideo activo={enPantalla} />
         </motion.div>
         <motion.div
           initial={false}
