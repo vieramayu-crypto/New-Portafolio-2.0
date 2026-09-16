@@ -137,12 +137,15 @@ const FondoVideo: React.FC = () => (
       className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 object-cover md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0 md:translate-y-0"
     />
     {FONDO && MOSTRAR_VIDEO && (
-      <VideoNube
-        src={FONDO.src}
-        tocable={false}
-        poster={BG_PLACEHOLDER}
-        className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 border-0 object-cover md:h-[100svh] md:w-[177.78svh] md:min-h-[56.25vw] md:min-w-full"
-      />
+      /* El recorte a sangre completa se hace ENSANCHANDO ESTE CONTENEDOR, no
+         deformando el iframe: dentro, el vídeo conserva exactamente la caja
+         16:9 y el iframe al 100% que da el proveedor. 177.78svh de ancho es
+         justo lo que hace que esa caja 16:9 mida 100svh de alto.
+         `pointer-events-none` va aquí fuera y no en el iframe: es un fondo
+         decorativo a pantalla completa y se tragaría el gesto de desplazar. */
+      <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 md:w-[177.78svh] md:min-w-full">
+        <VideoNube src={FONDO.src} />
+      </div>
     )}
   </>
 );

@@ -24,9 +24,7 @@ interface HotelDetailProps {
  *  VideoNube, compartida con el fondo de Inicio: un solo sitio que arreglar.
  *  Sin parallax, igual que las fotos a sangre completa. */
 const GalleryEmbed: React.FC<{ src: string }> = ({ src }) => (
-  <div className="relative w-full aspect-[16/9] overflow-hidden bg-[#1a1918]">
-    <VideoNube src={src} className="absolute inset-0 h-full w-full border-0" />
-  </div>
+  <VideoNube src={src} className="bg-[#1a1918]" />
 );
 
 interface GalleryPhotoProps {
