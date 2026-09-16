@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { HotelStory, PhotoItem } from '../types';
-import { VideoNube } from './VideoNube';
+import { VideoNube, useEsMovil } from './VideoNube';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
@@ -25,7 +25,7 @@ interface HotelDetailProps {
  *  Sin parallax, igual que las fotos a sangre completa. */
 const GalleryEmbed: React.FC<{ src: string }> = ({ src }) => (
   <div className="relative w-full aspect-[16/9] overflow-hidden bg-[#1a1918]">
-    <VideoNube src={src} className="pointer-events-none absolute inset-0 h-full w-full border-0" />
+    <VideoNube src={src} className="absolute inset-0 h-full w-full border-0" />
   </div>
 );
 
@@ -148,7 +148,13 @@ const Bleed: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // 0 -- THE RITZ-CARLTON TENERIFE, ABAMA: a guided walk through the property --
   // facade, grounds + room, private cove, architecture + pool, spa, dining.
-  ({ photos, y, video, embed }) => (
+  ({ photos, y, video, embed }) => {
+    /* Una sola copia del vídeo, elegida en JavaScript: ocultar la otra con
+       CSS no evitaba que cargase y reprodujese. En móvil va DENTRO de la fila
+       (que ahí se apila) para caer tras la foto de la persona; en escritorio
+       va debajo de las dos columnas. */
+    const esMovil = useEsMovil();
+    return (
     <>
       {photos[0] && (
         <div className="w-full flex justify-center">
@@ -171,8 +177,8 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
               fila es de dos columnas y el vídeo debe ir debajo de las dos:
               por eso esta copia sólo existe hasta md, y la de abajo a partir
               de md. */}
-          {embed && (
-            <div className="w-full md:hidden">
+          {embed && esMovil && (
+            <div className="w-full">
               <Bleed>
                 <GalleryEmbed src={embed} />
               </Bleed>
@@ -190,12 +196,10 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           )}
         </div>
       )}
-      {embed && (
-        <div className="hidden md:block">
-          <Bleed>
-            <GalleryEmbed src={embed} />
-          </Bleed>
-        </div>
+      {embed && !esMovil && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {video ? (
         <Bleed>
@@ -249,7 +253,8 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
         </div>
       )}
     </>
-  ),
+    );
+  },
 
   // 1 -- VESTIGE COLLECTION, BINIDUFÀ: a longer guided walk (10 photos) -- aerial,
   // facade, common areas, the path in, patio + gym, grounds, pool, room.
