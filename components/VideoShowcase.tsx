@@ -1,10 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent, publicImage } from '../src/lib/content';
 import { VideoNube } from './VideoNube';
-import { VideoModal } from './VideoModal';
 import { VIDEOS_HORIZONTALES } from '../data/videos';
 
 /** Los cuatro hoteles con los que se ejemplifica el bloque -- los mismos
@@ -128,7 +127,13 @@ const CARD_SPRING = { type: 'spring' as const, stiffness: 110, damping: 19, mass
  *
  *  `activo` llega de fuera: sólo se monta cuando la sección está en pantalla.
  */
-const FondoVideo: React.FC = () => (
+/** Cada cuánto pasa sola la tira de vídeos. 15 s, no 5: cambiar el vídeo de
+ *  fondo significa recargar el reproductor, así que tiene que dar tiempo a
+ *  verlo. Y en cuanto Mayurlin toca uno, se para y manda ella -- misma regla
+ *  que "El proceso" en Acerca de. */
+const PASO_AUTOMATICO_MS = 15000;
+
+const FondoVideo: React.FC<{ src: string }> = ({ src }) => (
   <>
     {/* La foto de respaldo se recorta como el vídeo: a sangre completa en
         escritorio, y en móvil como banda 16:9 centrada, para que el bloque se
@@ -146,11 +151,129 @@ const FondoVideo: React.FC = () => (
          `pointer-events-none` va aquí fuera y no en el iframe: es un fondo
          decorativo a pantalla completa y se tragaría el gesto de desplazar. */
       <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 md:w-[177.78svh] md:min-w-full">
-        <VideoNube src={FONDO.src} />
+        <VideoNube key={src} src={src} />
       </div>
     )}
   </>
 );
+
+/** La tira de vídeos horizontales, en la base del bloque.
+ *
+ *  Mismo efecto de profundidad que el carrusel de la ventana de propiedades:
+ *  el del centro grande y nítido -- que es el que suena de fondo -- y los de
+ *  al lado pequeños, apagados y desenfocados. Se pasa arrastrando o tocando
+ *  uno de los laterales.
+ *
+ *  El alto lo manda `ALTO_TIRA_SVH`: 15% de la pantalla, que es el techo que
+ *  puso Mayurlin para que tape lo menos posible del vídeo de detrás.
+ *
+ *  Las miniaturas son FOTOS, nunca reproductores. El único vídeo de esta
+ *  sección es el del fondo; cuatro iframes serían cuatro descargas y cuatro
+ *  audios sonando a la vez.
+ */
+const ALTO_TIRA_SVH = 15;
+
+const TiraVideos: React.FC<{ activo: number; onElegir: (i: number) => void }> = ({
+  activo,
+  onElegir,
+}) => {
+  const total = VIDEOS_HORIZONTALES.length;
+  const arrastreX = useRef<number | null>(null);
+  const acabaDeArrastrar = useRef(false);
+  const pistaRef = useRef<HTMLDivElement>(null);
+  // La separación entre miniaturas se calcula, no se fija: en móvil la
+  // central ocupa casi dos tercios de la tira, y con un porcentaje fijo las de
+  // al lado se le montaban encima 61 px (medido). Media central (50%) más
+  // media lateral (31%, porque van al 62%) más un 4% de aire.
+  const [separacion, setSeparacion] = useState(34);
+
+  useEffect(() => {
+    const pista = pistaRef.current;
+    if (!pista) return;
+    const recalcular = () => {
+      const ancho = pista.clientWidth;
+      const centro = pista.querySelector<HTMLElement>('[aria-current="true"]');
+      const anchoCentro = centro?.getBoundingClientRect().width ?? 0;
+      if (!ancho || !anchoCentro) return;
+      setSeparacion(Math.min(56, Math.max(28, Math.round(((anchoCentro * 0.81) / ancho) * 100 + 4))));
+    };
+    recalcular();
+    const ro = new ResizeObserver(recalcular);
+    ro.observe(pista);
+    return () => ro.disconnect();
+  }, [activo]);
+
+  const alSoltar = (e: React.PointerEvent) => {
+    if (arrastreX.current === null) return;
+    const delta = e.clientX - arrastreX.current;
+    arrastreX.current = null;
+    if (Math.abs(delta) < 40) return;
+    acabaDeArrastrar.current = true;
+    window.setTimeout(() => {
+      acabaDeArrastrar.current = false;
+    }, 120);
+    onElegir(activo + (delta < 0 ? 1 : -1));
+  };
+
+  return (
+    <div
+      ref={pistaRef}
+      className="relative w-full max-w-[760px] cursor-grab touch-pan-y select-none [isolation:isolate] active:cursor-grabbing"
+      style={{ height: `${ALTO_TIRA_SVH}svh`, minHeight: 96 }}
+      onPointerDown={(e) => {
+        arrastreX.current = e.clientX;
+      }}
+      onPointerUp={alSoltar}
+      onPointerCancel={() => {
+        arrastreX.current = null;
+      }}
+    >
+      {VIDEOS_HORIZONTALES.map((video, i) => {
+        let diff = i - activo;
+        if (diff > total / 2) diff -= total;
+        if (diff < -total / 2) diff += total;
+
+        const dist = Math.abs(diff);
+        const centro = diff === 0;
+        const cerca = dist === 1;
+
+        const escala = centro ? 1 : cerca ? 0.62 : 0.46;
+        const opacidad = centro ? 1 : cerca ? 0.5 : 0.24;
+        const desenfoque = centro ? 0 : cerca ? 1.6 : 3;
+        const capa = centro ? 20 : cerca ? 10 : 5;
+        const izquierda = 50 + diff * separacion;
+
+        return (
+          <button
+            key={video.id}
+            onClick={() => {
+              if (acabaDeArrastrar.current) return;
+              onElegir(i);
+            }}
+            aria-label={`Ver el vídeo de ${video.hotelName}`}
+            aria-current={centro}
+            style={{
+              left: `${izquierda}%`,
+              zIndex: capa,
+              opacity: opacidad,
+              filter: `blur(${desenfoque}px)`,
+              transform: `translate(-50%, -50%) scale(${escala}) translateZ(0)`,
+              willChange: 'transform, opacity, filter',
+              backfaceVisibility: 'hidden',
+            }}
+            className={`absolute top-1/2 block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] transition-[transform,opacity,filter,left] duration-500 ease-out ${
+              centro
+                ? 'shadow-[0_6px_28px_rgba(0,0,0,0.5)] ring-1 ring-white/45'
+                : 'shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
+            }`}
+          >
+            <img src={video.portada} alt="" className="h-full w-full object-cover" />
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -264,10 +387,20 @@ export const VideoShowcase: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { hotels: hotelContent } = useSiteContent();
   const [deployed, setDeployed] = useState(false);
-  // La ventana con los demás vídeos horizontales. Sólo se ofrece si hay más
-  // de uno: con uno solo no habría nada que enseñar que no esté ya de fondo.
-  const [videosAbiertos, setVideosAbiertos] = useState(false);
-  const hayMasVideos = VIDEOS_HORIZONTALES.length > 1;
+  // Cuál de los vídeos horizontales se está reproduciendo de fondo. La tira de
+  // abajo lo cambia. Antes esto vivía detrás de un botón que abría una ventana,
+  // y Mayurlin lo dijo claro: eso entorpece el flujo. Ahora los cuatro están
+  // siempre a la vista y cambiar es desplazar o tocar.
+  const [activo, setActivo] = useState(0);
+  const [pasoParado, setPasoParado] = useState(false);
+  const totalVideos = VIDEOS_HORIZONTALES.length;
+  const hayVarios = totalVideos > 1;
+  const videoActivo = VIDEOS_HORIZONTALES[activo] ?? VIDEOS_HORIZONTALES[0];
+
+  const irAVideo = (i: number) => {
+    setPasoParado(true);
+    setActivo(((i % totalVideos) + totalVideos) % totalVideos);
+  };
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -275,6 +408,16 @@ export const VideoShowcase: React.FC = () => {
   });
 
   const [salidaVisible, setSalidaVisible] = useState(false);
+
+  // La tira va sola hasta que alguien la toca.
+  useEffect(() => {
+    if (!hayVarios || pasoParado) return;
+    const t = window.setInterval(
+      () => setActivo((i) => (i + 1) % totalVideos),
+      PASO_AUTOMATICO_MS,
+    );
+    return () => window.clearInterval(t);
+  }, [hayVarios, pasoParado, totalVideos]);
 
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setDeployed((abierto) => (abierto ? p > DEPLOY_OFF : p >= DEPLOY_ON));
@@ -334,7 +477,7 @@ export const VideoShowcase: React.FC = () => {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0 overflow-hidden"
         >
-          <FondoVideo />
+          <FondoVideo src={videoActivo.src} />
         </motion.div>
         {/* Aquí había un botón de reproducir grande y blanco. Tenía sentido
             sobre la foto fija: decía "esto es un vídeo". Con el vídeo real
@@ -376,23 +519,30 @@ export const VideoShowcase: React.FC = () => {
           />
         ))}
 
-        {/* Los demás vídeos horizontales. Uno solo ya ocupa la pantalla
-            entera de fondo, así que los otros no caben aquí sin alargar el
-            bloque: viven en una ventana con el mismo carrusel con
-            profundidad que la de propiedades. Idea de Mayurlin. El botón se
-            queda arriba a la derecha, lejos del aviso de salida de abajo y
-            de las cuatro tarjetas. */}
-        {hayMasVideos && (
-          <motion.button
+        {/* LA TIRA DE VÍDEOS. Siempre a la vista, en la base del bloque y
+            centrada. Antes esto vivía detrás de un botón que abría una
+            ventana; Mayurlin lo dijo claro: ir a un botón para abrir una
+            ventana para ver otro vídeo entorpece el flujo. Ahora los cuatro
+            están ahí y cambiar es desplazar o tocar.
+
+            Mismo efecto de profundidad que la ventana de propiedades -- el
+            del centro grande y nítido, los de al lado pequeños y
+            desenfocados -- pero en pequeño: la tira ocupa un 15% del alto de
+            la pantalla como máximo, que es lo que ella pidió, para tapar lo
+            menos posible del vídeo que hay detrás.
+
+            NINGUNA miniatura es un reproductor: son las fotos de portada. El
+            único vídeo que existe en esta sección es el del fondo. */}
+        {hayVarios && (
+          <motion.div
             initial={false}
-            animate={{ opacity: deployed ? 0 : 1 }}
-            transition={{ duration: 0.5 }}
-            onClick={() => setVideosAbiertos(true)}
+            animate={{ opacity: deployed ? 0 : 1, y: deployed ? 16 : 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             style={{ pointerEvents: deployed ? 'none' : 'auto' }}
-            className="mt-glass mt-glass-light absolute right-4 top-24 z-40 flex items-center gap-3 overflow-hidden rounded-md px-5 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed] !shadow-[inset_0_1px_1px_rgba(255,255,255,0.72)] [text-shadow:0_1px_6px_rgba(26,25,24,0.85)] transition-colors duration-300 hover:bg-white/20 md:right-8 md:top-28 md:text-xs"
+            className="absolute inset-x-0 bottom-20 z-30 flex justify-center px-4 md:bottom-24"
           >
-            <span>Más vídeos ({VIDEOS_HORIZONTALES.length})</span>
-          </motion.button>
+            <TiraVideos activo={activo} onElegir={irAVideo} />
+          </motion.div>
         )}
 
         {/* Aviso de salida. Este bloque es pegajoso y ocupa la pantalla
@@ -414,11 +564,16 @@ export const VideoShowcase: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 14 }}
               transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="absolute inset-x-0 bottom-8 z-40 flex justify-center px-4"
+              className="absolute inset-x-0 bottom-8 z-40 flex justify-end px-6 md:px-10"
             >
+              {/* Sin el recuadro de cristal y a la derecha: el centro de abajo
+                  es ahora de la tira de vídeos, y dos cajas de cristal
+                  seguidas competían. Queda el texto, que es lo que hace
+                  falta, con su sombra para que se lea sobre cualquier plano
+                  del vídeo. */}
               <button
                 onClick={irAbajo}
-                className="mt-glass mt-glass-light relative flex items-center gap-3 overflow-hidden rounded-md px-5 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed] !shadow-[inset_0_1px_1px_rgba(255,255,255,0.72)] [text-shadow:0_1px_6px_rgba(26,25,24,0.85)] transition-colors duration-300 hover:bg-white/20 md:text-xs"
+                className="relative flex items-center gap-3 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed]/85 [text-shadow:0_1px_6px_rgba(26,25,24,0.9)] transition-colors duration-300 hover:text-[#f5f3ed] md:text-xs"
               >
                 <span>Ver los hoteles</span>
                 <motion.span
@@ -436,7 +591,6 @@ export const VideoShowcase: React.FC = () => {
       </div>
     </section>
 
-    <VideoModal open={videosAbiertos} onClose={() => setVideosAbiertos(false)} />
     </>
   );
 };

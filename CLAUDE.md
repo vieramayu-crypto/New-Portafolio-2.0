@@ -416,53 +416,56 @@ ese id no hay a dónde anclar.
 - **El orden de `TESTIMONIALS` es el orden que se ve**, y lo eligió ella:
   GPRO Valparaíso primero, Ritz-Carlton Abama segundo. No tocar esos dos.
 
-## Varios vídeos horizontales: la ventana con carrusel
+## Varios vídeos horizontales: la tira permanente
 
-Un vídeo horizontal ocupa la pantalla entera de fondo en el bloque de Inicio,
-así que no caben dos sin alargar el bloque. Idea de Mayurlin: **el mismo
-carrusel con profundidad de la ventana de propiedades, pero con los vídeos**.
-Vive en `components/VideoModal.tsx` y se alimenta de `data/videos.ts`.
+Los cuatro vídeos viven en una tira SIEMPRE VISIBLE en la base del bloque de
+vídeos de Inicio (`TiraVideos`, dentro de `VideoShowcase.tsx`), alimentada por
+`data/videos.ts`.
 
-- **Sólo se monta UN `<iframe>`: el del centro.** Los laterales son la foto de
-  portada. Esto no es negociable: ya pasó con la galería (dos copias del
-  mismo vídeo escondidas con CSS = dos descargas y dos audios sonando), y
-  esconder un iframe no impide que cargue ni que reproduzca. Con cuatro
-  vídeos serían cuatro de cada. Además los laterales van al 42% y
-  desenfocados: ahí no se aprecia el movimiento.
-- **Nada se descarga hasta que alguien abre la ventana.**
-- **La separación entre tarjetas se calcula, no se fija.** Media tarjeta
-  central (50%) más media lateral (21%) más un 4% de aire, sobre el ancho
-  real de la pista. Con el 26% fijo que va bien en escritorio, en móvil
-  quedaban 62 px de la lateral montados sobre la central (medido). Se
-  recalcula con un `ResizeObserver` al girar el móvil.
-- **Para añadir un vídeo**: un bloque en `VIDEOS_HORIZONTALES` con la
-  dirección de incrustar tal cual, el hotel y una portada de
-  `public/images`. El carrusel se ajusta solo a la cantidad.
-- **Con un solo vídeo el botón "Más vídeos" no se muestra**: no habría nada
-  que enseñar que no esté ya de fondo.
-- **Direcciones provisionales: sí durante la construcción, no al migrar.**
-  La web de GitHub Pages es el taller de Mayurlin, no un escaparate -- no se
-  la manda a nadie y sólo será pública cuando la migre a su dominio. Así que
-  para poder ver y juzgar un bloque nuevo, vale publicarlo con una dirección
-  repetida, marcándolo en el código. Lo que NO puede pasar es llegar a la
-  migración con varios hoteles apuntando al mismo vídeo: eso sí sería
-  atribuir un trabajo a quien no es. Ver la lista de PROVISIONAL en
-  `data/videos.ts` antes de migrar.
+Primero se hizo como una ventana emergente con un botón, y Mayurlin lo
+rechazó: "ir a un botón para abrir una ventana para reproducir otro vídeo
+entorpecería el flujo. La idea es que estén los cuatro directamente ahí".
 
-**Regla general que salió de aquí:** no bloquear lo que ella quiere ver por
-proteger un escaparate que todavía no existe. Publicar, marcar lo provisional
-en el código, y avisar de qué hay que cerrar antes de migrar.
+- **Efecto de profundidad**, el mismo de la ventana de propiedades: el del
+  centro nítido -- que es el que suena de fondo -- y los de al lado pequeños,
+  apagados y desenfocados.
+- **Ocupa el 15% del alto de la pantalla como máximo** (`ALTO_TIRA_SVH`), tope
+  que puso ella para tapar lo menos posible del vídeo de detrás. Centrada.
+- **NINGUNA miniatura es un reproductor**: son fotos de portada. El único
+  vídeo de la sección es el del fondo, y cambia al elegir otro (`key={src}`
+  fuerza el remontaje).
+- **La tira pasa sola cada 15 s** y se para en cuanto se toca: misma regla que
+  "El proceso" en Acerca de. 15 y no 5 porque cambiar de vídeo recarga el
+  reproductor.
+- **La separación se calcula, no se fija** (media central + media lateral +
+  4% de aire, sobre el ancho real, con `ResizeObserver`). Con un 34% fijo, en
+  móvil las laterales se montaban 61 px sobre la central.
+- **"Ver los hoteles" se fue a la derecha y sin cristal**: el centro de abajo
+  es de la tira, y dos cajas de cristal seguidas competían.
+
+## El subrayado de "Iniciar un proyecto"
+
+En la caja de cristal del Hero hay dos acciones con el mismo peso. Para
+destacar la principal SIN meter otro botón fuera de la caja -- eso rompería el
+bloque -- lleva una línea de 1 px, blanca al 70%, que se dibuja sola de
+izquierda a derecha en 1,5 s tras una espera de 1,2 s, y se queda. Medido:
+crece de 14 a 132 px, el ancho exacto del texto. Idea de Mayurlin.
 
 ## La línea fina sobre el vídeo: no es del sitio
 
 Medido en Inicio y en la galería, móvil y escritorio: la caja del vídeo es
 16:9 EXACTA (1600,02 × 900, proporción 1,7778) y el iframe la cubre entera --
-hueco de 0 px en los cuatro bordes, sin bordes y sin fondo asomando. Si
-aparece una línea en el borde superior, viene del archivo o del reproductor
-del servicio, no del CSS. La forma de distinguirlo es abrir el vídeo solo en
-`livid.com/watch/<id>` a pantalla completa: si la línea está ahí, es del
-vídeo. Desde el entorno del agente no se puede comprobar, porque los dominios
-externos están bloqueados.
+hueco de 0 px en los cuatro bordes, a 1x y a 2x, sin bordes y sin fondo
+asomando. Mayurlin comprobó además que el archivo no lleva esa franja. O sea
+que la pinta el reproductor DENTRO del iframe, y desde fuera de un marco de
+otro dominio no se puede ni mirar ni corregir.
+
+**Solución: se tapa.** `VideoNube` tiene un `recorte` (5 px por defecto, una
+sola constante para todos los vídeos de la web): el iframe crece esos píxeles
+EN PROPORCIÓN -- el horizontal sale del vertical por 16/9, así que la imagen
+no se deforma -- y el contenedor recorta el sobrante. Es lo que hace cualquier
+reproductor de televisión. A 900 px de alto, 5 px son un 0,9%: invisible. Si
+algún día el servicio deja de pintar esa línea, se pone a 0 y se acabó.
 
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
