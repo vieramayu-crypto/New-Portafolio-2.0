@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { MENU_ABOUT_PHOTO, MAYU_PORTRAIT, PORTFOLIO_MENU_PHOTO } from '../data/media';
+import { MENU_ABOUT_PHOTO, MAYU_PORTRAIT, HOME_MENU_PHOTO, PROJECTS_MENU_PHOTO } from '../data/media';
 import mayuLogoBlack from '../src/assets/images/mayu-logo-black.png';
 
 interface NavbarProps {
@@ -20,8 +20,8 @@ const PAGE_LABELS: Partial<Record<Page, string>> = {
  *  una URL del portafolio que enviar a un hotel. Ahora Proyectos es una
  *  página propia (/proyectos) y ocupa ese sitio. */
 const MENU_ITEMS: { page: Page; label: string; photo: string }[] = [
-  { page: 'home', label: 'Inicio', photo: PORTFOLIO_MENU_PHOTO },
-  { page: 'projects', label: 'Proyectos y portafolio', photo: PORTFOLIO_MENU_PHOTO },
+  { page: 'home', label: 'Inicio', photo: HOME_MENU_PHOTO },
+  { page: 'projects', label: 'Proyectos y portafolio', photo: PROJECTS_MENU_PHOTO },
   { page: 'about', label: 'Equipo', photo: MENU_ABOUT_PHOTO },
   { page: 'contact', label: 'Contacto', photo: MAYU_PORTRAIT },
 ];
@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
       <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 md:px-12 md:py-8 bg-white pointer-events-none">
         {/* Left: Plain logo, no box */}
         <button onClick={() => handleLinkClick('home')} className="pointer-events-auto hover:opacity-70 transition-opacity">
-          <img src={mayuLogoBlack} alt="MAYU" className="h-[25px] md:h-[30px] w-auto" />
+          <img src={mayuLogoBlack} alt="MAYU" className="h-[22px] md:h-[26px] w-auto" />
         </button>
 
         {/* Right: Page indicator + Minimal Two-Line Menu Icon */}
@@ -89,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
             {/* Top Row inside menu */}
             <div className="flex items-center justify-between">
               <button onClick={() => handleLinkClick('home')} className="hover:opacity-70 transition-opacity">
-                <img src={mayuLogoBlack} alt="MAYU" className="h-[25px] md:h-[30px] w-auto" />
+                <img src={mayuLogoBlack} alt="MAYU" className="h-[22px] md:h-[26px] w-auto" />
               </button>
 
               <button
