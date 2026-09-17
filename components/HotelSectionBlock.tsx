@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { HotelStory } from '../types';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
@@ -7,6 +7,22 @@ interface HotelSectionBlockProps {
   story: HotelStory;
   index: number;
   onSelectStory?: (story: HotelStory) => void;
+  /** Modo compacto, para la página de Proyectos.
+   *
+   *  Ahí van los NUEVE hoteles seguidos, así que cada uno tiene que caber en
+   *  una pantalla con su texto al lado. Medido antes: cada bloque ocupaba
+   *  1.747 px en escritorio, casi DOS pantallas, y había que bajar dos veces
+   *  para ver de qué hotel eran las fotos.
+   *
+   *  La clave está en cómo se dimensiona el mosaico: las fotos son `absolute`
+   *  con el ancho en % y la forma por `aspect-ratio`, así que su altura la
+   *  manda el ANCHO del lienzo, no su altura. Por eso el lienzo llevaba un
+   *  `min-h` de 1.320 px: es lo que necesitan las fotos a ese ancho.
+   *
+   *  En compacto se le da al lienzo la proporción que ya tenía (1156/1320) y
+   *  se limita por ALTURA, así que el ancho sale solo y todo encoge a la vez
+   *  sin deformarse ni desbordar. */
+  compacto?: boolean;
 }
 
 /**
@@ -35,6 +51,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
   story,
   index,
   onSelectStory,
+  compacto = false,
 }) => {
   // STRICT CONSTRAINT: Maximum 3 photos per section so each photo has its own space to be viewed
   const photos = (story.photos || []).slice(0, 3);
@@ -91,12 +108,69 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
     window.setTimeout(() => onSelectStory(story), 480);
   };
 
+  /* EL AIRE HASTA EL TEXTO SE MIDE, NO SE FIJA. Sólo en móvil y en compacto.
+   *
+   *  El lienzo mantiene su proporción (124/165), que es lo que hace que los
+   *  `top` y `left` en % de las fotos funcionen. Lo que se ajusta es cuánto
+   *  espacio queda entre la foto más baja y el nombre del hotel.
+   *
+   *  Hace falta porque cada variante coloca sus fotos a distinta altura:
+   *  medido, en dos hoteles la última foto se salía 10 y 14 px del lienzo y se
+   *  montaba sobre el nombre, mientras en otros sobraban más de 100 px de aire.
+   *  Un número fijo no puede acertar con los dos casos a la vez.
+   *
+   *  Se mide con `offsetTop`/`offsetHeight` porque ignoran los `transform`, así
+   *  que el desplazamiento de parallax no falsea la medida. Y se miran las
+   *  fotos de verdad (los hijos del contenedor de la variante), no ese
+   *  contenedor, que lleva `h-full` y mide lo mismo que el lienzo siempre. */
+  const lienzoRef = useRef<HTMLDivElement>(null);
+  const [aireAbajo, setAireAbajo] = useState(0);
+
+  useLayoutEffect(() => {
+    const lienzo = lienzoRef.current;
+    if (!lienzo || !compacto) return;
+    const medir = () => {
+      // Se mide dónde acaba de verdad cada foto, con los rectángulos reales.
+      // Se probó antes con `offsetTop`/`offsetHeight`, que ignoran los
+      // `transform` y parecían más limpios, pero justo la foto que se salía en
+      // uno de los nueve hoteles lo hacía POR un transform: la medida decía
+      // que sobraba sitio mientras en pantalla tapaba el nombre 54 px.
+      const piezas: HTMLElement[] = Array.prototype.slice.call(
+        lienzo.getElementsByTagName('img'),
+      );
+      if (!piezas.length) return;
+      const fondoLienzo = lienzo.getBoundingClientRect().bottom;
+      const masBaja = piezas.reduce(
+        (m, el) => Math.max(m, el.getBoundingClientRect().bottom),
+        0,
+      );
+      // 20 px de aire, más 24 de colchón: el parallax desplaza las fotos hasta
+      // 20 px y esta medida se toma en un instante cualquiera de ese recorrido.
+      setAireAbajo(Math.round(masBaja - fondoLienzo + 44));
+    };
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(lienzo);
+    return () => ro.disconnect();
+  }, [compacto, story.id]);
+
   return (
     <div
       ref={sectionRef}
       id={`hotel-${story.id}`}
       data-hotel-id={story.id}
-      className="hotel-section-block relative w-full scroll-mt-24 py-16 md:py-28 px-4 md:px-12 lg:px-20 overflow-hidden md:min-h-[1380px]"
+      style={aireAbajo ? { paddingBottom: Math.max(0, aireAbajo) } : undefined}
+      className={`hotel-section-block relative w-full scroll-mt-24 px-4 md:px-12 lg:px-20 ${
+        compacto
+          ? // Sin `overflow-hidden`: las fotos SALEN del lienzo por diseño --
+            // cada variante las coloca con `top` en % y su altura se la da el
+            // aspect-ratio -- y medido, el contenido llega a 1,7 veces la
+            // altura del lienzo. Recortarlo cortaba las fotos hasta 476 px.
+            // En vez de cortar, el bloque crece: el `paddingBottom` de arriba
+            // es exactamente lo que sobresale, medido.
+            'pt-8 pb-0 md:py-0'
+          : 'overflow-hidden py-16 md:py-28 md:min-h-[1380px]'
+      }`}
     >
       {/* El nombre del hotel lo pone ahora la ficha que va debajo del bloque
           (en HomeMain), la misma en móvil y en escritorio. Aquí se repetía
@@ -113,7 +187,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
           - Expanded height (1320px) gives generous breathing space for each photo.
           - Side padding ensures photos never collide with sticky side labels.
          ========================================================= */}
-      <div className="relative mx-auto aspect-[124/165] max-w-[1380px] pl-4 pr-4 md:aspect-auto md:min-h-[1320px] md:pl-28 md:pr-28 lg:pl-36 lg:pr-36 xl:max-w-[1520px]">
+      <div
+        ref={lienzoRef}
+        className={`relative mx-auto aspect-[124/165] pl-4 pr-4 ${
+          compacto
+            ? // El alto manda y el ancho sale de la proporción de siempre, así
+              // que el mosaico entero encoge a la vez sin deformarse.
+              'md:aspect-[1156/1320] md:h-[52svh] md:max-h-[540px] md:w-auto md:pl-0 md:pr-0'
+            : 'max-w-[1380px] md:aspect-auto md:min-h-[1320px] md:pl-28 md:pr-28 lg:pl-36 lg:pr-36 xl:max-w-[1520px]'
+        }`}
+      >
         
         {/* VARIANT 0: Giant Hero VERTICAL (left ~68%) + Top-Right Floating + Bottom-Right Overlap (~48%) */}
         {variant === 0 && (
