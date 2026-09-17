@@ -42,38 +42,42 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec1-gal4-playa-h.jpg'),
   },
-  // LOS QUE FALTAN. El carrusel está hecho y verificado con cuatro vídeos
-  // (un solo reproductor a la vez, 16:9 exacto, sin solapes en móvil ni en
-  // escritorio). Para activarlo basta con descomentar estos bloques y pegar
-  // en cada `src` la dirección de incrustar que da el servicio.
-  //
-  // No se publican con una dirección provisional a propósito: apuntarían
-  // todos al vídeo de Abama con el nombre de otro hotel, y eso es atribuir un
-  // trabajo a quien no es. Mientras haya un solo vídeo, el botón "Más vídeos"
-  // no se muestra y el bloque de Inicio se comporta como hasta ahora.
-  //
-  // {
-  //   id: 'v-gpro',
-  //   hotelName: 'GPRO Valparaíso Palace & Spa',
-  //   hotelId: 'gpro-valparaiso',
-  //   descripcion: 'Jardines, piscina y spa sobre la Bahía de Palma.',
-  //   src: 'PEGAR AQUÍ LA DIRECCIÓN DE INCRUSTAR',
-  //   portada: publicImage('sec5-gal09-piscina-palmeras-v.jpg'),
-  // },
-  // {
-  //   id: 'v-intercontinental',
-  //   hotelName: 'InterContinental Lisboa',
-  //   hotelId: 'intercontinental-lisboa',
-  //   descripcion: 'Interiores, servicio y experiencia de ciudad.',
-  //   src: 'PEGAR AQUÍ LA DIRECCIÓN DE INCRUSTAR',
-  //   portada: publicImage('sec3-gal08-fachada-h.jpg'),
-  // },
-  // {
-  //   id: 'v-deltapark',
-  //   hotelName: 'Deltapark Vitalresort',
-  //   hotelId: 'deltapark-vitalresort',
-  //   descripcion: 'Habitación, spa y lago Thun.',
-  //   src: 'PEGAR AQUÍ LA DIRECCIÓN DE INCRUSTAR',
-  //   portada: publicImage('sec6-gal01-fachada-noche-h.jpg'),
-  // },
+  // ┌──────────────────────────────────────────────────────────────────────┐
+  // │  PROVISIONAL: los tres de abajo apuntan al MISMO vídeo que el de      │
+  // │  arriba, el de Abama. Están así para que Mayurlin pueda ver el        │
+  // │  carrusel funcionando y decidir si la forma de presentarlo le vale,   │
+  // │  mientras termina de subir los suyos.                                 │
+  // │                                                                       │
+  // │  QUÉ HAY QUE CAMBIAR: sólo la línea `src` de cada uno, pegando la     │
+  // │  dirección de incrustar que da el servicio. El hotel, la portada y    │
+  // │  el texto ya son los definitivos.                                     │
+  // │                                                                       │
+  // │  ANTES DE MIGRAR AL DOMINIO PROPIO hay que haberlo hecho: publicar    │
+  // │  esto tal cual pondría el mismo vídeo bajo el nombre de tres hoteles  │
+  // │  distintos, y eso es atribuir un trabajo a quien no es.               │
+  // └──────────────────────────────────────────────────────────────────────┘
+  {
+    id: 'v-gpro',
+    hotelName: 'GPRO Valparaíso Palace & Spa',
+    hotelId: 'gpro-valparaiso',
+    descripcion: 'Jardines, piscina y spa sobre la Bahía de Palma.',
+    src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1', // PROVISIONAL
+    portada: publicImage('sec5-gal09-piscina-palmeras-v.jpg'),
+  },
+  {
+    id: 'v-intercontinental',
+    hotelName: 'InterContinental Lisboa',
+    hotelId: 'intercontinental-lisboa',
+    descripcion: 'Interiores, servicio y experiencia de ciudad.',
+    src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1', // PROVISIONAL
+    portada: publicImage('sec3-gal08-fachada-h.jpg'),
+  },
+  {
+    id: 'v-deltapark',
+    hotelName: 'Deltapark Vitalresort',
+    hotelId: 'deltapark-vitalresort',
+    descripcion: 'Habitación, spa y lago Thun.',
+    src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1', // PROVISIONAL
+    portada: publicImage('sec6-gal01-fachada-noche-h.jpg'),
+  },
 ];

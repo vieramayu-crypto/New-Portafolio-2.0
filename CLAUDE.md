@@ -440,9 +440,18 @@ Vive en `components/VideoModal.tsx` y se alimenta de `data/videos.ts`.
   `public/images`. El carrusel se ajusta solo a la cantidad.
 - **Con un solo vídeo el botón "Más vídeos" no se muestra**: no habría nada
   que enseñar que no esté ya de fondo.
-- **Nunca publicar una entrada con una dirección provisional.** Quedarían
-  varios hoteles distintos apuntando al mismo vídeo, y eso es atribuir un
-  trabajo a quien no es.
+- **Direcciones provisionales: sí durante la construcción, no al migrar.**
+  La web de GitHub Pages es el taller de Mayurlin, no un escaparate -- no se
+  la manda a nadie y sólo será pública cuando la migre a su dominio. Así que
+  para poder ver y juzgar un bloque nuevo, vale publicarlo con una dirección
+  repetida, marcándolo en el código. Lo que NO puede pasar es llegar a la
+  migración con varios hoteles apuntando al mismo vídeo: eso sí sería
+  atribuir un trabajo a quien no es. Ver la lista de PROVISIONAL en
+  `data/videos.ts` antes de migrar.
+
+**Regla general que salió de aquí:** no bloquear lo que ella quiere ver por
+proteger un escaparate que todavía no existe. Publicar, marcar lo provisional
+en el código, y avisar de qué hay que cerrar antes de migrar.
 
 ## La línea fina sobre el vídeo: no es del sitio
 
