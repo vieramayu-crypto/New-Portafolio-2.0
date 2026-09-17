@@ -27,7 +27,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
           className="font-serif font-medium text-[16vw] leading-[1.08] text-[#1a1918] sm:text-[13vw] md:text-[10.5vw]"
         >
           <span className="block">Fotografía,</span>
-          <span className="block">cine y</span>
+          <span className="block">vídeo y</span>
           <FlipWords words={content.about.flipWords} />
         </motion.h1>
       </section>

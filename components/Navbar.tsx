@@ -21,7 +21,7 @@ const PAGE_LABELS: Partial<Record<Page, string>> = {
  *  página propia (/proyectos) y ocupa ese sitio. */
 const MENU_ITEMS: { page: Page; label: string; photo: string }[] = [
   { page: 'home', label: 'Inicio', photo: PORTFOLIO_MENU_PHOTO },
-  { page: 'projects', label: 'Proyectos', photo: PORTFOLIO_MENU_PHOTO },
+  { page: 'projects', label: 'Proyectos y portafolio', photo: PORTFOLIO_MENU_PHOTO },
   { page: 'about', label: 'Equipo', photo: MENU_ABOUT_PHOTO },
   { page: 'contact', label: 'Contacto', photo: MAYU_PORTRAIT },
 ];
