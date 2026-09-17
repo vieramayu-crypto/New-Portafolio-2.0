@@ -18,5 +18,21 @@ export const COUPLE_PHOTO = publicImage('sobre-nosotros-pareja.jpg');
 // La misma foto recortada a 4:5, que es el formato del retrato del menu.
 export const MENU_ABOUT_PHOTO = publicImage('menu-pareja.jpg');
 
-// Same photo as the Home hero background.
-export const PORTFOLIO_MENU_PHOTO = HERO_PHOTO;
+// El retrato del menu para "Inicio": la misma foto que el fondo del hero, que
+// es justo lo que se va a encontrar al pulsar.
+export const HOME_MENU_PHOTO = HERO_PHOTO;
+
+// "Proyectos y portafolio" tenia esa misma foto, asi que el menu ensenaba dos
+// veces la misma imagen. Esta es de la galeria de Ritz-Carlton Abama: las
+// palmeras reflejadas en el agua quieta.
+//
+// Se probo antes la piscina infinita de Honeymoon Petra Villas con Imerovigli
+// detras. Se descarto: en el recuadro de 300x375 dejaba el tercio de arriba en
+// cielo vacio y el pueblo blanco se leia como ruido. Esta llena el marco, y en
+// el blanco y negro que el menu aplica a todos sus retratos las palmeras y su
+// reflejo quedan graficos.
+//
+// No es un retrato de persona a proposito: Equipo y Contacto ya lo son. Y es
+// una foto que ensena oficio, no solo un sitio bonito, que es lo que tiene que
+// prometer el enlace al portafolio.
+export const PROJECTS_MENU_PHOTO = publicImage('sec1-gal5-reflejo-v.jpg');

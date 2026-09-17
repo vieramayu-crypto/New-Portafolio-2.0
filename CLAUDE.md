@@ -243,9 +243,10 @@ falta que Mayurlin especifique cuál va dónde. Con criterio propio se decide
 cuál foto es la "protagonista" (slot más grande) cuando hay varias del mismo
 tipo de orientación, salvo que ella indique una preferencia.
 
-Fotos con nombre propio (no numeradas): `hero-portada.jpg` (fondo de Inicio,
-también usada en la vista previa de "Portafolio" en el menú),
-`sobre-mi-mayurlin.jpg`, `sobre-mi-yerfran.jpg` (retratos en "Acerca de").
+Fotos con nombre propio (no numeradas): `hero-portada.jpg` (fondo de Inicio y
+vista previa de "Inicio" en el menú), `sobre-mi-mayurlin.jpg`,
+`sobre-mi-yerfran.jpg` (retratos en "Acerca de"). La vista previa de
+"Proyectos y portafolio" sí sale de las galerías: `sec1-gal5-reflejo-v.jpg`.
 
 **No están en este sistema, siguen en su hosting externo (WordPress) porque
 ya son editables por ella sin tocar código:** la foto de pareja de "Acerca
@@ -573,15 +574,18 @@ es un rótulo de estado, no navegación.
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
 - Logo actual: sin efecto de sombra/resplandor (el anterior sí lo tenía, ella
-  lo pidió quitar). Tamaño reducido en dos rondas: -15% y luego -18%
-  adicional (actual: 25px móvil / 30px escritorio en navbar, 25px en footer).
+  lo pidió quitar). Tamaño reducido en tres rondas: -15%, luego -18%, y
+  ahora otro -12% porque pesaba demasiado al lado del rótulo de página y del
+  icono de menú. **Actual: 22px móvil / 26px escritorio en navbar, 22px en
+  footer.** Son tres sitios en dos archivos (`Navbar.tsx` dos veces --
+  la barra y el menú abierto -- y `Footer.tsx`): hay que tocar los tres.
 - Foto del Hero (`hero-portada.jpg`): lleva un tinte plano negro al 10%
   (`bg-black/10`) sobre toda la foto para que el titular blanco tenga más
   contraste — pedido explícito, revierte la decisión anterior de "sin
   ningún filtro". Además el degradado inferior (detrás del texto del pie)
   y la franja blanca del Navbar (logo/menú) para legibilidad, ver
-  `HeroSection.tsx`. Esta misma foto se reutiliza como vista previa al
-  pasar el cursor sobre "Portafolio" en el menú.
+  `HeroSection.tsx`. Esta misma foto es la vista previa de "Inicio" en el
+  menú, que es justo lo que se va a encontrar al pulsar.
 - Titular del Hero: centrado en ambos ejes, blanco puro (`text-white`),
   copy elegido por Mayurlin entre 4 opciones que generé con la skill de
   copywriting: "Contamos lo que se siente, no solo lo que se ve."
@@ -593,8 +597,17 @@ es un rótulo de estado, no navegación.
   (reemplazando uno que venía quemado en el video y se veía borroso), pero
   no quedó bien y se eliminó por completo; el video se reproduce solo.
 - La página "Portafolio" fue eliminada — el enlace (menú y footer) ahora
-  lleva a Inicio. La foto de vista previa al pasar el mouse sobre
-  "Portafolio" en el menú es la misma que el fondo del Hero.
+  lleva a Inicio.
+- **Las cuatro vistas previas del menú son cuatro fotos distintas**
+  (`MENU_ITEMS` en `Navbar.tsx`, constantes en `data/media.ts`): Inicio =
+  el fondo del hero, Proyectos y portafolio = `sec1-gal5-reflejo-v.jpg`,
+  Equipo = `menu-pareja.jpg`, Contacto = el retrato de Mayurlin. Inicio y
+  Proyectos compartían foto y el menú enseñaba dos veces la misma imagen.
+  El recuadro aplica `grayscale contrast-[1.12] brightness-[0.98]` a todas,
+  así que **cualquier foto que se ponga ahí sale en blanco y negro sola** —
+  no hace falta preparar una copia. Lo que sí hay que mirar es cómo aguanta
+  ese recorte de 300x375 con `object-[50%_20%]`: se descartó la piscina de
+  Honeymoon Petra Villas porque dejaba el tercio de arriba en cielo vacío.
 - Marquee de marcas (`BrandsMarquee.tsx`, página Contacto): padding vertical
   simétrico y reducido (`py-8 md:py-10`) — cuidado si se vuelve a tocar, ya
   hubo una ronda donde un padding asimétrico rompió tanto el centrado de los
