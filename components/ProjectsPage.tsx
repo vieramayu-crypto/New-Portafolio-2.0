@@ -107,39 +107,26 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
       {stories.map((story, index) => {
         const caseStudy = caseByHotel.get(story.id);
         return (
-          <section
-            key={story.id}
-            className="mx-auto flex max-w-[1560px] flex-col md:min-h-[100svh] md:flex-row md:items-center md:justify-center md:gap-10 md:px-6 md:py-10 lg:gap-16 lg:px-10"
-          >
-            {/* El mosaico, en modo compacto: cabe en la altura de la pantalla
-                y deja sitio al texto a su lado. El conjunto va centrado en vez
-                de con el mosaico estirado a la izquierda, que dejaba 238 px
-                muertos a cada lado. */}
-            <div className="md:min-w-0 md:shrink-0">
-              <HotelSectionBlock
-                story={story}
-                index={index}
-                compacto
-                onSelectStory={(s) => navigate(`/trabajo/${s.id}`)}
-              />
-            </div>
+          <React.Fragment key={story.id}>
+            {/* El id para anclar lo pone ya HotelSectionBlock; repetirlo aquí
+                dejaba dos elementos con el mismo id y el Volver aterrizaba en
+                el primero que encontrara. */}
+            <HotelSectionBlock
+              story={story}
+              index={index}
+              onSelectStory={(s) => navigate(`/trabajo/${s.id}`)}
+            />
 
-            {/* EL TEXTO VA AL LADO, NO DEBAJO.
-                Debajo, cada hotel ocupaba 1.747 px -- casi dos pantallas -- y
-                había que bajar dos veces para ver de quién eran las fotos.
-                Y el mosaico es casi cuadrado mientras la pantalla de
-                escritorio es apaisada, así que a la derecha sobraba sitio.
-                Mayurlin: "hay mucho espacio vacío donde se podría aprovechar
-                para colocar todo el texto". En móvil sigue debajo, que ahí la
-                pantalla es vertical y ya cabía. */}
-            <div className="mx-auto max-w-3xl px-6 pb-16 text-center md:mx-0 md:w-[300px] md:shrink-0 md:px-0 md:pb-0 md:text-left lg:w-[340px]">
-              <h3 className="font-serif text-xl leading-[1.25] md:text-[1.75rem] md:leading-[1.2]">
+            {/* Misma ficha que en Inicio: nombre, qué prueba este trabajo y
+                las salidas. Fuera del lienzo de fotos, que no se toca. */}
+            <div className="mx-auto -mt-6 max-w-3xl px-6 pb-20 text-center md:-mt-10 md:pb-28">
+              <h3 className="font-serif text-xl leading-[1.25] md:text-2xl">
                 {toTitleCase(story.hotelName)}
               </h3>
-              <p className="mx-auto mt-3 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:mx-0 md:mt-5 md:text-sm">
+              <p className="mx-auto mt-3 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:text-sm">
                 {primeraFrase(story.description)}
               </p>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 md:mt-8 md:justify-start md:gap-x-0 md:gap-y-4 md:flex-col md:items-start">
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
                 {caseStudy && (
                   <Link
                     to={`/proyecto/${caseStudy.slug}`}
@@ -156,7 +143,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
                 </Link>
               </div>
             </div>
-          </section>
+          </React.Fragment>
         );
       })}
 

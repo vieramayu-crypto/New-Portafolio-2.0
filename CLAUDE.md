@@ -491,37 +491,6 @@ hemos construido".
   `gallerySectionLine` siguen en `content.json` sin usarse, por si algún día
   se vuelve a separar.
 
-### El modo `compacto` y por qué el mosaico no cabe en una pantalla
-
-`HotelSectionBlock` acepta `compacto`, que usa la página de Proyectos. Dos
-cosas que conviene saber antes de tocarlo:
-
-1. **Las fotos se dimensionan por el ANCHO del lienzo, no por su altura.** Son
-   `absolute` con el ancho en % y la forma por `aspect-ratio`. Por eso el
-   lienzo llevaba un `min-h` de 1.320 px: es lo que piden las fotos a ese
-   ancho. En compacto se le da la proporción de siempre (1156/1320) y se
-   limita por ALTURA, así el mosaico entero encoge a la vez sin deformarse.
-2. **El contenido mide 1,7 veces la altura del lienzo.** Las fotos SALEN del
-   lienzo por diseño. Encoger el lienzo no arregla nada -- se probó, y cortaba
-   más -- y recortar con `overflow-hidden` corta las fotos hasta 476 px. La
-   solución es que el bloque CREZCA: se mide cuánto sobresale la foto más baja
-   y eso se aplica como `paddingBottom`.
-
-**La medida usa rectángulos reales, no `offsetTop`.** Se intentó con
-`offsetTop`/`offsetHeight`, que ignoran los `transform` y parecían más
-limpios, pero justo la foto que se salía en uno de los nueve hoteles lo hacía
-POR un transform: la medida decía que sobraba sitio mientras en pantalla
-tapaba el nombre 54 px. Lleva 44 px de colchón porque el parallax desplaza las
-fotos hasta 20 px y la medida se toma en un instante cualquiera.
-
-**Resultado medido** (antes → después): escritorio 1,94 → 1,06-1,30 pantallas
-por hotel y 19,1 → 12,2 pantallas la página entera; móvil 0,99 → 0,86-1,00 y
-cero solapes (antes dos hoteles tapaban el nombre). **No llega a una pantalla
-exacta en escritorio**: el mosaico es alto por naturaleza y la pantalla
-apaisada, así que para que cupiera entero las fotos quedaban diminutas. Lo que
-sí se resolvió es lo que de verdad molestaba -- el texto va AL LADO, arriba,
-y se lee sin bajar.
-
 **El bloque de vídeos mide 160vh en móvil y 220vh en escritorio.** En móvil el
 vídeo horizontal es una banda 16:9 de 219 px en una pantalla de 844, así que
 con 220vh había que recorrer 1.857 px casi todos negros. Y la tira de vídeos
