@@ -401,7 +401,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             onChange={(e) =>
                               setForm({ ...form, message: e.target.value })
                             }
-                            placeholder="Para cuándo lo necesitas, dónde se va a usar y cualquier contexto que creas útil."
+                            placeholder="Objetivo, fechas, dónde se va a usar y, si ya lo sabes, qué espacios te importan más y quién aprueba el contenido."
                             className={`${fieldClass} h-48 min-h-[190px] resize-y`}
                           />
                         </Field>

@@ -101,7 +101,11 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       document.removeEventListener('keydown', escape);
     };
   }, [isHotelSelectorOpen]);
-  const [showFixedLabels, setShowFixedLabels] = useState<boolean>(false);
+  // Dos estados distintos a proposito: los rotulos laterales se apagan cuando
+  // el centro de la pantalla sale de la seccion, y el boton flotante cuando la
+  // seccion entera sale de la pantalla. Antes compartian uno solo.
+  const [centroEnHoteles, setCentroEnHoteles] = useState<boolean>(false);
+  const [seccionHotelesALaVista, setSeccionHotelesALaVista] = useState<boolean>(false);
   const [isValueBlockVisible, setIsValueBlockVisible] = useState<boolean>(false);
 
   const { hotels: hotelContent } = useSiteContent();
@@ -158,18 +162,47 @@ export const HomeMain: React.FC<HomeMainProps> = ({
     const sectionElements = document.querySelectorAll('.hotel-section-block');
     sectionElements.forEach((el) => observer.observe(el));
 
-    // Also observe the entire hotel section container to toggle label visibility
+    // Los rotulos laterales viven anclados al CENTRO vertical de la pantalla
+    // (top-1/2), asi que tienen que verse exactamente mientras ese centro cae
+    // dentro de la seccion de hoteles -- ni un pixel mas.
+    //
+    // Antes esto miraba si la seccion entera segu­ia tocando la pantalla, con
+    // un umbral del 2%. La seccion mide 7.235 px: el 2% son 145, asi que con
+    // 200 px de seccion asomando por abajo el observador segu­ia diciendo que
+    // si, mientras el centro de la pantalla ya estaba dentro de los
+    // testimonios. Resultado medido: "HOTEL" y "THE RITZ-CARLTON TENERIFE,
+    // ABAMA" a opacidad 1 encima de una cita de Costa Magica.
+    //
+    // El rootMargin de -50% arriba y abajo encoge la zona de deteccion a una
+    // franja de un pixel justo en el centro. Asi "intersecar" pasa a
+    // significar literalmente "el centro de la pantalla esta aqui dentro",
+    // que es la regla que hace falta.
     const hotelSectionEl = document.getElementById('hotel-section');
     const containerObserver = new IntersectionObserver(
       (entries) => {
         if (entries[0]) {
-          setShowFixedLabels(entries[0].isIntersecting);
+          setCentroEnHoteles(entries[0].isIntersecting);
+        }
+      },
+      { rootMargin: '-50% 0px -50% 0px', threshold: 0 }
+    );
+    if (hotelSectionEl) {
+      containerObserver.observe(hotelSectionEl);
+    }
+
+    // El boton flotante NO usa la franja central: Mayurlin pidio que apareciera
+    // en cuanto se llega al final del bloque de videos, o sea antes de que el
+    // centro entre en la seccion. Mantiene su propia deteccion.
+    const botonObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]) {
+          setSeccionHotelesALaVista(entries[0].isIntersecting);
         }
       },
       { threshold: 0.02 }
     );
     if (hotelSectionEl) {
-      containerObserver.observe(hotelSectionEl);
+      botonObserver.observe(hotelSectionEl);
     }
 
     // El bloque de valor ocupa la pantalla entera con su propio texto grande:
@@ -193,8 +226,10 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       observer.disconnect();
       if (hotelSectionEl) {
         containerObserver.unobserve(hotelSectionEl);
+        botonObserver.unobserve(hotelSectionEl);
       }
       containerObserver.disconnect();
+      botonObserver.disconnect();
       if (valueBlockEl) {
         valueBlockObserver.unobserve(valueBlockEl);
       }
@@ -202,7 +237,8 @@ export const HomeMain: React.FC<HomeMainProps> = ({
     };
   }, []);
 
-  const chromeVisible = showFixedLabels && !isValueBlockVisible;
+  const rotulosVisibles = centroEnHoteles && !isValueBlockVisible;
+  const chromeVisible = seccionHotelesALaVista && !isValueBlockVisible;
 
   const scrollToHotel = (hotelId: string) => {
     setIsHotelSelectorOpen(false);
@@ -226,7 +262,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
         <div className="relative w-full pb-32">
           {/* Viewport-fixed Side Labels (Locked in place at screen vertical center while scrolling) */}
           <AnimatePresence>
-            {chromeVisible && (
+            {rotulosVisibles && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

@@ -1,5 +1,13 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { HashRouter, Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import {
+  HashRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useNavigationType,
+  useParams,
+} from 'react-router-dom';
 import { Page, HotelStory } from './types';
 import { HOTEL_STORIES } from './data/hotels';
 import { Navbar } from './components/Navbar';
@@ -15,6 +23,14 @@ import { HotelDetail } from './components/HotelDetail';
 import { PhotoZoomTransition } from './components/PhotoZoomTransition';
 import { IntroLoader } from './components/IntroLoader';
 import { ContentProvider, useSiteContent } from './src/lib/content';
+import {
+  hayHistorialPropio,
+  pedirAncla,
+  posicionGuardada,
+  restaurarScroll,
+  tomarAncla,
+  vigilarPosicion,
+} from './src/lib/recorrido';
 
 /** Cada página real vive en su propia ruta (URL compartible), pero el resto
  *  de la web sigue hablando en términos de `Page` como antes: este mapa
@@ -58,11 +74,32 @@ function esRutaDeEntradaConIntro(): boolean {
   return ruta in PAGE_BY_PATH;
 }
 
+/** El botón Volver de una ficha o de un caso.
+ *
+ *  Hacia atrás de verdad cuando hay algo detrás -- así se recupera la página y
+ *  la altura exacta en que se quedó, que es lo que pidió Mayurlin. Y cuando no
+ *  lo hay, porque se ha entrado por un enlace directo, a Proyectos señalando el
+ *  hotel del que se viene, para no dejar al visitante en la puerta. */
+export function useVolver() {
+  const navigate = useNavigate();
+  return ({ hotelId }: { hotelId?: string } = {}) => {
+    if (hayHistorialPropio()) {
+      // `navigate(-1)` no admite llevar datos, así que el bloque al que hay
+      // que volver se deja apuntado aquí y lo recoge la restauración.
+      if (hotelId) pedirAncla(hotelId);
+      navigate(-1);
+      return;
+    }
+    navigate('/proyectos', { replace: true, state: hotelId ? { irA: hotelId } : undefined });
+  };
+}
+
 /** Ficha de un proyecto de Trabajo, alcanzable por URL propia
  *  (/trabajo/:id) además de por clic desde Inicio. */
 const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpenAvailability }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const volver = useVolver();
   const { hotels: hotelContent } = useSiteContent();
   const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
 
@@ -87,7 +124,10 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
   return (
     <HotelDetail
       story={story}
-      onBack={() => navigate('/')}
+      // Vuelve a la pantalla anterior, a la altura en la que se quedó. Si se
+      // ha entrado directo por un enlace, no hay pantalla anterior: entonces
+      // lleva a Proyectos, y ahí abajo se busca el bloque de este hotel.
+      onBack={() => volver({ hotelId: story.id })}
       onNavigateStory={(direction) =>
         navigate(`/trabajo/${direction === 'next' ? nextStory.id : prevStory.id}`)
       }
@@ -101,6 +141,7 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
 const AppShell: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const navigationType = useNavigationType();
   const [isInquiryOpen, setIsInquiryOpen] = useState<boolean>(false);
   const [isWorkOpen, setIsWorkOpen] = useState<boolean>(false);
   const [pendingTransition, setPendingTransition] = useState<HotelStory | null>(null);
@@ -124,11 +165,26 @@ const AppShell: React.FC = () => {
     navigate(PATH_BY_PAGE[page]);
   };
 
-  // El reseteo va después del render, no en el manejador: hacerlo antes de que
-  // React monte la página nueva dejaba el scroll a media altura.
+  // Mientras se está en una pantalla se va anotando a qué altura está, para
+  // poder devolver ahí al visitante si vuelve. Ver el comentario de
+  // `vigilarPosicion`: hacerlo sólo al salir no vale.
+  useEffect(() => vigilarPosicion(location.key), [location.key]);
+
+  // Al LLEGAR: si es una pantalla nueva, arriba del todo. Si se ha vuelto
+  // hacia atrás, a la altura que tenía -- entrar en la galería de un hotel y
+  // volver tiene que devolver al bloque de ese hotel, no al principio.
+  //
+  // Va después del render, no en el manejador: hacerlo antes de que React monte
+  // la página nueva dejaba el scroll a media altura.
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [location.pathname]);
+    const guardada = navigationType === 'POP' ? posicionGuardada(location.key) : undefined;
+    const ancla = navigationType === 'POP' ? tomarAncla() : null;
+    if (guardada === undefined && !ancla) {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      return;
+    }
+    return restaurarScroll(guardada ?? 0, ancla);
+  }, [location.key, navigationType]);
 
   const handleSelectStory = (story: HotelStory) => {
     if (pendingTransition) return;

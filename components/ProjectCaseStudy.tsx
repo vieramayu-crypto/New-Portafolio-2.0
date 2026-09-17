@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useVolver } from '../App';
 import { motion } from 'motion/react';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { HOTEL_STORIES } from '../data/hotels';
@@ -23,6 +24,7 @@ interface ProjectCaseStudyProps {
 export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvailability }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const volver = useVolver();
   const caseStudy = CASE_STUDIES.find((c) => c.slug === id);
   const hotel = caseStudy ? HOTEL_STORIES.find((h) => h.id === caseStudy.hotelId) : undefined;
 
@@ -36,6 +38,17 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
       <section className="relative h-[70vh] min-h-[420px] w-full overflow-hidden bg-stone-200">
         <img src={hotel.coverImage} alt={hotel.hotelName} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+        {/* Volver, igual que en la ficha de un hotel. Esta página no tenía
+            ninguna salida arriba: se entraba desde Proyectos y la única forma
+            de regresar era el botón del navegador. */}
+        <button
+          onClick={() => volver({ hotelId: hotel.id })}
+          className="absolute left-6 top-24 z-10 flex items-center gap-2 font-sans text-xs uppercase tracking-[0.15em] text-white/90 transition-colors hover:text-white sm:top-28 md:left-12 md:text-sm"
+        >
+          <span aria-hidden="true">&larr;</span>
+          <span>Volver</span>
+        </button>
+
         <div className="absolute inset-x-0 bottom-0 px-6 pb-10 text-center md:px-12 md:pb-14">
           <span className="text-[11px] font-sans uppercase tracking-[0.28em] text-white/75 md:text-xs">
             Caso de estudio

@@ -367,6 +367,55 @@ días de GPRO son por rodaje o en total), pt 36 (galería publicada / total
 entregado / usos autorizados) y pt 106 (si el plazo de "dos a tres semanas"
 es real).
 
+## El recorrido: volver deja al visitante donde estaba
+
+`src/lib/recorrido.ts` + el efecto de restauración en `App.tsx`. Pedido de
+Mayurlin: "entro en Proyectos, bajo hasta GPRO, le doy a Ver galería, y al
+volver me manda a Inicio. Aquí se rompe el flujo."
+
+Tres piezas, y las tres tienen trampa:
+
+1. **El botón Volver mira el historial.** Antes era `navigate('/')` a secas.
+   Ahora retrocede de verdad si hay algo detrás (`history.state.idx > 0`), y
+   si se entró por un enlace directo lleva a Proyectos señalando ese hotel.
+2. **La posición se anota de forma CONTINUA, no al salir.** La limpieza de un
+   efecto corre en la fase pasiva, después de que el efecto de layout de la
+   pantalla nueva ya haya puesto el scroll a cero: guardando al salir se
+   guardaba siempre un cero. Medido: 2.286 px de desvío.
+3. **Se ancla al bloque, no al píxel.** En móvil la página de destino puede
+   crecer mientras el visitante está fuera (fotos que terminan de cargar) y
+   entonces el píxel guardado ya no cae en el mismo sitio. `navigate(-1)` no
+   admite llevar datos, así que el bloque al que volver se deja apuntado en
+   el módulo (`pedirAncla`) y la restauración recalcula el destino a cada
+   fotograma. Aterriza a 96 px del borde, justo bajo el navbar.
+
+Verificado en móvil y escritorio, 8 de 8: Proyectos→galería→volver,
+Proyectos→caso→volver, Inicio→galería→volver y enlace directo→volver.
+
+Los bloques de hotel llevan `id="hotel-<id>"` en Inicio Y en Proyectos: sin
+ese id no hay a dónde anclar.
+
+## Rótulos laterales y caja de testimonios
+
+- **Los rótulos laterales** (HOTEL / nombre del hotel) viven anclados al
+  centro vertical de la pantalla, así que su observador usa `rootMargin:
+  '-50% 0px -50% 0px'` — una franja de un píxel en el centro. Con el umbral
+  del 2% que tenían antes seguían encendidos sobre los testimonios: la
+  sección mide 7.235 px, el 2% son 145, y con 200 px asomando por abajo el
+  observador decía que sí mientras el centro ya estaba fuera. **El botón
+  flotante NO comparte esa lógica** y tiene su propio observador, porque ella
+  pidió que apareciera antes, al llegar al final del bloque de vídeos.
+- **La caja de testimonios** no lleva altura fija ni `min-h`: todas las
+  tarjetas se apilan en la misma celda de una rejilla (las copias,
+  invisibles, sólo miden) y la rejilla toma la altura de la más alta. Un
+  `min-h` es un mínimo, no un tope, y las citas largas lo desbordaban: el
+  marco saltaba 58 px en móvil, 202 en tableta y 44 en escritorio, moviendo
+  el rótulo y la fila de puntos. Un número fijo por tramo se rompería al
+  editar una cita. En las copias la foto se sustituye por un hueco de las
+  mismas medidas, para no descargar ocho fotografías invisibles.
+- **El orden de `TESTIMONIALS` es el orden que se ve**, y lo eligió ella:
+  GPRO Valparaíso primero, Ritz-Carlton Abama segundo. No tocar esos dos.
+
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
 - Logo actual: sin efecto de sombra/resplandor (el anterior sí lo tenía, ella
