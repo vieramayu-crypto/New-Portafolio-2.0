@@ -416,6 +416,45 @@ ese id no hay a dónde anclar.
 - **El orden de `TESTIMONIALS` es el orden que se ve**, y lo eligió ella:
   GPRO Valparaíso primero, Ritz-Carlton Abama segundo. No tocar esos dos.
 
+## Varios vídeos horizontales: la ventana con carrusel
+
+Un vídeo horizontal ocupa la pantalla entera de fondo en el bloque de Inicio,
+así que no caben dos sin alargar el bloque. Idea de Mayurlin: **el mismo
+carrusel con profundidad de la ventana de propiedades, pero con los vídeos**.
+Vive en `components/VideoModal.tsx` y se alimenta de `data/videos.ts`.
+
+- **Sólo se monta UN `<iframe>`: el del centro.** Los laterales son la foto de
+  portada. Esto no es negociable: ya pasó con la galería (dos copias del
+  mismo vídeo escondidas con CSS = dos descargas y dos audios sonando), y
+  esconder un iframe no impide que cargue ni que reproduzca. Con cuatro
+  vídeos serían cuatro de cada. Además los laterales van al 42% y
+  desenfocados: ahí no se aprecia el movimiento.
+- **Nada se descarga hasta que alguien abre la ventana.**
+- **La separación entre tarjetas se calcula, no se fija.** Media tarjeta
+  central (50%) más media lateral (21%) más un 4% de aire, sobre el ancho
+  real de la pista. Con el 26% fijo que va bien en escritorio, en móvil
+  quedaban 62 px de la lateral montados sobre la central (medido). Se
+  recalcula con un `ResizeObserver` al girar el móvil.
+- **Para añadir un vídeo**: un bloque en `VIDEOS_HORIZONTALES` con la
+  dirección de incrustar tal cual, el hotel y una portada de
+  `public/images`. El carrusel se ajusta solo a la cantidad.
+- **Con un solo vídeo el botón "Más vídeos" no se muestra**: no habría nada
+  que enseñar que no esté ya de fondo.
+- **Nunca publicar una entrada con una dirección provisional.** Quedarían
+  varios hoteles distintos apuntando al mismo vídeo, y eso es atribuir un
+  trabajo a quien no es.
+
+## La línea fina sobre el vídeo: no es del sitio
+
+Medido en Inicio y en la galería, móvil y escritorio: la caja del vídeo es
+16:9 EXACTA (1600,02 × 900, proporción 1,7778) y el iframe la cubre entera --
+hueco de 0 px en los cuatro bordes, sin bordes y sin fondo asomando. Si
+aparece una línea en el borde superior, viene del archivo o del reproductor
+del servicio, no del CSS. La forma de distinguirlo es abrir el vídeo solo en
+`livid.com/watch/<id>` a pantalla completa: si la línea está ahí, es del
+vídeo. Desde el entorno del agente no se puede comprobar, porque los dominios
+externos están bloqueados.
+
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
 - Logo actual: sin efecto de sombra/resplandor (el anterior sí lo tenía, ella
