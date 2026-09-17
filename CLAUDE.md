@@ -491,6 +491,73 @@ hemos construido".
   `gallerySectionLine` siguen en `content.json` sin usarse, por si algún día
   se vuelve a separar.
 
+### La ficha va DENTRO del mosaico (página de Proyectos)
+
+Pedido de Mayurlin: "en un solo bloque estén las fotos y la descripción, el
+texto, el botón de ver galería, todo" y "hay mucho espacio vacío donde se
+podría aprovechar para colocar todo el texto, el nombre, el rodaje, todo".
+
+Antes se intentó sacando el texto a una columna a la derecha y encogiendo el
+mosaico a `52svh`. **Lo rechazó**: las fotos quedaron pequeñas y dispersas.
+La diferencia está en dónde va el texto: no en una columna nueva al lado del
+mosaico, sino en el hueco que el propio mosaico ya deja vacío. Las fotos no
+se tocan — siguen exactamente al tamaño de Inicio.
+
+`HotelSectionBlock` acepta `ficha` (un nodo). Inicio no la pasa y no cambia
+nada allí: medido, sus bloques siguen midiendo 653 px en móvil y 1.544 en
+escritorio, sin un solo estilo en línea.
+
+- **`HUECO_FICHA`** tiene el hueco de cada variante (0-7) en % del lienzo.
+  Cada variante lo deja en un sitio distinto: la 0 y la 2 abajo a la
+  izquierda, la 6 en la banda derecha, la 4 (la más llena) sólo en la esquina
+  inferior derecha. **Si se cambia una variante hay que volver a mirar su
+  hueco.**
+- **A partir de 1.280 px** la ficha va dentro; por debajo va debajo de la
+  última foto. A 1.024 px la columna de la variante 6 mediría 250 px y el
+  nombre saldría partido en cuatro líneas.
+- **El alto del bloque se mide, no se fija.** El lienzo mide siempre lo mismo
+  pero las fotos no llegan siempre igual de abajo (de 75,1% a 100,2% del
+  lienzo): de ahí salían a la vez los dos defectos que ella señaló, fotos
+  encima del texto en unos hoteles y 330 px de nada en otros. Es un `height`,
+  no un margen negativo: el bloque lleva `overflow-hidden` y con margen la
+  ficha que sobresalía se recortaba (a GPRO le faltaban los dos enlaces).
+- **Se mide con la cadena de `offsetTop`, no con `getBoundingClientRect`**:
+  los rectángulos incluyen el parallax y la medida cambiaría según dónde
+  estuviera el scroll.
+
+**El recorrido del parallax va con el tamaño del mosaico.** Los 80/120/50 px
+de `yPhoto1/2/3` están pensados para un lienzo de 1.280 px; en móvil el
+lienzo mide 358, así que esos mismos píxeles son un CUARTO de su alto. Medido,
+las fotos llegan a bajar 78, 117 y 49 px justo mientras se está leyendo la
+ficha — casi todo su recorrido — y por eso dejar el hueco por donde acaba la
+foto en reposo no basta. Escalado (entre el 30% y el 100%), el aire hasta la
+ficha sale parejo: de 41 a 71 px en los nueve, cuando antes iba de -54 a +119.
+Sólo donde hay ficha; Inicio conserva su recorrido.
+
+**El lienzo es proporcional (`md:aspect-[1280/1320]`) cuando lleva ficha**, no
+de alto fijo. Con alto fijo, el ancho de las fotos y el alto del lienzo dejan
+de ir juntos en cuanto la pantalla no mide 1.440: a 1.920 las fotos se hacían
+un 19% más altas sin que el lienzo creciera y se salían por abajo (medido,
+hasta 204 px encima de la ficha), y a 1.280 encogían y el mosaico se abría.
+
+**Resultado medido** (antes → después), con cero solapes en 390, 1.280, 1.440
+y 1.920, y el botón Volver acertando en 9 de 9:
+
+| | antes | después |
+|---|---|---|
+| móvil, por hotel | 0,97-0,99 pantallas | 0,85-1,02 |
+| móvil, aire foto→texto | de -54 a +119 px | de 41 a 71 px |
+| escritorio, por hotel | 1,92-1,94 pantallas | 1,30-1,65 |
+| escritorio, hueco muerto | de 46 a 351 px | ninguno |
+| página entera (1.440) | 19,1 pantallas | 14,9 |
+
+**No llega a una pantalla exacta en escritorio**, y no por falta de ajuste: el
+mosaico es casi cuadrado (1280/1320) y la pantalla de portátil es apaisada.
+Para que un hotel entero cupiera en 900 px de alto, el mosaico tendría que
+medir unos 785 px de ancho en una pantalla de 1.440 — dejaría de ocupar la
+pantalla "horizontalmente", que es la otra mitad de lo que ella pidió. En
+móvil sí se cumple.
+
 **El bloque de vídeos mide 160vh en móvil y 220vh en escritorio.** En móvil el
 vídeo horizontal es una banda 16:9 de 219 px en una pantalla de 844, así que
 con 220vh había que recorrer 1.857 px casi todos negros. Y la tira de vídeos
