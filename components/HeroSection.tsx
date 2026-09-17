@@ -199,11 +199,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           ))}
 
           <div className="hidden flex-col items-end gap-1 text-right md:flex">
+            {/* La acción principal y la secundaria vivían con el mismo peso:
+                dos líneas de texto seguidas, la de abajo un poco más apagada.
+                No hacía falta otro botón fuera de la caja de cristal -- eso
+                rompería el bloque entero -- sino un detalle que sólo tiene
+                ésta: una línea finísima que se dibuja sola de izquierda a
+                derecha, despacio, y se queda. Basta para que el ojo caiga
+                aquí primero. */}
             <button
               onClick={onOpenAvailability}
-              className="uppercase tracking-[0.18em] text-white/90 transition-opacity hover:opacity-100"
+              className="group relative uppercase tracking-[0.18em] text-white/90 transition-opacity hover:opacity-100"
             >
               {hero.ctaLabel}
+              <motion.span
+                aria-hidden
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: 'left' }}
+                className="absolute -bottom-[3px] left-0 block h-px w-full bg-white/70"
+              />
             </button>
             {/* Ruta secundaria: nunca compite en peso con el CTA comercial,
                 solo baja a Trabajo para quien todavia quiere ver el portafolio. */}
