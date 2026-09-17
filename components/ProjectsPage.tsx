@@ -103,47 +103,62 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
 
           Lo que distingue un proyecto de una galería ya no es el diseño sino
           los enlaces de su ficha: "Ver proyecto" sólo aparece donde hay un
-          caso documentado. */}
+          caso documentado.
+
+          LA FICHA VA DENTRO DEL MOSAICO, en el hueco que cada variante ya
+          deja vacío (ver HUECO_FICHA en HotelSectionBlock). Antes iba debajo
+          y cada hotel ocupaba 1.747 px -- casi dos pantallas -- con hasta
+          351 px de nada entre la última foto y el nombre. Las fotos no se
+          tocan: siguen al mismo tamaño que en Inicio. */}
       {stories.map((story, index) => {
         const caseStudy = caseByHotel.get(story.id);
+        const rodaje = [story.caseStudy?.season, story.caseStudy?.duration]
+          .filter(Boolean)
+          .join(' · ');
         return (
-          <React.Fragment key={story.id}>
-            {/* El id para anclar lo pone ya HotelSectionBlock; repetirlo aquí
-                dejaba dos elementos con el mismo id y el Volver aterrizaba en
-                el primero que encontrara. */}
-            <HotelSectionBlock
-              story={story}
-              index={index}
-              onSelectStory={(s) => navigate(`/trabajo/${s.id}`)}
-            />
-
-            {/* Misma ficha que en Inicio: nombre, qué prueba este trabajo y
-                las salidas. Fuera del lienzo de fotos, que no se toca. */}
-            <div className="mx-auto -mt-6 max-w-3xl px-6 pb-20 text-center md:-mt-10 md:pb-28">
-              <h3 className="font-serif text-xl leading-[1.25] md:text-2xl">
-                {toTitleCase(story.hotelName)}
-              </h3>
-              <p className="mx-auto mt-3 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:text-sm">
-                {primeraFrase(story.description)}
-              </p>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-                {caseStudy && (
+          // El id para anclar lo pone ya HotelSectionBlock; repetirlo aquí
+          // dejaba dos elementos con el mismo id y el Volver aterrizaba en el
+          // primero que encontrara.
+          <HotelSectionBlock
+            key={story.id}
+            story={story}
+            index={index}
+            onSelectStory={(s) => navigate(`/trabajo/${s.id}`)}
+            ficha={
+              <>
+                <div className="text-[10px] font-sans uppercase tracking-[0.24em] text-[#5a5854] md:text-[11px]">
+                  {story.location} · {story.country}
+                </div>
+                <h3 className="mt-2.5 font-serif text-xl leading-[1.22] md:text-2xl xl:mt-3 xl:text-[1.9rem]">
+                  {toTitleCase(story.hotelName)}
+                </h3>
+                <p className="mx-auto mt-3 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:text-sm xl:mx-0 xl:mt-4">
+                  {primeraFrase(story.description)}
+                </p>
+                {rodaje && (
+                  <div className="mt-3 text-[10px] font-sans uppercase tracking-[0.2em] text-[#5a5854]/85 md:text-[11px] xl:mt-4">
+                    {rodaje}
+                  </div>
+                )}
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 xl:mt-7 xl:justify-start">
+                  {caseStudy && (
+                    <Link
+                      to={`/proyecto/${caseStudy.slug}`}
+                      className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
+                    >
+                      {projects.caseLinkLabel}
+                    </Link>
+                  )}
                   <Link
-                    to={`/proyecto/${caseStudy.slug}`}
+                    to={`/trabajo/${story.id}`}
                     className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                   >
-                    {projects.caseLinkLabel}
+                    {projects.galleryLinkLabel}
                   </Link>
-                )}
-                <Link
-                  to={`/trabajo/${story.id}`}
-                  className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
-                >
-                  {projects.galleryLinkLabel}
-                </Link>
-              </div>
-            </div>
-          </React.Fragment>
+                </div>
+              </>
+            }
+          />
         );
       })}
 
