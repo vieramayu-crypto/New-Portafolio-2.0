@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
@@ -31,6 +31,18 @@ const rise = (delay: number) => ({
  *  justo lo que la auditoría pedía evitar. */
 export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }) => {
   const { projects, hotels: hotelContent } = useSiteContent();
+  const location = useLocation();
+
+  // Quien entra a la galería de un hotel por un enlace directo no tiene
+  // pantalla anterior a la que volver, así que su botón Volver trae aquí
+  // señalando ese hotel. Aterrizar arriba del todo dejaría al visitante
+  // buscando a mano el bloque del que acaba de salir.
+  const irA = (location.state as { irA?: string } | null)?.irA;
+  useEffect(() => {
+    if (!irA) return;
+    const destino = document.getElementById(`hotel-${irA}`);
+    if (destino) destino.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior });
+  }, [irA]);
 
   const stories = HOTEL_STORIES.map((story, i) => ({
     ...story,
@@ -91,7 +103,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
         return (
           <React.Fragment key={featured.id}>
             {idx > 0 && <div className="h-px w-full bg-[#1a1918]/12" />}
-            <section className="pb-20 md:pb-28">
+            <section id={`hotel-${featured.id}`} className="scroll-mt-24 pb-20 md:pb-28">
               <motion.div {...rise(0)}>
                 <Link to={`/proyecto/${featuredCase.slug}`} className="group block">
                   <div className={`relative w-full overflow-hidden bg-stone-200 ${alturaFoto}`}>
@@ -163,8 +175,9 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
             return (
               <motion.article
                 key={story.id}
+                id={`hotel-${story.id}`}
                 {...rise(0)}
-                className="grid grid-cols-1 items-center gap-8 md:grid-cols-12 md:gap-12"
+                className="scroll-mt-24 grid grid-cols-1 items-center gap-8 md:grid-cols-12 md:gap-12"
               >
                 <Link
                   to={`/trabajo/${story.id}`}

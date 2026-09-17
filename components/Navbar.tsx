@@ -12,7 +12,7 @@ interface NavbarProps {
 
 const PAGE_LABELS: Partial<Record<Page, string>> = {
   projects: 'Proyectos',
-  about: 'Acerca de',
+  about: 'Equipo',
   contact: 'Contacto',
 };
 
@@ -22,7 +22,7 @@ const PAGE_LABELS: Partial<Record<Page, string>> = {
 const MENU_ITEMS: { page: Page; label: string; photo: string }[] = [
   { page: 'home', label: 'Inicio', photo: PORTFOLIO_MENU_PHOTO },
   { page: 'projects', label: 'Proyectos', photo: PORTFOLIO_MENU_PHOTO },
-  { page: 'about', label: 'Acerca de', photo: MENU_ABOUT_PHOTO },
+  { page: 'about', label: 'Equipo', photo: MENU_ABOUT_PHOTO },
   { page: 'contact', label: 'Contacto', photo: MAYU_PORTRAIT },
 ];
 

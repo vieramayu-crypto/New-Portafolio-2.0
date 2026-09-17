@@ -284,7 +284,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     introStatement:
       'Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.',
     legacyQuote:
-      'No hacemos esto para llenar un feed. Lo hacemos porque cada hotel tiene un alma que merece verse tal como se siente estar ahí.',
+      'Decidimos qué se rueda y qué no. Un hotel no se cuenta enseñándolo todo, sino eligiendo lo que hace que alguien quiera estar ahí.',
     overview: {
       heading: 'Un estudio de fotografía y producción audiovisual para hoteles.',
       paragraph:

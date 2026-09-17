@@ -72,21 +72,15 @@ export const COLLABORATIONS: CollaborationCase[] = [
   },
 ];
 
-// Testimonios reales de los equipos de cada propiedad. Ordenados por fuerza
-// comercial, no cronológicamente: primero los que hablan en lenguaje de negocio
-// (alcance, marca, resultados) y los que acreditan trabajo recurrente.
+// Testimonios reales de los equipos de cada propiedad. EL ORDEN DE ESTA LISTA
+// ES EL ORDEN EN QUE SE VEN, y lo eligió Mayurlin: abre GPRO Valparaíso -- el
+// cliente que ha repetido tres veces, y cuya cita habla de oficio y de querer
+// repetir -- y le sigue Ritz-Carlton Abama, que es la marca que más pesa. El
+// resto va por fuerza comercial: primero los que hablan en lenguaje de negocio
+// (alcance, marca, resultados). No tocar los dos primeros sin que ella lo pida.
 // Las citas están recortadas -- se quitan saludos y despedidas, el cuerpo queda
 // intacto. `photo` solo se rellena cuando tenemos material de esa propiedad.
 export const TESTIMONIALS: Testimonial[] = [
-  {
-    id: 't-honeymoon-petra',
-    quote:
-      'Su mirada y sus imágenes nos han ayudado muchísimo a contar nuestra historia y a llegar a públicos nuevos. Han sabido capturar la esencia de la marca.',
-    author: 'Aias Mavrikis',
-    role: 'Equipo de Marketing',
-    brandName: 'Honeymoon Petra Villas',
-    photo: publicImage('sec4-gal07-piscina-cruceros-v.jpg'),
-  },
   {
     id: 't-gpro',
     quote:
@@ -105,6 +99,15 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'Equipo de Marketing',
     brandName: 'The Ritz-Carlton Tenerife, Abama',
     photo: publicImage('sec1-gal1-facade-v.jpg'),
+  },
+  {
+    id: 't-honeymoon-petra',
+    quote:
+      'Su mirada y sus imágenes nos han ayudado muchísimo a contar nuestra historia y a llegar a públicos nuevos. Han sabido capturar la esencia de la marca.',
+    author: 'Aias Mavrikis',
+    role: 'Equipo de Marketing',
+    brandName: 'Honeymoon Petra Villas',
+    photo: publicImage('sec4-gal07-piscina-cruceros-v.jpg'),
   },
   {
     id: 't-costa-magica',
