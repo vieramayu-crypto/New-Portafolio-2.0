@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent, publicImage } from '../src/lib/content';
 import { VideoNube } from './VideoNube';
+import { VideoModal } from './VideoModal';
+import { VIDEOS_HORIZONTALES } from '../data/videos';
 
 /** Los cuatro hoteles con los que se ejemplifica el bloque -- los mismos
  *  cuatro que pidió Mayurlin por nombre (Ritz-Carlton, GPRO, InterContinental,
@@ -262,6 +264,10 @@ export const VideoShowcase: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { hotels: hotelContent } = useSiteContent();
   const [deployed, setDeployed] = useState(false);
+  // La ventana con los demás vídeos horizontales. Sólo se ofrece si hay más
+  // de uno: con uno solo no habría nada que enseñar que no esté ya de fondo.
+  const [videosAbiertos, setVideosAbiertos] = useState(false);
+  const hayMasVideos = VIDEOS_HORIZONTALES.length > 1;
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -370,6 +376,25 @@ export const VideoShowcase: React.FC = () => {
           />
         ))}
 
+        {/* Los demás vídeos horizontales. Uno solo ya ocupa la pantalla
+            entera de fondo, así que los otros no caben aquí sin alargar el
+            bloque: viven en una ventana con el mismo carrusel con
+            profundidad que la de propiedades. Idea de Mayurlin. El botón se
+            queda arriba a la derecha, lejos del aviso de salida de abajo y
+            de las cuatro tarjetas. */}
+        {hayMasVideos && (
+          <motion.button
+            initial={false}
+            animate={{ opacity: deployed ? 0 : 1 }}
+            transition={{ duration: 0.5 }}
+            onClick={() => setVideosAbiertos(true)}
+            style={{ pointerEvents: deployed ? 'none' : 'auto' }}
+            className="mt-glass mt-glass-light absolute right-4 top-24 z-40 flex items-center gap-3 overflow-hidden rounded-md px-5 py-2.5 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed] !shadow-[inset_0_1px_1px_rgba(255,255,255,0.72)] [text-shadow:0_1px_6px_rgba(26,25,24,0.85)] transition-colors duration-300 hover:bg-white/20 md:right-8 md:top-28 md:text-xs"
+          >
+            <span>Más vídeos ({VIDEOS_HORIZONTALES.length})</span>
+          </motion.button>
+        )}
+
         {/* Aviso de salida. Este bloque es pegajoso y ocupa la pantalla
             entera: sin una señal, al llegar a las cuatro tarjetas es
             razonable pensar que la página se acaba aquí. Dice a dónde lleva
@@ -410,6 +435,8 @@ export const VideoShowcase: React.FC = () => {
         </AnimatePresence>
       </div>
     </section>
+
+    <VideoModal open={videosAbiertos} onClose={() => setVideosAbiertos(false)} />
     </>
   );
 };
