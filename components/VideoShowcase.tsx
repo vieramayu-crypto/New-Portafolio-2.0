@@ -462,10 +462,15 @@ export const VideoShowcase: React.FC = () => {
         </motion.div>
       </section>
 
-    {/* 220vh, no 280: el alto solo tiene que dar para llegar al umbral, ver la
-        animación completa y quedarse un rato con las cuatro puestas. Ya no hay
-        que reservar recorrido para "dibujarla". */}
-    <section ref={containerRef} className="relative w-full bg-[#1a1918]" style={{ height: '220vh' }}>
+    {/* El alto sólo tiene que dar para llegar al umbral, ver la animación
+        completa y quedarse un rato con las cuatro tarjetas puestas.
+
+        En móvil son 160vh y no 220: el vídeo horizontal ahí es una banda 16:9
+        de 219 px dentro de una pantalla de 844, así que con 220vh había que
+        recorrer 1.857 px -- dos pantallas y pico -- de los que la mayoría era
+        negro. Medido. En escritorio el vídeo llena la pantalla entera y ese
+        recorrido sí se aprovecha. */}
+    <section ref={containerRef} className="relative h-[160vh] w-full bg-[#1a1918] md:h-[220vh]">
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         {/* Vídeo horizontal a sangre completa. El desenfoque y el zoom van en
             este contenedor, no en el vídeo: un filtro CSS sobre el padre
@@ -539,7 +544,11 @@ export const VideoShowcase: React.FC = () => {
             animate={{ opacity: deployed ? 0 : 1, y: deployed ? 16 : 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             style={{ pointerEvents: deployed ? 'none' : 'auto' }}
-            className="absolute inset-x-0 bottom-20 z-30 flex justify-center px-4 md:bottom-24"
+            /* En móvil va pegada bajo el vídeo, no al fondo de la pantalla:
+               el vídeo es una banda centrada y entre ella y el borde había
+               más de 300 px de negro. En escritorio el vídeo llena la
+               pantalla, así que ahí sí va abajo. */
+            className="absolute inset-x-0 top-[calc(50%+130px)] z-30 flex justify-center px-4 md:top-auto md:bottom-24"
           >
             <TiraVideos activo={activo} onElegir={irAVideo} />
           </motion.div>
