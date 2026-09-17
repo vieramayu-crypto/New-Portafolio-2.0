@@ -467,6 +467,35 @@ no se deforma -- y el contenedor recorta el sobrante. Es lo que hace cualquier
 reproductor de televisión. A 900 px de alto, 5 px son un 0,9%: invisible. Si
 algún día el servicio deja de pintar esa línea, se pone a 0 y se acabó.
 
+## La página de Proyectos usa el mosaico de Inicio
+
+Un solo lenguaje visual en toda la web. Antes esta página enseñaba lo mismo de
+dos maneras: los casos como foto horizontal a sangre completa, y las galerías
+como foto al 80% con la ficha al lado. Ninguna de las dos era la de Inicio, y
+Mayurlin lo dijo claro: "si ya probamos un diseño que funciona y es más
+elegante, ¿por qué no lo replicamos? Esta página está desfasada de lo que
+hemos construido".
+
+- Los **nueve** hoteles seguidos, cada uno con `HotelSectionBlock` -- el mismo
+  mosaico de tres fotos de Inicio -- y debajo su ficha: nombre, la primera
+  frase de su descripción y las salidas.
+- **Lo que distingue un proyecto de una galería ya no es el diseño sino los
+  enlaces**: "Ver proyecto" sólo aparece donde hay caso documentado (hoy 3 de
+  9). Se quitaron los dos rótulos de sección, que ya no separaban nada.
+- **El id para anclar lo pone `HotelSectionBlock`**, no quien lo usa. Ponerlo
+  también fuera dejaba dos elementos con el mismo id y el botón Volver
+  aterrizaba en el primero que encontrara.
+- La página pasa a medir unos 17.000 px en escritorio. Es el coste, y ella lo
+  aceptó: "ocupa un poco más de espacio, pero la diferencia visual es grande".
+- `caseSectionLabel`, `caseSectionLine`, `gallerySectionLabel` y
+  `gallerySectionLine` siguen en `content.json` sin usarse, por si algún día
+  se vuelve a separar.
+
+**El menú dice "Proyectos y portafolio"**, igual que el titular de la página,
+para que un hotel sepa dónde están las fotos. El indicador pequeño de la
+esquina superior sigue diciendo sólo "Proyectos": ahí el espacio es escaso y
+es un rótulo de estado, no navegación.
+
 ## Decisiones de diseño ya tomadas (no revertir sin que ella lo pida)
 
 - Logo actual: sin efecto de sombra/resplandor (el anterior sí lo tenía, ella

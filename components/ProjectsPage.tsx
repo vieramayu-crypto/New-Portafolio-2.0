@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
@@ -7,9 +7,19 @@ import { useSiteContent } from '../src/lib/content';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
 import { BrandsMarquee } from './BrandsMarquee';
+import { HotelSectionBlock } from './HotelSectionBlock';
 
 interface ProjectsPageProps {
   onOpenAvailability: () => void;
+}
+
+/** La primera frase de la descripción del hotel, que es la que resume qué
+ *  prueba ese trabajo ("Arquitectura, jardines, spa y gastronomía en una
+ *  selección visual del resort"). El resto es la evocación, y debajo de un
+ *  mosaico de tres fotos sobra: aquí hace falta el rótulo, no el párrafo. */
+function primeraFrase(texto: string): string {
+  const corte = texto.indexOf('. ');
+  return corte === -1 ? texto : texto.slice(0, corte + 1);
 }
 
 /** Misma entrada suave que usan Qué creamos, Formas de trabajar y el cierre
@@ -32,6 +42,7 @@ const rise = (delay: number) => ({
 export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }) => {
   const { projects, hotels: hotelContent } = useSiteContent();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Quien entra a la galería de un hotel por un enlace directo no tiene
   // pantalla anterior a la que volver, así que su botón Volver trae aquí
@@ -50,12 +61,10 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     description: hotelContent[i]?.description ?? story.description,
   }));
 
-  // Todos los hoteles con caso documentado van arriba, en el bloque grande;
-  // el resto baja a las filas de galería. Antes solo subía el primero y los
-  // casos nuevos se quedaban invisibles en la página que debía enseñarlos.
+  // Ya no se separan en dos bloques con diseños distintos: los nueve van
+  // seguidos, con el mismo mosaico, y lo que distingue a uno con caso
+  // documentado es que su ficha añade el enlace "Ver proyecto".
   const caseByHotel = new Map(CASE_STUDIES.map((c) => [c.hotelId, c]));
-  const featuredStories = stories.filter((s) => caseByHotel.has(s.id));
-  const rest = stories.filter((s) => !caseByHotel.has(s.id));
 
   return (
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans">
@@ -81,145 +90,62 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
       {/* Regla a sangre completa = cambio de sección */}
       <div className="h-px w-full bg-[#1a1918]/12" />
 
-      {/* Caso documentado: foto a sangre y ficha debajo, para que se distinga
-          de un vistazo de las galerías que vienen después. */}
-      {featuredStories.length > 0 && (
-        <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-12 pt-10 text-center md:px-12 md:pb-16 md:pt-14">
-          <div className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[12px]">
-            {projects.caseSectionLabel}
-          </div>
-          <p className="mx-auto mt-4 max-w-[46ch] font-serif text-lg leading-[1.45] text-[#1a1918] md:text-xl">
-            {projects.caseSectionLine}
-          </p>
-        </motion.div>
-      )}
+      {/* LAS NUEVE PROPIEDADES, CON EL MOSAICO DE INICIO.
+          Antes esta página enseñaba lo mismo de dos maneras distintas: los
+          casos como una foto horizontal a pantalla completa, y las galerías
+          como una foto al 80% con la ficha al lado. Dos lenguajes en una
+          página que resume las dos cosas, y ninguno era el de Inicio.
 
-      {featuredStories.map((featured, idx) => {
-        const featuredCase = caseByHotel.get(featured.id)!;
-        // El primer caso abre a sangre completa; los siguientes bajan de
-        // altura para que la página tenga jerarquía y no sean tres portadas
-        // idénticas seguidas.
-        const alturaFoto = idx === 0 ? 'h-[58vh] min-h-[320px] md:h-[72vh]' : 'h-[44vh] min-h-[260px] md:h-[56vh]';
+          Ahora es el mosaico de tres fotos de Inicio, que ya está probado en
+          móvil y en escritorio y es el que sostiene la web. La página es más
+          larga -- son nueve bloques -- pero se lee como el resto y se entiende
+          de un vistazo qué hay dentro.
+
+          Lo que distingue un proyecto de una galería ya no es el diseño sino
+          los enlaces de su ficha: "Ver proyecto" sólo aparece donde hay un
+          caso documentado. */}
+      {stories.map((story, index) => {
+        const caseStudy = caseByHotel.get(story.id);
         return (
-          <React.Fragment key={featured.id}>
-            {idx > 0 && <div className="h-px w-full bg-[#1a1918]/12" />}
-            <section id={`hotel-${featured.id}`} className="scroll-mt-24 pb-20 md:pb-28">
-              <motion.div {...rise(0)}>
-                <Link to={`/proyecto/${featuredCase.slug}`} className="group block">
-                  <div className={`relative w-full overflow-hidden bg-stone-200 ${alturaFoto}`}>
-                    <picture>
-                      <source media={MEDIA_MOVIL} srcSet={versionMovil(featured.coverImage)} />
-                      <img
-                        src={featured.coverImage}
-                        alt={toTitleCase(featured.hotelName)}
-                        className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
-                      />
-                    </picture>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-                  </div>
+          <React.Fragment key={story.id}>
+            {/* El id para anclar lo pone ya HotelSectionBlock; repetirlo aquí
+                dejaba dos elementos con el mismo id y el Volver aterrizaba en
+                el primero que encontrara. */}
+            <HotelSectionBlock
+              story={story}
+              index={index}
+              onSelectStory={(s) => navigate(`/trabajo/${s.id}`)}
+            />
+
+            {/* Misma ficha que en Inicio: nombre, qué prueba este trabajo y
+                las salidas. Fuera del lienzo de fotos, que no se toca. */}
+            <div className="mx-auto -mt-6 max-w-3xl px-6 pb-20 text-center md:-mt-10 md:pb-28">
+              <h3 className="font-serif text-xl leading-[1.25] md:text-2xl">
+                {toTitleCase(story.hotelName)}
+              </h3>
+              <p className="mx-auto mt-3 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:text-sm">
+                {primeraFrase(story.description)}
+              </p>
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+                {caseStudy && (
+                  <Link
+                    to={`/proyecto/${caseStudy.slug}`}
+                    className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
+                  >
+                    {projects.caseLinkLabel}
+                  </Link>
+                )}
+                <Link
+                  to={`/trabajo/${story.id}`}
+                  className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
+                >
+                  {projects.galleryLinkLabel}
                 </Link>
-
-                <div className="mx-auto max-w-4xl px-6 pt-10 text-center md:px-12 md:pt-14">
-                  <div className="font-sans text-[10px] uppercase tracking-[0.28em] text-[#5a5854] md:text-[11px]">
-                    {projects.caseLabel}
-                  </div>
-                  <h2 className="mt-4 font-serif text-3xl leading-[1.15] md:mt-5 md:text-[2.9rem]">
-                    {toTitleCase(featured.hotelName)}
-                  </h2>
-                  <div className="mt-3 font-sans text-[12px] uppercase tracking-[0.2em] text-[#5a5854] md:text-xs">
-                    {featured.location} · {featured.country} · {featured.year}
-                  </div>
-                  <p className="mx-auto mt-6 max-w-[58ch] text-[14px] leading-[1.75] text-[#5a5854] md:text-sm">
-                    {featured.description}
-                  </p>
-
-                  <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-11">
-                    <Link
-                      to={`/proyecto/${featuredCase.slug}`}
-                      className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
-                    >
-                      {projects.caseLinkLabel}
-                    </Link>
-                    <Link
-                      to={`/trabajo/${featured.id}`}
-                      className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
-                    >
-                      {projects.galleryLinkLabel}
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            </section>
+              </div>
+            </div>
           </React.Fragment>
         );
       })}
-
-      <div className="h-px w-full bg-[#1a1918]/12" />
-
-      {/* A partir de aquí cambia lo que se está mirando, y hay que decirlo:
-          una galería sin el relato del encargo detrás no es un proyecto. */}
-      <motion.div {...rise(0)} className="mx-auto max-w-4xl px-6 pb-4 pt-14 text-center md:px-12 md:pt-18">
-        <div className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-[12px]">
-          {projects.gallerySectionLabel}
-        </div>
-        <p className="mx-auto mt-4 max-w-[46ch] font-serif text-lg leading-[1.45] text-[#1a1918] md:text-xl">
-          {projects.gallerySectionLine}
-        </p>
-      </motion.div>
-
-      {/* Galerías: filas alternas, foto grande y ficha al lado. */}
-      <section className="mx-auto max-w-6xl px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16">
-        <div className="space-y-20 md:space-y-32">
-          {rest.map((story, i) => {
-            const photoFirst = i % 2 === 0;
-            return (
-              <motion.article
-                key={story.id}
-                id={`hotel-${story.id}`}
-                {...rise(0)}
-                className="scroll-mt-24 grid grid-cols-1 items-center gap-8 md:grid-cols-12 md:gap-12"
-              >
-                <Link
-                  to={`/trabajo/${story.id}`}
-                  className={`group block md:col-span-7 ${photoFirst ? '' : 'md:order-2'}`}
-                >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-200">
-                    <picture>
-                      <source media={MEDIA_MOVIL} srcSet={versionMovil(story.coverImage)} />
-                      <img
-                        src={story.coverImage}
-                        alt={story.hotelName}
-                        className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
-                      />
-                    </picture>
-                  </div>
-                </Link>
-
-                <div className={`md:col-span-5 ${photoFirst ? '' : 'md:order-1'}`}>
-                  {/* Sin rótulo: la sección de arriba ya dice que esto es el
-                      portafolio, y "Selección de imágenes" encima de cada foto
-                      solo repetía lo evidente. */}
-                  <h2 className="font-serif text-2xl leading-[1.2] md:text-[2rem]">
-                    {toTitleCase(story.hotelName)}
-                  </h2>
-                  <div className="mt-2.5 font-sans text-[12px] uppercase tracking-[0.2em] text-[#5a5854]">
-                    {story.location} · {story.country}
-                  </div>
-                  <p className="mt-5 max-w-[46ch] text-[14px] leading-[1.75] text-[#5a5854]">
-                    {story.description}
-                  </p>
-                  <Link
-                    to={`/trabajo/${story.id}`}
-                    className="mt-6 inline-block border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
-                  >
-                    {projects.galleryLinkLabel}
-                  </Link>
-                </div>
-              </motion.article>
-            );
-          })}
-        </div>
-      </section>
 
       <div className="h-px w-full bg-[#1a1918]/12" />
 

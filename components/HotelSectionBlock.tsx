@@ -96,7 +96,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
       ref={sectionRef}
       id={`hotel-${story.id}`}
       data-hotel-id={story.id}
-      className="hotel-section-block relative w-full py-16 md:py-28 px-4 md:px-12 lg:px-20 overflow-hidden md:min-h-[1380px]"
+      className="hotel-section-block relative w-full scroll-mt-24 py-16 md:py-28 px-4 md:px-12 lg:px-20 overflow-hidden md:min-h-[1380px]"
     >
       {/* El nombre del hotel lo pone ahora la ficha que va debajo del bloque
           (en HomeMain), la misma en móvil y en escritorio. Aquí se repetía
