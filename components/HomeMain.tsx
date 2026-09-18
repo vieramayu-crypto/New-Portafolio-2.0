@@ -35,7 +35,6 @@ interface HomeMainProps {
   introDone: boolean;
   onNavigate: (page: Page) => void;
   onOpenAvailability: () => void;
-  onOpenWork: () => void;
   onSelectStory?: (story: HotelStory) => void;
 }
 
@@ -61,51 +60,15 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   introDone,
   onNavigate,
   onOpenAvailability,
-  onOpenWork,
   onSelectStory,
 }) => {
   const [activeStoryIndex, setActiveStoryIndex] = useState<number>(0);
-  const [isHotelSelectorOpen, setIsHotelSelectorOpen] = useState<boolean>(false);
 
-  /* Cerrar el selector tocando fuera. Antes la única salida era volver a
-     pulsar la misma flecha que lo abrió: quien tocaba la pantalla veía que no
-     pasaba nada y tenía que deducir el camino de vuelta. `pointerdown` cubre
-     ratón y dedo a la vez, y el listener sólo existe mientras está abierto.
-     Escape hace lo mismo para quien navega con teclado. */
-  const selectorRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!isHotelSelectorOpen) return;
-    const fuera = (e: PointerEvent) => {
-      const n = selectorRef.current;
-      if (!n) return;
-      /* Por coordenadas, no con contains(): el contenedor es una banda de
-         ancho completo, así que un toque a 300px del botón seguiría estando
-         "dentro" de él. Sus hijos directos sí son cajas ajustadas -- el botón
-         y, si está abierto, el panel. */
-      const dentro = [...n.children].some((hijo) => {
-        const r = hijo.getBoundingClientRect();
-        return (
-          e.clientX >= r.left && e.clientX <= r.right &&
-          e.clientY >= r.top && e.clientY <= r.bottom
-        );
-      });
-      if (!dentro) setIsHotelSelectorOpen(false);
-    };
-    const escape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsHotelSelectorOpen(false);
-    };
-    document.addEventListener('pointerdown', fuera);
-    document.addEventListener('keydown', escape);
-    return () => {
-      document.removeEventListener('pointerdown', fuera);
-      document.removeEventListener('keydown', escape);
-    };
-  }, [isHotelSelectorOpen]);
-  // Dos estados distintos a proposito: los rotulos laterales se apagan cuando
-  // el centro de la pantalla sale de la seccion, y el boton flotante cuando la
-  // seccion entera sale de la pantalla. Antes compartian uno solo.
+  // Los rotulos laterales se apagan cuando el centro de la pantalla sale de la
+  // seccion. Habia un segundo estado, para el boton flotante, que se apagaba
+  // cuando salia la seccion entera; el boton se fue a Proyectos y con el ese
+  // estado y su observador.
   const [centroEnHoteles, setCentroEnHoteles] = useState<boolean>(false);
-  const [seccionHotelesALaVista, setSeccionHotelesALaVista] = useState<boolean>(false);
   const [isValueBlockVisible, setIsValueBlockVisible] = useState<boolean>(false);
 
   const { hotels: hotelContent } = useSiteContent();
@@ -190,21 +153,6 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       containerObserver.observe(hotelSectionEl);
     }
 
-    // El boton flotante NO usa la franja central: Mayurlin pidio que apareciera
-    // en cuanto se llega al final del bloque de videos, o sea antes de que el
-    // centro entre en la seccion. Mantiene su propia deteccion.
-    const botonObserver = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]) {
-          setSeccionHotelesALaVista(entries[0].isIntersecting);
-        }
-      },
-      { threshold: 0.02 }
-    );
-    if (hotelSectionEl) {
-      botonObserver.observe(hotelSectionEl);
-    }
-
     // El bloque de valor ocupa la pantalla entera con su propio texto grande:
     // mientras esta a la vista se apartan los rotulos laterales y el boton
     // flotante, que si no se le montarian encima.
@@ -226,10 +174,8 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       observer.disconnect();
       if (hotelSectionEl) {
         containerObserver.unobserve(hotelSectionEl);
-        botonObserver.unobserve(hotelSectionEl);
       }
       containerObserver.disconnect();
-      botonObserver.disconnect();
       if (valueBlockEl) {
         valueBlockObserver.unobserve(valueBlockEl);
       }
@@ -238,15 +184,6 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   }, []);
 
   const rotulosVisibles = centroEnHoteles && !isValueBlockVisible;
-  const chromeVisible = seccionHotelesALaVista && !isValueBlockVisible;
-
-  const scrollToHotel = (hotelId: string) => {
-    setIsHotelSelectorOpen(false);
-    const element = document.getElementById(`hotel-${hotelId}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className="relative min-h-screen bg-[#fbfaf6] text-[#1a1918] select-none font-sans overflow-x-clip">
@@ -367,79 +304,11 @@ export const HomeMain: React.FC<HomeMainProps> = ({
             </Link>
           </div>
 
-          {/* Bottom Floating Button: only appears once the first photo section is reached */}
-          <AnimatePresence>
-            {chromeVisible && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3 }}
-                ref={selectorRef}
-                className="fixed bottom-8 inset-x-0 z-50 flex flex-col items-center px-4"
-              >
-                <button
-                  onClick={() => setIsHotelSelectorOpen(!isHotelSelectorOpen)}
-                  className="mt-glass mt-glass-light pointer-events-auto relative overflow-hidden rounded-md px-5 py-2 flex items-center gap-3 text-sm md:text-base font-serif tracking-[0.25em] font-medium text-[#1a1918] hover:bg-[#1a1918] hover:text-[#f5f3ed] transition-all duration-300 shadow-[0_2px_20px_rgba(26,25,24,0.14)]"
-                >
-                  {/* Decía "Proyectos", pero no abre proyectos: salta a la
-                      sección de un hotel. Con "proyecto" ya definido como el
-                      encargo contado entero, llamarle así aquí era una de las
-                      piezas que emborronaban las dos palabras. */}
-                  <span>Hoteles ({flagshipStories.length})</span>
-                  <span className="text-xs">{isHotelSelectorOpen ? '▼' : '▲'}</span>
-                </button>
-
-                {/* Selector Popup Menu to Jump to Any Hotel Section */}
-                <AnimatePresence>
-                  {isHotelSelectorOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                      className="mt-glass mt-glass-light mt-glass-panel absolute bottom-16 z-50 w-80 overflow-hidden rounded-lg text-left md:w-96 md:rounded-[10px]"
-                    >
-                      {/* El scroll vive aqui dentro, no en la caja: un
-                          pseudo-elemento posicionado se desplaza con el
-                          contenido de su contenedor con scroll, y el borde de
-                          cristal acababa cruzando la lista como una linea
-                          blanca. */}
-                      <div className="no-scrollbar max-h-80 space-y-1 overflow-y-auto p-3">
-                      <div className="mb-1 border-b border-[#1a1918]/15 px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]">
-                        Ir a un hotel
-                      </div>
-                      {flagshipStories.map((hotel) => (
-                        <button
-                          key={hotel.id}
-                          onClick={() => scrollToHotel(hotel.id)}
-                          className={`w-full rounded-lg px-3 py-2.5 text-left font-sans text-xs transition-colors ${
-                            currentStory.id === hotel.id
-                              ? 'bg-[#1a1918] text-[#fbfaf6] font-medium'
-                              : 'text-[#1a1918] hover:bg-white/45'
-                          }`}
-                        >
-                          <div>
-                            <div className="font-serif text-sm tracking-wide font-medium">{hotel.hotelName}</div>
-                            <div className="text-[11px] text-[#5a5854]">{hotel.location} &bull; {hotel.coupleName}</div>
-                          </div>
-                        </button>
-                      ))}
-                      </div>
-                      <button
-                        onClick={() => {
-                          setIsHotelSelectorOpen(false);
-                          onOpenWork();
-                        }}
-                        className="block w-full border-t border-[#1a1918]/15 px-3 py-3 text-center font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854] transition-colors hover:bg-white/45 hover:text-[#1a1918]"
-                      >
-                        Ver todas las propiedades →
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* EL ÍNDICE FLOTANTE DE HOTELES YA NO VIVE AQUÍ.
+              Mayurlin: "me hace hacer dos pasos para algo tan simple como ir
+              directamente a la galería". En Inicio era un atajo hacia otra
+              página; ahora vive en Proyectos, donde es el índice de lo que ya
+              estás mirando. El componente es `IndiceHoteles`. */}
         </div>
       </div>
 

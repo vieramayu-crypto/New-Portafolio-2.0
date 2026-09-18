@@ -155,13 +155,32 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
               había ninguna forma de contactar desde la primera pantalla. Aquí
               va el botón para ese tamaño; en escritorio manda el de la banda. */}
           <motion.div {...rise(0.34)} animate={animate} className="mt-11 md:hidden">
-            {/* `font-semibold` solo aqui: es el unico boton de la web que se
-                lee sobre una foto a pleno sol. */}
+            {/* EN PRUEBA: la misma línea que en escritorio, en vez del botón
+                relleno. Allí funciona sobre el cristal de la banda; aquí vive
+                directamente sobre la foto, que es el caso difícil -- la grava
+                de `hero-portada.jpg` es la zona más clara y cae justo por esta
+                altura. De ahí el `font-semibold` y la sombra del texto, que el
+                botón relleno no necesitaba porque traía su propio fondo.
+
+                Si se ve demasiado sutil, se vuelve al botón relleno: era
+                `bg-[#f5f3ed] px-6 py-3 ... font-semibold text-[#1a1918]`. */}
             <button
               onClick={onOpenAvailability}
-              className="bg-[#f5f3ed] px-6 py-3 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-[#1a1918] transition-colors hover:bg-white"
+              className="group relative inline-block text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,.6)]"
             >
               {hero.ctaLabel}
+              {/* Se dibuja sola de izquierda a derecha, despacio, y se queda.
+                  Mismo tiempo y misma curva que la de la banda de escritorio,
+                  para que sea el mismo gesto y no dos parecidos. La sombra
+                  bajo la línea hace el mismo trabajo que la del texto. */}
+              <motion.span
+                aria-hidden
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: 'left' }}
+                className="absolute -bottom-[5px] left-0 block h-px w-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,.55)]"
+              />
             </button>
           </motion.div>
         </div>

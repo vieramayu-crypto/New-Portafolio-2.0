@@ -200,7 +200,14 @@ const AppShell: React.FC = () => {
   };
 
   const openAvailability = () => setIsInquiryOpen(true);
+  /* OJO: ahora mismo NADIE llama a esto. La ventana del carrusel de hoteles
+     (`WorkModal`) se abría desde el pie del índice flotante de Inicio, con
+     "Ver todas las propiedades". Ese índice se mudó a Proyectos y allí ese pie
+     no aplica -- ya estás viendo todas -- así que la ventana se quedó sin
+     puerta de entrada. Se deja montada, y no borrada, porque Mayurlin dijo
+     que no sabe si la querrá para otra sección. */
   const openWork = () => setIsWorkOpen(true);
+  void openWork;
 
   return (
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans antialiased selection:bg-[#1a1918] selection:text-[#f5f3ed]">
@@ -229,7 +236,6 @@ const AppShell: React.FC = () => {
                   introDone={introPlayed}
                   onNavigate={handleNavigate}
                   onOpenAvailability={openAvailability}
-                  onOpenWork={openWork}
                   onSelectStory={handleSelectStory}
                 />
               }
@@ -246,7 +252,6 @@ const AppShell: React.FC = () => {
                   introDone={introPlayed}
                   onNavigate={handleNavigate}
                   onOpenAvailability={openAvailability}
-                  onOpenWork={openWork}
                   onSelectStory={handleSelectStory}
                 />
               }
