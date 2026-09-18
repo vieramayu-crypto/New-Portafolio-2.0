@@ -7,6 +7,19 @@ export const HERO_PHOTO = publicImage('hero-portada.jpg');
 // recortado en vertical, asi que el movil no tiene que ampliar nada.
 export const HERO_PHOTO_MOBILE = publicImage('hero-portada-movil.jpg');
 
+// La que se usa ahora en el hero de movil. Es la escena entera, ya graduada por
+// Mayurlin: en calido, oscurecida y con su propio degradado. Entra TAL CUAL en
+// el repositorio, sin recodificar ni redimensionar -- por eso sigue siendo el
+// .webp que ella mando -- y el codigo no le aplica ningun filtro.
+//
+// OJO A LA RESOLUCION: es la escena completa en 2000x1416, y el encuadre del
+// hero solo usa 732 px de ancho de ella. Un movil de 440 px a 3x pide 1.320,
+// asi que hay que ampliar un 80%. El archivo vertical anterior daba 1.450 px
+// para ese mismo encuadre y no ampliaba nada. Si se quiere la graduacion de
+// ella SIN perder nitidez, hace falta la misma graduacion aplicada sobre el
+// vertical, o un export mas grande.
+export const HERO_PHOTO_MOBILE_GRADUADA = publicImage('hero-portada-movil-graduada.webp');
+
 export const MAYU_PORTRAIT = publicImage('sobre-mi-mayurlin.jpg');
 export const YERFRAN_PORTRAIT = publicImage('sobre-mi-yerfran.jpg');
 
