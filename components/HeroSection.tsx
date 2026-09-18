@@ -89,7 +89,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             // En los dos casos el recorte se tira hacia arriba (el tejado), no
             // hacia abajo: abajo está la grava sobre la que cae el texto, y en
             // escritorio también los pies de la figura.
-            className="absolute inset-0 h-full w-full max-w-full object-cover object-[50%_72%] md:object-[50%_66%]"
+            className="absolute inset-y-0 left-0 h-full w-[118%] max-w-none object-cover object-[50%_72%] md:w-full md:max-w-full md:object-[50%_66%]"
           />
         </picture>
 
@@ -150,20 +150,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.h1
               {...rise(0.18)}
               animate={animate}
-              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
+              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,6vw,96px)] md:leading-[1.05] md:tracking-[-0.045em]"
             >
               {hero.titleLead} <i>{hero.titleEmphasis}</i>
             </motion.h1>
           </div>
 
-          {/* GRUPO INFERIOR: qué producimos y la salida. Vive sobre el
-              degradado corto de abajo, fuera de la zona protagonista de la
-              foto. */}
+          {/* GRUPO INFERIOR: qué producimos y la salida.
+              EN TINTA OSCURA, NO EN BLANCO. Cae sobre la grava, que en las
+              fotos de Mayurlin es casi blanca: medido, el blanco daba 1,89:1
+              en móvil y 2,14:1 en escritorio, cuando el mínimo legible es
+              4,5:1. Oscurecer la foto para salvarlo estaba descartado -- "no
+              quiero que le pongas filtros" -- así que el que cambia es el
+              texto. El titular sigue en blanco porque cae sobre el muro y ahí
+              va por encima de 8:1. */}
           <div>
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-white md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80"
+              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-[#1a1918] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-[#1a1918]/85"
             >
               {hero.subline}
             </motion.p>
@@ -180,7 +185,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
               <button
                 onClick={onOpenAvailability}
-                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-[#1a1918] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1a1918]/80"
               >
                 {hero.ctaLabel}
                 {/* Se dibuja sola de izquierda a derecha, despacio, y se
@@ -194,7 +199,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
                   style={{ transformOrigin: 'left' }}
-                  className="absolute bottom-[9px] left-0 block h-px w-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,.28)]"
+                  className="absolute bottom-[9px] left-0 block h-px w-full bg-[#1a1918]/70"
                 />
               </button>
             </motion.div>
@@ -211,12 +216,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
 
           `mt-hero-cifras` apaga el cristal por debajo de 768px: `.mt-glass`
           declara el desenfoque, el fondo y la sombra sin condición, así que no
-          basta con no ponerla. */}
+          basta con no ponerla.
+
+          TODO EN TINTA, TAMBIÉN EN ESCRITORIO. La banda iba en blanco desde
+          que el hero era una foto oscura. Con la de Mayurlin, que es clara, el
+          cristal translúcido se vuelve casi blanco y el blanco encima
+          desaparecía -- "ESTUDIO DE PRODUCCIÓN VISUAL" y "VER PROYECTOS"
+          apenas se leían. Aquí vive el CTA de escritorio, así que entra en el
+          mismo arreglo que el párrafo. */}
       <motion.div
         {...rise(0.42)}
         animate={animate}
         className="mt-glass mt-glass-halo mt-hero-cifras relative z-[3] w-full text-[#1a1918]
-                   md:absolute md:inset-x-0 md:bottom-[clamp(22px,3vw,42px)] md:mx-auto md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:overflow-hidden md:rounded-[10px] md:text-white"
+                   md:absolute md:inset-x-0 md:bottom-[clamp(22px,3vw,42px)] md:mx-auto md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:overflow-hidden md:rounded-[10px]"
       >
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
@@ -228,7 +240,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           {milestones.items.map((item, i) => (
             <div
               key={item.label}
-              className={`md:border-l md:border-white/[.14] md:pl-5 ${
+              className={`md:border-l md:border-[#1a1918]/[.18] md:pl-5 ${
                 i === 0 ? 'pl-0' : 'border-l border-[#1a1918]/15 pl-4'
               }`}
             >
@@ -254,7 +266,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 aquí primero. */}
             <button
               onClick={onOpenAvailability}
-              className="group relative uppercase tracking-[0.18em] text-white/90 transition-opacity hover:opacity-100"
+              className="group relative uppercase tracking-[0.18em] text-[#1a1918] transition-opacity hover:opacity-70"
             >
               {hero.ctaLabel}
               <motion.span
@@ -263,7 +275,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transformOrigin: 'left' }}
-                className="absolute -bottom-[3px] left-0 block h-px w-full bg-white/70"
+                className="absolute -bottom-[3px] left-0 block h-px w-full bg-[#1a1918]/65"
               />
             </button>
             {/* Ruta secundaria: nunca compite en peso con el CTA comercial,
@@ -272,7 +284,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
               onClick={() =>
                 document.getElementById('hotel-section')?.scrollIntoView({ behavior: 'smooth' })
               }
-              className="uppercase tracking-[0.18em] text-white/55 transition-opacity hover:text-white/85"
+              className="uppercase tracking-[0.18em] text-[#1a1918]/65 transition-opacity hover:text-[#1a1918]"
             >
               {hero.secondaryLabel}
             </button>

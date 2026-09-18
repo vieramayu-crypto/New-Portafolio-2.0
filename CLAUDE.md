@@ -696,25 +696,44 @@ proporción) se tira hacia arriba, nunca hacia abajo: abajo está la grava sobre
 la que cae el texto y, en escritorio, los pies de la figura.
 `object-[50%_72%]` en móvil, `md:object-[50%_66%]`.
 
-**LO QUE ESTAS FOTOS CUESTAN, MEDIDO.** Son claras, y el texto es blanco:
+**EL TEXTO DE ENCIMA VA EN TINTA, NO EN BLANCO** (salvo el titular y el
+rótulo). Las fotos de ella son claras y la grava es casi blanca: medido, el
+texto blanco daba 1,89:1 en el párrafo de móvil y 2,14:1 en el de escritorio,
+con 4,5:1 como mínimo legible. Oscurecer la foto estaba descartado, así que lo
+que cambia es el texto. Pasaron a `#1a1918`: el párrafo, el botón "Iniciar un
+proyecto" de móvil (y su subrayado), y **toda la banda de cristal de
+escritorio** — que es donde vive el CTA en ese tamaño, y donde el cristal
+translúcido sobre grava clara volvía el blanco ilegible.
 
-| | peor píxel | mediana |
+| | antes (blanco) | ahora (tinta) |
 |---|---|---|
-| titular móvil | 1,29:1 | 11,09:1 |
-| párrafo móvil | 1,35:1 | **1,89:1** |
-| enlace móvil | 1,50:1 | 2,00:1 |
-| titular escritorio | 1,49:1 | 8,60:1 |
-| párrafo escritorio | 1,59:1 | **2,14:1** |
+| párrafo móvil | 1,89:1 | **9,16:1** |
+| enlace móvil | 2,00:1 | **8,61:1** |
+| párrafo escritorio | 2,14:1 | **7,92:1** |
+| banda de cristal | ~1,5-2:1 | **9,1 a 10,3:1** |
 
-WCAG AA pide 4,5:1. El titular se salva porque cae sobre el muro oscuro; el
-párrafo y el enlace caen sobre grava clarísima y **no se leen bien de verdad**,
-no es un tecnicismo. Además, en móvil el titular cruza el vestido: "audiovisual
-para" termina en x=225 y el vestido empieza en x≈192 a 390 px.
+El **titular sigue en blanco** y el rótulo también: caen sobre el muro oscuro y
+ahí van por encima de 9:1. Cambiarlos sería empeorarlos.
 
-Las salidas que NO tocan la foto, por si vuelve a salir: subir ese degradado
-del 15% al 25-30%, bajar el texto a la zona de grava en sombra, cambiar el
-color del párrafo a tinta oscura sobre la grava, o que ella reencuadre el
-vertical con la figura más a la derecha.
+**LA FOTO DE MÓVIL SE CORRE A LA DERECHA: `w-[118%]`.** En el encuadre que
+mandó ella la figura queda en el centro y el titular se le montaba encima.
+No hay holgura horizontal con `object-cover` (su vertical es más estrecho que
+la caja), así que la imagen se dibuja al 118% del ancho anclada a la izquierda
+y el contenido se desplaza a la derecha; lo que sobra por la derecha lo recorta
+el `overflow-hidden` del contenedor. Calidad intacta: 1.600 px para 460 CSS
+siguen siendo 3,5x.
+
+Se llegó al 118% por medición, no a ojo, y el primer intento se quedó corto:
+un detector del **núcleo brillante** del vestido daba 18,6 px de holgura al
+108% — justo la de la referencia aprobada — pero a ojo el borde en sombra del
+vestido seguía tocando la "a" de "audiovisual para". El núcleo brillante no es
+la silueta. Al 118% el titular termina en 227 y la silueta empieza en 232.
+
+**El titular de escritorio pasa a `clamp(48px, 6vw, 96px)`** (86,4 px a 1.440,
+antes 77,8). Nota para cuando vuelva a salir: el titular **nunca se encogió** —
+llevaba `clamp(48px, 5.4vw, 86px)` desde el primer commit del hero. Lo que
+cambió fue la foto de debajo, más clara y con otro muro detrás, y eso lo hacía
+parecer más pequeño. Comprobado con `git log -L` antes de tocarlo.
 
 ### La calidad de la foto del hero: la graduación de ella sobre el recorte nítido
 
