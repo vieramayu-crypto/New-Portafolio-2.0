@@ -696,44 +696,66 @@ proporción) se tira hacia arriba, nunca hacia abajo: abajo está la grava sobre
 la que cae el texto y, en escritorio, los pies de la figura.
 `object-[50%_72%]` en móvil, `md:object-[50%_66%]`.
 
-**EL TEXTO DE ENCIMA VA EN TINTA, NO EN BLANCO** (salvo el titular y el
-rótulo). Las fotos de ella son claras y la grava es casi blanca: medido, el
-texto blanco daba 1,89:1 en el párrafo de móvil y 2,14:1 en el de escritorio,
-con 4,5:1 como mínimo legible. Oscurecer la foto estaba descartado, así que lo
-que cambia es el texto. Pasaron a `#1a1918`: el párrafo, el botón "Iniciar un
-proyecto" de móvil (y su subrayado), y **toda la banda de cristal de
-escritorio** — que es donde vive el CTA en ese tamaño, y donde el cristal
-translúcido sobre grava clara volvía el blanco ilegible.
+**EL TEXTO VUELVE AL BLANCO, Y ES UNA DECISIÓN DE DISEÑO, NO DE MEDIDA.**
+Se probó el párrafo y el botón en tinta `#1a1918` y resolvía el contraste
+(1,89 → 9,16:1), pero Mayurlin lo descartó: *"prefiero que esté todo el texto
+en un solo color"*, con el titular en blanco justo encima. Lo que sostiene la
+lectura ahora es **cuerpo**, no velo:
 
-| | antes (blanco) | ahora (tinta) |
-|---|---|---|
-| párrafo móvil | 1,89:1 | **9,16:1** |
-| enlace móvil | 2,00:1 | **8,61:1** |
-| párrafo escritorio | 2,14:1 | **7,92:1** |
-| banda de cristal | ~1,5-2:1 | **9,1 a 10,3:1** |
+- párrafo móvil 15 → 16 px y `font-medium`
+- párrafo escritorio 16 px → `clamp(20px, 1.6vw, 26px)`, a 30ch
+- titular escritorio `clamp(48px, 6.5vw, 104px)` — 93,6 px a 1.440 — para que
+  no compita con el párrafo, ya grande
+- CTA móvil 11 → 12 px, subrayado a 1,5 px
+- **una sola** `text-shadow` por texto, suave y ancha (`.38` y `.42`), no las
+  cinco de antes
 
-El **titular sigue en blanco** y el rótulo también: caen sobre el muro oscuro y
-ahí van por encima de 9:1. Cambiarlos sería empeorarlos.
+**La banda de cristal de escritorio SÍ se queda en tinta.** Es el único sitio
+donde ella dijo que se lee mejor así, y ahí vive el CTA de escritorio.
 
-**LA FOTO DE MÓVIL SE CORRE A LA DERECHA: `w-[118%]`.** En el encuadre que
-mandó ella la figura queda en el centro y el titular se le montaba encima.
-No hay holgura horizontal con `object-cover` (su vertical es más estrecho que
-la caja), así que la imagen se dibuja al 118% del ancho anclada a la izquierda
-y el contenido se desplaza a la derecha; lo que sobra por la derecha lo recorta
-el `overflow-hidden` del contenedor. Calidad intacta: 1.600 px para 460 CSS
-siguen siendo 3,5x.
+**Lo que esto cuesta, y hay que decirlo cada vez que se toque.** El blanco
+sobre esa grava da **1,88:1** en el párrafo de móvil y **2,10:1** en el de
+escritorio, con 4,5:1 como mínimo legible. La sombra suave sube el contraste
+efectivo de 2,06 a 2,23 — ayuda poco porque es difusa a propósito. Se midió
+también un degradado de esquina al 30%: móvil 2,20:1, escritorio 3,04:1.
+Ninguna palanca que respete su estética llega a AA; la única que lo consigue
+es la tinta, y está descartada por ella. **Está decidido y no hay que volver a
+proponerlo salvo que ella lo pida.**
 
-Se llegó al 118% por medición, no a ojo, y el primer intento se quedó corto:
-un detector del **núcleo brillante** del vestido daba 18,6 px de holgura al
-108% — justo la de la referencia aprobada — pero a ojo el borde en sombra del
-vestido seguía tocando la "a" de "audiovisual para". El núcleo brillante no es
-la silueta. Al 118% el titular termina en 227 y la silueta empieza en 232.
+**LA FOTO DE MÓVIL: `w-[123%]` y `object-[50%_65%]`.** Los dos números van
+juntos y cambiar uno obliga a revisar el otro. Bajar la foto un 2% (72 → 65 de
+`object-position`) mete en la franja del titular la parte ANCHA de la falda,
+así que el 118% que antes despejaba dejó de hacerlo y hubo que subir a 123%.
+Regla práctica: si se mueve la foto en vertical, hay que volver a mirar el
+cruce del titular con el vestido, porque la silueta no tiene el mismo ancho a
+todas las alturas.
 
-**El titular de escritorio pasa a `clamp(48px, 6vw, 96px)`** (86,4 px a 1.440,
-antes 77,8). Nota para cuando vuelva a salir: el titular **nunca se encogió** —
-llevaba `clamp(48px, 5.4vw, 86px)` desde el primer commit del hero. Lo que
-cambió fue la foto de debajo, más clara y con otro muro detrás, y eso lo hacía
-parecer más pequeño. Comprobado con `git log -L` antes de tocarlo.
+### El índice de hoteles es sólo una flecha, abajo a la derecha
+
+Llevaba "Hoteles (9) ▲" centrado abajo, y en Proyectos eso cae justo encima
+del nombre del hotel — lo único que hay que leer en ese punto. Mayurlin mandó
+la referencia: la misma caja de cristal con **la flecha sola**, en la esquina
+inferior derecha, flotando siempre para poder saltar a cualquier hotel (o
+volver arriba) desde el final de la página.
+
+`IndiceHoteles.tsx`: el botón es un cuadrado de 44x44 con el `▲`, el rótulo se
+fue a `aria-label` (no se pierde para lectores de pantalla), el contenedor pasa
+de `inset-x-0 items-center` a `right-5 items-end` (`md:right-8`), y el panel se
+ancla con `right-0` y se limita a `min(20rem, 100vw - 2.5rem)` para no salirse
+en móvil. Dentro sigue estando "Ir a un hotel", que es lo que el rótulo decía.
+
+### La franja de cifras: el fondo no se anima, sólo su contenido
+
+Al cargar en móvil aparecía **un bloque negro a pantalla completa** debajo de
+la foto que luego se aclaraba hasta marfil. La caja entera llevaba el `rise`
+(opacidad 0 → 1) y durante ese segundo se veía el `bg-[#1a1918]` de la sección
+por detrás. En escritorio no se notaba porque ahí la banda flota sobre la
+fotografía, no sobre el fondo de la sección.
+
+El arreglo es mover el `motion` un nivel hacia dentro: la caja con el fondo es
+un `div` normal y lo que anima es un `motion.div` (`md:h-full`) que envuelve la
+rejilla. Verificado a 120, 260, 420, 700 y 1.200 ms: el marfil está desde el
+primer fotograma (brillo medio 237) y lo que entra son las cifras.
 
 ### La calidad de la foto del hero: la graduación de ella sobre el recorte nítido
 

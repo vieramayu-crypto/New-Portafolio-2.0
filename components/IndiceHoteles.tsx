@@ -93,18 +93,22 @@ export const IndiceHoteles: React.FC<IndiceHotelesProps> = ({
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
           ref={cajaRef}
-          className="fixed bottom-8 inset-x-0 z-50 flex flex-col items-center px-4"
+          className="fixed bottom-8 right-5 z-50 flex flex-col items-end md:right-8"
         >
+          {/* SÓLO LA FLECHA, Y A LA DERECHA.
+              Llevaba "Hoteles (9) ▲" y vivía centrado abajo: en Proyectos eso
+              cae justo encima del nombre del hotel, que es lo único que hay
+              que leer en ese punto de la página. Mayurlin mandó la referencia
+              -- la misma caja de cristal con la flecha sola -- y la esquina
+              donde la quiere. El rótulo no hace falta: lo que abre se explica
+              solo en cuanto se abre, y ahí sigue estando "Ir a un hotel". */}
           <button
             onClick={() => setAbierto(!abierto)}
-            className="mt-glass mt-glass-light pointer-events-auto relative overflow-hidden rounded-md px-5 py-2 flex items-center gap-3 text-sm md:text-base font-serif tracking-[0.25em] font-medium text-[#1a1918] hover:bg-[#1a1918] hover:text-[#f5f3ed] transition-all duration-300 shadow-[0_2px_20px_rgba(26,25,24,0.14)]"
+            aria-label={`Ir a un hotel (${hoteles.length})`}
+            aria-expanded={abierto}
+            className="mt-glass mt-glass-light pointer-events-auto relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-md text-[13px] text-[#1a1918] shadow-[0_2px_20px_rgba(26,25,24,0.14)] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed]"
           >
-            {/* Decía "Proyectos", pero no abre proyectos: salta a la
-                sección de un hotel. Con "proyecto" ya definido como el
-                encargo contado entero, llamarle así aquí era una de las
-                piezas que emborronaban las dos palabras. */}
-            <span>Hoteles ({hoteles.length})</span>
-            <span className="text-xs">{abierto ? '▼' : '▲'}</span>
+            <span aria-hidden>{abierto ? '▼' : '▲'}</span>
           </button>
 
           {/* La lista, para saltar a cualquier hotel */}
@@ -114,7 +118,7 @@ export const IndiceHoteles: React.FC<IndiceHotelesProps> = ({
                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                className="mt-glass mt-glass-light mt-glass-panel absolute bottom-16 z-50 w-80 overflow-hidden rounded-lg text-left md:w-96 md:rounded-[10px]"
+                className="mt-glass mt-glass-light mt-glass-panel absolute bottom-14 right-0 z-50 w-[min(20rem,calc(100vw-2.5rem))] overflow-hidden rounded-lg text-left md:w-96 md:rounded-[10px]"
               >
                 {/* El scroll vive aqui dentro, no en la caja: un
                     pseudo-elemento posicionado se desplaza con el
