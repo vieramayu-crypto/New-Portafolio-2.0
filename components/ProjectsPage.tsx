@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { HOTEL_STORIES } from '../data/hotels';
@@ -8,6 +8,7 @@ import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
 import { BrandsMarquee } from './BrandsMarquee';
 import { HotelSectionBlock } from './HotelSectionBlock';
+import { IndiceHoteles } from './IndiceHoteles';
 
 interface ProjectsPageProps {
   onOpenAvailability: () => void;
@@ -54,6 +55,56 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     const destino = document.getElementById(`hotel-${irA}`);
     if (destino) destino.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior });
   }, [irA]);
+
+  /* EL ÍNDICE FLOTANTE: qué hotel se está mirando, y si hay alguno a la vista.
+   *
+   *  Dos observadores, no uno, porque son dos preguntas distintas: el índice
+   *  se ve mientras haya CUALQUIER hotel en pantalla (por eso no aparece sobre
+   *  la cabecera ni sobre el cierre), y marca el hotel cuyo bloque ocupa el
+   *  CENTRO de la pantalla, que es el que se está leyendo. Con un solo umbral,
+   *  en un bloque de 1.400 px, "tocar la pantalla" y "ser el que miras" dejan
+   *  de significar lo mismo. */
+  const [hotelActivo, setHotelActivo] = useState<string>();
+  const [hayHotelALaVista, setHayHotelALaVista] = useState(false);
+
+  useEffect(() => {
+    const bloques = Array.from(document.querySelectorAll('.hotel-section-block'));
+    if (!bloques.length) return;
+
+    const aLaVista = new Set<string>();
+    const presencia = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((e) => {
+          const id = e.target.getAttribute('data-hotel-id');
+          if (!id) return;
+          if (e.isIntersecting) aLaVista.add(id);
+          else aLaVista.delete(id);
+        });
+        setHayHotelALaVista(aLaVista.size > 0);
+      },
+      { threshold: 0 },
+    );
+
+    // Franja de un píxel en el centro exacto de la pantalla.
+    const centro = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((e) => {
+          const id = e.target.getAttribute('data-hotel-id');
+          if (e.isIntersecting && id) setHotelActivo(id);
+        });
+      },
+      { rootMargin: '-50% 0px -50% 0px', threshold: 0 },
+    );
+
+    bloques.forEach((b) => {
+      presencia.observe(b);
+      centro.observe(b);
+    });
+    return () => {
+      presencia.disconnect();
+      centro.disconnect();
+    };
+  }, []);
 
   const stories = HOTEL_STORIES.map((story, i) => ({
     ...story,
@@ -184,6 +235,15 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
           </button>
         </motion.div>
       </section>
+
+      {/* El índice, con los nueve en el mismo orden en que se pintan arriba.
+          Sin pie: el "Ver todas las propiedades" que llevaba en Inicio aquí
+          mandaría a donde ya estás. */}
+      <IndiceHoteles
+        hoteles={stories}
+        activoId={hotelActivo}
+        visible={hayHotelALaVista}
+      />
     </div>
   );
 };

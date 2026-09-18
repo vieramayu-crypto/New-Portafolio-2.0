@@ -443,6 +443,18 @@ entorpecería el flujo. La idea es que estén los cuatro directamente ahí".
   móvil las laterales se montaban 61 px sobre la central.
 - **"Ver los hoteles" se fue a la derecha y sin cristal**: el centro de abajo
   es de la tira, y dos cajas de cristal seguidas competían.
+- **La portada TIENE que ser de ese hotel**, y el número del prefijo NO sigue
+  el orden de la página: Abama `sec1`, Binidufà `sec2`, Deltapark `sec3`,
+  Honeymoon `sec4`, GPRO `sec5`, Espléndido `sec6`, InterContinental `sec7`,
+  Welmoon `sec8`, District Hive `sec9`. Dos entradas llevaban la portada de
+  otro hotel por dar por hecho que sí lo seguía.
+- **Reales: Abama, Vestige Collection Binidufà y GPRO Valparaíso.** Sigue
+  PROVISIONAL sólo InterContinental, apuntando al vídeo de Abama. Antes de
+  migrar al dominio propio hay que cambiarle el `src`: publicarlo así pondría
+  el vídeo de Abama bajo el nombre de otro hotel.
+- **El de GPRO es una MUESTRA en baja resolución** ("WEB CLIENTES HORIZONTAL
+  (MUESTRA) LOW RESOLU"), que choca con su regla de máxima calidad siempre.
+  Conviene cambiarlo por el definitivo antes de migrar.
 
 ## El subrayado de "Iniciar un proyecto"
 
@@ -558,6 +570,52 @@ Para que un hotel entero cupiera en 900 px de alto, el mosaico tendría que
 medir unos 785 px de ancho en una pantalla de 1.440 — dejaría de ocupar la
 pantalla "horizontalmente", que es la otra mitad de lo que ella pidió. En
 móvil sí se cumple.
+
+### El índice flotante de hoteles vive en Proyectos, no en Inicio
+
+`components/IndiceHoteles.tsx`. Era un bloque dentro de `HomeMain`; se sacó a
+su propio archivo al mudarlo, para que no queden dos copias que se separen.
+
+Mayurlin: "me hace hacer dos pasos para algo tan simple como ir directamente a
+la galería... ya que la galería está unificada con los proyectos y galerías".
+En Inicio era un atajo hacia otra página; en Proyectos es el índice de lo que
+ya estás mirando.
+
+- **Los nueve, en el orden de la página.** El componente no reordena: recibe la
+  lista ya ordenada. Si la página los pinta en otro orden, saltar de uno a otro
+  se vuelve adivinar.
+- **Sin el pie "Ver todas las propiedades"**, que en Inicio abría `WorkModal`.
+  Ahí mandaría a donde ya estás.
+- **`WorkModal` (el carrusel 3D) se quedó SIN PUERTA DE ENTRADA.** Ese pie era
+  su único disparador. Se deja montado en `App.tsx`, no borrado, porque ella
+  dijo que no sabe si lo querrá para otra sección. Si se decide que no, hay que
+  quitar el componente, su estado y el `openWork` que ahora no llama nadie.
+- **Posición: centrado abajo (`fixed bottom-8`), igual que en Inicio.** Es lo
+  que ella pidió para probarlo — "ponlo por ahora en el medio... y vemos qué tal
+  queda". **Medido: la píldora tapa la ficha del hotel 37 px en móvil y 36 en
+  escritorio** (peor caso, Ritz-Carlton Abama), que es justo lo que le molestaba
+  en Inicio. Pendiente de que ella decida en la siguiente ronda.
+- Se ve mientras haya CUALQUIER bloque de hotel en pantalla, y marca el que
+  ocupa el centro exacto. Son dos observadores a propósito: en un bloque de
+  1.400 px, "tocar la pantalla" y "ser el que miras" no significan lo mismo.
+
+### El CTA del hero en móvil, en prueba con la línea
+
+`HeroSection.tsx`. Era un botón relleno (`bg-[#f5f3ed]`); ahora lleva el mismo
+subrayado que se dibuja solo de izquierda a derecha que el CTA de la banda de
+cristal en escritorio — mismo tiempo (1,5 s), mismo retardo (1,2 s) y misma
+curva, para que sea el mismo gesto y no dos parecidos.
+
+Es una prueba de ella: "quiero probar si con la línea es muy sutil y si no
+funciona visualmente, pues nada, rehacemos y volvemos al botón". **Para
+revertir**: `bg-[#f5f3ed] px-6 py-3 text-[11px] ... font-semibold
+text-[#1a1918]`, sin el `motion.span`.
+
+Legibilidad medida (390x844, sobre el píxel más claro del fondo real, con el
+texto escondido para no medir los propios glifos): el CTA cae dentro del
+degradado inferior, no sobre la grava, así que el fondo más claro bajo él es
+rgb(74,74,74). **Texto blanco 8,86:1 y línea blanca al 80% 7,29:1** — WCAG AA
+pide 4,5 y 3,0. No es un problema de contraste; si no convence, será de gusto.
 
 **El bloque de vídeos mide 160vh en móvil y 220vh en escritorio.** En móvil el
 vídeo horizontal es una banda 16:9 de 219 px en una pantalla de 844, así que
