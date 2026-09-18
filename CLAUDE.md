@@ -571,6 +571,44 @@ medir unos 785 px de ancho en una pantalla de 1.440 — dejaría de ocupar la
 pantalla "horizontalmente", que es la otra mitad de lo que ella pidió. En
 móvil sí se cumple.
 
+### Dónde va el vídeo horizontal dentro de la galería de su hotel
+
+Cada vídeo horizontal se mete TAMBIÉN en la galería del hotel al que
+pertenece, con `galleryEmbed` en `data/hotels.ts`. El sitio exacto no lo elige
+el dato: lo fija a mano la variante correspondiente de `GALLERY_LAYOUTS` en
+`HotelDetail.tsx`, porque depende de qué fotos tiene alrededor.
+
+**Las tres reglas que puso Mayurlin**, y hay que comprobarlas en móvil Y en
+escritorio, que no siempre dan el mismo resultado:
+
+1. **No de primero.** Tiene que haber algo antes.
+2. **Entre los primeros, y nunca de la mitad para abajo** — "debe tener
+   protagonismo". Medido, los tres caen entre el 26% y el 41% del alto de la
+   página.
+3. **No pegado a una foto en formato horizontal.** El vídeo es una banda 16:9
+   a sangre; con otra horizontal encima o debajo se leen como dos bandas
+   iguales. Sus dos vecinas tienen que ser verticales.
+4. Y con continuidad lógica: el vídeo es una pieza de la propiedad entera, así
+   que cae bien donde el recorrido cambia de capítulo.
+
+**Cuidado con las filas de dos columnas.** Es la trampa de esto: en móvil una
+fila `md:flex-row` se apila, así que meter el vídeo dentro de la fila lo deja
+en el sitio correcto; pero en ESCRITORIO la fila son dos columnas y el vídeo
+acaba DESPUÉS de las dos fotos, que puede ser justo encima de una horizontal.
+Le pasaba a Ritz-Carlton: en móvil cumplía y en escritorio caía pegado a la
+foto de la playa. La solución que se usa ahora en los tres es sacar esas dos
+fotos de la fila y centrarlas por separado, con el vídeo entre medias — así el
+orden es el mismo en los dos tamaños y sobra la doble copia del vídeo (y con
+ella el `useEsMovil` que hacía falta para elegir).
+
+| Hotel | Variante | Va entre | Posición medida |
+|---|---|---|---|
+| Ritz-Carlton Abama | 0 | el paseo y la habitación | 4ª de 10, al 35-41% |
+| Vestige, Binidufà | 1 | el salón y la vasija | 5ª de 12, al 38-39% |
+| GPRO Valparaíso | 4 | el cartel del jardín y la habitación | 4ª de 15, al 26-27% |
+
+En GPRO no hizo falta separar nada: la foto del cartel ya iba sola.
+
 ### El índice flotante de hoteles vive en Proyectos, no en Inicio
 
 `components/IndiceHoteles.tsx`. Era un bloque dentro de `HomeMain`; se sacó a

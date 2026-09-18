@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { HotelStory, PhotoItem } from '../types';
-import { VideoNube, useEsMovil } from './VideoNube';
+import { VideoNube } from './VideoNube';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
@@ -146,58 +146,41 @@ const Bleed: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // 0 -- THE RITZ-CARLTON TENERIFE, ABAMA: a guided walk through the property --
   // facade, grounds + room, private cove, architecture + pool, spa, dining.
-  ({ photos, y, video, embed }) => {
-    /* Una sola copia del vídeo, elegida en JavaScript: ocultar la otra con
-       CSS no evitaba que cargase y reprodujese. En móvil va DENTRO de la fila
-       (que ahí se apila) para caer tras la foto de la persona; en escritorio
-       va debajo de las dos columnas. */
-    const esMovil = useEsMovil();
-    return (
+  ({ photos, y, video, embed }) => (
     <>
       {photos[0] && (
         <div className="w-full flex justify-center">
           <GalleryPhoto photo={photos[0]} y={y[0]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[56%]" />
         </div>
       )}
-      {(photos[1] || photos[2]) && (
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-          {photos[1] && (
-            <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[62%]" />
-          )}
 
-          {/* El vídeo va justo detrás de la foto de la persona caminando
-              frente a la fachada: ahí el recorrido pasa de llegar al hotel a
-              estar dentro, y el movimiento cuenta ese salto mejor que otra
-              foto fija.
-              En MÓVIL esta fila se apila, así que ponerlo detrás del bloque
-              entero lo dejaba debajo de la foto de la cama, compitiendo con
-              ella. Aquí dentro cae donde tiene que caer. En ESCRITORIO la
-              fila es de dos columnas y el vídeo debe ir debajo de las dos:
-              por eso esta copia sólo existe hasta md, y la de abajo a partir
-              de md. */}
-          {embed && esMovil && (
-            <div className="w-full">
-              <Bleed>
-                <GalleryEmbed src={embed} />
-              </Bleed>
-            </div>
-          )}
+      {/* EL VÍDEO VA ENTRE EL PASEO Y LA HABITACIÓN, las fotos 2 y 3 del
+          recorrido: ahí se pasa de llegar al hotel a estar dentro, y el
+          movimiento cuenta ese salto mejor que otra foto fija.
 
-          {photos[2] && (
-            <GalleryPhoto
-              photo={photos[2]}
-              y={y[2]}
-              aspectClass="aspect-[3/4]"
-              widthClass="w-full md:w-[34%]"
-              offsetClass="md:mt-20"
-            />
-          )}
+          Antes estas dos iban en una fila de dos columnas, con una copia del
+          vídeo dentro para móvil y otra fuera para escritorio. Funcionaba en
+          móvil, pero en ESCRITORIO el vídeo caía después de las dos, pegado a
+          la foto de la playa, que es una horizontal a sangre: dos bandas
+          16:9 seguidas. Mayurlin lo pidió al revés -- "no pegado a una foto en
+          igual formato horizontal".
+
+          Separadas y centradas, el vídeo queda entre dos verticales en móvil
+          y en escritorio, y sobra la doble copia. */}
+      {photos[1] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[50%]" />
         </div>
       )}
-      {embed && !esMovil && (
+      {embed && (
         <Bleed>
           <GalleryEmbed src={embed} />
         </Bleed>
+      )}
+      {photos[2] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[2]} y={y[2]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[44%]" />
+        </div>
       )}
       {video ? (
         <Bleed>
@@ -251,12 +234,11 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
         </div>
       )}
     </>
-    );
-  },
+  ),
 
   // 1 -- VESTIGE COLLECTION, BINIDUFÀ: a longer guided walk (10 photos) -- aerial,
   // facade, common areas, the path in, patio + gym, grounds, pool, room.
-  ({ photos, y }) => (
+  ({ photos, y, embed }) => (
     <>
       {photos[0] && (
         <Bleed>
@@ -268,20 +250,31 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[4/3]" widthClass="w-full md:w-[72%]" />
         </div>
       )}
-      {(photos[2] || photos[3]) && (
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center">
-          {photos[2] && (
-            <GalleryPhoto
-              photo={photos[2]}
-              y={y[2]}
-              aspectClass="aspect-[3/4]"
-              widthClass="w-full md:w-[42%]"
-              offsetClass="md:mt-16"
-            />
-          )}
-          {photos[3] && (
-            <GalleryPhoto photo={photos[3]} y={y[3]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[42%]" />
-          )}
+
+      {/* EL VÍDEO VA AQUÍ: entre el salón y la vasija, las fotos 3 y 4 del
+          recorrido. Cumple las tres condiciones que puso Mayurlin -- no es lo
+          primero que se ve, está en la primera mitad (4º de 11 elementos) y no
+          toca ninguna foto horizontal: sus dos vecinas son verticales 3/4. Las
+          horizontales a sangre de este hotel son las fotos 1, 5 y 9, y ninguna
+          queda pegada.
+
+          Por eso estas dos fotos ya no van en una fila de dos columnas: puestas
+          así, en escritorio el vídeo habría caído DESPUÉS de las dos, justo
+          encima del camino de tierra, que es una horizontal a sangre. Separadas
+          y centradas, el orden es el mismo en móvil y en escritorio. */}
+      {photos[2] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[2]} y={y[2]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[46%]" />
+        </div>
+      )}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
+      )}
+      {photos[3] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[3]} y={y[3]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[46%]" />
         </div>
       )}
       {photos[4] && (
@@ -513,7 +506,7 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   //   9 jacuzzi pareja (landscape solo) →
   //   10 piscina bali beds (landscape bleed, exterior wow) →
   //   11+12 piernas frutas + piscina palmeras (blue-pool portrait pair).
-  ({ photos, y }) => (
+  ({ photos, y, embed }) => (
     <>
       {photos[0] && (
         <div className="w-full flex justify-center">
@@ -524,6 +517,19 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
         <div className="w-full flex justify-center">
           <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[42%]" />
         </div>
+      )}
+
+      {/* EL VÍDEO VA AQUÍ: detrás del cartel del jardín, que es justo el que
+          nombra la piscina, el hall y el restaurante, y antes de subir a la
+          habitación. El cartel los anuncia y el vídeo los enseña.
+          Cumple las tres condiciones: no es lo primero (3º de 14), está muy
+          arriba en el recorrido, y sus dos vecinas son verticales 3/4 -- la
+          recepción, que es la horizontal, queda una foto por encima. Aquí no
+          hace falta separar nada: la foto 2 ya iba sola. */}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {(photos[2] || photos[3]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">

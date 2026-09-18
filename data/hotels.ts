@@ -276,6 +276,8 @@ export const HOTEL_STORIES: HotelStory[] = [
       usage: 'Redes sociales',
     },
     coverImage: publicImage('sec2-portada.jpg'),
+    // Va entre el salón y la vasija; el sitio lo fija la variante 1 de GALLERY_LAYOUTS.
+    galleryEmbed: 'https://livid.com/embed/wbn5AZWOb8V9?autoplay=1&loop=1&muted=1',
     description:
       'En un valle al norte de Menorca, Vestige Binidufà restaura una possessió agrícola del siglo XVIII, en un entorno de 800 hectáreas que comparte con Son Ermità: piedra, barro y materiales naturales que toman su tono directamente del paisaje que los rodea, con la herencia morisca todavía presente en su nombre.',
     quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
@@ -694,6 +696,8 @@ export const HOTEL_STORIES: HotelStory[] = [
       usage: 'Redes sociales · Campaña de temporada alta',
     },
     coverImage: publicImage('sec5-portada.jpg'),
+    // Va detrás del cartel del jardín; el sitio lo fija la variante 4 de GALLERY_LAYOUTS.
+    galleryEmbed: 'https://livid.com/embed/bAN6qRGuhiHw?autoplay=1&loop=1&muted=1',
     description:
       'En lo alto del barrio de Bonanova, rodeado de jardines privados con vistas a la Bahía de Palma, GPRO Valparaíso Palace & Spa alberga el spa más grande de Mallorca, un retiro sereno de agua, piedra y vegetación mediterránea.',
     quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
