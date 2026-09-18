@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { HERO_PHOTO, HERO_PHOTO_MOBILE_GRADUADA } from '../data/media';
+import { HERO_PHOTO, HERO_PHOTO_MOBILE } from '../data/media';
 import { useSiteContent } from '../src/lib/content';
 
 interface HeroSectionProps {
@@ -59,65 +59,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           que hay dentro mantiene exactamente las coordenadas que tenía cuando
           colgaba de la sección. */}
       <div className="mt-hero-foto relative flex flex-col overflow-hidden md:absolute md:inset-0 md:block md:min-h-0">
-        {/* Dos encuadres de la misma escena, uno por tamano. La horizontal en
-            vertical obligaba al movil a usar un tercio de su ancho y estirarlo
-            casi al doble, y la foto se veia blanda; la vertical llega ya
-            recortada y el movil no amplia nada. `<picture>` no crea bloque
-            contenedor, asi que el `absolute` del <img> sigue midiendo contra
-            su caja. */}
+        {/* UN ENCUADRE POR PANTALLA, hecho por Mayurlin, no por el codigo.
+            La horizontal puesta en vertical obligaba al movil a usar un tercio
+            de su ancho y ampliarlo, y ahi se perdia la nitidez. Ahora llegan
+            dos archivos ya encuadrados y aqui no se recorta nada.
+            `<picture>` no crea bloque contenedor, asi que el `absolute` del
+            <img> sigue midiendo contra su caja. */}
         <picture>
           <source media="(min-width: 768px)" srcSet={HERO_PHOTO} />
           <img
-            src={HERO_PHOTO_MOBILE_GRADUADA}
+            src={HERO_PHOTO_MOBILE}
             alt="Mayu Travel, visual production for luxury hotels"
-            // LA FOTO ENTRA TAL CUAL. Mayurlin la graduó ella: en cálido,
-            // oscurecida y con su propio degradado. Por eso aquí no hay ni
-            // `grayscale` ni `brightness` ni `contrast` en móvil -- cualquiera
-            // de los tres se llevaría por delante su trabajo. Escritorio sigue
-            // con la suya y sus filtros de siempre.
+            // LAS DOS FOTOS ENTRAN TAL CUAL, SIN UN SOLO FILTRO. Las graduó
+            // ella: cálidas, claras y con su propio degradado. Ni `grayscale`,
+            // ni `brightness`, ni `contrast`, ni el `saturate(.84)` que
+            // escritorio arrastraba de cuando su foto no venía graduada --
+            // cualquiera de ellos se llevaría por delante su trabajo.
             //
-            // YA NO HACE FALTA CUADRAR EL ENCUADRE A MANO. Antes aquí había
-            // tres porcentajes calculados (-73,22% / -6,71% / 273,22%) porque
-            // el archivo era la escena entera y el hero sólo usaba una ventana
-            // de 732 px de ancho: el móvil ampliaba esa ventana un 80% y de ahí
-            // venía la pérdida de calidad. El archivo de ahora ES esa ventana,
-            // recortada del vertical nítido (1.450 x 2.333) y con la
-            // graduación de ella encima -- ver data/media.ts. Misma proporción
-            // que la caja (0,6215 frente a 0,6213), así que basta con llenarla.
-            className="absolute inset-0 h-full w-full object-cover object-center md:max-w-full md:object-[56%_28%] md:saturate-[.84]"
+            // Y TAMPOCO HACE FALTA CUADRAR EL ENCUADRE A MANO. Aquí hubo tres
+            // porcentajes calculados (-73,22% / -6,71% / 273,22%) mientras el
+            // archivo era la escena entera y el hero usaba sólo una ventana de
+            // 732 px de ancho. Ahora cada archivo ya es su encuadre, así que
+            // basta con llenar la caja.
+            //
+            // LO QUE SÍ DECIDE EL CÓDIGO ES QUÉ SE RECORTA AL LLENARLA, porque
+            // ninguna de las dos tiene exactamente la proporción de su caja:
+            //   móvil      0,574 contra 0,621 -> sobran 291 px de alto (7,7%)
+            //   escritorio 1,413 contra 1,600 -> sobran 453 px de alto (11,7%)
+            // En los dos casos el recorte se tira hacia arriba (el tejado), no
+            // hacia abajo: abajo está la grava sobre la que cae el texto, y en
+            // escritorio también los pies de la figura.
+            className="absolute inset-0 h-full w-full max-w-full object-cover object-[50%_72%] md:object-[50%_66%]"
           />
         </picture>
 
-        {/* VELOS. Tres capas que hacen trabajos distintos, y ninguna tapa la
-            escena entera: Mayurlin comparó su referencia con lo que había y el
-            problema era justo ése -- la foto salía apagada. Medido sobre las
-            dos imágenes: su referencia tiene un brillo medio de 103 y la mía
-            iba en 74, y en el tercio de la derecha, donde está ella, 129 contra
-            83.
+        {/* UN SOLO DEGRADADO, A LA IZQUIERDA, AL 15%.
+            Pedido literal de Mayurlin: "no quiero que se vean diferentes,
+            repeta al 100% todo, solo agregale un degradado ligero a la
+            izquierda donde esta el texto, pero ligero, de un 15% para probar
+            inicialmente".
 
-            1. Lateral izquierdo, flojo, para que el titular no flote sobre la
-               piedra clara.
-            2. Esquina inferior izquierda, que es donde de verdad cae el párrafo
-               y el enlace. Va en diagonal a propósito: así protege el texto sin
-               apagar la grava de la derecha, que en la referencia está clara.
-            3. Un dedo de sombra en el borde de abajo, para asentar la franja de
-               cifras.
+            Aqui habia tres capas en movil y dos en escritorio -- lateral,
+            diagonal inferior y un dedo abajo -- que existian para domar fotos
+            sin graduar. Con las suyas sobran: cualquier velo cambia su
+            graduacion, que es justo lo que no quiere.
 
-            Antes era una sola capa que subía hasta el 64% al 70% de negro. */}
+            Queda solo este: negro al 15% pegado al borde izquierdo, disuelto
+            al 55% del ancho. Es el mismo en movil y en escritorio porque en
+            los dos el texto vive a la izquierda. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 md:hidden"
+          className="pointer-events-none absolute inset-0"
           style={{
-            background:
-              'linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,.11) 26%, transparent 48%), linear-gradient(to top right, rgba(0,0,0,.15), transparent 42%), linear-gradient(0deg, rgba(0,0,0,.26), rgba(0,0,0,.21) 12%, rgba(0,0,0,.14) 26%, rgba(0,0,0,.08) 38%, transparent 52%)',
-          }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 hidden md:block"
-          style={{
-            background:
-              'linear-gradient(90deg, rgba(0,0,0,.30), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.13), transparent 42%)',
+            background: 'linear-gradient(90deg, rgba(0,0,0,.15), transparent 55%)',
           }}
         />
 
@@ -136,7 +130,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.1)}
               animate={animate}
-              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] [text-shadow:0_1px_10px_rgba(0,0,0,.28)] md:[text-shadow:none] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
+              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
             >
               {hero.eyebrow}
             </motion.p>
@@ -156,7 +150,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.h1
               {...rise(0.18)}
               animate={animate}
-              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] [text-shadow:0_2px_18px_rgba(0,0,0,.23)] md:[text-shadow:none] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
+              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
             >
               {hero.titleLead} <i>{hero.titleEmphasis}</i>
             </motion.h1>
@@ -169,7 +163,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.25)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80 md:[text-shadow:none]"
+              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-white md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80"
             >
               {hero.subline}
             </motion.p>
@@ -186,7 +180,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
               <button
                 onClick={onOpenAvailability}
-                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,.30)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
               >
                 {hero.ctaLabel}
                 {/* Se dibuja sola de izquierda a derecha, despacio, y se

@@ -662,6 +662,60 @@ ir dentro de esa misma regla. Pasó: la franja salía negra.
   así que apenas se distingue. Si se quiere unificar, es quitar `md:grayscale-0
   md:saturate-[.84]`.
 
+### Las dos fotos del hero las encuadra ella, y no llevan ningún filtro
+
+Mayurlin manda **dos archivos, uno por pantalla**, ya encuadrados y graduados
+por ella. El código no recorta, no colorea y no oscurece: sólo llena la caja.
+
+- `hero-portada.jpg` — escritorio. Original 5465x3869 (15 MB), publicado a
+  2880 px (una caja de 1440 a 2x). 2,7 MB.
+- `hero-movil.jpg` — móvil. Original 2176x3793 (6,3 MB), publicado a 1600 px
+  (un móvil de 430 pt a 3x pide 1.290). 2,0 MB.
+
+Los originales enteros viven en `/originales`, **fuera de `public/`** — si se
+dejan dentro se publican en el sitio y son 21 MB que nadie descarga a propósito.
+Al reducir: JPEG `quality=97, subsampling=0`. Se probó WebP q95 (1,1 MB, PSNR
+43,5 frente a 46,1 del JPEG) y se descartó por la regla de máxima calidad.
+
+**Instrucción literal de ella, y es una regla, no una preferencia:** *"no quiero
+que le pongas filtros… no quiero que se vean diferentes, repeta al 100% todo.
+solo agregale un degradado ligero a la izquierda donde esta el texto. pero
+ligero. de un 15% para probar inicialmente"*.
+
+Así que desaparecieron **todos**: el `saturate(.84)` de escritorio, los tres
+velos de móvil (lateral, diagonal inferior y el dedo de abajo), los dos de
+escritorio, el `bg-black/10` y las cinco `text-shadow` del texto. Queda una
+sola capa, la misma en los dos tamaños:
+
+```
+linear-gradient(90deg, rgba(0,0,0,.15), transparent 55%)
+```
+
+**El recorte al llenar la caja** (ninguna de las dos tiene exactamente su
+proporción) se tira hacia arriba, nunca hacia abajo: abajo está la grava sobre
+la que cae el texto y, en escritorio, los pies de la figura.
+`object-[50%_72%]` en móvil, `md:object-[50%_66%]`.
+
+**LO QUE ESTAS FOTOS CUESTAN, MEDIDO.** Son claras, y el texto es blanco:
+
+| | peor píxel | mediana |
+|---|---|---|
+| titular móvil | 1,29:1 | 11,09:1 |
+| párrafo móvil | 1,35:1 | **1,89:1** |
+| enlace móvil | 1,50:1 | 2,00:1 |
+| titular escritorio | 1,49:1 | 8,60:1 |
+| párrafo escritorio | 1,59:1 | **2,14:1** |
+
+WCAG AA pide 4,5:1. El titular se salva porque cae sobre el muro oscuro; el
+párrafo y el enlace caen sobre grava clarísima y **no se leen bien de verdad**,
+no es un tecnicismo. Además, en móvil el titular cruza el vestido: "audiovisual
+para" termina en x=225 y el vestido empieza en x≈192 a 390 px.
+
+Las salidas que NO tocan la foto, por si vuelve a salir: subir ese degradado
+del 15% al 25-30%, bajar el texto a la zona de grava en sombra, cambiar el
+color del párrafo a tinta oscura sobre la grava, o que ella reencuadre el
+vertical con la figura más a la derecha.
+
 ### La calidad de la foto del hero: la graduación de ella sobre el recorte nítido
 
 Mayurlin notó "una gran pérdida de calidad" en el hero de móvil, y tenía razón.
