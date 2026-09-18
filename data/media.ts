@@ -7,18 +7,27 @@ export const HERO_PHOTO = publicImage('hero-portada.jpg');
 // recortado en vertical, asi que el movil no tiene que ampliar nada.
 export const HERO_PHOTO_MOBILE = publicImage('hero-portada-movil.jpg');
 
-// La que se usa ahora en el hero de movil. Es la escena entera, ya graduada por
-// Mayurlin: en calido, oscurecida y con su propio degradado. Entra TAL CUAL en
-// el repositorio, sin recodificar ni redimensionar -- por eso sigue siendo el
-// .webp que ella mando -- y el codigo no le aplica ningun filtro.
+// La que se usa ahora en el hero de movil: el encuadre vertical nitido con la
+// graduacion de Mayurlin encima.
 //
-// OJO A LA RESOLUCION: es la escena completa en 2000x1416, y el encuadre del
-// hero solo usa 732 px de ancho de ella. Un movil de 440 px a 3x pide 1.320,
-// asi que hay que ampliar un 80%. El archivo vertical anterior daba 1.450 px
-// para ese mismo encuadre y no ampliaba nada. Si se quiere la graduacion de
-// ella SIN perder nitidez, hace falta la misma graduacion aplicada sobre el
-// vertical, o un export mas grande.
-export const HERO_PHOTO_MOBILE_GRADUADA = publicImage('hero-portada-movil-graduada.webp');
+// POR QUE NO ES SU .WEBP TAL CUAL. El archivo que ella graduó es la escena
+// entera en 2000x1416, y el hero solo usa 732 px de su ancho. Un movil de
+// 440 pt a 3x pide 1.320, asi que habia que ampliar un 80% -- de ahi la
+// perdida de calidad que ella noto. Este archivo parte del vertical
+// (1.450 px para ese mismo encuadre: no amplia nada) y le traslada la
+// graduacion de ella con una curva GLOBAL por canal mas una correccion de
+// muy baja frecuencia para su degradado.
+//
+// GLOBAL ES LA PALABRA. Un primer intento ajusto el tono por bloques y salio
+// PEOR que el original (gradiente medio 2,5 frente a 3,9): al forzar cada
+// bloque a parecerse al de la version ampliada, el ajuste aplanaba el detalle.
+// Una curva de 256 entradas por canal no puede hacer eso.
+//
+// Medido a 1.320 px, el tamaño real de pantalla: gradiente medio 6,40 frente
+// a 3,95 (1,6x mas detalle) con el mismo brillo (111,8 vs 111,9), el mismo
+// contraste (sd 56,4 vs 56,3) y el mismo color (RGB 121/109/102, identico).
+// Ver scripts en el historial: curva por emparejado de histogramas.
+export const HERO_PHOTO_MOBILE_GRADUADA = publicImage('hero-portada-movil-graduada-nitida.webp');
 
 export const MAYU_PORTRAIT = publicImage('sobre-mi-mayurlin.jpg');
 export const YERFRAN_PORTRAIT = publicImage('sobre-mi-yerfran.jpg');
