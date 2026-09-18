@@ -604,11 +604,23 @@ la figura, 83 contra 129.
   por correlación contra su imagen, probando ventanas. `object-cover` no
   permite pedir un recorte concreto, así que la imagen se coloca a mano:
   ancho 124,14%, izquierda -1,72%, arriba -7,53%, con `h-auto` y `max-w-none`.
-- **El color lleva `brightness(1.24) contrast(0.86)`.** La referencia no sólo
-  quita el velo: aclara la piedra (de 82 a 119) y a la vez apaga la grava (de
-  196 a 82-123). Eso es una curva, no un brillo: subir brillo y bajar contraste
-  la aproxima. Resultado medido: brillo medio 104 contra los 103 de ella.
-- **Los velos son tres y ninguno tapa la escena entera**: lateral izquierdo,
+- **EL COLOR YA NO LO PONE EL CÓDIGO: lo trae la foto.** Mayurlin mandó el
+archivo graduado por ella -- en cálido, oscurecido y con su propio degradado --
+y pidió usarlo tal cual. Así que en móvil NO hay `grayscale`, ni `brightness`,
+ni `contrast`: cualquiera de los tres se llevaría por delante su trabajo. Y por
+lo mismo, todas las sombras del código (los tres velos y las cinco
+`text-shadow`) van al 50% de lo que estaban.
+
+**EL ARCHIVO NUEVO CUESTA NITIDEZ, y hay que decirlo.** `hero-portada-movil-graduada.webp`
+es la escena ENTERA en 2000x1416, y el encuadre del hero sólo usa 732 px de su
+ancho. Un móvil de 440 px a 3x pide 1.320, así que hay que ampliar un 80%.
+Medido (varianza del laplaciano a tamaño real): el detalle cae de 167 a 35. El
+archivo vertical anterior daba 1.450 px para ese mismo encuadre y no ampliaba
+nada. **Para tener su graduación SIN perder nitidez hace falta esa misma
+graduación aplicada sobre el vertical (1800x2726), o un export del recorte más
+grande.** Está pendiente de que ella lo mande.
+
+**Los velos son tres y ninguno tapa la escena entera**: lateral izquierdo,
   una diagonal en la esquina inferior izquierda -- donde de verdad cae el
   párrafo, y así no apaga la grava de la derecha -- y un dedo en el borde de
   abajo.

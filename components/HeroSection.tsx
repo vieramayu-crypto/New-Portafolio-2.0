@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { HERO_PHOTO, HERO_PHOTO_MOBILE } from '../data/media';
+import { HERO_PHOTO, HERO_PHOTO_MOBILE_GRADUADA } from '../data/media';
 import { useSiteContent } from '../src/lib/content';
 
 interface HeroSectionProps {
@@ -68,25 +68,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         <picture>
           <source media="(min-width: 768px)" srcSet={HERO_PHOTO} />
           <img
-            src={HERO_PHOTO_MOBILE}
+            src={HERO_PHOTO_MOBILE_GRADUADA}
             alt="Mayu Travel, visual production for luxury hotels"
-            // El blanco y negro va SÓLO en la capa de la imagen, nunca en
-            // el contenedor: ahí dentro vive el texto, y un filtro en la caja
-            // se lo llevaría por delante.
+            // LA FOTO ENTRA TAL CUAL. Mayurlin la graduó ella: en cálido,
+            // oscurecida y con su propio degradado. Por eso aquí no hay ni
+            // `grayscale` ni `brightness` ni `contrast` en móvil -- cualquiera
+            // de los tres se llevaría por delante su trabajo. Escritorio sigue
+            // con la suya y sus filtros de siempre.
             //
             // EL ENCUADRE NO SALE DE `object-cover`, SALE DE UNA CUENTA.
-            // La referencia que aprobó Mayurlin es un recorte concreto del
-            // archivo: x 25-1475 e y 160-2286 de sus 1800x2726 -- se buscó por
-            // correlación contra su imagen, no a ojo. Con `object-cover` no se
-            // puede pedir eso: el recorte lo decide él. Así que la imagen se
-            // coloca a mano, y las cuentas son éstas, con W = ancho de la caja:
-            //   ancho dibujado = 1800/1450 = 124,14% de W
-            //   izquierda      = -25/1450  = -1,72% de W
-            //   arriba         = -160/1450 de W, que sobre un alto de
-            //                    2126/1450 de W son -7,53% del ALTO
-            // `h-auto` mantiene la proporción del archivo y `max-w-none` evita
-            // el `max-width:100%` que Tailwind pone a toda imagen.
-            className="absolute left-[-1.72%] top-[-7.53%] h-auto w-[124.14%] max-w-none grayscale brightness-[1.24] contrast-[0.86] md:brightness-100 md:contrast-100 md:left-0 md:top-0 md:h-full md:w-full md:object-cover md:object-[56%_28%] md:grayscale-0 md:saturate-[.84]"
+            // Hay que reproducir exactamente la escala que ya estaba aprobada,
+            // y el archivo nuevo es otro: es la escena entera en 2000x1416, no
+            // el vertical. La ventana equivalente se buscó por correlación
+            // contra el encuadre anterior (salió 0,99): x 536-1268, y 72-1145.
+            // De ahí, con W = ancho de la caja:
+            //   ancho dibujado = 2000/732 = 273,22% de W
+            //   izquierda      = -536/732 = -73,22% de W
+            //   arriba         = -72/1073 del ALTO = -6,71%
+            // `h-auto` mantiene la proporción y `max-w-none` evita el
+            // `max-width:100%` que Tailwind pone a toda imagen.
+            className="absolute left-[-73.22%] top-[-6.71%] h-auto w-[273.22%] max-w-none md:left-0 md:top-0 md:h-full md:w-full md:max-w-full md:object-cover md:object-[56%_28%] md:saturate-[.84]"
           />
         </picture>
 
@@ -111,7 +112,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           className="pointer-events-none absolute inset-0 md:hidden"
           style={{
             background:
-              'linear-gradient(90deg, rgba(0,0,0,.44), rgba(0,0,0,.22) 26%, transparent 48%), linear-gradient(to top right, rgba(0,0,0,.30), transparent 42%), linear-gradient(0deg, rgba(0,0,0,.52), rgba(0,0,0,.42) 12%, rgba(0,0,0,.28) 26%, rgba(0,0,0,.16) 38%, transparent 52%)',
+              'linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,.11) 26%, transparent 48%), linear-gradient(to top right, rgba(0,0,0,.15), transparent 42%), linear-gradient(0deg, rgba(0,0,0,.26), rgba(0,0,0,.21) 12%, rgba(0,0,0,.14) 26%, rgba(0,0,0,.08) 38%, transparent 52%)',
           }}
         />
         <div
@@ -138,7 +139,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.1)}
               animate={animate}
-              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] [text-shadow:0_1px_10px_rgba(0,0,0,.55)] md:[text-shadow:none] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
+              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] [text-shadow:0_1px_10px_rgba(0,0,0,.28)] md:[text-shadow:none] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
             >
               {hero.eyebrow}
             </motion.p>
@@ -158,7 +159,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.h1
               {...rise(0.18)}
               animate={animate}
-              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] [text-shadow:0_2px_18px_rgba(0,0,0,.45)] md:[text-shadow:none] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
+              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] [text-shadow:0_2px_18px_rgba(0,0,0,.23)] md:[text-shadow:none] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
             >
               {hero.titleLead} <i>{hero.titleEmphasis}</i>
             </motion.h1>
@@ -171,7 +172,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.5)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80 md:[text-shadow:none]"
+              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.25)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80 md:[text-shadow:none]"
             >
               {hero.subline}
             </motion.p>
@@ -188,7 +189,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
               <button
                 onClick={onOpenAvailability}
-                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,.6)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,.30)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
               >
                 {hero.ctaLabel}
                 {/* Se dibuja sola de izquierda a derecha, despacio, y se
@@ -202,7 +203,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
                   style={{ transformOrigin: 'left' }}
-                  className="absolute bottom-[9px] left-0 block h-px w-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,.55)]"
+                  className="absolute bottom-[9px] left-0 block h-px w-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,.28)]"
                 />
               </button>
             </motion.div>
