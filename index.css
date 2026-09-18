@@ -99,6 +99,36 @@ body {
   animation: mt-glass-reflection 22s ease-in-out infinite;
 }
 
+/* LA BANDA DE CIFRAS DEL HERO ES CRISTAL SÓLO EN ESCRITORIO.
+   En móvil sale de la fotografía y se vuelve una franja marfil plana: sin
+   desenfoque, sin transparencia, sin borde, sin esquinas y sin brillo.
+
+   Hace falta apagarlo, no basta con no poner `.mt-glass`: esa clase y su
+   `::before`/`::after` declaran el desenfoque, el fondo, la sombra y el canto
+   sin ninguna condición, y el mismo nodo tiene que seguir siendo cristal a
+   partir de 768px. Va DESPUÉS de `.mt-glass` en la hoja, así que con la misma
+   especificidad gana ésta. */
+@media (max-width: 767.98px) {
+  .mt-hero-cifras {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    /* El color va AQUÍ, no en una utilidad de Tailwind. `.mt-glass` declara
+       `background` en atajo, que además de poner su degradado deja el
+       `background-color` en transparente -- y esta hoja va después de las
+       utilidades, así que se llevaba por delante cualquier `bg-[...]`. Pasó:
+       la franja salía negra, el fondo oscuro de la sección asomando. */
+    background-image: none;
+    background-color: #fbfaf6;
+    box-shadow: none;
+    animation: none;
+  }
+
+  .mt-hero-cifras::before,
+  .mt-hero-cifras::after {
+    display: none;
+  }
+}
+
 @keyframes mt-glass-reflection {
   0% {
     left: -45%;

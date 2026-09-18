@@ -25,179 +25,205 @@ const SETTLED = { opacity: 1, y: 0, filter: 'blur(0px)' } as const;
 
 /** Hero D — Editorial Index refinado.
  *
- *  Titular a media altura sobre el margen izquierdo, y toda la trayectoria
- *  recogida en una banda de cristal estrecha al pie.
+ *  ESCRITORIO (md y arriba) no ha cambiado: titular a media altura sobre el
+ *  margen izquierdo y toda la trayectoria recogida en una banda de cristal
+ *  estrecha al pie, flotando sobre la foto.
  *
- *  Movil no es el mismo hero encogido, es otro encuadre:
- *  - la banda deja solo las tres cifras (el rotulo y el enlace ganaban una
- *    segunda fila que doblaba su altura y le comia sitio a la foto),
- *  - el titular baja un 10% y sube para caer entero dentro de la franja
- *    oscura de la piedra, donde se lee sin ayuda,
- *  - la foto se reencuadra para que la persona quede a la derecha y deje la
- *    izquierda limpia,
- *  - y por eso mismo el velo lateral desaparece: ahi ya no hace falta.
+ *  MÓVIL es otra composición, la que aprobó Mayurlin sobre una referencia
+ *  visual. Tres cosas la definen:
+ *
+ *  1. LA SECCIÓN YA NO MIDE UNA PANTALLA EXACTA. Antes era `h-[100svh]` y
+ *     todo se colgaba por dentro con porcentajes y anclajes al borde
+ *     inferior. Ahora el área de la foto tiene un alto mínimo y crece con lo
+ *     que lleva dentro, así que no hay nada que recortar ni que solapar
+ *     cuando el texto se agranda o la pantalla es estrecha.
+ *  2. EL TEXTO VA EN FLUJO, en dos grupos: arriba el rótulo con el titular
+ *     (que se leen como una sola unidad) y abajo el párrafo con el enlace.
+ *     Los separa un `justify-between`, no coordenadas.
+ *  3. LAS CIFRAS SALEN DE LA FOTO. En móvil dejan de ser una caja de cristal
+ *     flotando encima y pasan a una franja marfil plana, debajo de la
+ *     fotografía. Mismo dato, mismo marcado: sólo cambian las clases (ver
+ *     `.mt-hero-cifras` en `index.css`, que apaga el cristal por debajo de
+ *     768px).
  */
 export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvailability }) => {
   const { hero, milestones } = useSiteContent();
   const animate = introDone ? SETTLED : undefined;
 
   return (
-    <section className="relative h-[100svh] min-h-[680px] w-full select-none overflow-hidden bg-[#1a1918] font-sans text-white">
-      {/* Dos encuadres de la misma escena, uno por tamano. La horizontal en
-          vertical obligaba al movil a usar un tercio de su ancho y estirarlo
-          casi al doble, y la foto se veia blanda; la vertical llega ya
-          recortada y el movil no amplia nada. `<picture>` no crea bloque
-          contenedor, asi que el `absolute` del <img> sigue midiendo contra la
-          seccion. */}
-      <picture>
-        <source media="(min-width: 768px)" srcSet={HERO_PHOTO} />
-        <img
-          src={HERO_PHOTO_MOBILE}
-          alt="Mayu Travel, visual production for luxury hotels"
-          // En movil la foto se dibuja un 5% mas alta y anclada arriba: a
-          // 390x844 el `cover` ya encaja de altura exacta, asi que
-          // `object-position` en el eje Y no hace nada y esta es la unica forma
-          // de bajar a la persona hasta la altura del titular. El sobrante cae
-          // detras de la banda.
-          className="absolute left-0 top-0 h-[105%] w-full object-cover object-[10%_64%] saturate-[.84] md:h-full md:object-[56%_28%]"
+    <section className="relative w-full select-none bg-[#1a1918] font-sans text-white md:h-[100svh] md:min-h-[680px] md:overflow-hidden">
+      {/* ÁREA FOTOGRÁFICA.
+          En móvil es una caja en flujo, con alto mínimo, que contiene la foto,
+          los velos y el texto. En escritorio se convierte en una capa que
+          cubre la sección entera (`md:absolute md:inset-0`), así que todo lo
+          que hay dentro mantiene exactamente las coordenadas que tenía cuando
+          colgaba de la sección. */}
+      <div className="relative flex min-h-[70svh] flex-col overflow-hidden md:absolute md:inset-0 md:block md:min-h-0">
+        {/* Dos encuadres de la misma escena, uno por tamano. La horizontal en
+            vertical obligaba al movil a usar un tercio de su ancho y estirarlo
+            casi al doble, y la foto se veia blanda; la vertical llega ya
+            recortada y el movil no amplia nada. `<picture>` no crea bloque
+            contenedor, asi que el `absolute` del <img> sigue midiendo contra
+            su caja. */}
+        <picture>
+          <source media="(min-width: 768px)" srcSet={HERO_PHOTO} />
+          <img
+            src={HERO_PHOTO_MOBILE}
+            alt="Mayu Travel, visual production for luxury hotels"
+            // El blanco y negro va SÓLO en la capa de la imagen, nunca en el
+            // contenedor: ahí dentro vive el texto, y un filtro en la caja se
+            // lo llevaría por delante.
+            // El encuadre de móvil está medido, no elegido a ojo: el archivo
+            // vertical es más estrecho de proporción que su caja, así que
+            // `object-position` en Y no tiene recorrido y la única forma de
+            // acercar la figura es dibujar la imagen más alta que la caja y
+            // subirla. Se compararon seis encuadres contra el rectángulo que
+            // ocupa el titular: con más zoom, el texto acababa sobre el
+            // vestido. Éste deja a Mayurlin entera -- cabeza, vestido y pies --
+            // a la derecha, con el titular despejado y la grava abajo para el
+            // párrafo.
+            className="absolute left-0 top-[-6%] h-[112%] w-full object-cover object-[10%_50%] grayscale md:top-0 md:h-full md:object-[56%_28%] md:grayscale-0 md:saturate-[.84]"
+          />
+        </picture>
+
+        {/* VELOS. En móvil son dos degradados que hacen trabajos distintos, no
+            una capa gris uniforme: uno horizontal que sostiene el titular
+            sobre el margen izquierdo y se apaga antes de llegar a la figura, y
+            uno vertical corto abajo que da contraste al párrafo y al enlace.
+            Entre los dos dejan la piedra, el vestido y la entrada con su luz.
+            El vertical llega al 50% justo donde cae el párrafo, y no menos:
+            ahí abajo la grava a pleno sol mide rgb(203) y el texto blanco se
+            quedaba en 1,62:1 -- medido -- cuando hacen falta 4,5. Para bajar
+            ese píxel al nivel que exige la norma hay que taparlo un 39%; se
+            deja en 46% de margen. De 50% hacia arriba no hay nada: la piedra,
+            el vestido y la entrada conservan su luz.
+
+            Antes era una sola capa que subía hasta el 64% al 70% de negro, y
+            apagaba la escena entera. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 md:hidden"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(0,0,0,.48), rgba(0,0,0,.33) 34%, rgba(0,0,0,.08) 58%, transparent 74%), linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.56) 16%, rgba(0,0,0,.50) 27%, rgba(0,0,0,.22) 38%, transparent 50%)',
+          }}
         />
-      </picture>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 hidden md:block"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(0,0,0,.30), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.13), transparent 42%)',
+          }}
+        />
 
-      {/* Dos velos cruzados: uno lateral que sostiene el titular sobre el margen
-          izquierdo y uno inferior muy leve que asienta la banda. En movil el
-          lateral va al 70% de su fuerza (.30 -> .21): la franja oscura de la
-          piedra ya hace parte del trabajo, pero no todo — sin nada, el rotulo
-          se queda en 2,2:1 sobre las piedras claras de arriba. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 md:hidden"
-        style={{
-          background:
-            'linear-gradient(90deg, rgba(0,0,0,.21), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.70), rgba(0,0,0,.62) 20%, rgba(0,0,0,.52) 34%, rgba(0,0,0,.28) 50%, transparent 64%)',
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 hidden md:block"
-        style={{
-          background:
-            'linear-gradient(90deg, rgba(0,0,0,.30), transparent 62%), linear-gradient(0deg, rgba(0,0,0,.13), transparent 42%)',
-        }}
-      />
-
-      {/* Bloque editorial.
-
-          En escritorio va a media altura sobre el margen izquierdo, en flujo
-          normal. En movil NO: cada pieza se coloca en su propio porcentaje de
-          pantalla, porque con margenes encadenados el sitio de una dependia
-          del alto de la anterior y nunca caia donde Mayurlin la marcaba. El
-          titular se centra con la figura de la persona de la foto (su centro
-          esta al 48% de la pantalla), el subtitulo arranca por debajo de los
-          pies y el boton cierra sin llegar a la banda de cristal.
-
-          Cada motion.* va envuelto en un div de posicion: Framer Motion
-          escribe su propio `transform` para animar y se llevaria por delante
-          cualquier `translate` que pusieramos en la misma etiqueta. */}
-      <div className="absolute inset-x-5 inset-y-0 z-[3] md:inset-y-auto md:right-auto md:left-[clamp(22px,3.4vw,54px)] md:top-1/2 md:-translate-y-[52%]">
-        {/* UNA sola pila, anclada por ABAJO y con huecos en pixeles.
-
-            Antes el rotulo iba a top-16% y el titular a top-48%, mientras el
-            subtitulo y la banda de cristal iban anclados por pixeles desde
-            abajo. Dos sistemas a la vez: en cuanto el navegador colapsa su
-            barra de direcciones y la ventana crece, los porcentajes se mueven
-            y los pixeles no, asi que el reparto interior cambia solo. Medido
-            con la ventana pasando de 700 a 790 de alto: el hueco rotulo-
-            titular pasaba de 122 a 148px, y el titular-subtitulo de 23 a 67 --
-            casi el triple. En Safari de iPhone no se notaba porque su barra
-            va abajo y no cambia la altura igual.
-
-            Con todo anclado por abajo y los huecos en pixeles, la pila entera
-            sube o baja con la banda de cristal, pero por dentro no se mueve
-            nada. En escritorio no cambia: los cuatro elementos ya iban en
-            flujo normal y siguen en el mismo orden, con sus margenes md:. */}
-        <div className="absolute inset-x-0 bottom-[112px] md:static md:bottom-auto">
-          <motion.p
-            {...rise(0.1)}
-            animate={animate}
-            // Blanco puro en movil: ahi no hay velo debajo y con .72 el rotulo
-            // se quedaba en 2.2:1 sobre la piedra clara. En escritorio el velo
-            // lateral lo sostiene y puede seguir apagado.
-            className="m-0 mb-14 text-[10px] uppercase tracking-[0.28em] text-white/[.72] md:mb-10"
-          >
-            {hero.eyebrow}
-          </motion.p>
-
-          <motion.h1
-            {...rise(0.18)}
-            animate={animate}
-            // Interlineado apretado a propósito: el problema no era el cuerpo
-            // de la letra sino el aire ENTRE renglones, que estiraba el
-            // titular hasta comerse la pantalla.
-            className="m-0 max-w-[12ch] font-serif text-[clamp(38px,11vw,52px)] font-normal leading-[1.05] tracking-[-0.045em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)]"
-          >
-            {hero.titleLead} <i>{hero.titleEmphasis}</i>
-          </motion.h1>
-
-          {/* Frase funcional: qué producimos y para qué sirve. Nunca compite
-              en tamaño con el titular, pero en movil vive sobre la grava a
-              pleno sol: sube a 14px y a peso medio, y va en blanco puro sobre
-              el velo reforzado de abajo. Con 13px en .80 no se leia. */}
-          <motion.p
-            {...rise(0.26)}
-            animate={animate}
-            className="m-0 mt-14 text-[15px] font-medium leading-snug text-white [text-shadow:0_1px_16px_rgba(0,0,0,.52)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:font-normal md:text-white/80 md:[text-shadow:none]"
-          >
-            {hero.subline}
-          </motion.p>
-
-          {/* El CTA vivía solo dentro de la banda de cristal, y esa banda
-              esconde su columna de acción por debajo de 768px: en móvil no
-              había ninguna forma de contactar desde la primera pantalla. Aquí
-              va el botón para ese tamaño; en escritorio manda el de la banda. */}
-          <motion.div {...rise(0.34)} animate={animate} className="mt-11 md:hidden">
-            {/* EN PRUEBA: la misma línea que en escritorio, en vez del botón
-                relleno. Allí funciona sobre el cristal de la banda; aquí vive
-                directamente sobre la foto, que es el caso difícil -- la grava
-                de `hero-portada.jpg` es la zona más clara y cae justo por esta
-                altura. De ahí el `font-semibold` y la sombra del texto, que el
-                botón relleno no necesitaba porque traía su propio fondo.
-
-                Si se ve demasiado sutil, se vuelve al botón relleno: era
-                `bg-[#f5f3ed] px-6 py-3 ... font-semibold text-[#1a1918]`. */}
-            <button
-              onClick={onOpenAvailability}
-              className="group relative inline-block text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,.6)]"
+        {/* BLOQUE EDITORIAL.
+            Móvil: columna en flujo con dos grupos separados por
+            `justify-between`. Escritorio: exactamente donde estaba, a media
+            altura sobre el margen izquierdo. */}
+        <div
+          className="relative z-[3] flex flex-1 flex-col justify-between gap-10 px-5 pb-[clamp(30px,5vh,48px)] pt-[clamp(104px,19vh,168px)]
+                     md:absolute md:inset-y-auto md:left-[clamp(22px,3.4vw,54px)] md:right-auto md:top-1/2 md:block md:-translate-y-[52%] md:gap-0 md:p-0"
+        >
+          {/* GRUPO SUPERIOR: el rótulo y el titular se leen como una unidad.
+              El hueco entre ellos era de 57 px medidos y dejaba el rótulo
+              suelto arriba; ahora son 20. */}
+          <div>
+            <motion.p
+              {...rise(0.1)}
+              animate={animate}
+              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
             >
-              {hero.ctaLabel}
-              {/* Se dibuja sola de izquierda a derecha, despacio, y se queda.
-                  Mismo tiempo y misma curva que la de la banda de escritorio,
-                  para que sea el mismo gesto y no dos parecidos. La sombra
-                  bajo la línea hace el mismo trabajo que la del texto. */}
-              <motion.span
-                aria-hidden
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                style={{ transformOrigin: 'left' }}
-                className="absolute -bottom-[5px] left-0 block h-px w-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,.55)]"
-              />
-            </button>
-          </motion.div>
+              {hero.eyebrow}
+            </motion.p>
+
+            {/* El corte en cuatro líneas -- "Fotografía y / producción /
+                audiovisual para / hoteles de lujo." -- sale del ancho máximo
+                en `ch`, no de saltos escritos a mano: así aguanta otros anchos
+                y otro idioma.
+
+                EL CUERPO LO MANDA LA FIGURA, no una cifra redonda. El encargo
+                pedía 34-40 px a 390, pero a ese tamaño el renglón más largo
+                ("audiovisual para") llega a 234 px y el vestido empieza en
+                225: el texto se le montaba encima, que era justo lo que había
+                que evitar. A 31 px termina en 208 y queda libre por 17. Medido
+                con el texto escondido, para no confundir el vestido con los
+                propios glifos blancos. */}
+            <motion.h1
+              {...rise(0.18)}
+              animate={animate}
+              className="m-0 max-w-[13ch] font-serif text-[clamp(28px,7.9vw,32px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
+            >
+              {hero.titleLead} <i>{hero.titleEmphasis}</i>
+            </motion.h1>
+          </div>
+
+          {/* GRUPO INFERIOR: qué producimos y la salida. Vive sobre el
+              degradado corto de abajo, fuera de la zona protagonista de la
+              foto. */}
+          <div>
+            <motion.p
+              {...rise(0.26)}
+              animate={animate}
+              className="m-0 text-[15px] font-normal leading-[1.55] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.5)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80 md:[text-shadow:none]"
+            >
+              {hero.subline}
+            </motion.p>
+
+            {/* El CTA vivía solo dentro de la banda de cristal, y esa banda
+                esconde su columna de acción por debajo de 768px: en móvil no
+                había ninguna forma de contactar desde la primera pantalla.
+                Aquí va el enlace para ese tamaño; en escritorio manda el de la
+                banda.
+
+                `py-3.5 -my-3.5` deja la zona táctil en 45 px -- el mínimo son
+                44 -- sin mover el subrayado ni el sitio del enlace: el relleno
+                se compensa con el margen negativo. Con `py-3` se quedaba en 41. */}
+            <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
+              <button
+                onClick={onOpenAvailability}
+                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,.6)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+              >
+                {hero.ctaLabel}
+                {/* Se dibuja sola de izquierda a derecha, despacio, y se
+                    queda. Mismo tiempo y misma curva que la de la banda de
+                    escritorio, para que sea el mismo gesto y no dos
+                    parecidos. La sombra bajo la línea hace el mismo trabajo
+                    que la del texto. */}
+                <motion.span
+                  aria-hidden
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ transformOrigin: 'left' }}
+                  className="absolute bottom-[9px] left-0 block h-px w-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,.55)]"
+                />
+              </button>
+            </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Banda de cristal. Se centra con `mx-auto`, no con `translate`: Framer
-          Motion escribe su propio `transform` para animar y se llevaria por
-          delante el centrado. */}
+      {/* LAS CIFRAS.
+          Móvil: franja marfil plana, en flujo, justo debajo de la foto.
+          Escritorio: la misma banda de cristal de siempre, flotando sobre la
+          fotografía y centrada con `mx-auto` -- no con `translate`, porque
+          Framer Motion escribe su propio `transform` para animar y se llevaría
+          por delante el centrado.
+
+          `mt-hero-cifras` apaga el cristal por debajo de 768px: `.mt-glass`
+          declara el desenfoque, el fondo y la sombra sin condición, así que no
+          basta con no ponerla. */}
       <motion.div
         {...rise(0.42)}
         animate={animate}
-        className="mt-glass mt-glass-halo absolute inset-x-0 bottom-[max(14px,env(safe-area-inset-bottom))] z-[3] mx-auto h-[74px] w-[calc(100vw-28px)] overflow-hidden rounded-[9px] md:bottom-[clamp(22px,3vw,42px)] md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:rounded-[10px]"
+        className="mt-glass mt-glass-halo mt-hero-cifras relative z-[3] w-full text-[#1a1918]
+                   md:absolute md:inset-x-0 md:bottom-[clamp(22px,3vw,42px)] md:mx-auto md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:overflow-hidden md:rounded-[10px] md:text-white"
       >
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
             ("6 anos") y con el reparto original partia en dos lineas. */}
-        <div className="grid h-full grid-cols-3 items-center px-4 text-[7.5px] uppercase tracking-[0.08em] md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:whitespace-nowrap md:px-6 md:text-[9px] md:tracking-[0.18em]">
+        <div className="grid grid-cols-3 items-start px-5 py-7 text-[9px] uppercase tracking-[0.14em] md:h-full md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:items-center md:whitespace-nowrap md:px-6 md:py-0 md:tracking-[0.18em]">
           {/* El rotulo y el enlace solo caben en escritorio. */}
           <div className="hidden md:block">{hero.glassLabel}</div>
 
@@ -205,13 +231,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <div
               key={item.label}
               className={`md:border-l md:border-white/[.14] md:pl-5 ${
-                i === 0 ? 'pl-0' : 'border-l border-white/[.14] pl-3'
+                i === 0 ? 'pl-0' : 'border-l border-[#1a1918]/15 pl-4'
               }`}
             >
-              <b className="mb-0.5 block font-serif text-[22px] font-normal italic tracking-normal md:mb-0 md:mr-[7px] md:inline">
+              <b className="mb-1.5 block font-serif text-[30px] font-normal italic leading-none tracking-normal md:mb-0 md:mr-[7px] md:inline md:text-[22px] md:leading-normal">
                 {item.value}
               </b>
-              <span className="block min-h-[2.3em] leading-[1.15] md:inline md:min-h-0 md:leading-normal">
+              {/* Dos líneas caben a propósito: "CLIENTES RECURRENTES" no
+                  cabe de una en pantallas estrechas, y encoger las tres
+                  columnas para forzarlo sería peor. */}
+              <span className="block min-h-[2.3em] leading-[1.3] md:inline md:min-h-0 md:leading-normal">
                 {item.label}
               </span>
             </div>

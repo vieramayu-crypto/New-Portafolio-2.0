@@ -571,6 +571,60 @@ medir unos 785 px de ancho en una pantalla de 1.440 — dejaría de ocupar la
 pantalla "horizontalmente", que es la otra mitad de lo que ella pidió. En
 móvil sí se cumple.
 
+### El hero de móvil: otra composición, no el de escritorio encogido
+
+Mayurlin aprobó una referencia visual para móvil. **Escritorio no cambia** y hay
+que dejarlo así: está comprobado que el titular sigue en y=303 a 768px y en
+y=237 a 1.440, con los mismos cuerpos, los mismos cortes de línea y la misma
+banda de cristal. Cualquier cambio compartido hay que medirlo contra eso.
+
+**La estructura.** La sección ya no mide `h-[100svh]` en móvil: el área de la
+foto tiene alto mínimo y crece con lo que lleva dentro, así que no hay nada que
+recortar cuando el texto se agranda (probado al 150%: crece de 706 a 740 px y
+sigue sin solapes ni scroll horizontal). Dentro van dos grupos separados por
+`justify-between` -- rótulo + titular arriba, párrafo + enlace abajo -- en flujo,
+no con coordenadas. El truco para no romper escritorio es que el área
+fotográfica es una caja en flujo en móvil y `md:absolute md:inset-0` a partir de
+md: así todo lo de dentro conserva las coordenadas que tenía colgando de la
+sección.
+
+**El cuerpo del titular lo manda la figura, no una cifra.** El encargo pedía
+34-40 px a 390. A ese tamaño el renglón más largo ("audiovisual para") llega a
+234 px y el vestido empieza en 225: el texto se le montaba encima, que era justo
+lo que había que evitar. Con `clamp(28px,7.9vw,32px)` termina en 208 y queda
+libre por 23 px; a 360 por 35 y a 430 por 20. **Al medirlo hay que esconder el
+texto del hero**: si no, el detector toma los propios glifos blancos por el
+vestido -- pasó, y daba 211 px de solape falso.
+
+**El encuadre está medido.** El archivo vertical es más estrecho de proporción
+que su caja, así que `object-position` en Y no tiene recorrido: la única forma
+de acercar la figura es dibujar la imagen más alta que la caja y subirla
+(`top-[-6%] h-[112%]`). Se compararon doce encuadres contra el rectángulo que
+ocupa el titular; con más zoom el texto acababa sobre el vestido.
+
+**Los velos son dos, con trabajos distintos**, no una capa gris uniforme:
+horizontal al 48% a la izquierda que se apaga antes de la figura, y vertical
+corto abajo que llega al 50% donde cae el párrafo. Ese 50% no es estético: la
+grava a pleno sol mide rgb(203) y el texto blanco se quedaba en **1,62:1**
+cuando la norma pide 4,5. Medido ahora, todo cumple: rótulo 4,84, titular 4,29
+(pide 3), párrafo 4,88, enlace 9,15, cifras 16,81.
+
+**Las cifras salen de la foto en móvil**: franja marfil plana debajo, tres
+columnas a la izquierda con dos separadores finos y "CLIENTES RECURRENTES" en
+dos líneas. Mismo marcado y mismo dato que en escritorio -- sólo cambian las
+clases. Lo hace `.mt-hero-cifras` en `index.css`, que apaga el cristal por
+debajo de 768px. **Ojo con el color**: `.mt-glass` declara `background` en
+atajo, que deja el `background-color` en transparente, y esa hoja va DESPUÉS de
+las utilidades de Tailwind; un `bg-[#fbfaf6]` no sobrevive. El marfil tiene que
+ir dentro de esa misma regla. Pasó: la franja salía negra.
+
+**Diferencias respecto a la referencia, a propósito:**
+- El cuerpo del titular es menor que el 34-40 px pedido, por lo de la figura.
+- El blanco y negro va sólo en móvil. En escritorio la foto sigue con
+  `saturate(.84)`, que es lo que había; la escena es casi monocroma de por sí,
+  así que apenas se distingue. Si se quiere unificar, es quitar `md:grayscale-0
+  md:saturate-[.84]`.
+
 ### Dónde va el vídeo horizontal dentro de la galería de su hotel
 
 Cada vídeo horizontal se mete TAMBIÉN en la galería del hotel al que
