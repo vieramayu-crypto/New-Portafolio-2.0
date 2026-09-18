@@ -76,18 +76,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             // de los tres se llevaría por delante su trabajo. Escritorio sigue
             // con la suya y sus filtros de siempre.
             //
-            // EL ENCUADRE NO SALE DE `object-cover`, SALE DE UNA CUENTA.
-            // Hay que reproducir exactamente la escala que ya estaba aprobada,
-            // y el archivo nuevo es otro: es la escena entera en 2000x1416, no
-            // el vertical. La ventana equivalente se buscó por correlación
-            // contra el encuadre anterior (salió 0,99): x 536-1268, y 72-1145.
-            // De ahí, con W = ancho de la caja:
-            //   ancho dibujado = 2000/732 = 273,22% de W
-            //   izquierda      = -536/732 = -73,22% de W
-            //   arriba         = -72/1073 del ALTO = -6,71%
-            // `h-auto` mantiene la proporción y `max-w-none` evita el
-            // `max-width:100%` que Tailwind pone a toda imagen.
-            className="absolute left-[-73.22%] top-[-6.71%] h-auto w-[273.22%] max-w-none md:left-0 md:top-0 md:h-full md:w-full md:max-w-full md:object-cover md:object-[56%_28%] md:saturate-[.84]"
+            // YA NO HACE FALTA CUADRAR EL ENCUADRE A MANO. Antes aquí había
+            // tres porcentajes calculados (-73,22% / -6,71% / 273,22%) porque
+            // el archivo era la escena entera y el hero sólo usaba una ventana
+            // de 732 px de ancho: el móvil ampliaba esa ventana un 80% y de ahí
+            // venía la pérdida de calidad. El archivo de ahora ES esa ventana,
+            // recortada del vertical nítido (1.450 x 2.333) y con la
+            // graduación de ella encima -- ver data/media.ts. Misma proporción
+            // que la caja (0,6215 frente a 0,6213), así que basta con llenarla.
+            className="absolute inset-0 h-full w-full object-cover object-center md:max-w-full md:object-[56%_28%] md:saturate-[.84]"
           />
         </picture>
 

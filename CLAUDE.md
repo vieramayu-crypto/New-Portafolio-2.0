@@ -662,6 +662,58 @@ ir dentro de esa misma regla. Pasó: la franja salía negra.
   así que apenas se distingue. Si se quiere unificar, es quitar `md:grayscale-0
   md:saturate-[.84]`.
 
+### La calidad de la foto del hero: la graduación de ella sobre el recorte nítido
+
+Mayurlin notó "una gran pérdida de calidad" en el hero de móvil, y tenía razón.
+El archivo que ella graduó (`hero-portada-movil-graduada.webp`) es **la escena
+entera en 2000x1416**, y el hero sólo usa una ventana de **732 px de ancho** de
+ella. Un móvil de 440 pt a 3x pide 1.320 px: ampliación del 80%.
+
+**La solución, y por qué la primera falló.** El origen vertical
+(`hero-portada-movil.jpg`, 1800x2726) da 1.450 px para esa misma ventana, o sea
+no amplía nada — pero no tiene su graduación. Hay que trasplantarla:
+
+- **Primer intento (MAL): ajuste de tono por bloques** (gain/offset por bloque
+  de 58 px, interpolado). El color quedó clavado, pero el gradiente medio bajó
+  a **2,53** frente a **3,95** del original: forzar cada bloque a parecerse al
+  de la versión *ampliada* aplana el detalle. Salió peor que el problema.
+- **Lo que sí funciona: una curva GLOBAL por canal** (emparejado de histogramas,
+  256 entradas) **+ una corrección de muy baja frecuencia** (diferencia entre
+  las dos imágenes desenfocadas con sigma = lado/18) para su degradado y su
+  oscurecido. Una tabla global es monótona: cambia el tono sin poder tocar el
+  detalle local.
+
+Resultado medido a 1.320 px, el tamaño real de pantalla:
+
+| | gradiente medio | luz | sd | RGB |
+|---|---|---|---|---|
+| su archivo (antes) | 3,99 | 118,9 | 58,0 | 129/116/109 |
+| nítida (ahora) | **6,33** | 118,9 | 58,0 | 129/116/109 |
+
+Mismo tono, mismo contraste, mismo color, **1,6x más detalle**. En pantalla a
+2x el gradiente pasa de 7,56 a 9,77 y la correlación de encuadre entre antes y
+después es 0,9971 — es la misma composición aprobada, sólo más nítida. Pesa
+695 KB frente a 442 KB: aceptado, su regla es máxima calidad siempre.
+
+**La ventana hay que medirla en el navegador, no deducirla.** El primer recorte
+salió de la correlación entre los dos archivos y quedó 112 px corto por abajo.
+Lo correcto es leer la geometría real de la versión publicada: la `<img>` se
+dibujaba a 1065,5x754,4 con x=-285,5 e y=-42,1 en una caja de 390x627,7, lo que
+da la ventana `(536, 79) - (1268, 1257)` en su archivo, y por la escala medida
+entre ambos (1,981) la ventana `(25, 174) - (1475, 2507)` en el vertical.
+
+Como el archivo nuevo **ya es** la ventana, en `HeroSection.tsx` desaparecieron
+los tres porcentajes calculados a mano (`-73,22% / -6,71% / 273,22%`) y ahora
+basta `absolute inset-0 h-full w-full object-cover`. Su proporción (0,6215)
+coincide con la de la caja (0,6213).
+
+**Si vuelve a mandar una foto para el hero**, lo que evita todo esto es pedirle
+un export **ya recortado a la ventana, en vertical, de 1.400x2.100 px o más**.
+El chat recomprime a WebP y limita a ~2.000 px **de ancho** (ver "Limitaciones
+del entorno"), así que un vertical de ese tamaño llega intacto y gasta todos
+sus píxeles en la parte que el hero enseña — no en una escena de la que se usa
+un tercio.
+
 ### Dónde va el vídeo horizontal dentro de la galería de su hotel
 
 Cada vídeo horizontal se mete TAMBIÉN en la galería del hotel al que
