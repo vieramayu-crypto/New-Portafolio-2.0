@@ -57,28 +57,31 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     src: 'https://livid.com/embed/wbn5AZWOb8V9?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec2-gal01-aerea-h.jpg'),
   },
-  // ┌──────────────────────────────────────────────────────────────────────┐
-  // │  PROVISIONAL: los dos de abajo apuntan al MISMO vídeo que el primero, │
-  // │  el de Abama. Están así para que Mayurlin pueda ver el carrusel       │
-  // │  funcionando y decidir si la forma de presentarlo le vale, mientras   │
-  // │  termina de subir los suyos.                                          │
-  // │                                                                       │
-  // │  QUÉ HAY QUE CAMBIAR: sólo la línea `src` de cada uno, pegando la     │
-  // │  dirección de incrustar que da el servicio. El hotel, la portada y    │
-  // │  el texto ya son los definitivos.                                     │
-  // │                                                                       │
-  // │  ANTES DE MIGRAR AL DOMINIO PROPIO hay que haberlo hecho: publicar    │
-  // │  esto tal cual pondría el mismo vídeo bajo el nombre de dos hoteles   │
-  // │  distintos, y eso es atribuir un trabajo a quien no es.               │
-  // └──────────────────────────────────────────────────────────────────────┘
   {
     id: 'v-gpro',
     hotelName: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
     descripcion: 'Jardines, piscina y spa sobre la Bahía de Palma.',
-    src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1', // PROVISIONAL
+    // El archivo que mandó Mayurlin es una MUESTRA en baja resolución
+    // ("WEB CLIENTES HORIZONTAL (MUESTRA) LOW RESOLU"). Funciona para verlo
+    // montado, pero choca con su propia regla de máxima calidad siempre:
+    // conviene cambiarlo por el definitivo antes de migrar al dominio propio.
+    src: 'https://livid.com/embed/bAN6qRGuhiHw?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec5-gal09-piscina-palmeras-v.jpg'),
   },
+  // ┌──────────────────────────────────────────────────────────────────────┐
+  // │  PROVISIONAL: el de abajo apunta al MISMO vídeo que el primero, el de │
+  // │  Abama. Está así para que Mayurlin pueda ver el carrusel funcionando  │
+  // │  mientras termina de subir el suyo.                                   │
+  // │                                                                       │
+  // │  QUÉ HAY QUE CAMBIAR: sólo la línea `src`, pegando la dirección de    │
+  // │  incrustar que da el servicio. El hotel, la portada y el texto ya son │
+  // │  los definitivos.                                                     │
+  // │                                                                       │
+  // │  ANTES DE MIGRAR AL DOMINIO PROPIO hay que haberlo hecho: publicar    │
+  // │  esto tal cual pondría el vídeo de Abama bajo el nombre de otro       │
+  // │  hotel, y eso es atribuir un trabajo a quien no es.                   │
+  // └──────────────────────────────────────────────────────────────────────┘
   {
     id: 'v-intercontinental',
     hotelName: 'InterContinental Lisboa',

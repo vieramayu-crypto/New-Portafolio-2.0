@@ -448,10 +448,13 @@ entorpecería el flujo. La idea es que estén los cuatro directamente ahí".
   Honeymoon `sec4`, GPRO `sec5`, Espléndido `sec6`, InterContinental `sec7`,
   Welmoon `sec8`, District Hive `sec9`. Dos entradas llevaban la portada de
   otro hotel por dar por hecho que sí lo seguía.
-- **Reales: Abama y Vestige Collection, Binidufà.** Siguen PROVISIONALES GPRO e
-  InterContinental, los dos apuntando al vídeo de Abama. Antes de migrar al
-  dominio propio hay que cambiarles el `src`: publicarlo así pondría el mismo
-  vídeo bajo el nombre de dos hoteles distintos.
+- **Reales: Abama, Vestige Collection Binidufà y GPRO Valparaíso.** Sigue
+  PROVISIONAL sólo InterContinental, apuntando al vídeo de Abama. Antes de
+  migrar al dominio propio hay que cambiarle el `src`: publicarlo así pondría
+  el vídeo de Abama bajo el nombre de otro hotel.
+- **El de GPRO es una MUESTRA en baja resolución** ("WEB CLIENTES HORIZONTAL
+  (MUESTRA) LOW RESOLU"), que choca con su regla de máxima calidad siempre.
+  Conviene cambiarlo por el definitivo antes de migrar.
 
 ## El subrayado de "Iniciar un proyecto"
 
