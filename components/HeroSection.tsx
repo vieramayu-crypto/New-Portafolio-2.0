@@ -58,7 +58,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           cubre la sección entera (`md:absolute md:inset-0`), así que todo lo
           que hay dentro mantiene exactamente las coordenadas que tenía cuando
           colgaba de la sección. */}
-      <div className="relative flex min-h-[70svh] flex-col overflow-hidden md:absolute md:inset-0 md:block md:min-h-0">
+      <div className="mt-hero-foto relative flex flex-col overflow-hidden md:absolute md:inset-0 md:block md:min-h-0">
         {/* Dos encuadres de la misma escena, uno por tamano. La horizontal en
             vertical obligaba al movil a usar un tercio de su ancho y estirarlo
             casi al doble, y la foto se veia blanda; la vertical llega ya
@@ -70,42 +70,48 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           <img
             src={HERO_PHOTO_MOBILE}
             alt="Mayu Travel, visual production for luxury hotels"
-            // El blanco y negro va SÓLO en la capa de la imagen, nunca en el
-            // contenedor: ahí dentro vive el texto, y un filtro en la caja se
-            // lo llevaría por delante.
-            // El encuadre de móvil está medido, no elegido a ojo: el archivo
-            // vertical es más estrecho de proporción que su caja, así que
-            // `object-position` en Y no tiene recorrido y la única forma de
-            // acercar la figura es dibujar la imagen más alta que la caja y
-            // subirla. Se compararon seis encuadres contra el rectángulo que
-            // ocupa el titular: con más zoom, el texto acababa sobre el
-            // vestido. Éste deja a Mayurlin entera -- cabeza, vestido y pies --
-            // a la derecha, con el titular despejado y la grava abajo para el
-            // párrafo.
-            className="absolute left-0 top-[-6%] h-[112%] w-full object-cover object-[10%_50%] grayscale md:top-0 md:h-full md:object-[56%_28%] md:grayscale-0 md:saturate-[.84]"
+            // El blanco y negro va SÓLO en la capa de la imagen, nunca en
+            // el contenedor: ahí dentro vive el texto, y un filtro en la caja
+            // se lo llevaría por delante.
+            //
+            // EL ENCUADRE NO SALE DE `object-cover`, SALE DE UNA CUENTA.
+            // La referencia que aprobó Mayurlin es un recorte concreto del
+            // archivo: x 25-1475 e y 160-2286 de sus 1800x2726 -- se buscó por
+            // correlación contra su imagen, no a ojo. Con `object-cover` no se
+            // puede pedir eso: el recorte lo decide él. Así que la imagen se
+            // coloca a mano, y las cuentas son éstas, con W = ancho de la caja:
+            //   ancho dibujado = 1800/1450 = 124,14% de W
+            //   izquierda      = -25/1450  = -1,72% de W
+            //   arriba         = -160/1450 de W, que sobre un alto de
+            //                    2126/1450 de W son -7,53% del ALTO
+            // `h-auto` mantiene la proporción del archivo y `max-w-none` evita
+            // el `max-width:100%` que Tailwind pone a toda imagen.
+            className="absolute left-[-1.72%] top-[-7.53%] h-auto w-[124.14%] max-w-none grayscale brightness-[1.24] contrast-[0.86] md:brightness-100 md:contrast-100 md:left-0 md:top-0 md:h-full md:w-full md:object-cover md:object-[56%_28%] md:grayscale-0 md:saturate-[.84]"
           />
         </picture>
 
-        {/* VELOS. En móvil son dos degradados que hacen trabajos distintos, no
-            una capa gris uniforme: uno horizontal que sostiene el titular
-            sobre el margen izquierdo y se apaga antes de llegar a la figura, y
-            uno vertical corto abajo que da contraste al párrafo y al enlace.
-            Entre los dos dejan la piedra, el vestido y la entrada con su luz.
-            El vertical llega al 50% justo donde cae el párrafo, y no menos:
-            ahí abajo la grava a pleno sol mide rgb(203) y el texto blanco se
-            quedaba en 1,62:1 -- medido -- cuando hacen falta 4,5. Para bajar
-            ese píxel al nivel que exige la norma hay que taparlo un 39%; se
-            deja en 46% de margen. De 50% hacia arriba no hay nada: la piedra,
-            el vestido y la entrada conservan su luz.
+        {/* VELOS. Tres capas que hacen trabajos distintos, y ninguna tapa la
+            escena entera: Mayurlin comparó su referencia con lo que había y el
+            problema era justo ése -- la foto salía apagada. Medido sobre las
+            dos imágenes: su referencia tiene un brillo medio de 103 y la mía
+            iba en 74, y en el tercio de la derecha, donde está ella, 129 contra
+            83.
 
-            Antes era una sola capa que subía hasta el 64% al 70% de negro, y
-            apagaba la escena entera. */}
+            1. Lateral izquierdo, flojo, para que el titular no flote sobre la
+               piedra clara.
+            2. Esquina inferior izquierda, que es donde de verdad cae el párrafo
+               y el enlace. Va en diagonal a propósito: así protege el texto sin
+               apagar la grava de la derecha, que en la referencia está clara.
+            3. Un dedo de sombra en el borde de abajo, para asentar la franja de
+               cifras.
+
+            Antes era una sola capa que subía hasta el 64% al 70% de negro. */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 md:hidden"
           style={{
             background:
-              'linear-gradient(90deg, rgba(0,0,0,.48), rgba(0,0,0,.33) 34%, rgba(0,0,0,.08) 58%, transparent 74%), linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.56) 16%, rgba(0,0,0,.50) 27%, rgba(0,0,0,.22) 38%, transparent 50%)',
+              'linear-gradient(90deg, rgba(0,0,0,.44), rgba(0,0,0,.22) 26%, transparent 48%), linear-gradient(to top right, rgba(0,0,0,.30), transparent 42%), linear-gradient(0deg, rgba(0,0,0,.52), rgba(0,0,0,.42) 12%, rgba(0,0,0,.28) 26%, rgba(0,0,0,.16) 38%, transparent 52%)',
           }}
         />
         <div
@@ -122,7 +128,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             `justify-between`. Escritorio: exactamente donde estaba, a media
             altura sobre el margen izquierdo. */}
         <div
-          className="relative z-[3] flex flex-1 flex-col justify-between gap-10 px-5 pb-[clamp(30px,5vh,48px)] pt-[clamp(104px,19vh,168px)]
+          className="relative z-[3] flex flex-1 flex-col justify-between gap-10 px-7 pb-[clamp(26px,4.5vh,44px)] pt-[calc(39.8vw_+_56px)]
                      md:absolute md:inset-y-auto md:left-[clamp(22px,3.4vw,54px)] md:right-auto md:top-1/2 md:block md:-translate-y-[52%] md:gap-0 md:p-0"
         >
           {/* GRUPO SUPERIOR: el rótulo y el titular se leen como una unidad.
@@ -132,7 +138,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.1)}
               animate={animate}
-              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
+              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] [text-shadow:0_1px_10px_rgba(0,0,0,.55)] md:[text-shadow:none] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
             >
               {hero.eyebrow}
             </motion.p>
@@ -152,7 +158,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.h1
               {...rise(0.18)}
               animate={animate}
-              className="m-0 max-w-[13ch] font-serif text-[clamp(28px,7.9vw,32px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
+              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] [text-shadow:0_2px_18px_rgba(0,0,0,.45)] md:[text-shadow:none] md:max-w-[16ch] md:text-[clamp(48px,5.4vw,86px)] md:leading-[1.05] md:tracking-[-0.045em]"
             >
               {hero.titleLead} <i>{hero.titleEmphasis}</i>
             </motion.h1>
@@ -165,7 +171,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 text-[15px] font-normal leading-[1.55] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.5)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80 md:[text-shadow:none]"
+              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.5)] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-white/80 md:[text-shadow:none]"
             >
               {hero.subline}
             </motion.p>
