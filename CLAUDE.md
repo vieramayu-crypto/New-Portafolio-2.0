@@ -588,26 +588,51 @@ fotográfica es una caja en flujo en móvil y `md:absolute md:inset-0` a partir 
 md: así todo lo de dentro conserva las coordenadas que tenía colgando de la
 sección.
 
-**El cuerpo del titular lo manda la figura, no una cifra.** El encargo pedía
-34-40 px a 390. A ese tamaño el renglón más largo ("audiovisual para") llega a
-234 px y el vestido empieza en 225: el texto se le montaba encima, que era justo
-lo que había que evitar. Con `clamp(28px,7.9vw,32px)` termina en 208 y queda
-libre por 23 px; a 360 por 35 y a 430 por 20. **Al medirlo hay que esconder el
-texto del hero**: si no, el detector toma los propios glifos blancos por el
-vestido -- pasó, y daba 211 px de solape falso.
+**El encuadre y el color salen de MEDIR la referencia, no de mirarla.** La
+primera versión se quedó lejos y ella lo dijo: "fíjate la interpretación del
+color de la foto, la posición de la imagen, el tamaño del hero". Comparadas las
+dos imágenes con números, las diferencias eran: proporción del área fotográfica
+1,14 contra 1,47; brillo medio 74 contra 103; y en el tercio derecho, donde está
+la figura, 83 contra 129.
 
-**El encuadre está medido.** El archivo vertical es más estrecho de proporción
-que su caja, así que `object-position` en Y no tiene recorrido: la única forma
-de acercar la figura es dibujar la imagen más alta que la caja y subirla
-(`top-[-6%] h-[112%]`). Se compararon doce encuadres contra el rectángulo que
-ocupa el titular; con más zoom el texto acababa sobre el vestido.
+- **La proporción es 1,466 de alto por 1 de ancho** (`.mt-hero-foto` en
+  `index.css`). Ojo: hay que sumarle los 56 px de la cabecera, que va fija y
+  tapa la parte de arriba de la foto. Sin sumarlos, lo que SE VE se queda en
+  1,34 y la composición no cuadra.
+- **El encuadre no sale de `object-cover`, sale de una cuenta.** La referencia
+  es el recorte x 25-1475, y 160-2286 del archivo de 1800x2726 -- se encontró
+  por correlación contra su imagen, probando ventanas. `object-cover` no
+  permite pedir un recorte concreto, así que la imagen se coloca a mano:
+  ancho 124,14%, izquierda -1,72%, arriba -7,53%, con `h-auto` y `max-w-none`.
+- **El color lleva `brightness(1.24) contrast(0.86)`.** La referencia no sólo
+  quita el velo: aclara la piedra (de 82 a 119) y a la vez apaga la grava (de
+  196 a 82-123). Eso es una curva, no un brillo: subir brillo y bajar contraste
+  la aproxima. Resultado medido: brillo medio 104 contra los 103 de ella.
+- **Los velos son tres y ninguno tapa la escena entera**: lateral izquierdo,
+  una diagonal en la esquina inferior izquierda -- donde de verdad cae el
+  párrafo, y así no apaga la grava de la derecha -- y un dedo en el borde de
+  abajo.
 
-**Los velos son dos, con trabajos distintos**, no una capa gris uniforme:
-horizontal al 48% a la izquierda que se apaga antes de la figura, y vertical
-corto abajo que llega al 50% donde cae el párrafo. Ese 50% no es estético: la
-grava a pleno sol mide rgb(203) y el texto blanco se quedaba en **1,62:1**
-cuando la norma pide 4,5. Medido ahora, todo cumple: rótulo 4,84, titular 4,29
-(pide 3), párrafo 4,88, enlace 9,15, cifras 16,81.
+**EL CONTRASTE NO LLEGA A LA NORMA, Y ES A PROPÓSITO.** Con la foto al brillo
+que ella aprobó, el peor píxel deja el párrafo en 2,32:1 y el titular en
+1,51:1, cuando WCAG AA pide 4,5 y 3. Las medianas sí van bien (3,7 y 9,0) y el
+texto lleva sombra, así que en la práctica se lee. Su propia referencia está
+peor: 1,63:1 bajo el párrafo. **Para cumplir la norma hay que oscurecer la
+franja de abajo hasta el 50%, que es justo la versión que ella rechazó por
+apagada.** Es una decisión suya, no un descuido: si vuelve a salir el tema, es
+esto.
+
+**El cuerpo del titular lo manda la figura.** El encargo pedía 34-40 px a 390.
+Al medirlo con el encuadre nuevo la figura queda mucho más a la derecha, así
+que ya caben 32 px sin tocarla. **Al medir esto hay que esconder el texto del
+hero**: si no, el detector toma los propios glifos blancos por el vestido --
+pasó, y daba 211 px de solape falso.
+
+**Cuidado con `md:max-w-none` y compañía.** Poner una utilidad `md:` nueva
+puede pisar una que ya estaba: `md:max-w-none` en el párrafo se llevó por
+delante el `md:max-w-[34ch]` de escritorio, el bloque se acortó y el
+`-translate-y-[52%]` bajó el titular 34 px. Se detectó porque escritorio se
+mide antes y después; hay que seguir haciéndolo.
 
 **Las cifras salen de la foto en móvil**: franja marfil plana debajo, tres
 columnas a la izquierda con dos separadores finos y "CLIENTES RECURRENTES" en

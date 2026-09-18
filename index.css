@@ -109,6 +109,16 @@ body {
    partir de 768px. Va DESPUÉS de `.mt-glass` en la hoja, así que con la misma
    especificidad gana ésta. */
 @media (max-width: 767.98px) {
+  /* EL ÁREA FOTOGRÁFICA DEL HERO, con la proporción de la referencia.
+     1,466 de alto por 1 de ancho, medido sobre la imagen que aprobó Mayurlin.
+     Los 56 px de más son la cabecera: va fija y tapa la parte de arriba de la
+     foto, así que sin sumarlos la parte que SE VE se queda en 1,34 y la
+     composición no cuadra. El tope evita que en una tableta estrecha se
+     dispare. */
+  .mt-hero-foto {
+    min-height: min(calc(146.6vw + 56px), 780px);
+  }
+
   .mt-hero-cifras {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
