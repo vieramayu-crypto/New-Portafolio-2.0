@@ -89,7 +89,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             // En los dos casos el recorte se tira hacia arriba (el tejado), no
             // hacia abajo: abajo está la grava sobre la que cae el texto, y en
             // escritorio también los pies de la figura.
-            className="absolute inset-y-0 left-0 h-full w-[118%] max-w-none object-cover object-[50%_72%] md:w-full md:max-w-full md:object-[50%_66%]"
+            //
+            // EL 65% DE MÓVIL SON LOS 72% DE ANTES MENOS UN 2% DE LA CAJA.
+            // Mayurlin pidió bajar la foto "un 2% para que se alinee mejor con
+            // el título". Un 2% de los 627,7 px de la caja son 12,55, y como
+            // lo que sobra de alto son 174,5 px, eso son 7,2 puntos de
+            // `object-position`: 72 - 7,2 = 64,8, redondeado a 65.
+            className="absolute inset-y-0 left-0 h-full w-[123%] max-w-none object-cover object-[50%_65%] md:w-full md:max-w-full md:object-[50%_66%]"
           />
         </picture>
 
@@ -150,25 +156,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.h1
               {...rise(0.18)}
               animate={animate}
-              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,6vw,96px)] md:leading-[1.05] md:tracking-[-0.045em]"
+              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,6.5vw,104px)] md:leading-[1.05] md:tracking-[-0.045em]"
             >
               {hero.titleLead} <i>{hero.titleEmphasis}</i>
             </motion.h1>
           </div>
 
           {/* GRUPO INFERIOR: qué producimos y la salida.
-              EN TINTA OSCURA, NO EN BLANCO. Cae sobre la grava, que en las
-              fotos de Mayurlin es casi blanca: medido, el blanco daba 1,89:1
-              en móvil y 2,14:1 en escritorio, cuando el mínimo legible es
-              4,5:1. Oscurecer la foto para salvarlo estaba descartado -- "no
-              quiero que le pongas filtros" -- así que el que cambia es el
-              texto. El titular sigue en blanco porque cae sobre el muro y ahí
-              va por encima de 8:1. */}
+              VUELVE AL BLANCO. Se probó en tinta oscura y resolvía el
+              contraste (1,89 -> 9,16:1), pero Mayurlin lo descartó por una
+              razón de diseño, no de medida: "prefiero que esté todo el texto
+              en un solo color", con el titular en blanco justo encima.
+              Lo que sostiene la lectura ahora es CUERPO, no sombra: más
+              tamaño y más peso, y una sola sombra suave y ancha -- no las
+              cinco de antes, que ella ya había mandado quitar. En escritorio
+              el párrafo crece mucho más porque ahí sobra sitio.
+              La banda de cristal de escritorio SÍ se queda en tinta: es el
+              único sitio donde ella dijo que se lee mejor así. */}
           <div>
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[15px] font-normal leading-[1.55] text-[#1a1918] md:mt-10 md:max-w-[34ch] md:text-[16px] md:leading-snug md:text-[#1a1918]/85"
+              className="m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.38)] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
             >
               {hero.subline}
             </motion.p>
@@ -185,7 +194,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
               <button
                 onClick={onOpenAvailability}
-                className="group relative inline-block -my-3.5 py-3.5 text-[11px] font-sans uppercase tracking-[0.2em] font-semibold text-[#1a1918] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1a1918]/80"
+                className="group relative inline-block -my-3.5 py-3.5 text-[12px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_12px_rgba(0,0,0,.42)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
               >
                 {hero.ctaLabel}
                 {/* Se dibuja sola de izquierda a derecha, despacio, y se
@@ -199,7 +208,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
                   style={{ transformOrigin: 'left' }}
-                  className="absolute bottom-[9px] left-0 block h-px w-full bg-[#1a1918]/70"
+                  className="absolute bottom-[8px] left-0 block h-[1.5px] w-full bg-white/90"
                 />
               </button>
             </motion.div>
@@ -223,13 +232,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           cristal translúcido se vuelve casi blanco y el blanco encima
           desaparecía -- "ESTUDIO DE PRODUCCIÓN VISUAL" y "VER PROYECTOS"
           apenas se leían. Aquí vive el CTA de escritorio, así que entra en el
-          mismo arreglo que el párrafo. */}
-      <motion.div
-        {...rise(0.42)}
-        animate={animate}
+          mismo arreglo que el párrafo.
+
+          EL FONDO NO SE ANIMA, SÓLO SU CONTENIDO. La caja entera llevaba el
+          `rise` (opacidad de 0 a 1) y en móvil eso dejaba ver el `bg-[#1a1918]`
+          de la sección durante el primer segundo: al cargar aparecía un bloque
+          negro a pantalla completa debajo de la foto, y luego se aclaraba
+          hasta marfil. En escritorio no se notaba porque la banda flota sobre
+          la fotografía, no sobre el fondo de la sección. Ahora el marfil está
+          desde el primer fotograma y lo que entra son las cifras. */}
+      <div
         className="mt-glass mt-glass-halo mt-hero-cifras relative z-[3] w-full text-[#1a1918]
                    md:absolute md:inset-x-0 md:bottom-[clamp(22px,3vw,42px)] md:mx-auto md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:overflow-hidden md:rounded-[10px]"
       >
+        <motion.div {...rise(0.42)} animate={animate} className="md:h-full">
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
             ("6 anos") y con el reparto original partia en dos lineas. */}
@@ -289,8 +305,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
               {hero.secondaryLabel}
             </button>
           </div>
-        </div>
-      </motion.div>
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 };
