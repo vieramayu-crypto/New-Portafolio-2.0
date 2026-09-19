@@ -288,6 +288,46 @@ de las 3 fotos del teaser de Inicio.
   propia secuencia: fachada → habitación → desayuno → spa → cena. Nunca
   agrupar por casualidad (p. ej. spa justo después de la cena sin razón).
 
+## La galería de vídeos son DOS secciones, no una
+
+Durante mucho tiempo el vídeo horizontal y los cuatro verticales compartían un
+solo bloque pegajoso de 160vh: el vídeo debajo y las tarjetas desplegándose
+ENCIMA al cruzar el umbral. Mayurlin lo describió exacto: *"tan pronto haces
+más de un scroll, automáticamente saltan estos vídeos verticales y te impide
+la visualización del vídeo horizontal"*. Ahora son dos secciones seguidas.
+
+**Sección 1 — el horizontal.** En móvil es una banda 16:9 **pegada al titular**
+(antes iba centrada en una pantalla completa, así que había ~300 px de negro
+entre el texto y el vídeo, y la tira caía tan abajo que hacía falta otro scroll
+para encontrarla). En escritorio llena la pantalla, como siempre. La tira va en
+flujo justo debajo del vídeo en móvil y flotando sobre él en escritorio.
+
+**Sección 2 — los cuatro verticales.** Misma distribución
+(`DESKTOP_POSITIONS` / `MOBILE_POSITIONS`), mismo despliegue con muelle y
+desenfoque de movimiento, en su propio espacio. **El fondo es la misma foto que
+respalda al vídeo** (`BG_PLACEHOLDER`), desenfocada 16 px y con el velo negro
+al 45%: se lee como continuación del bloque anterior sin cargar un segundo
+reproductor, que serían dos descargas y dos audios sonando a la vez.
+
+### La tira: una miniatura a cada lado, y ni una más
+
+Con cuatro vídeos, el reparto por distancia dejaba **siempre** una miniatura a
+distancia 2, así que se veían dos de un lado y una del otro — y al pasar de
+vídeo el lado lleno cambiaba de sitio. Ése era el "salto extraño". Ahora las de
+distancia 2 se quedan **donde están**, en su sitio de la fila, pero con
+`opacity: 0`: entran deslizándose desde el borde en vez de aparecer de golpe, y
+la tira se lee infinita. Aparcarlas en la posición de distancia 1 en vez de la
+2 las convertiría en un fundido cruzado, que es otro efecto.
+
+Llevan `aria-hidden`, `tabIndex={-1}` y `pointer-events: none` mientras son
+invisibles, para que no se pueda tabular ni pulsar lo que no se ve.
+
+**Debajo va el nombre del hotel**: serif de la casa, 10-11 px, versalitas,
+blanco al 80% con una sombra corta — el vídeo de fondo puede tener un plano
+claro justo ahí. Cambia con un fundido (`AnimatePresence mode="wait"`) para que
+el relevo no dé un tirón, y vive en una caja de alto fijo (`h-4`) para que la
+tira no dé un salto cuando el nombre pasa de una línea a otra.
+
 ## Vídeos incrustados (regla fija — aplicar a todos los que vengan)
 
 **Pegar el código del proveedor y no tocarlo.** Todos los vídeos pasan por

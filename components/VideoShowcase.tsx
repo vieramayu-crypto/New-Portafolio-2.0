@@ -135,21 +135,18 @@ const PASO_AUTOMATICO_MS = 15000;
 
 const FondoVideo: React.FC<{ src: string }> = ({ src }) => (
   <>
-    {/* La foto de respaldo se recorta como el vídeo: a sangre completa en
-        escritorio, y en móvil como banda 16:9 centrada, para que el bloque se
-        vea igual con vídeo y sin él. */}
-    <img
-      src={BG_PLACEHOLDER}
-      alt=""
-      className="absolute left-1/2 top-1/2 h-[56.25vw] w-full -translate-x-1/2 -translate-y-1/2 object-cover md:left-0 md:top-0 md:h-full md:w-full md:translate-x-0 md:translate-y-0"
-    />
+    {/* La foto de respaldo llena la caja que le den. El recorte ya no lo
+        decide ella: lo decide el contenedor, que en móvil es una banda 16:9
+        pegada al titular y en escritorio la pantalla entera. */}
+    <img src={BG_PLACEHOLDER} alt="" className="absolute inset-0 h-full w-full object-cover" />
     {FONDO && MOSTRAR_VIDEO && (
       /* El recorte a sangre completa se hace ENSANCHANDO ESTE CONTENEDOR, no
          deformando el iframe: dentro, el vídeo conserva exactamente la caja
          16:9 y el iframe al 100% que da el proveedor. 177.78svh de ancho es
-         justo lo que hace que esa caja 16:9 mida 100svh de alto.
+         justo lo que hace que esa caja 16:9 mida 100svh de alto. En móvil no
+         hace falta: la caja del padre YA es 16:9, así que `w-full` calza.
          `pointer-events-none` va aquí fuera y no en el iframe: es un fondo
-         decorativo a pantalla completa y se tragaría el gesto de desplazar. */
+         decorativo y se tragaría el gesto de desplazar. */
       <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 md:w-[177.78svh] md:min-w-full">
         <VideoNube key={src} src={src} />
       </div>
@@ -173,10 +170,11 @@ const FondoVideo: React.FC<{ src: string }> = ({ src }) => (
  */
 const ALTO_TIRA_SVH = 15;
 
-const TiraVideos: React.FC<{ activo: number; onElegir: (i: number) => void }> = ({
-  activo,
-  onElegir,
-}) => {
+const TiraVideos: React.FC<{
+  activo: number;
+  onElegir: (i: number) => void;
+  nombre: string;
+}> = ({ activo, onElegir, nombre }) => {
   const total = VIDEOS_HORIZONTALES.length;
   const arrastreX = useRef<number | null>(null);
   const acabaDeArrastrar = useRef(false);
@@ -216,61 +214,94 @@ const TiraVideos: React.FC<{ activo: number; onElegir: (i: number) => void }> = 
   };
 
   return (
-    <div
-      ref={pistaRef}
-      className="relative w-full max-w-[760px] cursor-grab touch-pan-y select-none [isolation:isolate] active:cursor-grabbing"
-      style={{ height: `${ALTO_TIRA_SVH}svh`, minHeight: 96 }}
-      onPointerDown={(e) => {
-        arrastreX.current = e.clientX;
-      }}
-      onPointerUp={alSoltar}
-      onPointerCancel={() => {
-        arrastreX.current = null;
-      }}
-    >
-      {VIDEOS_HORIZONTALES.map((video, i) => {
-        let diff = i - activo;
-        if (diff > total / 2) diff -= total;
-        if (diff < -total / 2) diff += total;
+    <div className="flex w-full max-w-[760px] flex-col items-center gap-3">
+      <div
+        ref={pistaRef}
+        className="relative w-full cursor-grab touch-pan-y select-none [isolation:isolate] active:cursor-grabbing"
+        style={{ height: `${ALTO_TIRA_SVH}svh`, minHeight: 96 }}
+        onPointerDown={(e) => {
+          arrastreX.current = e.clientX;
+        }}
+        onPointerUp={alSoltar}
+        onPointerCancel={() => {
+          arrastreX.current = null;
+        }}
+      >
+        {VIDEOS_HORIZONTALES.map((video, i) => {
+          let diff = i - activo;
+          if (diff > total / 2) diff -= total;
+          if (diff < -total / 2) diff += total;
 
-        const dist = Math.abs(diff);
-        const centro = diff === 0;
-        const cerca = dist === 1;
+          const dist = Math.abs(diff);
+          const centro = diff === 0;
+          const cerca = dist === 1;
+          // UNA A CADA LADO Y NI UNA MÁS. Con cuatro vídeos, el reparto por
+          // distancia dejaba SIEMPRE una miniatura a distancia 2, así que se
+          // veían dos de un lado y una del otro, y al pasar de vídeo el lado
+          // lleno cambiaba de sitio: ése era el salto raro. Las de distancia
+          // 2 se quedan donde están -- fuera, en su sitio de la fila -- pero
+          // transparentes, así que entran deslizándose desde el borde en vez
+          // de aparecer de golpe, y la tira se lee infinita.
+          const visible = dist <= 1;
 
-        const escala = centro ? 1 : cerca ? 0.62 : 0.46;
-        const opacidad = centro ? 1 : cerca ? 0.5 : 0.24;
-        const desenfoque = centro ? 0 : cerca ? 1.6 : 3;
-        const capa = centro ? 20 : cerca ? 10 : 5;
-        const izquierda = 50 + diff * separacion;
+          const escala = centro ? 1 : 0.62;
+          const opacidad = centro ? 1 : cerca ? 0.5 : 0;
+          const desenfoque = centro ? 0 : 1.6;
+          const capa = centro ? 20 : cerca ? 10 : 1;
+          const izquierda = 50 + diff * separacion;
 
-        return (
-          <button
-            key={video.id}
-            onClick={() => {
-              if (acabaDeArrastrar.current) return;
-              onElegir(i);
-            }}
-            aria-label={`Ver el vídeo de ${video.hotelName}`}
-            aria-current={centro}
-            style={{
-              left: `${izquierda}%`,
-              zIndex: capa,
-              opacity: opacidad,
-              filter: `blur(${desenfoque}px)`,
-              transform: `translate(-50%, -50%) scale(${escala}) translateZ(0)`,
-              willChange: 'transform, opacity, filter',
-              backfaceVisibility: 'hidden',
-            }}
-            className={`absolute top-1/2 block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] transition-[transform,opacity,filter,left] duration-500 ease-out ${
-              centro
-                ? 'shadow-[0_6px_28px_rgba(0,0,0,0.5)] ring-1 ring-white/45'
-                : 'shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
-            }`}
+          return (
+            <button
+              key={video.id}
+              onClick={() => {
+                if (acabaDeArrastrar.current) return;
+                onElegir(i);
+              }}
+              aria-label={`Ver el vídeo de ${video.hotelName}`}
+              aria-current={centro}
+              aria-hidden={!visible}
+              tabIndex={visible ? 0 : -1}
+              style={{
+                left: `${izquierda}%`,
+                zIndex: capa,
+                opacity: opacidad,
+                filter: `blur(${desenfoque}px)`,
+                transform: `translate(-50%, -50%) scale(${escala}) translateZ(0)`,
+                willChange: 'transform, opacity, filter',
+                backfaceVisibility: 'hidden',
+                pointerEvents: visible ? 'auto' : 'none',
+              }}
+              className={`absolute top-1/2 block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] transition-[transform,opacity,filter,left] duration-500 ease-out ${
+                centro
+                  ? 'shadow-[0_6px_28px_rgba(0,0,0,0.5)] ring-1 ring-white/45'
+                  : 'shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
+              }`}
+            >
+              <img src={video.portada} alt="" className="h-full w-full object-cover" />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* EL NOMBRE DEL HOTEL, DEBAJO. La miniatura sola no dice de quién es
+          el vídeo que suena de fondo, y era lo único que faltaba para que la
+          tira se entendiera sin tocarla. Misma serif de la casa, en blanco y
+          pequeña: informa sin competir con el vídeo. Cambia con un fundido
+          para que el relevo no dé un tirón. */}
+      <div className="flex h-4 items-center justify-center">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={nombre}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="font-serif text-[10px] uppercase tracking-[0.22em] text-white/80 [text-shadow:0_1px_8px_rgba(0,0,0,.8)] md:text-[11px]"
           >
-            <img src={video.portada} alt="" className="h-full w-full object-cover" />
-          </button>
-        );
-      })}
+            {nombre}
+          </motion.span>
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
@@ -445,7 +476,7 @@ export const VideoShowcase: React.FC = () => {
           fijo sobre la imagen en movimiento le quita la pantalla justo cuando
           hay algo que ver. Sale fuera, a su propia cabecera sobre el fondo
           oscuro, y el vídeo se queda limpio. */}
-      <section className="w-full bg-[#1a1918] px-6 pb-14 pt-20 text-center md:pb-20 md:pt-28">
+      <section className="w-full bg-[#1a1918] px-6 pb-7 pt-20 text-center md:pb-14 md:pt-28">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -462,42 +493,52 @@ export const VideoShowcase: React.FC = () => {
         </motion.div>
       </section>
 
-    {/* El alto sólo tiene que dar para llegar al umbral, ver la animación
-        completa y quedarse un rato con las cuatro tarjetas puestas.
+    {/* SECCIÓN 1 -- EL VÍDEO HORIZONTAL, CON SU PROPIO ESPACIO.
 
-        En móvil son 160vh y no 220: el vídeo horizontal ahí es una banda 16:9
-        de 219 px dentro de una pantalla de 844, así que con 220vh había que
-        recorrer 1.857 px -- dos pantallas y pico -- de los que la mayoría era
-        negro. Medido. En escritorio el vídeo llena la pantalla entera y ese
-        recorrido sí se aprovecha. */}
-    <section ref={containerRef} className="relative h-[160vh] w-full bg-[#1a1918] md:h-[220vh]">
+        Antes esto y los verticales compartían un bloque pegajoso de 160vh:
+        el vídeo quedaba debajo y las tarjetas se desplegaban ENCIMA al primer
+        scroll, así que quien bajaba un poco se quedaba sin ver el vídeo
+        -- "te impide la visualización del vídeo horizontal", dijo Mayurlin.
+        Ahora son dos secciones seguidas y cada una manda en lo suyo.
+
+        En móvil la banda 16:9 va pegada al titular. Estaba centrada en una
+        pantalla completa, así que entre el texto y el vídeo había ~300 px de
+        negro y la tira caía tan abajo que hacía falta otro scroll para
+        encontrarla. En escritorio el vídeo sí llena la pantalla. */}
+    <section className="relative w-full bg-[#1a1918] md:h-[100svh] md:overflow-hidden">
+      <div className="relative aspect-video w-full md:absolute md:inset-0 md:aspect-auto">
+        <FondoVideo src={videoActivo.src} />
+      </div>
+
+      {/* LA TIRA. En móvil, en flujo justo debajo del vídeo. En escritorio
+          sigue flotando sobre él, que ahí sí hay sitio de sobra.
+
+          NINGUNA miniatura es un reproductor: son las fotos de portada. El
+          único vídeo que existe en esta sección es el del fondo. */}
+      {hayVarios && (
+        <div className="relative z-30 flex justify-center px-4 pb-12 pt-6 md:absolute md:inset-x-0 md:bottom-16 md:px-6 md:pb-0 md:pt-0">
+          <TiraVideos activo={activo} onElegir={irAVideo} nombre={videoActivo.hotelName} />
+        </div>
+      )}
+    </section>
+
+    {/* SECCIÓN 2 -- LOS CUATRO VERTICALES, DEBAJO Y EN SU PROPIO ESPACIO.
+
+        Misma distribución de siempre (DESKTOP_POSITIONS / MOBILE_POSITIONS) y
+        el mismo despliegue con muelle y desenfoque de movimiento. Lo único que
+        cambia es que ya no se montan sobre el vídeo.
+
+        El fondo es la MISMA foto que respalda al vídeo, desenfocada y con el
+        velo: así el bloque se lee como continuación del anterior sin cargar un
+        segundo reproductor -- que serían dos descargas y dos audios. */}
+    <section ref={containerRef} className="relative h-[150vh] w-full bg-[#1a1918] md:h-[200vh]">
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-        {/* Vídeo horizontal a sangre completa. El desenfoque y el zoom van en
-            este contenedor, no en el vídeo: un filtro CSS sobre el padre
-            también afecta al iframe, así que la entrada se conserva igual
-            con vídeo incrustado que con archivo propio. */}
-        <motion.div
-          initial={false}
-          animate={{ filter: deployed ? 'blur(16px)' : 'blur(0px)', scale: deployed ? 1.06 : 1 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 overflow-hidden"
-        >
-          <FondoVideo src={videoActivo.src} />
-        </motion.div>
-        {/* Aquí había un botón de reproducir grande y blanco. Tenía sentido
-            sobre la foto fija: decía "esto es un vídeo". Con el vídeo real
-            reproduciéndose solo es un botón que no hace nada, puesto encima
-            de algo que ya está en marcha. */}
-
-        {/* Velo que sube junto con el desenfoque, igual que detrás de las
-            ventanas emergentes: sostiene la lectura de las tarjetas sin
-            apagar del todo el vídeo de fondo. */}
-        <motion.div
-          initial={false}
-          animate={{ opacity: deployed ? 0.45 : 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none absolute inset-0 bg-black"
+        <img
+          src={BG_PLACEHOLDER}
+          alt=""
+          className="absolute inset-0 h-full w-full scale-110 object-cover blur-[16px]"
         />
+        <div className="pointer-events-none absolute inset-0 bg-black/45" />
 
         {stories.map((story, i) => (
           <VerticalCard
@@ -524,48 +565,10 @@ export const VideoShowcase: React.FC = () => {
           />
         ))}
 
-        {/* LA TIRA DE VÍDEOS. Siempre a la vista, en la base del bloque y
-            centrada. Antes esto vivía detrás de un botón que abría una
-            ventana; Mayurlin lo dijo claro: ir a un botón para abrir una
-            ventana para ver otro vídeo entorpece el flujo. Ahora los cuatro
-            están ahí y cambiar es desplazar o tocar.
-
-            Mismo efecto de profundidad que la ventana de propiedades -- el
-            del centro grande y nítido, los de al lado pequeños y
-            desenfocados -- pero en pequeño: la tira ocupa un 15% del alto de
-            la pantalla como máximo, que es lo que ella pidió, para tapar lo
-            menos posible del vídeo que hay detrás.
-
-            NINGUNA miniatura es un reproductor: son las fotos de portada. El
-            único vídeo que existe en esta sección es el del fondo. */}
-        {hayVarios && (
-          <motion.div
-            initial={false}
-            animate={{ opacity: deployed ? 0 : 1, y: deployed ? 16 : 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            style={{ pointerEvents: deployed ? 'none' : 'auto' }}
-            /* En móvil va pegada bajo el vídeo, no al fondo de la pantalla:
-               el vídeo es una banda centrada y entre ella y el borde había
-               más de 300 px de negro. En escritorio el vídeo llena la
-               pantalla, así que ahí sí va abajo. */
-            className="absolute inset-x-0 top-[calc(50%+130px)] z-30 flex justify-center px-4 md:top-auto md:bottom-24"
-          >
-            <TiraVideos activo={activo} onElegir={irAVideo} />
-          </motion.div>
-        )}
-
         {/* Aviso de salida. Este bloque es pegajoso y ocupa la pantalla
             entera: sin una señal, al llegar a las cuatro tarjetas es
             razonable pensar que la página se acaba aquí. Dice a dónde lleva
-            en vez de un "hay más abajo" genérico -- nombrar lo que viene es
-            también una razón para seguir. Mismo cristal que la banda
-            flotante de Inicio, pero con el texto en claro: ese cristal es
-            translúcido al 32 % y aquí vive sobre un vídeo oscurecido por el
-            velo, así que el texto casi negro de la banda de Inicio (que sí
-            funciona sobre crema) quedaba ilegible. Flecha moviéndose despacio
-            para que se vea sin gritar. La sombra del texto no es decorativa:
-            el fondo ya no es una foto fija sino vídeo, y un plano soleado
-            podría aclarar el cristal justo debajo de estas letras. */}
+            en vez de un "hay más abajo" genérico. */}
         <AnimatePresence>
           {salidaVisible && (
             <motion.div
@@ -575,11 +578,6 @@ export const VideoShowcase: React.FC = () => {
               transition={{ duration: 0.45, ease: 'easeOut' }}
               className="absolute inset-x-0 bottom-8 z-40 flex justify-end px-6 md:px-10"
             >
-              {/* Sin el recuadro de cristal y a la derecha: el centro de abajo
-                  es ahora de la tira de vídeos, y dos cajas de cristal
-                  seguidas competían. Queda el texto, que es lo que hace
-                  falta, con su sombra para que se lea sobre cualquier plano
-                  del vídeo. */}
               <button
                 onClick={irAbajo}
                 className="relative flex items-center gap-3 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed]/85 [text-shadow:0_1px_6px_rgba(26,25,24,0.9)] transition-colors duration-300 hover:text-[#f5f3ed] md:text-xs"
