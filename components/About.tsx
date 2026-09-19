@@ -54,16 +54,19 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
           referrerPolicy="no-referrer"
           className="absolute inset-0 h-full w-full object-cover object-[50%_32%] grayscale contrast-110"
         />
-        {/* Velo plano + refuerzo arriba y abajo: la foto tiene cielo claro en
-            la mitad superior y ahí el titular se quedaba corto de contraste. */}
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-[#1a1918]/60"
-          style={{
-            backgroundImage:
-              'linear-gradient(180deg, rgba(26,25,24,.34), transparent 38%, transparent 62%, rgba(26,25,24,.30))',
-          }}
-        />
+        {/* VELO PLANO Y NADA MÁS. Llevaba encima un degradado vertical que
+            sumaba un 34% arriba y un 30% abajo, y Mayurlin lo vio: "se nota en
+            los bordes más oscuro, en el centro un poco más claro". Fuera.
+
+            EL 60% PLANO SÍ SE QUEDA, Y NO ES DECORATIVO. La foto es a
+            contraluz: justo donde cae el titular, el cielo es casi blanco.
+            Medido sobre los glifos, sin ningún velo el contraste baja a
+            1,12:1 en el titular y 1,04:1 en el párrafo, con 4,5:1 como mínimo
+            legible -- o sea, ilegible. Con este 60% queda en 4,97 y 4,73.
+            Se probaron también 52% (3,91 / 3,68) y 45% (3,20 / 3,03): los dos
+            bajan de la norma. Si alguna vez hay que aclararlo más, el camino
+            es otra foto, no menos velo. */}
+        <div aria-hidden className="absolute inset-0 bg-[#1a1918]/60" />
 
         <div className="relative mx-auto max-w-5xl px-6 py-20 text-center md:px-12 md:py-28">
           <h2 className="font-serif text-3xl leading-[1.15] text-white sm:text-4xl md:text-5xl">
