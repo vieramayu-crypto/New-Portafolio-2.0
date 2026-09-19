@@ -101,9 +101,18 @@ const MOBILE_CARD_CLASS = 'h-[37svh] w-auto';
 
 /** Umbrales de despliegue, con histéresis: una vez abiertas hace falta subir
  *  bastante más para volver a cerrarlas, así una rueda de ratón que rebota en
- *  el límite no las hace parpadear. */
-const DEPLOY_ON = 0.2;
-const DEPLOY_OFF = 0.12;
+ *  el límite no las hace parpadear.
+ *
+ *  SE MIDEN SOBRE LA ENTRADA DE LA SECCIÓN, NO SOBRE SU RECORRIDO INTERNO.
+ *  Iban sobre `['start start','end end']`, o sea 0 cuando la sección ya estaba
+ *  clavada arriba: había que dar un scroll de más, ya dentro, para que las
+ *  tarjetas salieran -- y hasta entonces sólo se veía la foto borrosa. Ahora
+ *  van sobre `['start end','start start']`: 0 cuando el borde superior de la
+ *  sección asoma por abajo y 1 cuando llega arriba del todo. A 0,6 la sección
+ *  ocupa ya el 60% de la pantalla, así que el despliegue termina justo cuando
+ *  el bloque acaba de clavarse. */
+const DEPLOY_ON = 0.6;
+const DEPLOY_OFF = 0.45;
 
 /** El aviso de que hay más abajo. No sale desde el primer fotograma -- ahí se
  *  leería como parte del decorado y se pasaría por alto -- pero sí en cuanto
@@ -170,6 +179,26 @@ const FondoVideo: React.FC<{ src: string }> = ({ src }) => (
  */
 const ALTO_TIRA_SVH = 15;
 
+/** Las tres ranuras que existen: izquierda, centro, derecha. Ni una más.
+ *
+ *  LA CAUSA DEL "BARRIDO RARO", que no era la opacidad. Antes se pintaban las
+ *  CUATRO miniaturas y cada una calculaba su sitio por distancia al centro.
+ *  Con cuatro vídeos, al pasar de uno al siguiente la que estaba a -1 pasaba
+ *  a +2: viajaba de un extremo al otro CRUZANDO POR EL MEDIO, detrás de la
+ *  central, en los mismos 500 ms. Eso es lo que se veía "pasar de dos a un
+ *  lado y uno al otro".
+ *
+ *  Ahora sólo existen tres nodos. Al cambiar de vídeo, la central se convierte
+ *  en lateral (un salto de ranura), la lateral de ese lado se va apagándose
+ *  por el borde y entra una nueva por el otro. Ninguna cruza el centro nunca.
+ */
+const RANURAS = [-1, 0, 1] as const;
+
+/** Muelle, no `ease`. Mayurlin lo dijo tal cual: "no es fluida, no es
+ *  orgánica, va a trompicones". Un muelle tiene aceleración y frenada
+ *  propias; una curva fija de 500 ms, no. */
+const TIRA_MUELLE = { type: 'spring' as const, stiffness: 170, damping: 26, mass: 0.9 };
+
 const TiraVideos: React.FC<{
   activo: number;
   onElegir: (i: number) => void;
@@ -179,27 +208,28 @@ const TiraVideos: React.FC<{
   const arrastreX = useRef<number | null>(null);
   const acabaDeArrastrar = useRef(false);
   const pistaRef = useRef<HTMLDivElement>(null);
-  // La separación entre miniaturas se calcula, no se fija: en móvil la
-  // central ocupa casi dos tercios de la tira, y con un porcentaje fijo las de
-  // al lado se le montaban encima 61 px (medido). Media central (50%) más
-  // media lateral (31%, porque van al 62%) más un 4% de aire.
-  const [separacion, setSeparacion] = useState(34);
 
+  /* La separación se mide, no se fija, y ahora en PÍXELES.
+     Iba en `left: %`, y animar `left` obliga al navegador a recalcular la
+     maquetación en cada fotograma -- de ahí los tirones. Los píxeles viajan
+     en `transform`, que va por la tarjeta gráfica.
+     Media central + media lateral (que va al 62%) + un dedo de aire. */
+  const [sep, setSep] = useState(0);
   useEffect(() => {
     const pista = pistaRef.current;
     if (!pista) return;
     const recalcular = () => {
       const ancho = pista.clientWidth;
-      const centro = pista.querySelector<HTMLElement>('[aria-current="true"]');
-      const anchoCentro = centro?.getBoundingClientRect().width ?? 0;
-      if (!ancho || !anchoCentro) return;
-      setSeparacion(Math.min(56, Math.max(28, Math.round(((anchoCentro * 0.81) / ancho) * 100 + 4))));
+      const alto = pista.clientHeight;
+      if (!ancho || !alto) return;
+      const anchoCentral = (alto * 16) / 9;
+      setSep(Math.min(ancho * 0.5, anchoCentral * 0.81 + ancho * 0.04));
     };
     recalcular();
     const ro = new ResizeObserver(recalcular);
     ro.observe(pista);
     return () => ro.disconnect();
-  }, [activo]);
+  }, []);
 
   const alSoltar = (e: React.PointerEvent) => {
     if (arrastreX.current === null) return;
@@ -212,6 +242,11 @@ const TiraVideos: React.FC<{
     }, 120);
     onElegir(activo + (delta < 0 ? 1 : -1));
   };
+
+  const enRanura = RANURAS.map((r) => {
+    const i = ((activo + r) % total + total) % total;
+    return { r, i, video: VIDEOS_HORIZONTALES[i] };
+  });
 
   return (
     <div className="flex w-full max-w-[760px] flex-col items-center gap-3">
@@ -227,67 +262,70 @@ const TiraVideos: React.FC<{
           arrastreX.current = null;
         }}
       >
-        {VIDEOS_HORIZONTALES.map((video, i) => {
-          let diff = i - activo;
-          if (diff > total / 2) diff -= total;
-          if (diff < -total / 2) diff += total;
-
-          const dist = Math.abs(diff);
-          const centro = diff === 0;
-          const cerca = dist === 1;
-          // UNA A CADA LADO Y NI UNA MÁS. Con cuatro vídeos, el reparto por
-          // distancia dejaba SIEMPRE una miniatura a distancia 2, así que se
-          // veían dos de un lado y una del otro, y al pasar de vídeo el lado
-          // lleno cambiaba de sitio: ése era el salto raro. Las de distancia
-          // 2 se quedan donde están -- fuera, en su sitio de la fila -- pero
-          // transparentes, así que entran deslizándose desde el borde en vez
-          // de aparecer de golpe, y la tira se lee infinita.
-          const visible = dist <= 1;
-
-          const escala = centro ? 1 : 0.62;
-          const opacidad = centro ? 1 : cerca ? 0.5 : 0;
-          const desenfoque = centro ? 0 : 1.6;
-          const capa = centro ? 20 : cerca ? 10 : 1;
-          const izquierda = 50 + diff * separacion;
-
-          return (
-            <button
-              key={video.id}
-              onClick={() => {
-                if (acabaDeArrastrar.current) return;
-                onElegir(i);
-              }}
-              aria-label={`Ver el vídeo de ${video.hotelName}`}
-              aria-current={centro}
-              aria-hidden={!visible}
-              tabIndex={visible ? 0 : -1}
-              style={{
-                left: `${izquierda}%`,
-                zIndex: capa,
-                opacity: opacidad,
-                filter: `blur(${desenfoque}px)`,
-                transform: `translate(-50%, -50%) scale(${escala}) translateZ(0)`,
-                willChange: 'transform, opacity, filter',
-                backfaceVisibility: 'hidden',
-                pointerEvents: visible ? 'auto' : 'none',
-              }}
-              className={`absolute top-1/2 block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] transition-[transform,opacity,filter,left] duration-500 ease-out ${
-                centro
-                  ? 'shadow-[0_6px_28px_rgba(0,0,0,0.5)] ring-1 ring-white/45'
-                  : 'shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
-              }`}
-            >
-              <img src={video.portada} alt="" className="h-full w-full object-cover" />
-            </button>
-          );
-        })}
+        <AnimatePresence initial={false}>
+          {enRanura.map(({ r, i, video }) => {
+            const centro = r === 0;
+            return (
+              /* Dos cajas a propósito: la de fuera centra con CSS estático
+                 (`left-1/2 -translate-x-1/2`) y la de dentro anima sólo
+                 `x`, `scale`, `opacity` y el desenfoque. Si el centrado
+                 viviera en la animación, Framer reescribiría el `transform`
+                 entero y se perdería. */
+              <motion.div
+                key={video.id}
+                className="absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2"
+                style={{ zIndex: centro ? 20 : 10 }}
+                initial={{ opacity: 0, x: r * sep * 1.45, scale: 0.42, filter: 'blur(7px)' }}
+                animate={{
+                  opacity: centro ? 1 : 0.5,
+                  x: r * sep,
+                  scale: centro ? 1 : 0.62,
+                  /* EL DESENFOQUE DE MOVIMIENTO. Sube al arrancar y baja al
+                     llegar, igual que en las tarjetas verticales: tapa el
+                     salto y hace que el recorrido se lea como inercia. */
+                  filter: centro ? ['blur(4px)', 'blur(0px)'] : ['blur(5px)', 'blur(1.6px)'],
+                }}
+                /* Se va POR EL BORDE, no se apaga en el sitio: Framer guarda
+                   las props del último renderizado, así que este `r` es el
+                   lado por el que estaba saliendo. Entra y sale por el mismo
+                   sitio, y así el recorrido se lee como una cinta. */
+                exit={{ opacity: 0, x: r * sep * 1.45, scale: 0.42, filter: 'blur(7px)' }}
+                transition={{
+                  default: TIRA_MUELLE,
+                  opacity: { duration: 0.38, ease: 'easeOut' },
+                  filter: { duration: 0.5, ease: 'easeOut' },
+                }}
+              >
+                <button
+                  onClick={() => {
+                    if (acabaDeArrastrar.current) return;
+                    onElegir(i);
+                  }}
+                  aria-label={`Ver el vídeo de ${video.hotelName}`}
+                  aria-current={centro}
+                  tabIndex={centro ? 0 : -1}
+                  /* SIN BORDE. La central llevaba `ring-1 ring-white/45` y
+                     Mayurlin pidió quitarlo: "no quiero que tenga ningún
+                     borde, por muy pequeño que sea". La sombra se queda --
+                     eso es profundidad, no un filo. */
+                  className={`block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] ${
+                    centro
+                      ? 'shadow-[0_6px_28px_rgba(0,0,0,0.5)]'
+                      : 'shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
+                  }`}
+                >
+                  <img src={video.portada} alt="" className="h-full w-full object-cover" />
+                </button>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </div>
 
       {/* EL NOMBRE DEL HOTEL, DEBAJO. La miniatura sola no dice de quién es
-          el vídeo que suena de fondo, y era lo único que faltaba para que la
-          tira se entendiera sin tocarla. Misma serif de la casa, en blanco y
-          pequeña: informa sin competir con el vídeo. Cambia con un fundido
-          para que el relevo no dé un tirón. */}
+          el vídeo que suena de fondo. Misma serif de la casa, en blanco y
+          pequeña. Caja de alto fijo para que la tira no salte cuando un
+          nombre ocupa dos líneas. */}
       <div className="flex h-4 items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.span
@@ -438,6 +476,13 @@ export const VideoShowcase: React.FC = () => {
     offset: ['start start', 'end end'],
   });
 
+  /* Un segundo medidor, sólo para la entrada: cuánto ha subido la sección
+     desde que asoma hasta que se clava. Ver DEPLOY_ON. */
+  const { scrollYProgress: entrada } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'start start'],
+  });
+
   const [salidaVisible, setSalidaVisible] = useState(false);
 
   // La tira va sola hasta que alguien la toca.
@@ -450,8 +495,10 @@ export const VideoShowcase: React.FC = () => {
     return () => window.clearInterval(t);
   }, [hayVarios, pasoParado, totalVideos]);
 
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+  useMotionValueEvent(entrada, 'change', (p) => {
     setDeployed((abierto) => (abierto ? p > DEPLOY_OFF : p >= DEPLOY_ON));
+  });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setSalidaVisible((visible) => (visible ? p > SALIDA_OFF : p >= SALIDA_ON));
   });
 
@@ -505,7 +552,7 @@ export const VideoShowcase: React.FC = () => {
         pantalla completa, así que entre el texto y el vídeo había ~300 px de
         negro y la tira caía tan abajo que hacía falta otro scroll para
         encontrarla. En escritorio el vídeo sí llena la pantalla. */}
-    <section className="relative w-full bg-[#1a1918] md:h-[100svh] md:overflow-hidden">
+    <section className="relative w-full bg-[#1a1918] md:h-[100dvh] md:overflow-hidden">
       <div className="relative aspect-video w-full md:absolute md:inset-0 md:aspect-auto">
         <FondoVideo src={videoActivo.src} />
       </div>
@@ -532,7 +579,14 @@ export const VideoShowcase: React.FC = () => {
         velo: así el bloque se lee como continuación del anterior sin cargar un
         segundo reproductor -- que serían dos descargas y dos audios. */}
     <section ref={containerRef} className="relative h-[150vh] w-full bg-[#1a1918] md:h-[200vh]">
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
+      {/* `dvh`, no `svh`. Con `svh` la caja mide siempre lo que la pantalla
+          MÁS PEQUEÑA -- la que tiene la barra del navegador a la vista -- así
+          que en cuanto la barra se escondía, el hueco de más quedaba fuera de
+          este bloque y asomaba el `bg-[#1a1918]` de la sección por debajo:
+          esa banda oscura que aparecía bajo los cuatro vídeos y desaparecía
+          al seguir bajando. `dvh` sigue a la pantalla real. En escritorio los
+          dos valen lo mismo. */}
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
         <img
           src={BG_PLACEHOLDER}
           alt=""

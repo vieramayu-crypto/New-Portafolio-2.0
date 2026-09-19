@@ -309,18 +309,58 @@ respalda al vídeo** (`BG_PLACEHOLDER`), desenfocada 16 px y con el velo negro
 al 45%: se lee como continuación del bloque anterior sin cargar un segundo
 reproductor, que serían dos descargas y dos audios sonando a la vez.
 
-### La tira: una miniatura a cada lado, y ni una más
 
-Con cuatro vídeos, el reparto por distancia dejaba **siempre** una miniatura a
-distancia 2, así que se veían dos de un lado y una del otro — y al pasar de
-vídeo el lado lleno cambiaba de sitio. Ése era el "salto extraño". Ahora las de
-distancia 2 se quedan **donde están**, en su sitio de la fila, pero con
-`opacity: 0`: entran deslizándose desde el borde en vez de aparecer de golpe, y
-la tira se lee infinita. Aparcarlas en la posición de distancia 1 en vez de la
-2 las convertiría en un fundido cruzado, que es otro efecto.
+### La tira: tres ranuras, y por qué el "barrido raro" no era la opacidad
 
-Llevan `aria-hidden`, `tabIndex={-1}` y `pointer-events: none` mientras son
-invisibles, para que no se pueda tabular ni pulsar lo que no se ve.
+Primero se intentó dejando las cuatro miniaturas montadas y poniendo a 0 la
+opacidad de las que estuvieran a distancia 2. **No bastó, y el motivo importa.**
+Con cuatro vídeos, al pasar de uno al siguiente la miniatura que estaba a -1
+pasaba a +2: **viajaba de un extremo al otro cruzando por el medio**, por
+detrás de la central, en los mismos 500 ms. Eso es lo que Mayurlin describía
+como *"pasa dos a un lado y uno al otro... hace una cosa rarísima"*.
+
+Ahora sólo existen **tres nodos** (`RANURAS = [-1, 0, 1]`), montados y
+desmontados con `AnimatePresence`. Al cambiar de vídeo la central se convierte
+en lateral (un salto de ranura), la lateral de ese lado sale por su borde y
+entra una nueva por el otro. **Ninguna cruza el centro nunca.** Verificado
+muestreando la transición a 60, 150, 260, 420 y 700 ms: la que sale se queda
+clavada en su x mientras baja de 0,5 a 0, y la que entra aparece fuera del
+borde.
+
+**Y la posición ya no se anima con `left`.** Animar `left` obliga al navegador
+a recalcular la maquetación en cada fotograma — ésos eran los trompicones. Va
+en `x` (píxeles, `transform`, tarjeta gráfica) con **muelle**, no con una curva
+fija de 500 ms: un muelle tiene aceleración y frenada propias, que es lo que
+ella pedía con "orgánico". Hay dos cajas a propósito: la de fuera centra con
+CSS estático (`left-1/2 -translate-x-1/2`) y la de dentro anima; si el centrado
+viviera en la animación, Framer reescribiría el `transform` entero.
+
+Lleva **desenfoque de movimiento**: sube al arrancar y baja al llegar, igual
+que en las tarjetas verticales.
+
+**Sin borde.** La central llevaba `ring-1 ring-white/45` y Mayurlin pidió
+quitarlo: *"no quiero que tenga ningún borde, por muy pequeño que sea"*. La
+sombra se queda — eso es profundidad, no un filo.
+
+### Los verticales entran al llegar, no un scroll después
+
+`DEPLOY_ON` iba sobre `scrollYProgress` con `offset: ['start start','end end']`,
+o sea 0 **cuando la sección ya estaba clavada arriba**: había que dar un scroll
+de más, ya dentro, para que las tarjetas salieran, y hasta entonces sólo se
+veía la foto borrosa. Ahora hay un **segundo medidor** sólo para la entrada,
+con `offset: ['start end','start start']` — 0 cuando el borde superior asoma
+por abajo, 1 cuando llega arriba del todo — y el umbral está en 0,6: la
+sección ocupa ya el 60% de la pantalla, así que el despliegue termina justo
+cuando el bloque acaba de clavarse. El aviso de salida sigue con el medidor
+de siempre.
+
+### `dvh`, no `svh`, en los bloques pegajosos
+
+En móvil asomaba una banda oscura bajo los cuatro vídeos que desaparecía al
+seguir bajando. `100svh` es la pantalla **más pequeña** — la que tiene la barra
+del navegador a la vista — así que en cuanto la barra se escondía, el hueco de
+más quedaba fuera del bloque pegajoso y asomaba el `bg-[#1a1918]` de la sección
+por debajo. `100dvh` sigue a la pantalla real. En escritorio valen lo mismo.
 
 **Debajo va el nombre del hotel**: serif de la casa, 10-11 px, versalitas,
 blanco al 80% con una sombra corta — el vídeo de fondo puede tener un plano
