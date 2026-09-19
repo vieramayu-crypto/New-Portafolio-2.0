@@ -713,14 +713,48 @@ lectura ahora es **cuerpo**, no velo:
 **La banda de cristal de escritorio SÍ se queda en tinta.** Es el único sitio
 donde ella dijo que se lee mejor así, y ahí vive el CTA de escritorio.
 
-**Lo que esto cuesta, y hay que decirlo cada vez que se toque.** El blanco
-sobre esa grava da **1,88:1** en el párrafo de móvil y **2,10:1** en el de
-escritorio, con 4,5:1 como mínimo legible. La sombra suave sube el contraste
-efectivo de 2,06 a 2,23 — ayuda poco porque es difusa a propósito. Se midió
-también un degradado de esquina al 30%: móvil 2,20:1, escritorio 3,04:1.
-Ninguna palanca que respete su estética llega a AA; la única que lo consigue
-es la tinta, y está descartada por ella. **Está decidido y no hay que volver a
-proponerlo salvo que ella lo pida.**
+**LA LEGIBILIDAD SE RESUELVE CON UNA ELIPSE, NO TOCANDO LA FOTO.** Mayurlin
+aceptó la recomendación con una condición: *"no quiero que edites la foto,
+sino que agregues un degradado al texto... tan sutil que no debe ser
+perceptible a la vista"*, y marcó en negro dónde podía caer (la mitad inferior
+izquierda, desde el titular hasta el CTA). Va en su propia capa encima, así
+que el archivo sigue intacto. Dos capas:
+
+```
+linear-gradient(90deg, rgba(0,0,0,.15), transparent 55%),
+radial-gradient(130% 66% at 16% 108%, rgba(0,0,0,.46), rgba(0,0,0,.28) 40%,
+                rgba(0,0,0,.11) 68%, transparent 90%)      /* móvil     */
+radial-gradient(95% 78% at 6% 112%,  …mismas paradas…)     /* escritorio */
+```
+
+**Lo que la hace invisible es el anclaje, no la opacidad.** La elipse se ancla
+FUERA del encuadre (`at 16% 108%`, por debajo de la esquina) y tarda el 90% de
+su radio en llegar a cero: no tiene borde y se lee como la sombra que el muro
+ya proyecta. Un óvalo centrado sobre el párrafo, aunque fuese más flojo, se
+vería como una mancha en mitad de la grava. Si hay que retocarlo, mover
+opacidad; **no** mover el centro hacia dentro del encuadre.
+
+Medido en el párrafo de móvil (mediana sobre los glifos), con la serie
+completa que se probó:
+
+| | móvil | escritorio |
+|---|---|---|
+| sin nada | 1,88:1 | 2,10:1 |
+| al 34% | 2,59:1 | 3,03:1 |
+| **al 46% (el que va)** | **2,99:1** | **3,56:1** |
+| al 58% | 3,50:1 | 4,25:1 — ya se ve, descartado |
+
+El enlace sube a 4,22:1. Las `text-shadow` bajan a `.26` y `.28` con radio de
+20-22 px: más difusas, porque el degradado ya hace el trabajo. **4,5:1 no se
+alcanza sin que el degradado se note; está hablado con ella y es su decisión.**
+
+**LA FRANJA DE CIFRAS DE MÓVIL MIDE 87 px, NO 115.** *"Está robando mucho
+protagonismo a la foto."* El relleno pasa de `py-7` (28/28) a `pt-[18px]
+pb-[15px]` y la cifra de 30 a 27 px con `mb-1` en vez de `mb-1.5`. Los 18/15
+no son un descuido: el `leading-none` de la cifra deja aire de ascendente
+arriba, así que con relleno igual el bloque se veía bajo. Medido, el margen
+real queda en 18,0 arriba y 17,7 abajo. La banda de escritorio no cambia:
+sigue fija en 76 px y ella no se quejó de esa.
 
 **LA FOTO DE MÓVIL: `w-[123%]` y `object-[50%_65%]`.** Los dos números van
 juntos y cambiar uno obliga a revisar el otro. Bajar la foto un 2% (72 → 65 de

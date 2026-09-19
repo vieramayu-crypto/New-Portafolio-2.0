@@ -99,25 +99,43 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           />
         </picture>
 
-        {/* UN SOLO DEGRADADO, A LA IZQUIERDA, AL 15%.
-            Pedido literal de Mayurlin: "no quiero que se vean diferentes,
-            repeta al 100% todo, solo agregale un degradado ligero a la
-            izquierda donde esta el texto, pero ligero, de un 15% para probar
-            inicialmente".
+        {/* DOS CAPAS, Y NINGUNA TOCA LA FOTO: van encima, en su propio
+            div, así que el archivo de Mayurlin sigue intacto.
 
-            Aqui habia tres capas en movil y dos en escritorio -- lateral,
-            diagonal inferior y un dedo abajo -- que existian para domar fotos
-            sin graduar. Con las suyas sobran: cualquier velo cambia su
-            graduacion, que es justo lo que no quiere.
+            1. La lateral izquierda al 15% que ella aprobó.
+            2. Una elipse enorme anclada FUERA del encuadre, por debajo de la
+               esquina inferior izquierda (`at 16% 108%`), justo donde ella
+               marcó en negro que podía caer. Empieza en 46% y tarda el 90% del
+               radio en llegar a cero, así que no tiene borde: se lee como la
+               sombra que ya proyecta el muro, no como una capa.
 
-            Queda solo este: negro al 15% pegado al borde izquierdo, disuelto
-            al 55% del ancho. Es el mismo en movil y en escritorio porque en
-            los dos el texto vive a la izquierda. */}
+            POR QUÉ ESTA Y NO OTRA. Anclar la elipse en una esquina y dejarla
+            desbordar es lo que la hace invisible: un óvalo oscuro centrado
+            sobre el párrafo se vería como una mancha en mitad de la grava.
+            La caída por la esquina es fotográficamente plausible.
+
+            MEDIDO en el párrafo de móvil, mediana sobre los glifos:
+              sin nada          1,88:1
+              al 34%            2,59:1
+              al 46% (ésta)     2,99:1
+              al 58%            3,50:1  -- ya se ve, descartada
+            En escritorio la misma capa da 3,56:1. El mínimo de la norma son
+            4,5:1 y no se alcanza sin que el degradado se note; está hablado
+            con ella y es su decisión. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 md:hidden"
           style={{
-            background: 'linear-gradient(90deg, rgba(0,0,0,.15), transparent 55%)',
+            background:
+              'linear-gradient(90deg, rgba(0,0,0,.15), transparent 55%), radial-gradient(130% 66% at 16% 108%, rgba(0,0,0,.46), rgba(0,0,0,.28) 40%, rgba(0,0,0,.11) 68%, transparent 90%)',
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 hidden md:block"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(0,0,0,.15), transparent 55%), radial-gradient(95% 78% at 6% 112%, rgba(0,0,0,.46), rgba(0,0,0,.28) 42%, rgba(0,0,0,.11) 70%, transparent 92%)',
           }}
         />
 
@@ -177,7 +195,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_14px_rgba(0,0,0,.38)] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
+              className="m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_22px_rgba(0,0,0,.26)] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
             >
               {hero.subline}
             </motion.p>
@@ -194,7 +212,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.div {...rise(0.34)} animate={animate} className="mt-7 md:hidden">
               <button
                 onClick={onOpenAvailability}
-                className="group relative inline-block -my-3.5 py-3.5 text-[12px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_12px_rgba(0,0,0,.42)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+                className="group relative inline-block -my-3.5 py-3.5 text-[12px] font-sans uppercase tracking-[0.2em] font-semibold text-white [text-shadow:0_1px_20px_rgba(0,0,0,.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
               >
                 {hero.ctaLabel}
                 {/* Se dibuja sola de izquierda a derecha, despacio, y se
@@ -249,7 +267,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
             ("6 anos") y con el reparto original partia en dos lineas. */}
-        <div className="grid grid-cols-3 items-start px-5 py-7 text-[9px] uppercase tracking-[0.14em] md:h-full md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:items-center md:whitespace-nowrap md:px-6 md:py-0 md:tracking-[0.18em]">
+        <div className="grid grid-cols-3 items-start px-5 pb-[15px] pt-[18px] text-[9px] uppercase tracking-[0.14em] md:h-full md:grid-cols-[1.05fr_repeat(3,0.88fr)_0.9fr] md:items-center md:whitespace-nowrap md:px-6 md:py-0 md:tracking-[0.18em]">
           {/* El rotulo y el enlace solo caben en escritorio. */}
           <div className="hidden md:block">{hero.glassLabel}</div>
 
@@ -260,7 +278,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 i === 0 ? 'pl-0' : 'border-l border-[#1a1918]/15 pl-4'
               }`}
             >
-              <b className="mb-1.5 block font-serif text-[30px] font-normal italic leading-none tracking-normal md:mb-0 md:mr-[7px] md:inline md:text-[22px] md:leading-normal">
+              <b className="mb-1 block font-serif text-[27px] font-normal italic leading-none tracking-normal md:mb-0 md:mr-[7px] md:inline md:text-[22px] md:leading-normal">
                 {item.value}
               </b>
               {/* Dos líneas caben a propósito: "CLIENTES RECURRENTES" no
