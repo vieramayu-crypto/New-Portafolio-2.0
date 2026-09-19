@@ -310,6 +310,28 @@ al 45%: se lee como continuación del bloque anterior sin cargar un segundo
 reproductor, que serían dos descargas y dos audios sonando a la vez.
 
 
+### El velo de "Acerca de": plano, y no es decorativo
+
+La foto de pareja llevaba tres capas: `grayscale contrast-110` sobre la imagen,
+un velo plano del 60% y, encima, un degradado vertical que sumaba **34% arriba
+y 30% abajo**. Mayurlin vio ese tercero -- *"se nota en los bordes más oscuro,
+en el centro un poco más claro"* -- y se quitó. Queda el 60% plano y uniforme.
+
+**El 60% se queda y hay que defenderlo si vuelve a salir.** La foto es a
+contraluz, contra el sol: justo donde cae el titular, el cielo es casi blanco.
+Medido sobre los glifos:
+
+| | titular | párrafo |
+|---|---|---|
+| sin ningún velo | **1,12:1** | **1,04:1** |
+| 45% plano | 3,20 | 3,03 |
+| 52% plano | 3,91 | 3,68 |
+| **60% plano (el que va)** | **4,97** | **4,73** |
+| 60% + el degradado (antes) | 6,12 | 5,01 |
+
+El mínimo legible son 4,5:1. Si algún día hay que aclarar más esa sección, el
+camino es **otra foto**, no menos velo.
+
 ### La tira: tres ranuras, y por qué el "barrido raro" no era la opacidad
 
 Primero se intentó dejando las cuatro miniaturas montadas y poniendo a 0 la
@@ -341,6 +363,38 @@ que en las tarjetas verticales.
 **Sin borde.** La central llevaba `ring-1 ring-white/45` y Mayurlin pidió
 quitarlo: *"no quiero que tenga ningún borde, por muy pequeño que sea"*. La
 sombra se queda — eso es profundidad, no un filo.
+
+### TRAMPA: Framer y Tailwind escriben los dos `transform`
+
+Esto rompió la tira entera y se publicó así. Merece la pena leerlo antes de
+animar cualquier cosa que además esté centrada.
+
+Las clases `-translate-x-1/2 -translate-y-1/2` de Tailwind y las props `x` /
+`scale` de Framer acaban las dos en la propiedad `transform`. Framer la escribe
+**en línea**, así que **se lleva por delante el centrado**. Puestas en el mismo
+elemento, las miniaturas dejaron de estar centradas: colgaban del punto central
+hacia abajo y hacia la derecha, se salían de la pista y tapaban el nombre del
+hotel.
+
+La solución es repartirlo en dos cajas, y **la de fuera es la que anima**:
+
+```
+<motion.div className="pointer-events-none absolute inset-0"  ← anima x/scale
+  <div className="absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2">
+    <button className="pointer-events-auto aspect-video h-full">
+```
+
+La capa exterior ocupa la pista entera, así que `scale` sobre ella equivale a
+escalar la miniatura sobre su propio centro (está centrada en ella), y `x` no
+se ve afectado por la escala porque en CSS el desplazamiento se aplica en el
+sistema de coordenadas del padre. `pointer-events-none` en la capa y `auto` en
+el botón, o las capas laterales, que cubren toda la pista, se tragarían los
+clics de la central.
+
+**Y la lección de proceso**: esa ronda se verificó midiendo las posiciones en
+el DOM -- que salían correctas, porque el centro de cada caja sí estaba donde
+tocaba -- pero sin abrir una sola captura. Los números no ven que la miniatura
+se sale de su sitio. **Mirar la captura, siempre, aunque los números cuadren.**
 
 ### Los verticales entran al llegar, no un scroll después
 

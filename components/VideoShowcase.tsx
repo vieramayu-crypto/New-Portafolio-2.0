@@ -266,14 +266,26 @@ const TiraVideos: React.FC<{
           {enRanura.map(({ r, i, video }) => {
             const centro = r === 0;
             return (
-              /* Dos cajas a propósito: la de fuera centra con CSS estático
-                 (`left-1/2 -translate-x-1/2`) y la de dentro anima sólo
-                 `x`, `scale`, `opacity` y el desenfoque. Si el centrado
-                 viviera en la animación, Framer reescribiría el `transform`
-                 entero y se perdería. */
+              /* DOS CAJAS, Y EL REPARTO IMPORTA.
+                 La de fuera ocupa la pista entera (`inset-0`) y es la única
+                 que anima. La de dentro centra la miniatura con CSS estático.
+
+                 Aquí me equivoqué una vez y se rompió la sección entera: puse
+                 el centrado (`-translate-x-1/2 -translate-y-1/2`) Y la
+                 animación en el MISMO elemento. Las clases de Tailwind y
+                 Framer escriben las dos la propiedad `transform`, y Framer,
+                 que la pone en línea, se lleva el centrado por delante: las
+                 miniaturas quedaron colgando del punto central hacia abajo y
+                 hacia la derecha, tapando el nombre del hotel.
+
+                 Con la capa a tamaño de pista no hay conflicto: `scale` sobre
+                 la capa equivale a escalar la miniatura sobre su propio centro
+                 (está centrada en ella), y `x` no se ve afectado por la escala
+                 porque en CSS el desplazamiento se aplica en el sistema de
+                 coordenadas del padre. */
               <motion.div
                 key={video.id}
-                className="absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2"
+                className="pointer-events-none absolute inset-0"
                 style={{ zIndex: centro ? 20 : 10 }}
                 initial={{ opacity: 0, x: r * sep * 1.45, scale: 0.42, filter: 'blur(7px)' }}
                 animate={{
@@ -287,8 +299,7 @@ const TiraVideos: React.FC<{
                 }}
                 /* Se va POR EL BORDE, no se apaga en el sitio: Framer guarda
                    las props del último renderizado, así que este `r` es el
-                   lado por el que estaba saliendo. Entra y sale por el mismo
-                   sitio, y así el recorrido se lee como una cinta. */
+                   lado por el que estaba saliendo. */
                 exit={{ opacity: 0, x: r * sep * 1.45, scale: 0.42, filter: 'blur(7px)' }}
                 transition={{
                   default: TIRA_MUELLE,
@@ -296,6 +307,7 @@ const TiraVideos: React.FC<{
                   filter: { duration: 0.5, ease: 'easeOut' },
                 }}
               >
+                <div className="absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2">
                 <button
                   onClick={() => {
                     if (acabaDeArrastrar.current) return;
@@ -308,7 +320,7 @@ const TiraVideos: React.FC<{
                      Mayurlin pidió quitarlo: "no quiero que tenga ningún
                      borde, por muy pequeño que sea". La sombra se queda --
                      eso es profundidad, no un filo. */
-                  className={`block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] ${
+                  className={`pointer-events-auto block aspect-video h-full overflow-hidden rounded-[6px] bg-[#1a1918] ${
                     centro
                       ? 'shadow-[0_6px_28px_rgba(0,0,0,0.5)]'
                       : 'shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
@@ -316,6 +328,7 @@ const TiraVideos: React.FC<{
                 >
                   <img src={video.portada} alt="" className="h-full w-full object-cover" />
                 </button>
+                </div>
               </motion.div>
             );
           })}
