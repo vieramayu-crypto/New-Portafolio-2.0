@@ -353,6 +353,12 @@ vídeo**. Se resolvió con dos cambios a la vez:
    (`VideoVerticalesInicio`), así el vídeo queda repartido por la página en
    vez de concentrado en un solo punto.
 
+**Dónde está cada galería de vídeo en Inicio** (medido a 1440x900): la de
+horizontales al **14%** de la página, justo después del bloque de valor; la de
+verticales al **80%**, entre "Por qué Mayu Travel" y "Formas de trabajar
+juntos". Mayurlin dio por perdida la segunda más de una vez al buscarla donde
+estaba antes -- si vuelve a preguntar, estas son las señas.
+
 **Reglas que salieron de ahí y no se pueden saltar:**
 
 - **El hueco del vídeo va SIEMPRE por encima de las fotos** (`z-[25]`, por

@@ -124,10 +124,32 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
           </p>
         </motion.div>
 
+      </div>
+
+      {/* UN 15% MÁS GRANDE, pedido de Mayurlin.
+          EL MARCO SALE DEL CONTENEDOR DE LA SECCIÓN, a propósito. El tamaño de
+          la pieza sale de DOS topes -- el alto y el ancho -- y en escritorio el
+          horizontal ya estaba tocando el ancho del `max-w-6xl`: subiendo sólo
+          `--alto` no se movía ni un píxel. Medido: seguía en 1056x594.
+
+          La cabecera y el pie se quedan en `max-w-6xl` porque un titular a
+          1.216 px se lee peor y las flechas del pie se irían a los extremos.
+          Crece sólo la pieza, que es lo que ella quiere ver más grande.
+
+          El ancho lleva su propio tope contra el viewport y no un margen
+          negativo: con `-mx-20`, entre 1.152 y 1.216 px de pantalla el marco
+          se salía y el `overflow-x-clip` de Inicio le habría cortado los
+          bordes en silencio.
+
+          Medido antes/después a 1440x900: horizontal 1056x594 → 1216x684,
+          vertical 365x648 → 420x747. En móvil el horizontal NO crece: ya iba
+          de lado a lado (342 de 390) y lo único que quedaba era comerse el
+          margen. El vertical sí: 294x523 → 337x599. */}
+      <div className="mx-auto w-[min(1216px,calc(100vw-3rem))]">
         <motion.div
           layout
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="flex justify-center [--alto:62svh] md:[--alto:72svh]"
+          className="flex justify-center [--alto:71svh] md:[--alto:83svh]"
         >
           <AnimatePresence mode="wait" custom={sentido}>
             <motion.div
@@ -153,7 +175,9 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
             </motion.div>
           </AnimatePresence>
         </motion.div>
+      </div>
 
+      <div className="mx-auto max-w-6xl px-6 md:px-12">
         {/* EL PIE: quién es, y la navegación. Una sola línea fina, como la de
             los datos de rodaje en la ficha de hotel. */}
         <div className="mt-7 flex items-center justify-between gap-4 md:mt-9">

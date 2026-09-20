@@ -216,7 +216,11 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           composición, no la reencuadra. */}
       {photos[6] && (
         <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[4/3]" widthClass="w-full md:w-[58%]" />
+          {/* 969x1500, la proporción exacta del archivo de la cabaña de yoga.
+              Llegó apaisado y Mayurlin mandó después el encuadre vertical
+              entero, que es el bueno: en un 4:3 se perdían la palmera, el
+              césped y el campo de golf del fondo. */}
+          <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[969/1500]" widthClass="w-full md:w-[46%]" />
         </div>
       )}
       {photos[7] && (

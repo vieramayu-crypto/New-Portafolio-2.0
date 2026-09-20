@@ -252,9 +252,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
   /* SE MONTA AL ACERCARSE, NO AL CARGAR. Con tres hoteles con pieza en la
    *  vitrina serían tres reproductores descargando a la vez nada más abrir
-   *  Inicio, más los de las dos galerías. El observador los enciende 600 px
-   *  antes de entrar en pantalla y no los vuelve a apagar: apagarlos haría
-   *  que el vídeo se reconstruyera cada vez que se pasa por delante. */
+   *  Inicio, más los de las dos galerías. El observador los enciende antes de
+   *  que el bloque entre en pantalla y no los vuelve a apagar: apagarlos haría
+   *  que el vídeo se reconstruyera cada vez que se pasa por delante.
+   *
+   *  LA DISTANCIA ES EL "SEGUNDO Y MEDIO ANTES" QUE PIDIÓ MAYURLIN, TRADUCIDO.
+   *  El navegador no sabe cuándo va a llegar alguien a un punto de la página,
+   *  así que un adelanto en tiempo sólo se puede expresar en distancia: a una
+   *  velocidad de scroll corriente (800-1.000 px/s), 1.200 px más de margen
+   *  son aproximadamente ese segundo y medio. De 600 se pasa a 1.800. */
+  const MARGEN_VIDEO = '1800px 0px';
   const [videoCerca, setVideoCerca] = useState(false);
   useEffect(() => {
     if (huecoVideo === null) return;
@@ -270,7 +277,7 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
           io.disconnect();
         }
       },
-      { rootMargin: '600px 0px' },
+      { rootMargin: MARGEN_VIDEO },
     );
     io.observe(el);
     return () => io.disconnect();
