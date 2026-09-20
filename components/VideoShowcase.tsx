@@ -1,7 +1,8 @@
 import React from 'react';
 import { GaleriaPiezas, PIEZAS_HORIZONTALES, PIEZAS_VERTICALES } from './GaleriaPiezas';
 
-/** El bloque de vídeo de Inicio: DOS galerías, una por formato.
+/** El bloque de vídeo de Inicio: DOS galerías, una por formato, y ya NO van
+ *  seguidas -- ver `VideoVerticalesInicio` al final de este archivo.
  *
  *  HISTORIAL, PORQUE LA SECCIÓN SE REHÍZO SEIS VECES Y CONVIENE NO REPETIRLO.
  *
@@ -19,15 +20,11 @@ import { GaleriaPiezas, PIEZAS_HORIZONTALES, PIEZAS_VERTICALES } from './Galeria
  *     elegante", pero con un fallo que ella detectó: "hay que desplazarse por
  *     todos los vídeos para poder ver una pieza u otra", y el marco pegaba un
  *     salto de alto en cada cambio de formato.
- *  6. Esto: la misma galería, pero UNA POR FORMATO.
+ *  6. Una galería POR FORMATO, las dos seguidas.
+ *  7. Esto: las dos galerías repartidas por la página.
  *
  *  `PiezasVerticales.tsx` (la opción C) sigue en el repositorio sin usar, a
  *  propósito: ella dijo que podríamos volver.
- *
- *  LAS DOS GALERÍAS SON PORTÁTILES. Cada una lleva su cabecera y su fondo, así
- *  que separarlas y mandar una a otro punto de la página es mover una línea en
- *  `HomeMain`. Está pendiente decidir si los verticales se van más abajo para
- *  repartir el vídeo por la web.
  */
 export const VideoShowcase: React.FC = () => (
   <>
@@ -38,12 +35,33 @@ export const VideoShowcase: React.FC = () => (
       titulo="Vídeos para mostrar la experiencia de tu hotel"
       subtitulo="Una pieza que presenta la propiedad entera, para su web y sus campañas."
     />
-
-    <GaleriaPiezas
-      piezas={PIEZAS_VERTICALES}
-      titulo="Piezas verticales para sus redes"
-      subtitulo="Centradas en un espacio, la gastronomía o el servicio."
-      alterno
-    />
   </>
+);
+
+/** LAS PIEZAS VERTICALES VIVEN ABAJO, ENTRE "POR QUÉ MAYU TRAVEL" Y "FORMAS
+ *  DE TRABAJAR JUNTOS".
+ *
+ *  El sitio no es decorativo, lo decide el copy: la banda de "Un rodaje tipo"
+ *  que cierra "Formas de trabajar juntos" promete literalmente **3 piezas de
+ *  vídeo vertical**. Puestas justo antes, la prueba llega antes que la
+ *  promesa en vez de quedar diez pantallas por encima.
+ *
+ *  Y encaja por arriba: "Espacios con alguien dentro" y "Un hotel en marcha"
+ *  son exactamente lo que enseñan estas tres piezas -- el restaurante lleno,
+ *  el spa y la azotea a su hora, con el hotel funcionando.
+ *
+ *  Se baja la vertical y no la horizontal porque la horizontal ya aparece dos
+ *  veces arriba (su galería y, desde esta ronda, el mosaico de cada hotel).
+ *  Este formato no tenía otro sitio en Inicio.
+ *
+ *  Va con `alterno` a propósito: sus dos vecinas son marfil `#fbfaf6`, y sin
+ *  el cambio de fondo las tres se leerían como un solo bloque.
+ */
+export const VideoVerticalesInicio: React.FC = () => (
+  <GaleriaPiezas
+    piezas={PIEZAS_VERTICALES}
+    titulo="Piezas verticales para sus redes"
+    subtitulo="Centradas en un espacio, la gastronomía o el servicio."
+    alterno
+  />
 );

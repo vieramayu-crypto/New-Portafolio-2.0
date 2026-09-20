@@ -98,6 +98,19 @@ export const HOTEL_STORIES: HotelStory[] = [
         isBlackAndWhite: false
       },
       {
+        // LA CABAÑA DE YOGA VIENE DEL MOSAICO DE INICIO. Su hueco de allí lo
+        // ocupa ahora la pieza de vídeo de Abama, y ninguna foto que manda
+        // Mayurlin puede quedarse sin sitio: aquí va en su punto del
+        // recorrido -- después de la piscina y antes del spa, que es el orden
+        // en que se usan.
+        id: 'gt-gal-yoga',
+        url: publicImage('sec1-foto3-h.jpg'),
+        alt: 'Cabaña de bambú con una clase de yoga entre palmeras',
+        caption: 'Yoga bajo la cabaña junto al campo de golf',
+        aspectRatio: 'landscape',
+        isBlackAndWhite: false
+      },
+      {
         id: 'gt-gal-7',
         url: publicImage('sec1-gal7-spa-v.jpg'),
         alt: 'Tratamiento con piedras calientes en el spa del resort',

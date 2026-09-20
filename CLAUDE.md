@@ -338,20 +338,41 @@ queda: si algún día vuelven a convivir, sigue funcionando.
 vertical" y con una galería por formato eso ya lo dice la cabecera; además
 partía en dos líneas y empujaba las flechas.
 
-### Proporción foto/vídeo en Inicio — pendiente de decidir
+### Proporción foto/vídeo en Inicio — resuelta
 
 Mayurlin planteó el problema de fondo: *"vendemos contenido audiovisual para
 hoteles... y le estamos dando más protagonismo en la web a las fotos que a los
-vídeos"*. **Tiene razón, y es cuantificable.** El orden de Inicio es:
+vídeos"*. Tenía razón y era cuantificable: **12 huecos de foto contra 2 de
+vídeo**. Se resolvió con dos cambios a la vez:
 
-`Hero (foto)` → `WhatWeCreate` → `ValueBlock` → **vídeo** → `vitrina de
-hoteles (4 bloques x 3 fotos = 12 fotos)` → `Testimonials` → `BrandsMarquee`
-→ `WhyUs` → `WaysToWork` → `ClosingCta`
+1. **La pieza de cada hotel vive en su propio mosaico de la vitrina**, en el
+   hueco cuya forma es la suya. Ver `HUECO_VIDEO` y `ANCHO_VIDEO` en
+   `HotelSectionBlock.tsx`. La proporción pasa a **9 fotos contra 5 vídeos**
+   sin mover una sola sección de sitio.
+2. **La galería de piezas verticales baja entre `WhyUs` y `WaysToWork`**
+   (`VideoVerticalesInicio`), así el vídeo queda repartido por la página en
+   vez de concentrado en un solo punto.
 
-O sea: **12 huecos de foto contra 1 de vídeo** (ahora 2). Ella propuso meter
-vídeo entre `WhyUs` y `WaysToWork`. Analizado y contestado: colocar mejor no
-arregla una proporción de 12 a 2; las palancas reales son el hero y la vitrina.
-**Decisión pendiente.**
+**Reglas que salieron de ahí y no se pueden saltar:**
+
+- **El hueco del vídeo va SIEMPRE por encima de las fotos** (`z-[25]`, por
+  debajo de la ficha en `z-30`). Era el fallo exacto que vio ella: en Binidufà
+  la foto cuadrada le pasaba por delante y en GPRO lo tapaba entera la de la
+  maleta.
+- **Las clases de ancho son literales, nunca calculadas.** Tailwind genera las
+  clases leyendo el código fuente; una clase compuesta en tiempo de ejecución
+  no existe en el CSS. Medido en la primera versión: el marco del vídeo salía
+  de **0 px de ancho en móvil** y correcto en escritorio, porque sus `md:` sí
+  coincidían por casualidad con clases que ya existían en otra variante.
+- **El vídeo se monta al acercarse, no al cargar** (600 px antes de entrar en
+  pantalla, y no se vuelve a desmontar). Con tres hoteles con pieza serían
+  cinco reproductores descargando a la vez al abrir Inicio. Medido: **2
+  iframes al abrir**, 5 tras recorrer la página.
+- **La foto que sale del mosaico tiene que seguir viéndose en la galería de
+  ese hotel.** En Binidufà y GPRO ya estaba (el mosaico usaba otro recorte del
+  mismo plano); a Abama hubo que meterle la cabaña de yoga en `galleryPhotos`,
+  entre la piscina y el spa, y correr un hueco la cola de su variante de
+  `GALLERY_LAYOUTS` para que cada foto conservara su proporción real.
 
 ## La galería de vídeos son DOS secciones, no una
 
