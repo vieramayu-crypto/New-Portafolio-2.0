@@ -3,13 +3,8 @@ import { AnimatePresence, motion, useScroll, useMotionValueEvent } from 'motion/
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
 import { useSiteContent, publicImage } from '../src/lib/content';
-import { VideoNube } from './VideoNube';
-import { VIDEOS_HORIZONTALES } from '../data/videos';
-
-/** Los cuatro hoteles con los que se ejemplifica el bloque -- los mismos
- *  cuatro que pidió Mayurlin por nombre (Ritz-Carlton, GPRO, InterContinental,
- *  Deltapark). El botón de cada tarjeta ya lleva a su portafolio real. */
-const FEATURED_IDS = ['ritz-carlton-abama', 'gpro-valparaiso', 'intercontinental-lisboa', 'deltapark-vitalresort'];
+import { VideoNube, useEsMovil } from './VideoNube';
+import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
 
 /** Foto real de la web. Ya no es sólo un marcador de posición: se queda
  *  DEBAJO del vídeo como red de seguridad. Si el servicio de vídeo no
@@ -366,6 +361,8 @@ const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
 interface VerticalCardProps {
   hotelId: string;
   hotelName: string;
+  /** La pieza que se reproduce dentro. Sin ella la tarjeta es una caja vacía. */
+  src?: string;
   index: number;
   deployed: boolean;
   pos: CardSpec;
@@ -385,6 +382,7 @@ interface VerticalCardProps {
 const VerticalCard: React.FC<VerticalCardProps> = ({
   hotelId,
   hotelName,
+  src,
   index,
   deployed,
   pos,
@@ -426,24 +424,71 @@ const VerticalCard: React.FC<VerticalCardProps> = ({
       }}
       className={`absolute z-10 aspect-[9/16] ${sizeClassName} ${visibilityClassName}`}
     >
+      {/* EL DERRAME DE PANTALLA. Una mancha cálida y muy difusa por detrás,
+          como la luz que una pantalla encendida echa sobre la pared. No es
+          decoración: es lo que separa la tarjeta del fondo sin ponerle un
+          borde, que Mayurlin no quiere en ninguna parte. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-5 rounded-[26px] bg-[#ffdfb8]/[0.09] blur-2xl md:-inset-7"
+      />
+
       <div className="relative h-full w-full overflow-hidden rounded-[8px] bg-[#1a1918] shadow-2xl md:rounded-[10px]">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-lg sm:h-12 sm:w-12 md:h-14 md:w-14">
-            <PlayIcon className="h-3.5 w-3.5 translate-x-[1px] text-[#1a1918] sm:h-5 sm:w-5" />
-          </span>
-        </div>
+        {/* LA PIEZA, REPRODUCIÉNDOSE. Esto es lo que antes no estaba: la
+            tarjeta era una caja de color con un círculo de play y nada
+            dentro. Medido sobre la web publicada, el contraste entre el
+            interior de la tarjeta y el fondo era de 1,33:1.
+
+            Se monta SÓLO cuando el bloque está desplegado y se desmonta al
+            salir: son cuatro reproductores y, montados siempre, serían cuatro
+            descargas permanentes. Misma regla que el vídeo horizontal. */}
+        {src && deployed && (
+          <div className="absolute inset-0 [&>div]:h-full [&_iframe]:h-full">
+            <VideoNube src={src} proporcion="177.778%" className="h-full" />
+          </div>
+        )}
+
+        {/* El play sólo mientras no hay pieza montada, y de línea fina, no un
+            disco blanco macizo: sobre un vídeo en marcha un disco sólido tapa
+            justo el centro del encuadre. */}
+        {!(src && deployed) && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/70 sm:h-12 sm:w-12 md:h-14 md:w-14">
+              <PlayIcon className="h-3.5 w-3.5 translate-x-[1px] text-white/85 sm:h-5 sm:w-5" />
+            </span>
+          </div>
+        )}
+
+        {/* Un pie oscuro bajo la placa: el vídeo de debajo puede tener un
+            plano claro y la placa de cristal se quedaría sin asiento. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/55 to-transparent"
+        />
+
         {/* La caja del nombre mide siempre lo mismo en las cuatro tarjetas:
             ancho completo del hueco y alto reservado para dos renglones. Antes
             se ajustaba al texto, y como unos nombres caben en una línea y
             otros en dos, las cuatro cajas salían de tamaños distintos y el
-            conjunto se veía descuadrado. */}
+            conjunto se veía descuadrado.
+
+            SIN ENLACE CUANDO LA PIEZA NO ES DE UN HOTEL CON FICHA. Las piezas
+            verticales pueden ser de propiedades que todavía no están en
+            `data/hotels.ts`; mandar a una página que no existe es peor que no
+            mandar a ninguna. */}
         <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 md:p-4">
-          <Link
-            to={`/trabajo/${hotelId}`}
-            className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[9px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[12px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs"
-          >
-            {hotelName}
-          </Link>
+          {hotelId ? (
+            <Link
+              to={`/trabajo/${hotelId}`}
+              className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[9px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[12px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs"
+            >
+              {hotelName}
+            </Link>
+          ) : (
+            <span className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[9px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[12px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs">
+              {hotelName}
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
@@ -468,6 +513,12 @@ const VerticalCard: React.FC<VerticalCardProps> = ({
 export const VideoShowcase: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { hotels: hotelContent } = useSiteContent();
+  /* UN SOLO JUEGO DE TARJETAS, NO DOS. Había dos: el de escritorio con
+     `hidden lg:block` y el de móvil con `lg:hidden`. Mientras eran cajas
+     vacías daba igual; ahora cada una monta un reproductor, y ocultar un
+     iframe con CSS no impide que descargue ni que reproduzca -- se estaban
+     montando OCHO. El corte es el mismo `lg` que usan las posiciones. */
+  const estrecho = useEsMovil('(max-width: 1023px)');
   const [deployed, setDeployed] = useState(false);
   // Cuál de los vídeos horizontales se está reproduciendo de fondo. La tira de
   // abajo lo cambia. Antes esto vivía detrás de un botón que abría una ventana,
@@ -523,10 +574,21 @@ export const VideoShowcase: React.FC = () => {
     window.scrollTo({ top: n.getBoundingClientRect().bottom + window.scrollY, behavior: 'smooth' });
   };
 
-  const stories = FEATURED_IDS.map((id) => {
-    const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
-    const base = HOTEL_STORIES[idx];
-    return { id, hotelName: hotelContent[idx]?.hotelName ?? base.hotelName };
+  /* LAS CUATRO TARJETAS SALEN DE LAS PIEZAS, NO DE UNA LISTA DE HOTELES.
+     Iban atadas a FEATURED_IDS -- cuatro hoteles elegidos a mano -- y la
+     tarjeta enseñaba el nombre del hotel y nada más. Ahora cada tarjeta ES una
+     pieza vertical con su reproductor, así que manda `VIDEOS_VERTICALES`: su
+     etiqueta puede ser de una propiedad que aún no tiene ficha, y entonces la
+     placa no enlaza a ninguna parte. Si la pieza sí trae `hotelId`, se busca
+     su nombre traducido como siempre. */
+  const stories = VIDEOS_VERTICALES.slice(0, 4).map((pieza) => {
+    const idx = pieza.hotelId ? HOTEL_STORIES.findIndex((h) => h.id === pieza.hotelId) : -1;
+    return {
+      id: pieza.id,
+      hotelId: pieza.hotelId ?? '',
+      hotelName: idx >= 0 ? hotelContent[idx]?.hotelName ?? HOTEL_STORIES[idx].hotelName : pieza.etiqueta,
+      src: pieza.src,
+    };
   });
 
   return (
@@ -536,7 +598,17 @@ export const VideoShowcase: React.FC = () => {
           fijo sobre la imagen en movimiento le quita la pantalla justo cuando
           hay algo que ver. Sale fuera, a su propia cabecera sobre el fondo
           oscuro, y el vídeo se queda limpio. */}
-      <section className="w-full bg-[#1a1918] px-6 pb-7 pt-20 text-center md:pb-14 md:pt-28">
+      {/* LA ENTRADA A LA SALA. Toda la web es marfil y este bloque es el
+          único oscuro; sin avisar, el corte se lee como un bache. Un hairline
+          a sangre y un fundido corto del marfil al negro convierten el salto
+          en una puerta. */}
+      <div aria-hidden className="h-px w-full bg-[#1a1918]/12" />
+      <div
+        aria-hidden
+        className="h-16 w-full md:h-24"
+        style={{ background: 'linear-gradient(180deg, #f5f3ed, #1a1918)' }}
+      />
+      <section className="w-full bg-[#1a1918] px-6 pb-7 pt-10 text-center md:pb-14 md:pt-14">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -609,26 +681,15 @@ export const VideoShowcase: React.FC = () => {
 
         {stories.map((story, i) => (
           <VerticalCard
-            key={`desktop-${story.id}`}
-            hotelId={story.id}
+            key={story.id}
+            hotelId={story.hotelId}
             hotelName={story.hotelName}
+            src={story.src}
             index={i}
             deployed={deployed}
-            pos={DESKTOP_POSITIONS[i]}
-            sizeClassName={DESKTOP_CARD_CLASS}
-            visibilityClassName="hidden lg:block"
-          />
-        ))}
-        {stories.map((story, i) => (
-          <VerticalCard
-            key={`mobile-${story.id}`}
-            hotelId={story.id}
-            hotelName={story.hotelName}
-            index={i}
-            deployed={deployed}
-            pos={MOBILE_POSITIONS[i]}
-            sizeClassName={MOBILE_CARD_CLASS}
-            visibilityClassName="lg:hidden"
+            pos={estrecho ? MOBILE_POSITIONS[i] : DESKTOP_POSITIONS[i]}
+            sizeClassName={estrecho ? MOBILE_CARD_CLASS : DESKTOP_CARD_CLASS}
+            visibilityClassName=""
           />
         ))}
 
