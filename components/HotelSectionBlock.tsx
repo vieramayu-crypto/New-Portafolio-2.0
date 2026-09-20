@@ -1,6 +1,7 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { HotelStory } from '../types';
+import { HotelStory, PhotoItem } from '../types';
+import { VideoNube } from './VideoNube';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
 
 interface HotelSectionBlockProps {
@@ -21,6 +22,48 @@ interface HotelSectionBlockProps {
    *  Inicio no la pasa: allí la ficha sigue debajo y el bloque no cambia. */
   ficha?: React.ReactNode;
 }
+
+/** QUÉ HUECO DE CADA VARIANTE TIENE FORMA HORIZONTAL.
+ *
+ *  Cuando un hotel tiene pieza de vídeo, esa pieza ocupa en su mosaico el
+ *  hueco cuya forma es la suya: horizontal en hueco horizontal. Las formas de
+ *  cada variante son fijas (la tabla de CLAUDE.md), así que meter un 16:9 en
+ *  un hueco vertical dejaría el vídeo con dos bandas negras a los lados.
+ *
+ *  `null` = esa variante no tiene ningún hueco horizontal -- la 6 son tres
+ *  verticales -- y entonces ese hotel se queda con sus tres fotos.
+ *
+ *  LA FOTO QUE SALE DEL MOSAICO NO DESAPARECE: tiene que seguir viéndose en
+ *  la galería de ese hotel. En Binidufà y GPRO ya estaba (el mosaico usaba
+ *  otro recorte del mismo plano); a Abama hubo que meterle la cabaña de yoga
+ *  en `galleryPhotos`.
+ *
+ *  Índices por variante: 0 → foto3, 1 → foto1, 2 → foto2, 3 → foto3,
+ *  4 → foto1, 5 → foto3, 6 → ninguno, 7 → foto3. */
+const HUECO_VIDEO: (number | null)[] = [2, 0, 1, 2, 0, 2, null, 2];
+
+/** EL ANCHO DEL HUECO DEL VÍDEO, POR VARIANTE. Seis puntos por encima del de
+ *  la foto a la que sustituye: Mayurlin pidió "subirle ligeramente el tamaño
+ *  para que se pueda apreciar mejor", y además un 16:9 es más bajo que un 4:3
+ *  al mismo ancho, así que sin subirlo el vídeo se vería más pequeño que la
+ *  foto que ocupaba ese hueco.
+ *
+ *  ESTÁ ESCRITO A MANO Y NO CALCULADO, y eso importa: Tailwind genera las
+ *  clases leyendo el código fuente, así que una clase compuesta en tiempo de
+ *  ejecución no existe en el CSS. Primera versión, con el ancho calculado:
+ *  medido en móvil, el marco del vídeo de Abama salía de 0 px de ancho.
+ *
+ *  SI SE CAMBIA EL ANCHO DE UNA FOTO EN SU VARIANTE, HAY QUE CAMBIARLO AQUÍ. */
+const ANCHO_VIDEO: (string | null)[] = [
+  'w-[59%] md:w-[54%]', // 0  Abama     (su foto3 es w-[53%] md:w-[48%])
+  'w-[47%] md:w-[42%]', // 1  Binidufà  (su foto1 es w-[41%] md:w-[36%])
+  'w-[49%] md:w-[44%]', // 2            (su foto2 es w-[43%] md:w-[38%])
+  'w-[54%] md:w-[50%]', // 3            (su foto3 es w-[48%] md:w-[44%])
+  'w-[66%]',            // 4  GPRO      (su foto1 es w-[60%])
+  'w-[59%] md:w-[54%]', // 5            (su foto3 es w-[53%] md:w-[48%])
+  null,                 // 6  sin hueco horizontal
+  'w-[59%] md:w-[54%]', // 7            (su foto3 es w-[53%] md:w-[48%])
+];
 
 /** El hueco vacío de cada mosaico, en % del lienzo: dónde empieza la ficha y
  *  cuánto ancho tiene. Uno por variante (0-7), medido sobre las posiciones de
@@ -198,6 +241,91 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
 
   const hueco = HUECO_FICHA[variant] || HUECO_FICHA[0];
 
+  /* EL VÍDEO DEL HOTEL, DENTRO DEL MOSAICO.
+   *
+   *  Mayurlin: "vendemos contenido audiovisual para hoteles y le estamos
+   *  dando más protagonismo en la web a las fotos que a los vídeos". Medido
+   *  en Inicio eran 12 huecos de foto contra 2 de vídeo. Poniendo la pieza de
+   *  cada hotel en su propio mosaico pasa a 9 contra 5, y sin mover una sola
+   *  sección de sitio. */
+  const huecoVideo = story.galleryEmbed ? HUECO_VIDEO[variant] : null;
+
+  /* SE MONTA AL ACERCARSE, NO AL CARGAR. Con tres hoteles con pieza en la
+   *  vitrina serían tres reproductores descargando a la vez nada más abrir
+   *  Inicio, más los de las dos galerías. El observador los enciende 600 px
+   *  antes de entrar en pantalla y no los vuelve a apagar: apagarlos haría
+   *  que el vídeo se reconstruyera cada vez que se pasa por delante. */
+  const [videoCerca, setVideoCerca] = useState(false);
+  useEffect(() => {
+    if (huecoVideo === null) return;
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setVideoCerca(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entradas) => {
+        if (entradas[0]?.isIntersecting) {
+          setVideoCerca(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '600px 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [huecoVideo]);
+
+  /* LA CLASE DEL HUECO CUANDO LO OCUPA EL VÍDEO. Tres cambios sobre la de la
+   *  foto, y los tres tienen motivo:
+   *
+   *  - FORMA a 16:9. El hueco horizontal de cada variante es 4:3, 16:9 o
+   *    cuadrado; en cualquiera que no sea 16:9 el reproductor pinta bandas
+   *    negras arriba y abajo.
+   *  - ANCHO, seis puntos más (tope 72%). Pedido de ella, "subirle
+   *    ligeramente el tamaño para que se pueda apreciar mejor"; y además un
+   *    16:9 es más bajo que un 4:3 al mismo ancho, así que sin subirlo el
+   *    vídeo se vería más pequeño que la foto a la que sustituye.
+   *  - PLANO por encima de las fotos. Este era el fallo concreto: en Binidufà
+   *    la foto cuadrada le pasaba por delante y en GPRO lo tapaba entera la
+   *    de la maleta. `z-[25]` gana a las fotos (z-10 y z-20) y sigue por
+   *    debajo de la ficha (z-30) de la página de Proyectos. */
+  const claseHueco = (i: number, base: string) => {
+    if (i !== huecoVideo) return base;
+    const limpia = base
+      .replace(/aspect-\[[^\]]+\]|aspect-square/g, '')
+      .replace(/(?:\bmd:)?w-\[[^\]]+\]/g, '')
+      .replace(/\bz-\d+\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    // Las tres piezas que se añaden son literales, no compuestas: así
+    // Tailwind las ve al leer este archivo y las genera.
+    return `${limpia} ${ANCHO_VIDEO[variant] ?? ''} aspect-[16/9] z-[25]`;
+  };
+
+  /* Lo que va dentro del hueco: la foto, o el vídeo si es su hueco.
+   *  La capa de clic es obligatoria -- un iframe de otro dominio se come los
+   *  toques, así que sin ella el vídeo sería lo único del mosaico que no
+   *  abre la galería. */
+  const contenidoHueco = (i: number, photo: PhotoItem) =>
+    i === huecoVideo && story.galleryEmbed ? (
+      <div className="absolute inset-0 bg-[#1a1918]">
+        {videoCerca && <VideoNube src={story.galleryEmbed} />}
+        <span aria-hidden className="absolute inset-0" />
+      </div>
+    ) : (
+      <picture>
+        <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />
+        <img
+          src={photo.url}
+          alt={photo.alt}
+          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+            photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
+          }`}
+        />
+      </picture>
+    );
+
   useLayoutEffect(() => {
     if (!ficha) return;
     const lienzo = lienzoRef.current;
@@ -225,15 +353,15 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
         return x;
       };
 
-      const fotos = Array.prototype.slice.call(
-        lienzo.getElementsByTagName('img'),
-      ) as HTMLElement[];
-      if (!fotos.length) return;
-      // Se mide el marco pulsable, no la `img`: es el que lleva la forma.
-      const fondoFotos = fotos.reduce((m, img) => {
-        const marco = (img.closest('.absolute') as HTMLElement | null) || img;
-        return Math.max(m, fondoDe(marco));
-      }, 0);
+      // Se miden los MARCOS pulsables, no las `img`: son los que llevan la
+      // forma, y además uno de los tres puede ser el vídeo, que no tiene
+      // ninguna `img` dentro. Midiendo por `img` el mosaico de Abama --
+      // cuyo hueco más bajo es justo el del vídeo -- se quedaba corto.
+      const marcos = photoRefs
+        .map((ref) => ref.current)
+        .filter((el): el is HTMLDivElement => Boolean(el));
+      if (!marcos.length) return;
+      const fondoFotos = marcos.reduce((m, marco) => Math.max(m, fondoDe(marco)), 0);
 
       // Nunca más de lo de siempre, y nunca tan poco que el movimiento
       // desaparezca: entre el 30% y el 100% del recorrido de referencia.
@@ -347,18 +475,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -374,18 +493,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute right-[0%] top-[2%] w-[39%] md:w-[34%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute right-[0%] top-[2%] w-[39%] md:w-[34%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -401,18 +511,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute right-[2%] top-[58%] w-[53%] md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute right-[2%] top-[58%] w-[53%] md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -433,18 +534,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[2%] w-[41%] md:w-[36%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[0%] top-[2%] w-[41%] md:w-[36%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -460,18 +552,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute right-[0%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute right-[0%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -487,18 +570,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute left-[4%] top-[48%] w-[51%] md:w-[46%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute left-[4%] top-[48%] w-[51%] md:w-[46%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -519,18 +593,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -546,18 +611,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute right-[0%] top-[2%] w-[43%] md:w-[38%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute right-[0%] top-[2%] w-[43%] md:w-[38%] aspect-[4/3] shadow-lg group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -573,18 +629,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute right-[2%] top-[58%] w-[46%] md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute right-[2%] top-[58%] w-[46%] md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -605,18 +652,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[4%] w-[37%] md:w-[32%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-30"
+                className={claseHueco(0, "absolute left-[0%] top-[4%] w-[37%] md:w-[32%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-30")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -632,18 +670,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute left-[22%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute left-[22%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -659,18 +688,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute right-[0%] top-[52%] w-[48%] md:w-[44%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute right-[0%] top-[52%] w-[48%] md:w-[44%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -691,18 +711,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[20%] top-[4%] w-[60%] aspect-[16/9] shadow-xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[20%] top-[4%] w-[60%] aspect-[16/9] shadow-xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -718,18 +729,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute left-[0%] top-[26%] w-[66%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(1, "absolute left-[0%] top-[26%] w-[66%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -745,18 +747,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute right-[0%] top-[44%] w-[43%] md:w-[38%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(2, "absolute right-[0%] top-[44%] w-[43%] md:w-[38%] aspect-[3/4] shadow-md group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -777,18 +770,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[4%] w-[37%] md:w-[32%] aspect-square shadow-md group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[0%] top-[4%] w-[37%] md:w-[32%] aspect-square shadow-md group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -804,18 +788,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute right-[0%] top-[2%] w-[58%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute right-[0%] top-[2%] w-[58%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -831,18 +806,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute left-[2%] top-[48%] w-[53%] md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute left-[2%] top-[48%] w-[53%] md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -863,18 +829,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[0%] top-[2%] w-[68%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -890,18 +847,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute right-[0%] top-[2%] w-[41%] md:w-[36%] aspect-[3/4] shadow-lg group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute right-[0%] top-[2%] w-[41%] md:w-[36%] aspect-[3/4] shadow-lg group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -917,18 +865,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute left-[30%] top-[56%] w-[46%] md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute left-[30%] top-[56%] w-[46%] md:w-[42%] aspect-[3/4] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>
@@ -949,18 +888,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(0)}
-                className="absolute left-[0%] top-[2%] w-[32%] aspect-square shadow-lg group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(0, "absolute left-[0%] top-[2%] w-[32%] aspect-square shadow-lg group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[0].url)} />
-                  <img
-                    src={photos[0].url}
-                    alt={photos[0].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[0].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(0, photos[0])}
               </motion.div>
             )}
 
@@ -976,18 +906,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(1)}
-                className="absolute right-[0%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10"
+                className={claseHueco(1, "absolute right-[0%] top-[2%] w-[68%] aspect-square shadow-2xl group overflow-hidden bg-stone-200 z-10")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[1].url)} />
-                  <img
-                    src={photos[1].url}
-                    alt={photos[1].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[1].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(1, photos[1])}
               </motion.div>
             )}
 
@@ -1003,18 +924,9 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
                 }
                 transition={{ duration: 0.56, ease: [0.5, 0, 0.25, 1.1] }}
                 onClick={() => handlePhotoClick(2)}
-                className="absolute left-[0%] top-[56%] w-[53%] md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20"
+                className={claseHueco(2, "absolute left-[0%] top-[56%] w-[53%] md:w-[48%] aspect-[4/3] shadow-2xl group overflow-hidden bg-stone-200 z-20")}
               >
-                <picture>
-                  <source media={MEDIA_MOVIL} srcSet={versionMovil(photos[2].url)} />
-                  <img
-                    src={photos[2].url}
-                    alt={photos[2].alt}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                      photos[2].isBlackAndWhite ? 'grayscale contrast-125' : ''
-                    }`}
-                  />
-                </picture>
+                {contenidoHueco(2, photos[2])}
               </motion.div>
             )}
           </div>

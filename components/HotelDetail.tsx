@@ -209,28 +209,33 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           )}
         </div>
       )}
+      {/* LA COLA SE CORRIÓ UN HUECO al entrar la cabaña de yoga, que llega del
+          mosaico de Inicio. Cada foto conserva EXACTAMENTE su forma -- la
+          cabaña es 4:3 (969x725), el spa 4:5 (1333x1666) y el plato 3:2
+          (2000x1333) -- porque aquí una forma equivocada recorta la
+          composición, no la reencuadra. */}
       {photos[6] && (
         <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[4/5]" widthClass="w-full md:w-[68%]" />
+          <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[4/3]" widthClass="w-full md:w-[58%]" />
         </div>
       )}
       {photos[7] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[7]} y={y[7]} aspectClass="aspect-[4/5]" widthClass="w-full md:w-[68%]" />
+        </div>
+      )}
+      {photos[8] && (
         <Bleed>
-          {/* 3:2, la proporción real del archivo. Estaba en 16:9 sobre una
+          {/* 3:2, la proporción real del archivo. Estuvo en 16:9 sobre una
               copia ya recortada a 16:9 del original, así que al plato le
               faltaba aire arriba y abajo -- justo lo que sostiene esa
               composición cenital. */}
-          <GalleryPhoto photo={photos[7]} y={y[7]} aspectClass="aspect-[3/2]" widthClass="w-full" bleed />
+          <GalleryPhoto photo={photos[8]} y={y[8]} aspectClass="aspect-[3/2]" widthClass="w-full" bleed />
         </Bleed>
       )}
-      {photos[8] && (
-        <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[8]} y={y[8]} aspectClass="aspect-square" widthClass="w-full md:w-[50%]" />
-        </div>
-      )}
       {photos[9] && (
-        <div className="w-full">
-          <GalleryPhoto photo={photos[9]} y={y[9]} aspectClass="aspect-[16/9]" widthClass="w-full" />
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[9]} y={y[9]} aspectClass="aspect-square" widthClass="w-full md:w-[50%]" />
         </div>
       )}
     </>

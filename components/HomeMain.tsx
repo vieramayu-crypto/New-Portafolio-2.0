@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { HeroSection } from './HeroSection';
 import { HotelSectionBlock } from './HotelSectionBlock';
 import { ValueBlock } from './ValueBlock';
-import { VideoShowcase } from './VideoShowcase';
+import { VideoShowcase, VideoVerticalesInicio } from './VideoShowcase';
 import { WhatWeCreate } from './WhatWeCreate';
 import { WhyUs } from './WhyUs';
 import { WaysToWork } from './WaysToWork';
@@ -335,6 +335,13 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       {/* El argumento cierra la página: por qué nosotros y cómo se trabaja,
           pegados al último botón, que es donde alguien decide. */}
       <WhyUs onNavigate={onNavigate} />
+
+      {/* Las piezas verticales, entre los dos bloques de texto del cierre. El
+          porqué de este sitio exacto está en `VideoShowcase.tsx`: la banda de
+          "Un rodaje tipo" de aquí abajo promete tres piezas verticales, y
+          ahora se ven justo antes de leerlo. */}
+      <VideoVerticalesInicio />
+
       <WaysToWork />
 
       <ClosingCta onOpenAvailability={onOpenAvailability} onNavigate={onNavigate} />
