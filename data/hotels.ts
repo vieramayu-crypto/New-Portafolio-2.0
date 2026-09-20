@@ -40,11 +40,15 @@ export const HOTEL_STORIES: HotelStory[] = [
         isBlackAndWhite: false
       },
       {
+        // SU HUECO DEL MOSAICO LO OCUPA LA PIEZA DE VÍDEO (ver HUECO_VIDEO en
+        // HotelSectionBlock.tsx), así que esta entrada no se pinta hoy. Se
+        // deja apuntando al archivo bueno para que, si algún día el vídeo se
+        // quita, vuelva la foto y no un hueco roto.
         id: 'gt-3',
-        url: publicImage('sec1-foto3-h.jpg'),
+        url: publicImage('sec1-gal09-yoga-v.jpg'),
         alt: 'Cabaña de bambú con una clase de yoga entre palmeras',
         caption: 'Yoga bajo la cabaña junto al campo de golf',
-        aspectRatio: 'landscape',
+        aspectRatio: 'portrait',
         isBlackAndWhite: false
       }
     ],
@@ -104,10 +108,14 @@ export const HOTEL_STORIES: HotelStory[] = [
         // recorrido -- después de la piscina y antes del spa, que es el orden
         // en que se usan.
         id: 'gt-gal-yoga',
-        url: publicImage('sec1-foto3-h.jpg'),
-        alt: 'Cabaña de bambú con una clase de yoga entre palmeras',
+        // EL ENCUADRE VERTICAL, que es el que mandó Mayurlin. El que había
+        // era un recorte apaisado del mismo plano y se comía la palmera, el
+        // césped y el campo de golf del fondo. Mismo ancho de archivo (969
+        // px) en los dos, así que no se gana nitidez: se gana encuadre.
+        url: publicImage('sec1-gal09-yoga-v.jpg'),
+        alt: 'Cabaña de bambú con una clase de yoga entre palmeras, junto al campo de golf',
         caption: 'Yoga bajo la cabaña junto al campo de golf',
-        aspectRatio: 'landscape',
+        aspectRatio: 'portrait',
         isBlackAndWhite: false
       },
       {
