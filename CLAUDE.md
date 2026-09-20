@@ -288,6 +288,54 @@ de las 3 fotos del teaser de Inicio.
   propia secuencia: fachada → habitación → desayuno → spa → cena. Nunca
   agrupar por casualidad (p. ej. spa justo después de la cena sin razón).
 
+## Los cuatro verticales llevan vídeo dentro (y la sala se anuncia)
+
+**Hasta esta ronda las cuatro tarjetas verticales no tenían nada dentro.** Ni
+foto ni reproductor: una caja de color `#1a1918`, un círculo de play y la placa
+del nombre. Medido sobre la web publicada, el contraste entre el interior de la
+tarjeta y el fondo era de **1,33:1** — cuatro rectángulos oscuros sobre un
+fondo oscuro. Mayurlin lo notó como "un problema de contraste" y tenía razón en
+el síntoma.
+
+Las piezas existían, pero **nunca habían entrado al repositorio**. Ahora viven
+en `VIDEOS_VERTICALES` (`data/videos.ts`) y cada tarjeta monta su reproductor.
+
+### Reglas que hay que respetar al tocar esto
+
+- **UN SOLO JUEGO DE TARJETAS.** Había dos, `hidden lg:block` y `lg:hidden`.
+  Mientras eran cajas vacías daba igual; con reproductor dentro se montaban
+  **ocho** — ocultar un iframe con CSS no impide que descargue ni que
+  reproduzca. Ahora el juego se elige en JavaScript con
+  `useEsMovil('(max-width: 1023px)')`, el mismo corte `lg` que usan las
+  posiciones. El aviso ya estaba escrito en el propio comentario de
+  `useEsMovil` y aun así se repitió el error.
+- **Se montan sólo con `deployed`** y se desmontan al salir. Son cuatro
+  reproductores; montados siempre son cuatro descargas permanentes.
+- **La placa no enlaza si la pieza no es de un hotel con ficha.** Las piezas
+  pueden ser de propiedades que todavía no están en `data/hotels.ts` (Stic
+  Urban no lo está), y mandar a una página que no existe es peor que no mandar
+  a ninguna. La tarjeta lee `hotelId` de la pieza: si lo hay, enlaza; si no,
+  es texto.
+- **Las tarjetas salen de las piezas, no de una lista de hoteles.**
+  `FEATURED_IDS` desapareció.
+
+### El tratamiento "sala de proyección"
+
+De las cuatro direcciones de diseño que se le propusieron, eligió ésta: el
+negro se queda, pero deja de ser un accidente.
+
+- **Derrame de pantalla**: una mancha cálida muy difusa por detrás de cada
+  tarjeta (`-inset-5 bg-[#ffdfb8]/[0.09] blur-2xl`), como la luz que una
+  pantalla encendida echa sobre la pared. Separa la tarjeta del fondo **sin
+  ponerle un borde**, que ella no quiere en ninguna parte.
+- **Play de línea fina**, y sólo mientras no hay pieza montada: sobre un vídeo
+  en marcha un disco blanco macizo tapa justo el centro del encuadre.
+- **Pie oscuro** bajo la placa, porque el vídeo puede tener un plano claro ahí
+  y la placa de cristal se quedaría sin asiento.
+- **La entrada se anuncia**: hairline a sangre + un fundido corto del marfil al
+  negro. Toda la web es marfil y éste es el único bloque oscuro; sin avisar, el
+  corte se lee como un bache.
+
 ## La galería de vídeos son DOS secciones, no una
 
 Durante mucho tiempo el vídeo horizontal y los cuatro verticales compartían un

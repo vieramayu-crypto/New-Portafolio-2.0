@@ -123,8 +123,7 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
  * CSS no impide que cargue ni que reproduzca, y con una copia para cada tamaño
  * el vídeo se descargaba dos veces y sonaban dos reproductores a la vez.
  */
-export function useEsMovil(): boolean {
-  const consulta = '(max-width: 767px)';
+export function useEsMovil(consulta = '(max-width: 767px)'): boolean {
   const [movil, setMovil] = useState(() =>
     typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia(consulta).matches,
   );
@@ -135,6 +134,6 @@ export function useEsMovil(): boolean {
     alCambiar();
     mq.addEventListener('change', alCambiar);
     return () => mq.removeEventListener('change', alCambiar);
-  }, []);
+  }, [consulta]);
   return movil;
 }

@@ -93,3 +93,62 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     portada: publicImage('sec7-gal02-fachada-h.jpg'),
   },
 ];
+
+
+/** Una pieza vertical (9:16), de las que se publican en redes del hotel.
+ *
+ *  `etiqueta` es lo que se lee en la placa de la tarjeta. NO es el nombre de
+ *  un hotel de `data/hotels.ts`: estas piezas pueden ser de propiedades que
+ *  todavía no tienen ficha en la web, así que la placa dice qué es la pieza y
+ *  de dónde, y no enlaza a ningún sitio. En cuanto la propiedad tenga su
+ *  página, se le añade `hotelId` y la placa vuelve a ser un enlace.
+ */
+export interface VideoVertical {
+  id: string;
+  etiqueta: string;
+  src: string;
+  hotelId?: string;
+  /** Marca las que hay que sustituir antes de migrar al dominio propio. */
+  provisional?: boolean;
+}
+
+/** Las cuatro piezas verticales del bloque de vídeos de Inicio.
+ *
+ *  Antes aquí no había nada: las cuatro tarjetas eran cajas de color
+ *  `#1a1918` con un círculo de play y la placa del nombre, sin imagen ni
+ *  reproductor dentro. Medido sobre la web publicada, el contraste entre el
+ *  interior de la tarjeta y el fondo era de 1,33:1 -- cuatro rectángulos
+ *  oscuros sobre un fondo oscuro.
+ *
+ *  OJO CON EL PESO: son cuatro reproductores. Se montan sólo cuando el bloque
+ *  está desplegado y se desmontan al salir (ver `VerticalCard`), que es la
+ *  misma regla del vídeo horizontal. Sin eso son cuatro descargas
+ *  permanentes.
+ */
+export const VIDEOS_VERTICALES: VideoVertical[] = [
+  {
+    id: 'stic-restaurante',
+    etiqueta: 'Stic Urban · Restaurante',
+    src: 'https://livid.com/embed/aBvRZRirC6Bl?autoplay=1&loop=1&muted=1',
+  },
+  {
+    id: 'stic-spa',
+    etiqueta: 'Stic Urban · Spa',
+    src: 'https://livid.com/embed/AFaBlCH42ZBt?autoplay=1&loop=1&muted=1',
+  },
+  {
+    id: 'stic-roof',
+    etiqueta: 'Stic Urban · Azotea',
+    src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
+  },
+  {
+    /* PROVISIONAL: Mayurlin mandó cuatro direcciones pero la tercera y la
+       cuarta son la MISMA (`RU8PsfvjtTor`, la azotea). Ésta repite esa pieza
+       para poder juzgar la composición con las cuatro llenas. Hay que
+       sustituirla por la cuarta de verdad. */
+    id: 'stic-cuarta-provisional',
+    etiqueta: 'Stic Urban · Azotea',
+    src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
+    provisional: true,
+  },
+];
