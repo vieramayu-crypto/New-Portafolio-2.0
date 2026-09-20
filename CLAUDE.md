@@ -291,52 +291,51 @@ de las 3 fotos del teaser de Inicio.
   propia secuencia: fachada → habitación → desayuno → spa → cena. Nunca
   agrupar por casualidad (p. ej. spa justo después de la cena sin razón).
 
-## Las piezas verticales son el cuarto carrusel hermano
+## El bloque de vídeo: cinco rondas, y dónde está cada versión
 
-**Historia corta, porque costó cuatro rondas.** Los verticales fueron, por este
-orden: cuatro tarjetas **vacías** (una caja de color, un círculo de play y
-nada dentro — contraste con el fondo de **1,33:1**), luego esas mismas tarjetas
-con el vídeo real dentro y tratamiento de "sala de proyección", y por fin esto.
-Mayurlin descartó la sala sin matices: *"no me cierra para nada"*.
+**El historial completo, porque la sección se rehízo entera cinco veces.**
 
-De cuatro direcciones de diseño que se le propusieron eligió la C: **que las
-piezas hablen el idioma de la casa**. Viven en `components/PiezasVerticales.tsx`
-con el esqueleto exacto de "Voces de la industria" — cifra de ancla, pieza
-flotada a la izquierda, serif grande envolviéndola, firma abajo, puntos.
+1. Vídeo horizontal a sangre completa en un bloque pegajoso, y encima cuatro
+   tarjetas verticales que se desplegaban al bajar. **Tapaban el vídeo** al
+   primer scroll.
+2. Se separaron en dos secciones. Ahí se vio que las cuatro tarjetas
+   verticales **no tenían nada dentro**: caja de color, círculo de play y la
+   placa del nombre. Contraste con el fondo: **1,33:1**.
+3. Se les metió el vídeo real y un tratamiento de "sala de proyección".
+   Mayurlin: *"no me cierra para nada"*.
+4. **Opción C** — los verticales como cuarto carrusel hermano, en marfil.
+   *"Está mejor que antes pero no me cierra aún."*
+5. **Opción D, la que está publicada** — una sola galería, una pieza a la vez.
 
-### Lo que se fue con ella
+**`components/PiezasVerticales.tsx` (la C) SIGUE EN EL REPOSITORIO sin usar, a
+propósito.** Ella pidió ver la D antes de decidir y dijo que podríamos volver.
+Volver es cambiar el import y una línea en `VideoShowcase.tsx`. No borrarlo.
 
-El bloque pegajoso de 150vh, el despliegue con muelle y desenfoque, las dos
-tablas de posiciones (`DESKTOP_POSITIONS` / `MOBILE_POSITIONS`), el fondo
-desenfocado, el velo, el aviso de salida "Ver los hoteles" y el componente
-`VerticalCard`. `VideoShowcase.tsx` pasó de 605 a 355 líneas. **Está todo en el
-historial** por si algún día se echa de menos.
+### Cómo funciona la D (`components/GaleriaPiezas.tsx`)
 
-### Y el fondo oscuro también
+Horizontales y verticales viven en la **misma lista**, derivada de las dos de
+`data/videos.ts` (añadir un vídeo allí lo mete aquí solo). Se ven de una en
+una, sin nada detrás ni al lado. El argumento comercial va en el propio
+formato: *"rodamos en los dos que tu hotel necesita"*.
 
-Era el único bloque negro de la web y por eso se leía como un bache. La
-cabecera pasa a marfil (`#fbfaf6`) y el carrusel también. Ahora **el vídeo es
-lo más oscuro de la página**, que es donde tiene que ir la mirada. El único
-negro que queda es el propio vídeo horizontal a sangre completa, y ése es
-contenido, no decorado.
+**El tamaño sale de DOS topes, no de uno.** Primero se probó con el marco a
+alto fijo y la pieza a `h-full` con su proporción: en móvil el horizontal
+salía de **960 px de ancho sobre una pantalla de 390** y se desbordaba. Con
+`width: min(100%, calc(var(--alto) * proporción))` el ancho nunca pasa del
+contenedor y el alto nunca pasa de `--alto`. Medido: horizontal 342x192 en
+móvil y 1056x594 en escritorio; vertical 294x523 y 365x648. Los dos formatos
+enteros, sin deformar, sin scroll horizontal.
 
-### UN SOLO REPRODUCTOR MONTADO
+**El marco no tiene alto fijo**: se adapta a la pieza y Framer anima el cambio
+con `layout`. Con alto fijo, un horizontal en móvil dejaba 330 px de nada
+arriba y abajo — justo el hueco vacío que ella ya había rechazado antes.
 
-Esto es lo que más importa al tocar aquí. Medido en la web: **2 iframes en
-total** (el horizontal y la pieza vertical a la vista). Antes eran cinco, y
-durante una ronda **nueve**, porque había un juego de tarjetas para móvil y
-otro para escritorio y **ocultar un iframe con CSS no impide que descargue ni
-que reproduzca**.
+**La regla de piezas no son puntos**: son marcas de distinto ancho según el
+formato, anchas las horizontales y estrechas las verticales, así que el índice
+dice de un vistazo qué hay en la galería y en qué formato sin una palabra.
 
-Las copias de medición de la rejilla van con `medidor`, que las pinta **sin**
-reproductor. Si alguien quita esa condición, vuelven a montarse todos.
-
-### El carrusel se ajusta a las piezas que haya
-
-`VIDEOS_VERTICALES.filter(p => !p.provisional)`. Con tres, tres puntos. La
-constelación obligaba a tener cuatro huecos llenos sí o sí, y eso forzó a
-repetir una pieza; aquí no hace falta, y **repetir una pieza en un portafolio
-se nota mucho más cuando se ve de una en una**.
+**Un solo reproductor montado**, por diseño. Medido: 1 iframe en la página.
+Por el camino llegaron a ser nueve.
 
 ## La galería de vídeos son DOS secciones, no una
 
