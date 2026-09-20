@@ -291,51 +291,67 @@ de las 3 fotos del teaser de Inicio.
   propia secuencia: fachada → habitación → desayuno → spa → cena. Nunca
   agrupar por casualidad (p. ej. spa justo después de la cena sin razón).
 
-## El bloque de vídeo: cinco rondas, y dónde está cada versión
+## El bloque de vídeo: seis rondas, y dónde está cada versión
 
-**El historial completo, porque la sección se rehízo entera cinco veces.**
+**El historial completo, porque la sección se rehízo entera seis veces.**
 
 1. Vídeo horizontal a sangre completa en un bloque pegajoso, y encima cuatro
-   tarjetas verticales que se desplegaban al bajar. **Tapaban el vídeo** al
-   primer scroll.
+   tarjetas verticales que se desplegaban al bajar. **Tapaban el vídeo.**
 2. Se separaron en dos secciones. Ahí se vio que las cuatro tarjetas
    verticales **no tenían nada dentro**: caja de color, círculo de play y la
    placa del nombre. Contraste con el fondo: **1,33:1**.
 3. Se les metió el vídeo real y un tratamiento de "sala de proyección".
-   Mayurlin: *"no me cierra para nada"*.
+   *"No me cierra para nada."*
 4. **Opción C** — los verticales como cuarto carrusel hermano, en marfil.
    *"Está mejor que antes pero no me cierra aún."*
-5. **Opción D, la que está publicada** — una sola galería, una pieza a la vez.
+5. **Opción D** — las siete piezas en UNA galería. *"Me gusta, es más
+   elegante"*, con un fallo que ella detectó: *"hay que desplazarse por todos
+   los vídeos para poder ver una pieza u otra"*, y el marco pegaba un salto de
+   alto en cada cambio de formato.
+6. **Lo que está publicado** — la misma galería, pero **una por formato**.
 
 **`components/PiezasVerticales.tsx` (la C) SIGUE EN EL REPOSITORIO sin usar, a
-propósito.** Ella pidió ver la D antes de decidir y dijo que podríamos volver.
-Volver es cambiar el import y una línea en `VideoShowcase.tsx`. No borrarlo.
+propósito.** No borrarlo.
 
-### Cómo funciona la D (`components/GaleriaPiezas.tsx`)
+### `GaleriaPiezas` es un componente PORTÁTIL, y eso es lo importante
 
-Horizontales y verticales viven en la **misma lista**, derivada de las dos de
-`data/videos.ts` (añadir un vídeo allí lo mete aquí solo). Se ven de una en
-una, sin nada detrás ni al lado. El argumento comercial va en el propio
-formato: *"rodamos en los dos que tu hotel necesita"*.
+Lleva **su propia cabecera y su propio fondo**, y recibe las piezas por
+`piezas`. Mover una galería a otro punto de la página es mover una línea en
+`HomeMain`. Está hecho así porque Mayurlin quiere repartir más vídeo por la web
+y todavía no ha decidido dónde.
+
+`alterno` cambia el marfil (`#f5f3ed` en vez de `#fbfaf6`) para que dos
+galerías seguidas no se lean como un solo bloque interminable.
 
 **El tamaño sale de DOS topes, no de uno.** Primero se probó con el marco a
-alto fijo y la pieza a `h-full` con su proporción: en móvil el horizontal
-salía de **960 px de ancho sobre una pantalla de 390** y se desbordaba. Con
+alto fijo y la pieza a `h-full` con su proporción: en móvil el horizontal salía
+de **960 px de ancho sobre una pantalla de 390** y se desbordaba. Con
 `width: min(100%, calc(var(--alto) * proporción))` el ancho nunca pasa del
 contenedor y el alto nunca pasa de `--alto`. Medido: horizontal 342x192 en
-móvil y 1056x594 en escritorio; vertical 294x523 y 365x648. Los dos formatos
-enteros, sin deformar, sin scroll horizontal.
-
-**El marco no tiene alto fijo**: se adapta a la pieza y Framer anima el cambio
-con `layout`. Con alto fijo, un horizontal en móvil dejaba 330 px de nada
-arriba y abajo — justo el hueco vacío que ella ya había rechazado antes.
+móvil y 1056x594 en escritorio; vertical 294x523 y 365x648.
 
 **La regla de piezas no son puntos**: son marcas de distinto ancho según el
-formato, anchas las horizontales y estrechas las verticales, así que el índice
-dice de un vistazo qué hay en la galería y en qué formato sin una palabra.
+formato. Con una galería por formato ya no mezcla anchos, pero el código se
+queda: si algún día vuelven a convivir, sigue funcionando.
 
-**Un solo reproductor montado**, por diseño. Medido: 1 iframe en la página.
-Por el camino llegaron a ser nueve.
+**El `tipo` de cada pieza NO repite el formato.** Decía "Restaurante · Pieza
+vertical" y con una galería por formato eso ya lo dice la cabecera; además
+partía en dos líneas y empujaba las flechas.
+
+### Proporción foto/vídeo en Inicio — pendiente de decidir
+
+Mayurlin planteó el problema de fondo: *"vendemos contenido audiovisual para
+hoteles... y le estamos dando más protagonismo en la web a las fotos que a los
+vídeos"*. **Tiene razón, y es cuantificable.** El orden de Inicio es:
+
+`Hero (foto)` → `WhatWeCreate` → `ValueBlock` → **vídeo** → `vitrina de
+hoteles (4 bloques x 3 fotos = 12 fotos)` → `Testimonials` → `BrandsMarquee`
+→ `WhyUs` → `WaysToWork` → `ClosingCta`
+
+O sea: **12 huecos de foto contra 1 de vídeo** (ahora 2). Ella propuso meter
+vídeo entre `WhyUs` y `WaysToWork`. Analizado y contestado: colocar mejor no
+arregla una proporción de 12 a 2; las palancas reales son el hero y la vitrina.
+**Decisión pendiente.**
 
 ## La galería de vídeos son DOS secciones, no una
 

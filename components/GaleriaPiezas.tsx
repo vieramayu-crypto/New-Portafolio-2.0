@@ -4,20 +4,19 @@ import { Link } from 'react-router-dom';
 import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
 import { VideoNube } from './VideoNube';
 
-/** OPCIÓN D -- UNA SOLA GALERÍA, UNA PIEZA A LA VEZ.
+/** UNA GALERÍA DE PIEZAS: un marco, una pieza a la vez, y debajo una línea
+ *  fina que dice de quién es. Nada detrás ni al lado.
  *
- *  Las tres versiones anteriores tenían el mismo vicio: la sección enseñaba
- *  varias cosas a la vez y ninguna se veía bien. Cuatro tarjetas
- *  desparramadas, luego un carrusel de miniaturas encima de un vídeo de
- *  fondo, luego dos bloques separados. Mayurlin las fue descartando una a una.
+ *  ES UN COMPONENTE PORTÁTIL, y eso es a propósito. Lleva su propia cabecera
+ *  y su propio fondo, así que se puede mover a cualquier punto de la página
+ *  cambiando una línea en `HomeMain`. Mayurlin quiere repartir más vídeo por
+ *  la web y todavía no ha decidido dónde; esto lo deja preparado.
  *
- *  Aquí no hay nada detrás ni al lado: un marco, una pieza, y debajo una línea
- *  fina que dice de quién es. Horizontales y verticales viven en la MISMA
- *  lista y el marco cambia de forma según el formato -- que es, además, el
- *  argumento comercial: "rodamos en los dos formatos que tu hotel necesita".
- *
- *  Un hotel que está decidiendo si te contrata prefiere ver una pieza bien que
- *  cuatro a medias.
+ *  UNA GALERÍA POR FORMATO, NO UNA PARA TODO. Primero se probó con las siete
+ *  piezas en la misma lista. Es más limpio, pero ella vio el fallo: "hay que
+ *  desplazarse por todos los vídeos para poder ver una pieza u otra", y el
+ *  marco pegaba un salto de alto en cada cambio de formato. Ahora cada
+ *  formato tiene la suya y se le pasan las piezas por `piezas`.
  */
 
 type Formato = 'h' | 'v';
@@ -31,27 +30,27 @@ interface Pieza {
   hotelId?: string;
 }
 
-/** La lista se DERIVA de las dos que ya existen, no se duplica: añadir un
- *  vídeo en `data/videos.ts` lo mete aquí solo. Primero las películas de
- *  marca, después las piezas de redes. */
-const PIEZAS: Pieza[] = [
-  ...VIDEOS_HORIZONTALES.map((v) => ({
-    id: v.id,
-    formato: 'h' as Formato,
-    hotel: v.hotelName,
-    tipo: v.descripcion ?? 'Vídeo de presentación',
-    src: v.src,
-    hotelId: v.hotelId,
-  })),
-  ...VIDEOS_VERTICALES.filter((v) => !v.provisional).map((v) => ({
-    id: v.id,
-    formato: 'v' as Formato,
-    hotel: v.hotel,
-    tipo: v.tipo,
-    src: v.src,
-    hotelId: v.hotelId,
-  })),
-];
+/** Las dos listas, DERIVADAS de `data/videos.ts` y no duplicadas: añadir un
+ *  vídeo allí lo mete aquí solo. */
+export const PIEZAS_HORIZONTALES: Pieza[] = VIDEOS_HORIZONTALES.map((v) => ({
+  id: v.id,
+  formato: 'h' as Formato,
+  hotel: v.hotelName,
+  tipo: v.descripcion ?? 'Vídeo de presentación',
+  src: v.src,
+  hotelId: v.hotelId,
+}));
+
+export const PIEZAS_VERTICALES: Pieza[] = VIDEOS_VERTICALES.filter(
+  (v) => !v.provisional,
+).map((v) => ({
+  id: v.id,
+  formato: 'v' as Formato,
+  hotel: v.hotel,
+  tipo: v.tipo,
+  src: v.src,
+  hotelId: v.hotelId,
+}));
 
 const Flecha: React.FC<{ hacia: 'izq' | 'der' }> = ({ hacia }) => (
   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.3">
@@ -63,7 +62,21 @@ const Flecha: React.FC<{ hacia: 'izq' | 'der' }> = ({ hacia }) => (
   </svg>
 );
 
-export const GaleriaPiezas: React.FC = () => {
+interface GaleriaPiezasProps {
+  piezas: Pieza[];
+  titulo: string;
+  subtitulo: string;
+  /** El marfil de la casa. `alterno` usa el otro, para que dos galerías
+   *  seguidas no se lean como un solo bloque interminable. */
+  alterno?: boolean;
+}
+
+export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
+  piezas: PIEZAS,
+  titulo,
+  subtitulo,
+  alterno,
+}) => {
   const total = PIEZAS.length;
   const [i, setI] = useState(0);
   const [sentido, setSentido] = useState(1);
@@ -90,8 +103,27 @@ export const GaleriaPiezas: React.FC = () => {
   const proporcion = pieza.formato === 'v' ? 9 / 16 : 16 / 9;
 
   return (
-    <section className="relative w-full bg-[#fbfaf6] pb-20 pt-4 md:pb-28 md:pt-6">
+    <section
+      className={`relative w-full pb-20 pt-16 md:pb-28 md:pt-24 ${
+        alterno ? 'bg-[#f5f3ed]' : 'bg-[#fbfaf6]'
+      }`}
+    >
       <div className="mx-auto max-w-6xl px-6 md:px-12">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="mb-10 text-center md:mb-14"
+        >
+          <h2 className="mx-auto max-w-[20ch] font-serif text-3xl leading-[1.15] text-[#1a1918] md:max-w-none md:text-5xl">
+            {titulo}
+          </h2>
+          <p className="mx-auto mt-4 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:mt-5 md:text-sm">
+            {subtitulo}
+          </p>
+        </motion.div>
+
         <motion.div
           layout
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
