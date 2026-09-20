@@ -105,11 +105,14 @@ reporte completo — decir brevemente que ya se confirmó antes y seguir.
 - **Centrado sí, pero no los carruseles.** Cabeceras de sección, bloques de
   texto sueltos, formulario y botones van centrados. Se probó centrar también
   los carruseles y ella lo rechazó de inmediato: **ese diseño no se toca.**
-- **Tres carruseles hermanos**, con el mismo esqueleto y **alineados a la
-  izquierda**: ancla a la izquierda (comilla o cifra) → foto flotada 3/4 →
+- **Cuatro carruseles hermanos**, con el mismo esqueleto y **alineados a la
+  izquierda**: ancla a la izquierda (comilla o cifra) → pieza flotada →
   el texto en serif grande envolviéndola → firma. Son el bloque de valor de
-  Inicio, "El proceso" (Acerca de) y "Voces de la industria" (Contacto).
-  Cambiar uno es cambiar los tres.
+  Inicio, "El proceso" (Acerca de), "Voces de la industria" (Contacto) y
+  **"Piezas verticales"** (el bloque de vídeo de Inicio). Cambiar uno es
+  cambiar los cuatro. El cuarto flota un vídeo 9:16 en vez de una foto 3:4, y
+  por eso va un escalón más ancho: una pieza vertical al ancho de una foto
+  3:4 sale diminuta.
 - El bloque de valor **no lleva bucle**: entra una vez y se pasa de 01 a 02
   pulsando la foto. La cifra es un rótulo diminuto, no un ancla gigante.
 - "El proceso" **recorre los cuatro pasos una sola vez y se detiene** en el
@@ -288,53 +291,52 @@ de las 3 fotos del teaser de Inicio.
   propia secuencia: fachada → habitación → desayuno → spa → cena. Nunca
   agrupar por casualidad (p. ej. spa justo después de la cena sin razón).
 
-## Los cuatro verticales llevan vídeo dentro (y la sala se anuncia)
+## Las piezas verticales son el cuarto carrusel hermano
 
-**Hasta esta ronda las cuatro tarjetas verticales no tenían nada dentro.** Ni
-foto ni reproductor: una caja de color `#1a1918`, un círculo de play y la placa
-del nombre. Medido sobre la web publicada, el contraste entre el interior de la
-tarjeta y el fondo era de **1,33:1** — cuatro rectángulos oscuros sobre un
-fondo oscuro. Mayurlin lo notó como "un problema de contraste" y tenía razón en
-el síntoma.
+**Historia corta, porque costó cuatro rondas.** Los verticales fueron, por este
+orden: cuatro tarjetas **vacías** (una caja de color, un círculo de play y
+nada dentro — contraste con el fondo de **1,33:1**), luego esas mismas tarjetas
+con el vídeo real dentro y tratamiento de "sala de proyección", y por fin esto.
+Mayurlin descartó la sala sin matices: *"no me cierra para nada"*.
 
-Las piezas existían, pero **nunca habían entrado al repositorio**. Ahora viven
-en `VIDEOS_VERTICALES` (`data/videos.ts`) y cada tarjeta monta su reproductor.
+De cuatro direcciones de diseño que se le propusieron eligió la C: **que las
+piezas hablen el idioma de la casa**. Viven en `components/PiezasVerticales.tsx`
+con el esqueleto exacto de "Voces de la industria" — cifra de ancla, pieza
+flotada a la izquierda, serif grande envolviéndola, firma abajo, puntos.
 
-### Reglas que hay que respetar al tocar esto
+### Lo que se fue con ella
 
-- **UN SOLO JUEGO DE TARJETAS.** Había dos, `hidden lg:block` y `lg:hidden`.
-  Mientras eran cajas vacías daba igual; con reproductor dentro se montaban
-  **ocho** — ocultar un iframe con CSS no impide que descargue ni que
-  reproduzca. Ahora el juego se elige en JavaScript con
-  `useEsMovil('(max-width: 1023px)')`, el mismo corte `lg` que usan las
-  posiciones. El aviso ya estaba escrito en el propio comentario de
-  `useEsMovil` y aun así se repitió el error.
-- **Se montan sólo con `deployed`** y se desmontan al salir. Son cuatro
-  reproductores; montados siempre son cuatro descargas permanentes.
-- **La placa no enlaza si la pieza no es de un hotel con ficha.** Las piezas
-  pueden ser de propiedades que todavía no están en `data/hotels.ts` (Stic
-  Urban no lo está), y mandar a una página que no existe es peor que no mandar
-  a ninguna. La tarjeta lee `hotelId` de la pieza: si lo hay, enlaza; si no,
-  es texto.
-- **Las tarjetas salen de las piezas, no de una lista de hoteles.**
-  `FEATURED_IDS` desapareció.
+El bloque pegajoso de 150vh, el despliegue con muelle y desenfoque, las dos
+tablas de posiciones (`DESKTOP_POSITIONS` / `MOBILE_POSITIONS`), el fondo
+desenfocado, el velo, el aviso de salida "Ver los hoteles" y el componente
+`VerticalCard`. `VideoShowcase.tsx` pasó de 605 a 355 líneas. **Está todo en el
+historial** por si algún día se echa de menos.
 
-### El tratamiento "sala de proyección"
+### Y el fondo oscuro también
 
-De las cuatro direcciones de diseño que se le propusieron, eligió ésta: el
-negro se queda, pero deja de ser un accidente.
+Era el único bloque negro de la web y por eso se leía como un bache. La
+cabecera pasa a marfil (`#fbfaf6`) y el carrusel también. Ahora **el vídeo es
+lo más oscuro de la página**, que es donde tiene que ir la mirada. El único
+negro que queda es el propio vídeo horizontal a sangre completa, y ése es
+contenido, no decorado.
 
-- **Derrame de pantalla**: una mancha cálida muy difusa por detrás de cada
-  tarjeta (`-inset-5 bg-[#ffdfb8]/[0.09] blur-2xl`), como la luz que una
-  pantalla encendida echa sobre la pared. Separa la tarjeta del fondo **sin
-  ponerle un borde**, que ella no quiere en ninguna parte.
-- **Play de línea fina**, y sólo mientras no hay pieza montada: sobre un vídeo
-  en marcha un disco blanco macizo tapa justo el centro del encuadre.
-- **Pie oscuro** bajo la placa, porque el vídeo puede tener un plano claro ahí
-  y la placa de cristal se quedaría sin asiento.
-- **La entrada se anuncia**: hairline a sangre + un fundido corto del marfil al
-  negro. Toda la web es marfil y éste es el único bloque oscuro; sin avisar, el
-  corte se lee como un bache.
+### UN SOLO REPRODUCTOR MONTADO
+
+Esto es lo que más importa al tocar aquí. Medido en la web: **2 iframes en
+total** (el horizontal y la pieza vertical a la vista). Antes eran cinco, y
+durante una ronda **nueve**, porque había un juego de tarjetas para móvil y
+otro para escritorio y **ocultar un iframe con CSS no impide que descargue ni
+que reproduzca**.
+
+Las copias de medición de la rejilla van con `medidor`, que las pinta **sin**
+reproductor. Si alguien quita esa condición, vuelven a montarse todos.
+
+### El carrusel se ajusta a las piezas que haya
+
+`VIDEOS_VERTICALES.filter(p => !p.provisional)`. Con tres, tres puntos. La
+constelación obligaba a tener cuatro huecos llenos sí o sí, y eso forzó a
+repetir una pieza; aquí no hace falta, y **repetir una pieza en un portafolio
+se nota mucho más cuando se ve de una en una**.
 
 ## La galería de vídeos son DOS secciones, no una
 

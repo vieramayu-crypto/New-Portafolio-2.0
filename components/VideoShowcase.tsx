@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useScroll, useMotionValueEvent } from 'motion/react';
-import { Link } from 'react-router-dom';
-import { HOTEL_STORIES } from '../data/hotels';
-import { useSiteContent, publicImage } from '../src/lib/content';
-import { VideoNube, useEsMovil } from './VideoNube';
-import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
+import { AnimatePresence, motion } from 'motion/react';
+import { publicImage } from '../src/lib/content';
+import { VideoNube } from './VideoNube';
+import { PiezasVerticales } from './PiezasVerticales';
+import { VIDEOS_HORIZONTALES } from '../data/videos';
 
 /** Foto real de la web. Ya no es sólo un marcador de posición: se queda
  *  DEBAJO del vídeo como red de seguridad. Si el servicio de vídeo no
@@ -40,97 +39,6 @@ const FONDO: { tipo: 'incrustado' | 'archivo'; src: string; enVivo: boolean } | 
 
 const MOSTRAR_VIDEO = !!FONDO && FONDO.enVivo;
 
-interface CardSpec {
-  left: number; // % del viewport
-  top: number; // % del viewport
-}
-
-/** Posiciones calcadas de los recuadros que Mayurlin dibujó sobre la web ya
- *  publicada, medidas una a una y luego repartidas con márgenes simétricos.
- *
- *  Escritorio: las cuatro en FILA, no en cuadrícula -- repartidas de
- *  izquierda a derecha y cada una a distinta altura (zigzag), que es lo que
- *  decía el boceto original ("uno más abajo de otro", "de forma simétrica").
- *  Margen lateral idéntico a izquierda y derecha, y la misma separación
- *  entre tarjeta y tarjeta.
- *
- *  Móvil: dos columnas, la izquierda siempre más alta que la derecha.
- *
- *  El tamaño se define por ALTO (svh), no por ancho: con `aspect-[9/16]` el
- *  ancho sale solo, y así el alto de la tarjeta ocupa siempre la misma
- *  fracción de pantalla -- que es lo que decide si algo se sale por arriba o
- *  por abajo. Con el ancho en `vw` una pantalla ancha hacía la tarjeta
- *  altísima y se salía. */
-const DESKTOP_POSITIONS: CardSpec[] = [
-  { left: 15, top: 60 }, // 1ª, abajo
-  { left: 38.33, top: 42 }, // 2ª, arriba
-  { left: 61.67, top: 56 }, // 3ª, abajo (algo más alta que la 1ª)
-  { left: 85, top: 40 }, // 4ª, la más alta
-];
-/** 56svh de alto -> 31.5svh de ancho. Deja ~3% de margen lateral a cada lado
- *  y ~3% entre tarjetas en 1440x900, y sigue entrando en 1024x768. */
-const DESKTOP_CARD_CLASS = 'h-[56svh] w-auto';
-
-const MOBILE_POSITIONS: CardSpec[] = [
-  /* Las cuatro iban en dos columnas perfectas (26 / 74 repetido) y a la misma
-     distancia, y eso se leía como una cuadrícula, no como una escena. Ahora
-     cada columna se desplaza un poco entre su tarjeta de arriba y la de
-     abajo, así que ningún borde se alinea con el de enfrente.
-     El desorden es SÓLO lateral y en pasos pequeños. Con un escalonado mayor
-     las de abajo subían tanto que tapaban la placa del nombre de las de
-     arriba -- y el nombre es lo único que informa en cada tarjeta. Las
-     alturas dejan ~9px de aire entre la fila de arriba y la de abajo (antes
-     se tocaban a hueso, que tampoco era la idea) y hacen que la última acabe
-     antes del aviso de salida, que empieza a 776px sobre una pantalla de
-     844. */
-  { left: 26, top: 28 }, // arriba-izquierda (la más alta)
-  { left: 74, top: 32 }, // arriba-derecha, un escalón por debajo
-  { left: 28, top: 66 }, // abajo-izquierda, corrida a la derecha respecto a la de arriba
-  { left: 73, top: 70 }, // abajo-derecha, corrida a la izquierda respecto a la de arriba
-];
-/** 37svh de alto -> 20.8svh de ancho. Un 15% más grande que las 32svh
- *  anteriores, que es lo máximo que permite la pantalla: a 390px el ancho
- *  de la tarjeta sale a ~176px y quedan ~13px de margen a cada lado y ~11px
- *  entre columnas. Subir más se come el margen antes que el alto. */
-const MOBILE_CARD_CLASS = 'h-[37svh] w-auto';
-
-/** Umbrales de despliegue, con histéresis: una vez abiertas hace falta subir
- *  bastante más para volver a cerrarlas, así una rueda de ratón que rebota en
- *  el límite no las hace parpadear.
- *
- *  SE MIDEN SOBRE LA ENTRADA DE LA SECCIÓN, NO SOBRE SU RECORRIDO INTERNO.
- *  Iban sobre `['start start','end end']`, o sea 0 cuando la sección ya estaba
- *  clavada arriba: había que dar un scroll de más, ya dentro, para que las
- *  tarjetas salieran -- y hasta entonces sólo se veía la foto borrosa. Ahora
- *  van sobre `['start end','start start']`: 0 cuando el borde superior de la
- *  sección asoma por abajo y 1 cuando llega arriba del todo. A 0,6 la sección
- *  ocupa ya el 60% de la pantalla, así que el despliegue termina justo cuando
- *  el bloque acaba de clavarse. */
-const DEPLOY_ON = 0.6;
-const DEPLOY_OFF = 0.45;
-
-/** El aviso de que hay más abajo. No sale desde el primer fotograma -- ahí se
- *  leería como parte del decorado y se pasaría por alto -- pero sí en cuanto
- *  las cuatro tarjetas terminan de desplegarse (el despliegue arranca en
- *  0.20). Antes esperaba al 62 % y obligaba a un segundo scroll para
- *  descubrirlo: quien se paraba a mirar las tarjetas no lo veía nunca. */
-const SALIDA_ON = 0.26;
-const SALIDA_OFF = 0.18;
-
-/** Muelle blando a propósito: la animación ya no va pegada al dedo, se
- *  dispara sola, así que puede permitirse inercia. Con un `ease` lineal se
- *  veía robótica -- que es justo lo que pidió corregir Mayurlin. */
-const CARD_SPRING = { type: 'spring' as const, stiffness: 110, damping: 19, mass: 1 };
-
-/** El fondo a sangre completa: foto de seguridad abajo y, encima, el vídeo.
- *
- *  Un <iframe> no admite `object-fit: cover`, así que se recorta a mano con
- *  el truco de sobredimensionar: 177.78svh de ancho es exactamente 16:9 sobre
- *  la altura de la pantalla, y los `min-` toman el relevo cuando la pantalla
- *  es más ancha que alta. Así el vídeo llena siempre, sin bandas.
- *
- *  `activo` llega de fuera: sólo se monta cuando la sección está en pantalla.
- */
 /** Cada cuánto pasa sola la tira de vídeos. 15 s, no 5: cambiar el vídeo de
  *  fondo significa recargar el reproductor, así que tiene que dar tiempo a
  *  verlo. Y en cuanto Mayurlin toca uno, se para y manda ella -- misma regla
@@ -352,178 +260,19 @@ const TiraVideos: React.FC<{
   );
 };
 
-const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-    <path d="M8 5v14l11-7z" />
-  </svg>
-);
-
-interface VerticalCardProps {
-  hotelId: string;
-  hotelName: string;
-  /** La pieza que se reproduce dentro. Sin ella la tarjeta es una caja vacía. */
-  src?: string;
-  index: number;
-  deployed: boolean;
-  pos: CardSpec;
-  sizeClassName: string;
-  visibilityClassName: string;
-}
-
-/** Las cuatro tarjetas arrancan superpuestas en el centro -- con la misma
- *  posición y escala, así que se leen como una sola -- y al cruzar el umbral
- *  salen disparadas a su sitio, cada una con un retardo distinto. Nunca se
- *  desmontan: volver a subir invierte exactamente el mismo movimiento.
+/** El bloque de vídeo de Inicio: cabecera, el vídeo horizontal con su tira, y
+ *  debajo las piezas verticales.
  *
- *  El desenfoque que las acompaña es el "motion blur": sube al arrancar,
- *  baja al llegar. No es un desenfoque direccional real (CSS no lo tiene sin
- *  filtros SVG), pero cumple la misma función -- tapa el salto y hace que el
- *  movimiento se lea como inercia y no como un salto de coordenadas. */
-const VerticalCard: React.FC<VerticalCardProps> = ({
-  hotelId,
-  hotelName,
-  src,
-  index,
-  deployed,
-  pos,
-  sizeClassName,
-  visibilityClassName,
-}) => {
-  const delay = index * 0.08;
-
-  return (
-    <motion.div
-      // `initial={false}`: al montar debe estar ya recogida, sin reproducir
-      // la animación de cierre a espaldas del visitante.
-      initial={false}
-      animate={
-        deployed
-          ? {
-              left: `${pos.left}%`,
-              top: `${pos.top}%`,
-              scale: 1,
-              opacity: 1,
-              x: '-50%',
-              y: '-50%',
-              filter: ['blur(14px)', 'blur(7px)', 'blur(0px)'],
-            }
-          : {
-              left: '50%',
-              top: '50%',
-              scale: 0.86,
-              opacity: 0,
-              x: '-50%',
-              y: '-50%',
-              filter: ['blur(0px)', 'blur(7px)', 'blur(12px)'],
-            }
-      }
-      transition={{
-        default: { ...CARD_SPRING, delay },
-        opacity: { duration: 0.5, ease: 'easeOut', delay },
-        filter: { duration: 0.85, times: [0, 0.35, 1], ease: 'easeOut', delay },
-      }}
-      className={`absolute z-10 aspect-[9/16] ${sizeClassName} ${visibilityClassName}`}
-    >
-      {/* EL DERRAME DE PANTALLA. Una mancha cálida y muy difusa por detrás,
-          como la luz que una pantalla encendida echa sobre la pared. No es
-          decoración: es lo que separa la tarjeta del fondo sin ponerle un
-          borde, que Mayurlin no quiere en ninguna parte. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -inset-5 rounded-[26px] bg-[#ffdfb8]/[0.09] blur-2xl md:-inset-7"
-      />
-
-      <div className="relative h-full w-full overflow-hidden rounded-[8px] bg-[#1a1918] shadow-2xl md:rounded-[10px]">
-        {/* LA PIEZA, REPRODUCIÉNDOSE. Esto es lo que antes no estaba: la
-            tarjeta era una caja de color con un círculo de play y nada
-            dentro. Medido sobre la web publicada, el contraste entre el
-            interior de la tarjeta y el fondo era de 1,33:1.
-
-            Se monta SÓLO cuando el bloque está desplegado y se desmonta al
-            salir: son cuatro reproductores y, montados siempre, serían cuatro
-            descargas permanentes. Misma regla que el vídeo horizontal. */}
-        {src && deployed && (
-          <div className="absolute inset-0 [&>div]:h-full [&_iframe]:h-full">
-            <VideoNube src={src} proporcion="177.778%" className="h-full" />
-          </div>
-        )}
-
-        {/* El play sólo mientras no hay pieza montada, y de línea fina, no un
-            disco blanco macizo: sobre un vídeo en marcha un disco sólido tapa
-            justo el centro del encuadre. */}
-        {!(src && deployed) && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/70 sm:h-12 sm:w-12 md:h-14 md:w-14">
-              <PlayIcon className="h-3.5 w-3.5 translate-x-[1px] text-white/85 sm:h-5 sm:w-5" />
-            </span>
-          </div>
-        )}
-
-        {/* Un pie oscuro bajo la placa: el vídeo de debajo puede tener un
-            plano claro y la placa de cristal se quedaría sin asiento. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/55 to-transparent"
-        />
-
-        {/* La caja del nombre mide siempre lo mismo en las cuatro tarjetas:
-            ancho completo del hueco y alto reservado para dos renglones. Antes
-            se ajustaba al texto, y como unos nombres caben en una línea y
-            otros en dos, las cuatro cajas salían de tamaños distintos y el
-            conjunto se veía descuadrado.
-
-            SIN ENLACE CUANDO LA PIEZA NO ES DE UN HOTEL CON FICHA. Las piezas
-            verticales pueden ser de propiedades que todavía no están en
-            `data/hotels.ts`; mandar a una página que no existe es peor que no
-            mandar a ninguna. */}
-        <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 md:p-4">
-          {hotelId ? (
-            <Link
-              to={`/trabajo/${hotelId}`}
-              className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[9px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[12px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs"
-            >
-              {hotelName}
-            </Link>
-          ) : (
-            <span className="mt-glass mt-glass-light relative flex min-h-[34px] w-full items-center justify-center overflow-hidden rounded-md px-2 py-1.5 text-center text-[9px] font-serif font-medium leading-tight tracking-[0.1em] text-[#1a1918] sm:min-h-[46px] sm:px-3 sm:py-2 sm:text-[12px] sm:tracking-[0.15em] md:min-h-[50px] md:text-xs">
-              {hotelName}
-            </span>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-/** Sección "El hotel en movimiento" (pág. 9 de la auditoría). Un vídeo
- *  horizontal a pantalla completa (sin margen, 16:9) que se reproduce solo al
- *  llegar; al seguir bajando, se difumina como el cristal de los modales y
- *  encima se reparten cuatro vídeos verticales.
+ *  YA NO HAY CONSTELACIÓN. Durante muchas rondas los cuatro verticales eran
+ *  tarjetas desparramadas sobre una foto desenfocada, en un bloque pegajoso y
+ *  oscuro que se desplegaba con el scroll. Mayurlin lo descartó entero -- "no
+ *  me cierra para nada" -- y eligió que las piezas usaran el esqueleto de los
+ *  carruseles que ya funcionan. Viven en `PiezasVerticales`.
  *
- *  El scroll ya NO dibuja la animación fotograma a fotograma: solo la
- *  enciende y la apaga. Cruzar el umbral la dispara entera y ella sola
- *  (muelle + desenfoque de movimiento); volver a subir la invierte igual.
- *  Pedido explícito de Mayurlin -- ir pegada al dedo la hacía ver robótica y
- *  dejaba las tarjetas congeladas a medio camino.
- *
- *  Móvil y escritorio usan cada uno su propio set de posiciones/tamaño
- *  (DESKTOP_POSITIONS / MOBILE_POSITIONS, alternados por CSS, no por JS) en
- *  vez de un solo % compartido: compartirlo dejaba tarjetas cortadas por el
- *  borde en un formato al ajustar el otro. */
+ *  Con eso se fueron el bloque pegajoso, el despliegue con muelle, el fondo
+ *  desenfocado, el velo, el aviso de salida y los dos juegos de posiciones.
+ *  Si alguien echa de menos alguna de esas piezas, está en el historial. */
 export const VideoShowcase: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { hotels: hotelContent } = useSiteContent();
-  /* UN SOLO JUEGO DE TARJETAS, NO DOS. Había dos: el de escritorio con
-     `hidden lg:block` y el de móvil con `lg:hidden`. Mientras eran cajas
-     vacías daba igual; ahora cada una monta un reproductor, y ocultar un
-     iframe con CSS no impide que descargue ni que reproduzca -- se estaban
-     montando OCHO. El corte es el mismo `lg` que usan las posiciones. */
-  const estrecho = useEsMovil('(max-width: 1023px)');
-  const [deployed, setDeployed] = useState(false);
-  // Cuál de los vídeos horizontales se está reproduciendo de fondo. La tira de
-  // abajo lo cambia. Antes esto vivía detrás de un botón que abría una ventana,
-  // y Mayurlin lo dijo claro: eso entorpece el flujo. Ahora los cuatro están
-  // siempre a la vista y cambiar es desplazar o tocar.
   const [activo, setActivo] = useState(0);
   const [pasoParado, setPasoParado] = useState(false);
   const totalVideos = VIDEOS_HORIZONTALES.length;
@@ -535,62 +284,6 @@ export const VideoShowcase: React.FC = () => {
     setActivo(((i % totalVideos) + totalVideos) % totalVideos);
   };
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  /* Un segundo medidor, sólo para la entrada: cuánto ha subido la sección
-     desde que asoma hasta que se clava. Ver DEPLOY_ON. */
-  const { scrollYProgress: entrada } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'start start'],
-  });
-
-  const [salidaVisible, setSalidaVisible] = useState(false);
-
-  // La tira va sola hasta que alguien la toca.
-  useEffect(() => {
-    if (!hayVarios || pasoParado) return;
-    const t = window.setInterval(
-      () => setActivo((i) => (i + 1) % totalVideos),
-      PASO_AUTOMATICO_MS,
-    );
-    return () => window.clearInterval(t);
-  }, [hayVarios, pasoParado, totalVideos]);
-
-  useMotionValueEvent(entrada, 'change', (p) => {
-    setDeployed((abierto) => (abierto ? p > DEPLOY_OFF : p >= DEPLOY_ON));
-  });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    setSalidaVisible((visible) => (visible ? p > SALIDA_OFF : p >= SALIDA_ON));
-  });
-
-  /* Salta al final de esta sección, no a un id concreto: así el bloque no
-     tiene que saber qué viene detrás y sigue funcionando si se reordena. */
-  const irAbajo = () => {
-    const n = containerRef.current;
-    if (!n) return;
-    window.scrollTo({ top: n.getBoundingClientRect().bottom + window.scrollY, behavior: 'smooth' });
-  };
-
-  /* LAS CUATRO TARJETAS SALEN DE LAS PIEZAS, NO DE UNA LISTA DE HOTELES.
-     Iban atadas a FEATURED_IDS -- cuatro hoteles elegidos a mano -- y la
-     tarjeta enseñaba el nombre del hotel y nada más. Ahora cada tarjeta ES una
-     pieza vertical con su reproductor, así que manda `VIDEOS_VERTICALES`: su
-     etiqueta puede ser de una propiedad que aún no tiene ficha, y entonces la
-     placa no enlaza a ninguna parte. Si la pieza sí trae `hotelId`, se busca
-     su nombre traducido como siempre. */
-  const stories = VIDEOS_VERTICALES.slice(0, 4).map((pieza) => {
-    const idx = pieza.hotelId ? HOTEL_STORIES.findIndex((h) => h.id === pieza.hotelId) : -1;
-    return {
-      id: pieza.id,
-      hotelId: pieza.hotelId ?? '',
-      hotelName: idx >= 0 ? hotelContent[idx]?.hotelName ?? HOTEL_STORIES[idx].hotelName : pieza.etiqueta,
-      src: pieza.src,
-    };
-  });
-
   return (
     <>
       {/* El titular vivía ENCIMA del vídeo. Con una foto fija se leía bien,
@@ -598,27 +291,21 @@ export const VideoShowcase: React.FC = () => {
           fijo sobre la imagen en movimiento le quita la pantalla justo cuando
           hay algo que ver. Sale fuera, a su propia cabecera sobre el fondo
           oscuro, y el vídeo se queda limpio. */}
-      {/* LA ENTRADA A LA SALA. Toda la web es marfil y este bloque es el
-          único oscuro; sin avisar, el corte se lee como un bache. Un hairline
-          a sangre y un fundido corto del marfil al negro convierten el salto
-          en una puerta. */}
+      {/* LA CABECERA, EN MARFIL. Era el único bloque oscuro de la web y por
+          eso se leía como un bache. Ahora el vídeo que viene debajo es lo más
+          oscuro de la página, que es donde tiene que ir la mirada. */}
       <div aria-hidden className="h-px w-full bg-[#1a1918]/12" />
-      <div
-        aria-hidden
-        className="h-16 w-full md:h-24"
-        style={{ background: 'linear-gradient(180deg, #f5f3ed, #1a1918)' }}
-      />
-      <section className="w-full bg-[#1a1918] px-6 pb-7 pt-10 text-center md:pb-14 md:pt-14">
+      <section className="w-full bg-[#fbfaf6] px-6 pb-9 pt-20 text-center md:pb-12 md:pt-28">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
-          <h2 className="mx-auto max-w-[20ch] font-serif text-3xl leading-[1.15] text-white md:max-w-none md:text-5xl">
+          <h2 className="mx-auto max-w-[20ch] font-serif text-3xl leading-[1.15] text-[#1a1918] md:max-w-none md:text-5xl">
             Vídeos para mostrar la experiencia de tu hotel
           </h2>
-          <p className="mx-auto mt-4 max-w-[46ch] text-[14px] leading-[1.7] text-white/70 md:mt-5 md:text-sm">
+          <p className="mx-auto mt-4 max-w-[46ch] text-[14px] leading-[1.7] text-[#5a5854] md:mt-5 md:text-sm">
             Desde una presentación de la propiedad hasta reels centrados en sus espacios,
             gastronomía o servicio.
           </p>
@@ -654,77 +341,14 @@ export const VideoShowcase: React.FC = () => {
       )}
     </section>
 
-    {/* SECCIÓN 2 -- LOS CUATRO VERTICALES, DEBAJO Y EN SU PROPIO ESPACIO.
+    {/* SECCIÓN 2 -- LAS PIEZAS VERTICALES, COMO EL CUARTO CARRUSEL HERMANO.
 
-        Misma distribución de siempre (DESKTOP_POSITIONS / MOBILE_POSITIONS) y
-        el mismo despliegue con muelle y desenfoque de movimiento. Lo único que
-        cambia es que ya no se montan sobre el vídeo.
-
-        El fondo es la MISMA foto que respalda al vídeo, desenfocada y con el
-        velo: así el bloque se lee como continuación del anterior sin cargar un
-        segundo reproductor -- que serían dos descargas y dos audios. */}
-    <section ref={containerRef} className="relative h-[150vh] w-full bg-[#1a1918] md:h-[200vh]">
-      {/* `dvh`, no `svh`. Con `svh` la caja mide siempre lo que la pantalla
-          MÁS PEQUEÑA -- la que tiene la barra del navegador a la vista -- así
-          que en cuanto la barra se escondía, el hueco de más quedaba fuera de
-          este bloque y asomaba el `bg-[#1a1918]` de la sección por debajo:
-          esa banda oscura que aparecía bajo los cuatro vídeos y desaparecía
-          al seguir bajando. `dvh` sigue a la pantalla real. En escritorio los
-          dos valen lo mismo. */}
-      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
-        <img
-          src={BG_PLACEHOLDER}
-          alt=""
-          className="absolute inset-0 h-full w-full scale-110 object-cover blur-[16px]"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-black/45" />
-
-        {stories.map((story, i) => (
-          <VerticalCard
-            key={story.id}
-            hotelId={story.hotelId}
-            hotelName={story.hotelName}
-            src={story.src}
-            index={i}
-            deployed={deployed}
-            pos={estrecho ? MOBILE_POSITIONS[i] : DESKTOP_POSITIONS[i]}
-            sizeClassName={estrecho ? MOBILE_CARD_CLASS : DESKTOP_CARD_CLASS}
-            visibilityClassName=""
-          />
-        ))}
-
-        {/* Aviso de salida. Este bloque es pegajoso y ocupa la pantalla
-            entera: sin una señal, al llegar a las cuatro tarjetas es
-            razonable pensar que la página se acaba aquí. Dice a dónde lleva
-            en vez de un "hay más abajo" genérico. */}
-        <AnimatePresence>
-          {salidaVisible && (
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 14 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="absolute inset-x-0 bottom-8 z-40 flex justify-end px-6 md:px-10"
-            >
-              <button
-                onClick={irAbajo}
-                className="relative flex items-center gap-3 font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-[#f5f3ed]/85 [text-shadow:0_1px_6px_rgba(26,25,24,0.9)] transition-colors duration-300 hover:text-[#f5f3ed] md:text-xs"
-              >
-                <span>Ver los hoteles</span>
-                <motion.span
-                  aria-hidden
-                  animate={{ y: [0, 4, 0] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                  className="leading-none"
-                >
-                  &#8595;
-                </motion.span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
+        Aquí había una constelación: cuatro tarjetas desparramadas sobre una
+        foto desenfocada, en un bloque pegajoso y oscuro de 150vh. Mayurlin:
+        "no me cierra para nada". De las cuatro direcciones propuestas eligió
+        que las piezas hablen el idioma de la casa -- el mismo esqueleto de
+        "El proceso" y "Voces de la industria". Ver PiezasVerticales. */}
+    <PiezasVerticales />
 
     </>
   );

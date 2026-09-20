@@ -97,58 +97,58 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
 
 /** Una pieza vertical (9:16), de las que se publican en redes del hotel.
  *
- *  `etiqueta` es lo que se lee en la placa de la tarjeta. NO es el nombre de
- *  un hotel de `data/hotels.ts`: estas piezas pueden ser de propiedades que
- *  todavía no tienen ficha en la web, así que la placa dice qué es la pieza y
- *  de dónde, y no enlaza a ningún sitio. En cuanto la propiedad tenga su
- *  página, se le añade `hotelId` y la placa vuelve a ser un enlace.
+ *  `hotel` y `tipo` son la firma, con el mismo reparto que el resto de los
+ *  carruseles hermanos: el nombre en serif y debajo el rótulo en versalitas.
+ *  `titular` es la línea grande en serif que envuelve al vídeo, el equivalente
+ *  a la cita de "Voces de la industria".
+ *
+ *  `hotelId` sólo si esa propiedad tiene ficha en `data/hotels.ts`. Si no la
+ *  tiene, la firma no enlaza: mandar a una página que no existe es peor que
+ *  no mandar a ninguna.
  */
 export interface VideoVertical {
   id: string;
-  etiqueta: string;
+  hotel: string;
+  tipo: string;
+  titular: string;
   src: string;
   hotelId?: string;
   /** Marca las que hay que sustituir antes de migrar al dominio propio. */
   provisional?: boolean;
 }
 
-/** Las cuatro piezas verticales del bloque de vídeos de Inicio.
+/** Las piezas verticales del bloque de vídeos de Inicio.
  *
- *  Antes aquí no había nada: las cuatro tarjetas eran cajas de color
- *  `#1a1918` con un círculo de play y la placa del nombre, sin imagen ni
- *  reproductor dentro. Medido sobre la web publicada, el contraste entre el
- *  interior de la tarjeta y el fondo era de 1,33:1 -- cuatro rectángulos
- *  oscuros sobre un fondo oscuro.
+ *  SÓLO SE PINTAN LAS QUE NO SON PROVISIONALES. El carrusel se ajusta a las
+ *  que haya: con tres, tres. En la constelación anterior hacían falta cuatro
+ *  huecos llenos sí o sí, y eso obligó a repetir una pieza; aquí no, y repetir
+ *  una pieza en un portafolio se nota mucho más cuando se ve de una en una.
  *
- *  OJO CON EL PESO: son cuatro reproductores. Se montan sólo cuando el bloque
- *  está desplegado y se desmontan al salir (ver `VerticalCard`), que es la
- *  misma regla del vídeo horizontal. Sin eso son cuatro descargas
- *  permanentes.
+ *  UN SOLO REPRODUCTOR MONTADO, el de la pieza a la vista. Antes eran cuatro
+ *  a la vez -- y durante una ronda, ocho, porque había un juego de tarjetas
+ *  para móvil y otro para escritorio y ocultar un iframe con CSS no impide que
+ *  descargue.
  */
 export const VIDEOS_VERTICALES: VideoVertical[] = [
   {
     id: 'stic-restaurante',
-    etiqueta: 'Stic Urban · Restaurante',
+    hotel: 'Stic Urban',
+    tipo: 'Restaurante · Pieza vertical',
+    titular: 'La sala llena, a la hora a la que de verdad se llena.',
     src: 'https://livid.com/embed/aBvRZRirC6Bl?autoplay=1&loop=1&muted=1',
   },
   {
     id: 'stic-spa',
-    etiqueta: 'Stic Urban · Spa',
+    hotel: 'Stic Urban',
+    tipo: 'Spa · Pieza vertical',
+    titular: 'Un spa se enseña por la luz y el ritmo, no por el catálogo.',
     src: 'https://livid.com/embed/AFaBlCH42ZBt?autoplay=1&loop=1&muted=1',
   },
   {
     id: 'stic-roof',
-    etiqueta: 'Stic Urban · Azotea',
+    hotel: 'Stic Urban',
+    tipo: 'Azotea · Pieza vertical',
+    titular: 'La azotea a la hora en que justifica la reserva.',
     src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
-  },
-  {
-    /* PROVISIONAL: Mayurlin mandó cuatro direcciones pero la tercera y la
-       cuarta son la MISMA (`RU8PsfvjtTor`, la azotea). Ésta repite esa pieza
-       para poder juzgar la composición con las cuatro llenas. Hay que
-       sustituirla por la cuarta de verdad. */
-    id: 'stic-cuarta-provisional',
-    etiqueta: 'Stic Urban · Azotea',
-    src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
-    provisional: true,
   },
 ];
