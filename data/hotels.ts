@@ -870,7 +870,14 @@ export const HOTEL_STORIES: HotelStory[] = [
       duration: '3 días',
       usage: 'Redes sociales',
     },
+    // La portada es la piscina sobre la bahía, que mandó Mayurlin con el
+    // vídeo. La anterior era un duplicado EXACTO (mismo archivo, byte a byte)
+    // de sec6-gal01-fachada-noche-h.jpg, así que esa foto no se pierde: sigue
+    // abriendo la galería.
     coverImage: publicImage('sec6-portada.jpg'),
+    // Su hueco en el mosaico es la foto3 (ver HUECO_VIDEO, variante 5). Esa
+    // foto ya está en galleryPhotos, así que no desaparece de ningún sitio.
+    galleryEmbed: 'https://livid.com/embed/rx3uWQWDbVyM?autoplay=1&loop=1&muted=1',
     description:
       'En el paseo marítimo de la Bahía de Port de Sóller, con la Serra de Tramuntana de fondo, Hotel Espléndido combina fachadas de piedra caliza, terrazas frente al mar y el tranvía histórico que todavía recorre el paseo.',
     quote: 'Piedra, mar y el eco del tranvía sobre los adoquines de Sóller.',
