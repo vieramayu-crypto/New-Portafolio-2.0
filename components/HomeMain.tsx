@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { HeroSection } from './HeroSection';
 import { HotelSectionBlock } from './HotelSectionBlock';
 import { ValueBlock } from './ValueBlock';
-import { VideoShowcase, VideoVerticalesInicio } from './VideoShowcase';
+import { VideoShowcase, VideoVerticalesInicio, BandaVideo } from './VideoShowcase';
 import { WhatWeCreate } from './WhatWeCreate';
 import { WhyUs } from './WhyUs';
 import { WaysToWork } from './WaysToWork';
@@ -191,6 +191,12 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       <HeroSection introDone={introDone} onOpenAvailability={onOpenAvailability} />
 
       <WhatWeCreate />
+
+      {/* Las piezas verticales, arriba y no al final. Abajo quedaban al 80%
+          de la página y Mayurlin no las encontraba. El porqué completo está
+          en `VideoShowcase.tsx`. */}
+      <VideoVerticalesInicio />
+
       <ValueBlock />
       <VideoShowcase />
 
@@ -336,11 +342,10 @@ export const HomeMain: React.FC<HomeMainProps> = ({
           pegados al último botón, que es donde alguien decide. */}
       <WhyUs onNavigate={onNavigate} />
 
-      {/* Las piezas verticales, entre los dos bloques de texto del cierre. El
-          porqué de este sitio exacto está en `VideoShowcase.tsx`: la banda de
-          "Un rodaje tipo" de aquí abajo promete tres piezas verticales, y
-          ahora se ven justo antes de leerlo. */}
-      <VideoVerticalesInicio />
+      {/* Respiro visual entre los dos últimos bloques de texto. Sin titular,
+          sin rótulo y sin enlace: no vende nada, sólo parte el muro de texto
+          del cierre. */}
+      <BandaVideo />
 
       <WaysToWork />
 

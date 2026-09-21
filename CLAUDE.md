@@ -353,11 +353,29 @@ vídeo**. Se resolvió con dos cambios a la vez:
    (`VideoVerticalesInicio`), así el vídeo queda repartido por la página en
    vez de concentrado en un solo punto.
 
-**Dónde está cada galería de vídeo en Inicio** (medido a 1440x900): la de
-horizontales al **14%** de la página, justo después del bloque de valor; la de
-verticales al **80%**, entre "Por qué Mayu Travel" y "Formas de trabajar
-juntos". Mayurlin dio por perdida la segunda más de una vez al buscarla donde
-estaba antes -- si vuelve a preguntar, estas son las señas.
+**Dónde está cada vídeo en Inicio** (medido a 1440x900):
+
+| | sitio | %  |
+|---|---|---|
+| Galería de **verticales** | entre "Qué creamos" y "Una producción, dos destinos" | 10% |
+| Galería de **horizontales** | después del bloque de valor | 21% |
+| **Vitrina**: pieza de Abama, GPRO y Binidufà | dentro de su propio mosaico | 30-60% |
+| **Banda muda** (`BandaVideo`) | entre "Por qué Mayu Travel" y "Formas de trabajar juntos" | 85% |
+
+**LAS PIEZAS PRINCIPALES NO VAN AL FINAL DEL SCROLL, aunque el copy lo pida.**
+La galería de verticales estuvo una ronda abajo, entre "Por qué Mayu Travel" y
+"Formas de trabajar juntos", con un argumento de copy sólido: la banda de "Un
+rodaje tipo" promete 3 piezas verticales y la prueba quedaba justo antes.
+Medido, caían al **80% de la página**, y Mayurlin no las encontró -- *"han
+desaparecido"*, *"quedó enterrada abajo"*. Un buen argumento de copy no
+compensa estar al final.
+
+**La banda muda es el único vídeo de la web sin una sola palabra**: ni titular,
+ni rótulo, ni nombre de hotel, ni flechas, ni enlace, y no se puede pulsar.
+Mayurlin: *"sin ningún objetivo concreto de venta, sino más con aporte
+visual"*. Es lo que parte los cuatro bloques de texto del cierre. **Si se le
+pone un rótulo, deja de hacer su trabajo** y pasa a competir con el botón que
+cierra la página. La pieza se cambia en la constante `PIEZA_BANDA`.
 
 **Reglas que salieron de ahí y no se pueden saltar:**
 
