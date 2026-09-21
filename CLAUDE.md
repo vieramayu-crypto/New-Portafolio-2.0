@@ -398,6 +398,46 @@ cierra la página. La pieza se cambia en la constante `PIEZA_BANDA`.
   entre la piscina y el spa, y correr un hueco la cola de su variante de
   `GALLERY_LAYOUTS` para que cada foto conservara su proporción real.
 
+## El relevo entre piezas: por qué no hay parpadeo negro
+
+Mayurlin: *"cada vez que paso al siguiente vídeo hay un delay y en ese delay
+la pantalla se pone negra... es molesto"*. Tenía razón: el marco montaba un
+reproductor nuevo en cada flecha y tiraba el anterior, y entre las dos cosas
+el hueco se quedaba a negro.
+
+**NO SE PUEDE MANDAR AL REPRODUCTOR QUE EMPIECE.** Ella propuso "que al
+presionar la flecha se reproduzca directamente". El vídeo está en otro
+dominio, y el navegador no deja tocar nada dentro de ese marco: ni `play()`,
+ni saber si ya está reproduciendo. Lo único que llega de fuera es el `load`
+del `<iframe>` — de ahí sale `alCargar` en `VideoNube`, que es un escucha del
+elemento y no toca la dirección ni los atributos del proveedor.
+
+**Así que no se acelera: se tapa.** `GaleriaPiezas` lleva TRES índices:
+
+- `i` — adónde vas. Cambia en el clic y mueve la regla de piezas: respuesta
+  inmediata sin esperar a nadie.
+- `visible` — lo que se ve de verdad. Manda en el marco **y en la firma**,
+  para que el nombre del hotel nunca vaya por delante de su vídeo.
+- `saliente` — la que se va, viva un momento más por debajo para que el
+  relevo sea un fundido y no un corte.
+
+**Las piezas se apilan en el mismo hueco y lo que decide cuál se ve es la
+OPACIDAD, nunca montar o desmontar.** Van con `key` por id: al ascender la
+entrante, React no la vuelve a montar. **Si se remontara, la precarga se
+tiraría a la basura y volvería el negro.** Por eso se fue el
+`AnimatePresence` con desplazamiento lateral que había: para deslizar hay que
+sacar una y meter otra, y sacarla es tirar el reproductor.
+
+Medido a 390x844 y 1440x900, muestreando cada 60 ms durante el relevo:
+**cobertura mínima del marco 1,00** (nunca se ve el fondo), iframes 1 → pico
+de 2 → 1, y el elemento que queda visible es el mismo que se precargó.
+
+**Lo que esto NO arregla:** la espera sigue existiendo, sólo que ocurre detrás
+de la pieza anterior en vez de delante de un rectángulo negro. Para que la
+flecha sea instantánea de verdad habría que tener la siguiente pieza ya
+cargada ANTES del clic — dos reproductores por galería, y se entraría a la
+pieza empezada, no desde el principio. Pendiente de decidir.
+
 ## La galería de vídeos son DOS secciones, no una
 
 Durante mucho tiempo el vídeo horizontal y los cuatro verticales compartían un
