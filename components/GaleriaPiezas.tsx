@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
@@ -78,9 +78,76 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
   alterno,
 }) => {
   const total = PIEZAS.length;
+
+  /* TRES ÍNDICES, NO UNO, Y AHÍ ESTÁ TODO EL ARREGLO DEL PARPADEO NEGRO.
+   *
+   *  Antes el marco montaba un reproductor nuevo en cada flecha y tiraba el
+   *  anterior. Entre las dos cosas el hueco quedaba a negro mientras el
+   *  reproductor nuevo se construía y pedía el primer trozo de película.
+   *  Mayurlin: "la pantalla se pone negra... es molesto".
+   *
+   *  NO SE PUEDE ARREGLAR MANDÁNDOLE AL REPRODUCTOR QUE EMPIECE. El vídeo
+   *  está en otro dominio y el navegador no deja tocar nada dentro de ese
+   *  marco: ni `play()`, ni saber si ya va. Lo único que llega de fuera es el
+   *  `load` del `<iframe>`.
+   *
+   *  Así que en vez de acelerar la carga, se TAPA: la pieza nueva se monta
+   *  DEBAJO, invisible, y sólo se descubre cuando ya está cargada. Mientras
+   *  tanto sigue viéndose la anterior. Nunca hay negro.
+   *
+   *  - `i`        adónde vas. Cambia en el clic, sin esperar a nadie, y es lo
+   *               que mueve la regla de piezas: la respuesta es inmediata.
+   *  - `visible`  lo que se está viendo de verdad. Manda en el marco y en la
+   *               firma, para que el nombre nunca vaya por delante de su
+   *               vídeo.
+   *  - `saliente` la que se va, viva un momento más por debajo para que el
+   *               relevo sea un fundido y no un corte. */
   const [i, setI] = useState(0);
+  const [visible, setVisible] = useState(0);
+  const [saliente, setSaliente] = useState<string | null>(null);
   const [sentido, setSentido] = useState(1);
-  const pieza = PIEZAS[i];
+
+  const pieza = PIEZAS[visible];
+  const entrante = i !== visible ? PIEZAS[i] : null;
+
+  /** Del `load` del marco a descubrirlo. `load` dice que la página del
+   *  reproductor está puesta, no que haya pintado el primer fotograma; este
+   *  respiro cubre esa diferencia. */
+  const RESPIRO = 280;
+  /** Red de seguridad: si `load` no llegara nunca -- marco bloqueado, red
+   *  caída -- se pasa igual. Vale más una pieza a medio cargar que una
+   *  flecha que no hace nada. */
+  const TOPE = 2600;
+  /** Lo que dura el fundido, y lo que la saliente aguanta por debajo. */
+  const FUNDIDO = 420;
+
+  const relevo = useRef<number | null>(null);
+  const pasar = () => {
+    if (relevo.current) window.clearTimeout(relevo.current);
+    relevo.current = window.setTimeout(() => {
+      setSaliente(PIEZAS[visible]?.id ?? null);
+      setVisible(i);
+    }, RESPIRO);
+  };
+
+  useEffect(() => {
+    if (i === visible) return;
+    const tope = window.setTimeout(() => {
+      setSaliente(PIEZAS[visible]?.id ?? null);
+      setVisible(i);
+    }, TOPE);
+    return () => {
+      window.clearTimeout(tope);
+      if (relevo.current) window.clearTimeout(relevo.current);
+    };
+  }, [i, visible]);
+
+  // La saliente se retira cuando el fundido ya la ha tapado.
+  useEffect(() => {
+    if (!saliente) return;
+    const t = window.setTimeout(() => setSaliente(null), FUNDIDO);
+    return () => window.clearTimeout(t);
+  }, [saliente]);
 
   const ir = (delta: number) => {
     setSentido(delta);
@@ -88,6 +155,18 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
   };
 
   if (!pieza) return null;
+
+  /* Qué reproductores hay montados en este instante: el que se ve, el que se
+     va (un momento) y el que viene (invisible). Van con `key` por id, así que
+     al ascender la entrante React NO la vuelve a montar -- sólo le cambia la
+     opacidad. Si se remontara, el trabajo de precarga se tiraría a la basura
+     y volvería el negro. */
+  const montadas = [
+    saliente ? PIEZAS.find((p) => p.id === saliente) : null,
+    pieza,
+    entrante,
+  ].filter((p): p is Pieza => Boolean(p) && p!.id !== undefined);
+  const unicas = montadas.filter((p, n) => montadas.findIndex((q) => q.id === p.id) === n);
 
   /* EL TAMAÑO SALE DE DOS TOPES, NO DE UNO.
      Primero se probó con el marco a un alto fijo y la pieza a `h-full` con su
@@ -151,29 +230,48 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="flex justify-center [--alto:71svh] md:[--alto:83svh]"
         >
-          <AnimatePresence mode="wait" custom={sentido}>
-            <motion.div
-              key={pieza.id}
-              custom={sentido}
-              initial={{ opacity: 0, x: sentido * 26 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: sentido * -26 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                aspectRatio: `${proporcion}`,
-                width: `min(100%, calc(var(--alto) * ${proporcion}))`,
-              }}
-              className="overflow-hidden rounded-[10px] bg-[#1a1918] shadow-[0_30px_80px_-30px_rgba(26,25,24,0.55)]"
-            >
-              <div className="h-full [&>div]:h-full [&_iframe]:h-full">
-                <VideoNube
-                  src={pieza.src}
-                  proporcion={pieza.formato === 'v' ? '177.778%' : '56.25%'}
-                  className="h-full"
-                />
-              </div>
-            </motion.div>
-          </AnimatePresence>
+          {/* EL MARCO ES UNA PILA, NO UN SITIO. Las piezas montadas se apilan
+              todas en el mismo hueco y lo que decide cuál se ve es la
+              opacidad, nunca montar o desmontar. Por eso el relevo no tiene
+              negro: la entrante ya está cargada y corriendo por debajo cuando
+              se descubre, y la saliente aguanta el fundido por detrás.
+
+              Se acabó el `AnimatePresence` con desplazamiento lateral que
+              había aquí: para deslizar hay que sacar una y meter otra, y
+              sacarla es tirar el reproductor. El fundido cuesta un marco de
+              más durante medio segundo; el deslizamiento costaba el parpadeo
+              en cada flecha. */}
+          <div
+            className="relative"
+            style={{
+              aspectRatio: `${proporcion}`,
+              width: `min(100%, calc(var(--alto) * ${proporcion}))`,
+            }}
+          >
+            {unicas.map((p) => {
+              const esVisible = p.id === pieza.id;
+              const esSaliente = p.id === saliente && !esVisible;
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: esVisible ? 1 : 0 }}
+                  animate={{ opacity: esVisible || esSaliente ? 1 : 0 }}
+                  transition={{ duration: FUNDIDO / 1000, ease: 'easeInOut' }}
+                  style={{ zIndex: esVisible ? 2 : esSaliente ? 1 : 0 }}
+                  className="absolute inset-0 overflow-hidden rounded-[10px] bg-[#1a1918] shadow-[0_30px_80px_-30px_rgba(26,25,24,0.55)]"
+                >
+                  <div className="h-full [&>div]:h-full [&_iframe]:h-full">
+                    <VideoNube
+                      src={p.src}
+                      proporcion={p.formato === 'v' ? '177.778%' : '56.25%'}
+                      className="h-full"
+                      alCargar={p.id === entrante?.id ? pasar : undefined}
+                    />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </motion.div>
       </div>
 

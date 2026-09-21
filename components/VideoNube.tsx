@@ -74,6 +74,18 @@ interface VideoNubeProps {
   /** Píxeles de borde que se comen por arriba y por abajo (y lo proporcional
    *  a los lados). Tapa lo que pinte el reproductor en el borde. 0 lo apaga. */
   recorte?: number;
+  /** Aviso de que el marco ha terminado de cargar.
+   *
+   *  ES LO ÚNICO QUE SE PUEDE SABER DESDE FUERA. El vídeo vive en otro
+   *  dominio, así que el navegador no deja mirar dentro del marco: no hay
+   *  forma de preguntarle si ya está reproduciendo, ni de mandarle que
+   *  empiece. `load` del propio `<iframe>` avisa de que la página del
+   *  reproductor está puesta, que es un poco antes de que pinte el primer
+   *  fotograma -- de ahí el respiro que espera `GaleriaPiezas`.
+   *
+   *  No toca nada de lo que da el proveedor: es un escucha del elemento, no
+   *  un parámetro de la dirección ni un atributo suyo. */
+  alCargar?: () => void;
 }
 
 export const VideoNube: React.FC<VideoNubeProps> = ({
@@ -81,6 +93,7 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
   proporcion = '56.25%',
   className,
   recorte = RECORTE_POR_DEFECTO,
+  alCargar,
 }) => {
   // El horizontal sale del vertical por 16/9, para que al crecer la imagen
   // conserve su forma en vez de estirarse.
@@ -110,6 +123,7 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
         frameBorder="0"
         referrerPolicy="strict-origin-when-cross-origin"
         src={src}
+        onLoad={alCargar}
         title="Vídeo de producción para hotel"
       />
     </div>
