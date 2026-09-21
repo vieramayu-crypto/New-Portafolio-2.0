@@ -69,6 +69,14 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     src: 'https://livid.com/embed/bAN6qRGuhiHw?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec5-gal09-piscina-palmeras-v.jpg'),
   },
+  {
+    id: 'v-esplendido',
+    hotelName: 'Hotel Espléndido',
+    hotelId: 'hotel-esplendido',
+    descripcion: 'Terrazas y piscina frente a la Bahía de Port de Sóller.',
+    src: 'https://livid.com/embed/rx3uWQWDbVyM?autoplay=1&loop=1&muted=1',
+    portada: publicImage('sec6-portada.jpg'),
+  },
   // ┌──────────────────────────────────────────────────────────────────────┐
   // │  PROVISIONAL: el de abajo apunta al MISMO vídeo que el primero, el de │
   // │  Abama. Está así para que Mayurlin pueda ver el carrusel funcionando  │
