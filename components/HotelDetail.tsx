@@ -627,7 +627,7 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   //   10 entrada bistro Davant la Mar (square solo, day facade) →
   //   11 terraza pareja vista (landscape solo, warm terrace) →
   //   12 tranvía (portrait solo, closing outside).
-  ({ photos, y }) => (
+  ({ photos, y, embed }) => (
     <>
       {photos[0] && (
         <Bleed>
@@ -638,6 +638,16 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
         <div className="w-full flex justify-center">
           <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[42%]" />
         </div>
+      )}
+      {/* EL VÍDEO VA AQUÍ, entre la foto suelta y la pareja de verticales.
+          Cumple las tres condiciones que puso Mayurlin: no es lo primero que
+          se ve, está en la primera mitad del recorrido y no toca ninguna foto
+          horizontal -- sus dos vecinas son verticales 3/4. Las horizontales a
+          sangre de este hotel son las fotos 1 y 8, y ninguna queda pegada. */}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {(photos[2] || photos[3]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
@@ -723,7 +733,7 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   //   8+9 silueta-v + cortinas-v (light-and-curtain pair) →
   //   10+11 gym-v + lampara-restaurante-v (closing pair).
   // The vertical facade, the tram and the coffee close-up live on the home teaser.
-  ({ photos, y }) => (
+  ({ photos, y, embed }) => (
     <>
       {photos[0] && (
         <Bleed>
@@ -739,6 +749,17 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
         <div className="w-full flex justify-center">
           <GalleryPhoto photo={photos[2]} y={y[2]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[46%]" />
         </div>
+      )}
+      {/* EL VÍDEO VA AQUÍ, después del vestíbulo y antes del escritorio.
+          Medido, es el cuarto elemento de once: no es lo primero, está en la
+          primera mitad -- puesto un hueco más abajo caía al 55%, ya pasada la
+          mitad, y ella pidió que tuviera protagonismo -- y por delante lleva
+          una vertical 3/4. Lo que va detrás es 4:3 pero NO a sangre, así que
+          no se leen dos bandas anchas seguidas. */}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {photos[3] && (
         <div className="w-full flex justify-center">
@@ -801,6 +822,17 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
               offsetClass="md:mt-16"
             />
           )}
+        </div>
+      )}
+      {/* EL HUECO 13 LO ABRIÓ LA FOTO DEL CAMARERO al bajar del mosaico. Va
+          sola y un punto más ancha que las del par de arriba: después de dos
+          parejas seguidas, una sola cierra el recorrido. Es vertical como
+          toda la cola de esta variante, así que ninguna foto cambia de forma.
+          `yTransforms` ya traía catorce recorridos de parallax, de y0 a y13,
+          así que el hueco nuevo tiene el suyo. */}
+      {photos[12] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto photo={photos[12]} y={y[12]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[52%]" />
         </div>
       )}
     </>
