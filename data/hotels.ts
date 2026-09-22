@@ -146,6 +146,10 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Luxury Hotel',
     layoutVariant: 6,
+    // Su hueco en el mosaico es la foto3, la que cruza por delante de las
+    // otras dos (ver HUECO_VIDEO, variante 6). La foto que cede ese hueco --
+    // la del camarero -- baja a galleryPhotos, así que no desaparece.
+    galleryEmbed: 'https://livid.com/embed/AnikHPeM1YCc?autoplay=1&loop=1&muted=1',
     publishedByHotel: true,
     caseStudy: {
       season: 'Septiembre · Verano',
@@ -245,6 +249,23 @@ export const HOTEL_STORIES: HotelStory[] = [
         alt: 'Pareja en albornoces blancos brindando con zumo de naranja en la cama, con el desayuno servido delante',
         caption: 'Un brindis, antes de que empiece el día',
         aspectRatio: 'landscape',
+        isBlackAndWhite: false
+      },
+      {
+        // LA FOTO DEL CAMARERO VIENE DEL MOSAICO DE PROYECTOS. Su hueco lo
+        // ocupa ahora la pieza de vídeo de InterContinental; Mayurlin eligió
+        // que cediera ésta y no la del tranvía, "dado que la del tranvía
+        // ancla muy bien a Portugal en el contexto".
+        //
+        // Va aquí y no antes porque el hueco 7 de esta variante es una foto a
+        // sangre completa en 3:2: una vertical ahí saldría destrozada. Éste
+        // es el primer sitio del recorrido, después de la pareja, donde entra
+        // sin descolocar ninguna de las demás.
+        id: 'av-gal-cafe',
+        url: publicImage('sec7-gal08-cafe-v.jpg'),
+        alt: 'Camarero sirviendo café con un vaso de zumo de naranja en primer plano',
+        caption: 'El servicio, en el desayuno',
+        aspectRatio: 'portrait',
         isBlackAndWhite: false
       },
       {

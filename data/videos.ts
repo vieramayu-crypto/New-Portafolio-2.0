@@ -62,10 +62,10 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
     descripcion: 'Jardines, piscina y spa sobre la Bahía de Palma.',
-    // El archivo que mandó Mayurlin es una MUESTRA en baja resolución
-    // ("WEB CLIENTES HORIZONTAL (MUESTRA) LOW RESOLU"). Funciona para verlo
-    // montado, pero choca con su propia regla de máxima calidad siempre:
-    // conviene cambiarlo por el definitivo antes de migrar al dominio propio.
+    // OJO CON EL NOMBRE DEL ARCHIVO: dice "MUESTRA ... LOW RESOLU", y durante
+    // varias rondas se dio por hecho que era una copia de baja calidad que
+    // había que sustituir. Mayurlin lo aclaró: el título miente, el vídeo es
+    // el bueno. No hay nada que cambiar aquí.
     src: 'https://livid.com/embed/bAN6qRGuhiHw?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec5-gal09-piscina-palmeras-v.jpg'),
   },

@@ -30,8 +30,15 @@ interface HotelSectionBlockProps {
  *  cada variante son fijas (la tabla de CLAUDE.md), así que meter un 16:9 en
  *  un hueco vertical dejaría el vídeo con dos bandas negras a los lados.
  *
- *  `null` = esa variante no tiene ningún hueco horizontal -- la 6 son tres
- *  verticales -- y entonces ese hotel se queda con sus tres fotos.
+ *  LA REGLA ES DE MAYURLIN Y NO TIENE EXCEPCIONES: *"siempre que te pase los
+ *  vídeos, siempre, evidentemente que esté en formato horizontal, va
+ *  incrustado dentro de su propia galería"*. Por eso la 6 también tiene hueco
+ *  aunque sus tres fotos sean verticales: su pieza entra en la foto3, la que
+ *  cruza por delante de las otras dos, y el marco del vídeo se pone a 16:9
+ *  igual que en el resto.
+ *
+ *  `null` quedaría para una variante sin ningún hueco utilizable. Hoy no hay
+ *  ninguna.
  *
  *  LA FOTO QUE SALE DEL MOSAICO NO DESAPARECE: tiene que seguir viéndose en
  *  la galería de ese hotel. En Binidufà y GPRO ya estaba (el mosaico usaba
@@ -39,8 +46,8 @@ interface HotelSectionBlockProps {
  *  en `galleryPhotos`.
  *
  *  Índices por variante: 0 → foto3, 1 → foto1, 2 → foto2, 3 → foto3,
- *  4 → foto1, 5 → foto3, 6 → ninguno, 7 → foto3. */
-const HUECO_VIDEO: (number | null)[] = [2, 0, 1, 2, 0, 2, null, 2];
+ *  4 → foto1, 5 → foto3, 6 → foto3, 7 → foto3. */
+const HUECO_VIDEO: (number | null)[] = [2, 0, 1, 2, 0, 2, 2, 2];
 
 /** EL ANCHO DEL HUECO DEL VÍDEO, POR VARIANTE. Seis puntos por encima del de
  *  la foto a la que sustituye: Mayurlin pidió "subirle ligeramente el tamaño
@@ -61,7 +68,7 @@ const ANCHO_VIDEO: (string | null)[] = [
   'w-[54%] md:w-[50%]', // 3            (su foto3 es w-[48%] md:w-[44%])
   'w-[66%]',            // 4  GPRO      (su foto1 es w-[60%])
   'w-[59%] md:w-[54%]', // 5            (su foto3 es w-[53%] md:w-[48%])
-  null,                 // 6  sin hueco horizontal
+  'w-[52%] md:w-[48%]', // 6  InterContinental (su foto3 es w-[46%] md:w-[42%])
   'w-[59%] md:w-[54%]', // 7            (su foto3 es w-[53%] md:w-[48%])
 ];
 

@@ -737,16 +737,16 @@ entorpecería el flujo. La idea es que estén los cuatro directamente ahí".
   Lisboa. Ya no queda ninguna prestada. InterContinental fue la última en
   llegar: hasta entonces apuntaba al vídeo de Abama bajo su nombre, que es
   atribuir un trabajo a quien no lo hizo.
-- **InterContinental es el único de los cuatro de Inicio SIN vídeo en su
-  mosaico**, y es por diseño: su variante es la 6, la única cuyos tres huecos
-  son verticales (`HUECO_VIDEO[6] = null`). Meterle un 16:9 obligaría a
-  cambiarle la composición al mosaico y a mover su foto del café a
-  `galleryPhotos` — su galería ya está llena, 12 de 12 huecos de la variante
-  6 de `GALLERY_LAYOUTS`, así que habría que ampliarla también. **Pendiente de
-  que Mayurlin decida si merece la pena.**
-- **El de GPRO es una MUESTRA en baja resolución** ("WEB CLIENTES HORIZONTAL
-  (MUESTRA) LOW RESOLU"), que choca con su regla de máxima calidad siempre.
-  Conviene cambiarlo por el definitivo antes de migrar.
+- **TODO VÍDEO HORIZONTAL VA EN LA GALERÍA DE SU HOTEL. Sin excepciones.**
+  Regla de Mayurlin, en sus palabras: *"siempre que te pase los vídeos,
+  siempre, evidentemente que esté en formato horizontal, va incrustado dentro
+  de su propia galería"*. Al recibir una pieza nueva: `galleryEmbed` en
+  `data/hotels.ts`, entrada en `VIDEOS_HORIZONTALES`, y comprobar que la foto
+  que cede el hueco del mosaico sigue viéndose en `galleryPhotos`.
+- **El nombre del archivo de GPRO MIENTE.** Dice "WEB CLIENTES HORIZONTAL
+  (MUESTRA) LOW RESOLU" y durante varias rondas se dio por hecho que había que
+  sustituirlo. Ella lo aclaró: el vídeo es el bueno. **No hay nada que cambiar
+  ahí, y no volver a apuntarlo como pendiente.**
 
 ## El subrayado de "Iniciar un proyecto"
 
