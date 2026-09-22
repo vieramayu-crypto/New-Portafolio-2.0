@@ -195,7 +195,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_22px_rgba(0,0,0,.26)] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
+              className="m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_22px_rgba(0,0,0,.26)] [text-wrap:balance] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
             >
               {hero.subline}
             </motion.p>
