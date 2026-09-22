@@ -732,10 +732,18 @@ entorpecería el flujo. La idea es que estén los cuatro directamente ahí".
   Honeymoon `sec4`, GPRO `sec5`, Espléndido `sec6`, InterContinental `sec7`,
   Welmoon `sec8`, District Hive `sec9`. Dos entradas llevaban la portada de
   otro hotel por dar por hecho que sí lo seguía.
-- **Reales: Abama, Vestige Collection Binidufà y GPRO Valparaíso.** Sigue
-  PROVISIONAL sólo InterContinental, apuntando al vídeo de Abama. Antes de
-  migrar al dominio propio hay que cambiarle el `src`: publicarlo así pondría
-  el vídeo de Abama bajo el nombre de otro hotel.
+- **Las cinco piezas horizontales son reales y distintas**: Abama, Vestige
+  Collection Binidufà, GPRO Valparaíso, Hotel Espléndido e InterContinental
+  Lisboa. Ya no queda ninguna prestada. InterContinental fue la última en
+  llegar: hasta entonces apuntaba al vídeo de Abama bajo su nombre, que es
+  atribuir un trabajo a quien no lo hizo.
+- **InterContinental es el único de los cuatro de Inicio SIN vídeo en su
+  mosaico**, y es por diseño: su variante es la 6, la única cuyos tres huecos
+  son verticales (`HUECO_VIDEO[6] = null`). Meterle un 16:9 obligaría a
+  cambiarle la composición al mosaico y a mover su foto del café a
+  `galleryPhotos` — su galería ya está llena, 12 de 12 huecos de la variante
+  6 de `GALLERY_LAYOUTS`, así que habría que ampliarla también. **Pendiente de
+  que Mayurlin decida si merece la pena.**
 - **El de GPRO es una MUESTRA en baja resolución** ("WEB CLIENTES HORIZONTAL
   (MUESTRA) LOW RESOLU"), que choca con su regla de máxima calidad siempre.
   Conviene cambiarlo por el definitivo antes de migrar.

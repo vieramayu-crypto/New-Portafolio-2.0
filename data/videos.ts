@@ -77,25 +77,16 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     src: 'https://livid.com/embed/rx3uWQWDbVyM?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec6-portada.jpg'),
   },
-  // ┌──────────────────────────────────────────────────────────────────────┐
-  // │  PROVISIONAL: el de abajo apunta al MISMO vídeo que el primero, el de │
-  // │  Abama. Está así para que Mayurlin pueda ver el carrusel funcionando  │
-  // │  mientras termina de subir el suyo.                                   │
-  // │                                                                       │
-  // │  QUÉ HAY QUE CAMBIAR: sólo la línea `src`, pegando la dirección de    │
-  // │  incrustar que da el servicio. El hotel, la portada y el texto ya son │
-  // │  los definitivos.                                                     │
-  // │                                                                       │
-  // │  ANTES DE MIGRAR AL DOMINIO PROPIO hay que haberlo hecho: publicar    │
-  // │  esto tal cual pondría el vídeo de Abama bajo el nombre de otro       │
-  // │  hotel, y eso es atribuir un trabajo a quien no es.                   │
-  // └──────────────────────────────────────────────────────────────────────┘
   {
+    // Esta entrada era la última que apuntaba a un vídeo que no era suyo: el
+    // de Abama bajo el nombre de InterContinental, que es atribuir un trabajo
+    // a quien no lo hizo. Ya lleva el suyo, y con esto no queda en la web
+    // ninguna pieza prestada.
     id: 'v-intercontinental',
     hotelName: 'InterContinental Lisboa',
     hotelId: 'intercontinental-lisboa',
     descripcion: 'Interiores, servicio y experiencia de ciudad.',
-    src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1', // PROVISIONAL
+    src: 'https://livid.com/embed/AnikHPeM1YCc?autoplay=1&loop=1&muted=1',
     // Llevaba `sec3-gal08`, que es de Deltapark: la miniatura de un hotel
     // enseñaba la fachada de otro. Las fotos de InterContinental son `sec7`.
     portada: publicImage('sec7-gal02-fachada-h.jpg'),
