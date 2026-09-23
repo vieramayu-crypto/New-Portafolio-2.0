@@ -286,14 +286,14 @@ export const DEFAULT_CONTENT: SiteContent = {
     legacyQuote:
       'Decidimos qué se rueda y qué no. Un hotel no se cuenta enseñándolo todo, sino eligiendo lo que hace que alguien quiera estar ahí.',
     overview: {
-      heading: 'Un estudio de fotografía y producción audiovisual para hoteles.',
+      heading: 'Tu partner creativo para hoteles.',
       paragraph:
-        'Somos Mayurlin Viera y Yerfran. Planificamos y producimos contenido que muestra los espacios, los detalles y la experiencia de cada hotel, con un estilo visual coherente con su marca.',
+        'Somos Mayurlin Viera y Yerfran. Trabajamos con tu equipo para definir qué mostrar de tu hotel y cómo contarlo en fotografía y vídeo. Planificamos y realizamos la producción con un estilo visual coherente con tu marca.',
       boxes: [
         { label: 'Especialización', value: 'Hotelería de lujo' },
-        { label: 'Criterio', value: 'Propiedad antes que fórmula' },
-        { label: 'Modelo', value: 'Dos profesionales · ejecución directa' },
-        { label: 'Resultado', value: 'Material listo para usar' },
+        { label: 'Criterio', value: 'Cada hotel, una propuesta propia' },
+        { label: 'Relación', value: 'Trato directo con quienes crean' },
+        { label: 'Entrega', value: 'Fotografía y vídeo listos para usar' },
       ],
       ctaLabel: 'Conoce al equipo',
     },
@@ -301,21 +301,21 @@ export const DEFAULT_CONTENT: SiteContent = {
       name: 'Mayurlin Viera',
       role: 'Fotografía y dirección creativa',
       bio:
-        'Define el concepto visual y dirige la fotografía. Participa en cámara cuando las escenas acordadas lo requieren.',
+        'Define el concepto visual a partir de la identidad del hotel y dirige la fotografía. Participa en cámara cuando las escenas acordadas lo requieren.',
     },
     yerfran: {
       name: 'Yerfran',
       role: 'Producción audiovisual',
       bio:
-        'Se encarga de la planificación técnica, la grabación y la edición de vídeo, desde el rodaje hasta las versiones finales.',
+        'Planifica y realiza la producción de vídeo, desde las decisiones técnicas del rodaje hasta el montaje y las versiones finales para los canales acordados.',
     },
     together: {
-      heading: 'Un equipo reducido, coordinado con tu hotel',
+      heading: 'Trabajas directamente con nosotros.',
       description:
-        'Planificamos las sesiones, los espacios y los horarios con tu equipo para reducir las molestias a huéspedes y personal.',
+        'Coordinamos con tu equipo las sesiones, los espacios y los horarios para reducir las molestias a huéspedes y personal.',
     },
     closingStatement:
-      'Mayurlin y Yerfran dirigen la producción. La participación en cámara y los apoyos necesarios se acuerdan para cada proyecto.',
+      'Los dos dirigimos la producción; la participación en cámara y los apoyos necesarios se acuerdan para cada proyecto.',
   },
   contact: {
     headingLines: ['Hablemos', 'de tu', 'hotel.'],
@@ -347,7 +347,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     steps: [
       {
         number: '01',
-        title: 'Definimos el proyecto',
+        title: 'Definimos contigo el proyecto',
         description: 'Qué necesitas mostrar, a quién y en qué canales.',
       },
       {
