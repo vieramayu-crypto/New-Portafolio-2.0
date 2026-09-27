@@ -5,6 +5,7 @@ import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { traducirHotel } from '../data/textosEn';
 import { useIdioma } from '../src/lib/idioma';
+import { ruta } from '../src/lib/rutas';
 import { useSiteContent } from '../src/lib/content';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
@@ -181,7 +182,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
             key={story.id}
             story={story}
             index={index}
-            onSelectStory={(s) => navigate(`/trabajo/${s.id}`)}
+            onSelectStory={(s) => navigate(ruta(idioma, 'trabajo', s.id))}
             ficha={
               <>
                 <div className="text-[10px] font-sans uppercase tracking-[0.24em] text-[#5a5854] md:text-[11px]">
@@ -201,14 +202,14 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 xl:mt-7 xl:justify-start">
                   {caseStudy && (
                     <Link
-                      to={`/proyecto/${caseStudy.slug}`}
+                      to={ruta(idioma, 'proyecto', caseStudy.slug)}
                       className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                     >
                       {projects.caseLinkLabel}
                     </Link>
                   )}
                   <Link
-                    to={`/trabajo/${story.id}`}
+                    to={ruta(idioma, 'trabajo', story.id)}
                     className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                   >
                     {projects.galleryLinkLabel}

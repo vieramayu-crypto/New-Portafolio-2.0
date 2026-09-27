@@ -7,6 +7,7 @@ import { HOTEL_STORIES } from '../data/hotels';
 import { traducirCaso } from '../data/textosEn';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
+import { ruta } from '../src/lib/rutas';
 
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -35,7 +36,7 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
   const hotel = caseStudy ? HOTEL_STORIES.find((h) => h.id === caseStudy.hotelId) : undefined;
 
   if (!caseStudy || !hotel) {
-    navigate('/proyectos', { replace: true });
+    navigate(ruta(idioma, 'proyectos'), { replace: true });
     return null;
   }
 
@@ -92,7 +93,7 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
             {t('iniciarProyecto')}
           </button>
           <Link
-            to={`/trabajo/${hotel.id}`}
+            to={ruta(idioma, 'trabajo', hotel.id)}
             className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
           >
             {t('verGaleriaCompleta')}

@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
-  HashRouter,
+  BrowserRouter,
   Routes,
   Route,
   useNavigate,
@@ -12,6 +12,7 @@ import { Page, HotelStory } from './types';
 import { HOTEL_STORIES } from './data/hotels';
 import { traducirHotel } from './data/textosEn';
 import { useIdioma } from './src/lib/idioma';
+import { analizarRuta, IDIOMAS, ruta, type Clave } from './src/lib/rutas';
 import { Navbar } from './components/Navbar';
 import { HomeMain } from './components/HomeMain';
 import { About } from './components/About';
@@ -25,6 +26,7 @@ import { HotelDetail } from './components/HotelDetail';
 import { PhotoZoomTransition } from './components/PhotoZoomTransition';
 import { IntroLoader } from './components/IntroLoader';
 import { ContentProvider, useSiteContent } from './src/lib/content';
+import { Metadatos } from './src/lib/Metadatos';
 import { IdiomaProvider } from './src/lib/idioma';
 import {
   hayHistorialPropio,
@@ -35,21 +37,31 @@ import {
   vigilarPosicion,
 } from './src/lib/recorrido';
 
-/** Cada página real vive en su propia ruta (URL compartible), pero el resto
- *  de la web sigue hablando en términos de `Page` como antes: este mapa
- *  traduce entre los dos mundos sin tocar Navbar.tsx ni Footer.tsx. */
-const PATH_BY_PAGE: Record<Page, string> = {
-  home: '/',
-  projects: '/proyectos',
-  about: '/acerca-de',
-  contact: '/contacto',
+/** El resto de la web sigue hablando en términos de `Page` (Navbar y Footer
+ *  no saben de rutas), así que aquí se traduce entre los dos mundos. Las
+ *  direcciones las pone `src/lib/rutas.ts`, que es quien sabe cómo se llama
+ *  cada página en cada idioma. */
+/** La subcarpeta en la que está colgado el sitio. En GitHub Pages es
+ *  `/New-Portafolio-2.0/`; cuando Mayurlin migre a su dominio será `/`. Vite
+ *  la inyecta al compilar, así que no hay nada escrito a mano. */
+const BASE = import.meta.env.BASE_URL;
+
+const CLAVE_POR_PAGINA: Record<Page, Clave> = {
+  home: 'inicio',
+  projects: 'proyectos',
+  about: 'equipo',
+  contact: 'contacto',
 };
-const PAGE_BY_PATH: Partial<Record<string, Page>> = {
-  '/': 'home',
-  '/proyectos': 'projects',
-  '/acerca-de': 'about',
-  '/contacto': 'contact',
+const PAGINA_POR_CLAVE: Partial<Record<Clave, Page>> = {
+  inicio: 'home',
+  proyectos: 'projects',
+  equipo: 'about',
+  contacto: 'contact',
 };
+
+/** Las cuatro páginas del menú. Son las que abren con la intro y las únicas
+ *  que `Page` sabe nombrar. */
+const CLAVES_DE_MENU: Clave[] = ['inicio', 'proyectos', 'equipo', 'contacto'];
 
 /** Las rutas nacieron con nombres de hoteles que no eran los reales -- un
  *  enlace a Deltapark decía "hotel-caruso-belmond", y compartirlo hacía
@@ -71,10 +83,14 @@ const LEGACY_HOTEL_IDS: Record<string, string> = {
  *  directos al contenido. */
 function esRutaDeEntradaConIntro(): boolean {
   if (typeof window === 'undefined') return true;
-  // HashRouter: la ruta vive detrás de la almohadilla.
-  const hash = window.location.hash.replace(/^#/, '');
-  const ruta = (hash.split('?')[0] || '/').replace(/\/+$/, '') || '/';
-  return ruta in PAGE_BY_PATH;
+  // La ruta ya no vive detrás de una almohadilla, así que se lee del camino
+  // de verdad. Hay que quitarle la subcarpeta en la que está colgado el sitio
+  // (en GitHub Pages es `/New-Portafolio-2.0/`, en su dominio será `/`).
+  const base = BASE.replace(/\/$/, '');
+  let camino = window.location.pathname;
+  if (base && camino.startsWith(base)) camino = camino.slice(base.length);
+  const partes = analizarRuta(camino || '/');
+  return !partes || CLAVES_DE_MENU.includes(partes.clave);
 }
 
 /** El botón Volver de una ficha o de un caso.
@@ -85,6 +101,7 @@ function esRutaDeEntradaConIntro(): boolean {
  *  hotel del que se viene, para no dejar al visitante en la puerta. */
 export function useVolver() {
   const navigate = useNavigate();
+  const { idioma } = useIdioma();
   return ({ hotelId }: { hotelId?: string } = {}) => {
     if (hayHistorialPropio()) {
       // `navigate(-1)` no admite llevar datos, así que el bloque al que hay
@@ -93,7 +110,10 @@ export function useVolver() {
       navigate(-1);
       return;
     }
-    navigate('/proyectos', { replace: true, state: hotelId ? { irA: hotelId } : undefined });
+    navigate(ruta(idioma, 'proyectos'), {
+      replace: true,
+      state: hotelId ? { irA: hotelId } : undefined,
+    });
   };
 }
 
@@ -109,7 +129,7 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
 
   if (idx === -1) {
     const renamed = id ? LEGACY_HOTEL_IDS[id] : undefined;
-    navigate(renamed ? `/trabajo/${renamed}` : '/', { replace: true });
+    navigate(renamed ? ruta(idioma, 'trabajo', renamed) : ruta(idioma, 'inicio'), { replace: true });
     return null;
   }
 
@@ -135,7 +155,7 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
       // lleva a Proyectos, y ahí abajo se busca el bloque de este hotel.
       onBack={() => volver({ hotelId: story.id })}
       onNavigateStory={(direction) =>
-        navigate(`/trabajo/${direction === 'next' ? nextStory.id : prevStory.id}`)
+        navigate(ruta(idioma, 'trabajo', direction === 'next' ? nextStory.id : prevStory.id))
       }
       prevStory={prevStory}
       nextStory={nextStory}
@@ -165,10 +185,14 @@ const AppShell: React.FC = () => {
     () => !esRutaDeEntradaConIntro(),
   );
 
-  const currentPage: Page = PAGE_BY_PATH[location.pathname] ?? 'home';
+  const { idioma } = useIdioma();
+  const partesRuta = analizarRuta(location.pathname);
+  const currentPage: Page = partesRuta
+    ? PAGINA_POR_CLAVE[partesRuta.clave] ?? 'home'
+    : 'home';
 
   const handleNavigate = (page: Page) => {
-    navigate(PATH_BY_PAGE[page]);
+    navigate(ruta(idioma, CLAVE_POR_PAGINA[page]));
   };
 
   // Mientras se está en una pantalla se va anotando a qué altura está, para
@@ -199,7 +223,7 @@ const AppShell: React.FC = () => {
 
   const handleTransitionComplete = () => {
     if (pendingTransition) {
-      navigate(`/trabajo/${pendingTransition.id}`);
+      navigate(ruta(idioma, 'trabajo', pendingTransition.id));
     }
     setPendingTransition(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -218,6 +242,11 @@ const AppShell: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f5f3ed] text-[#1a1918] font-sans antialiased selection:bg-[#1a1918] selection:text-[#f5f3ed]">
       {/* Top Header Navigation */}
+      {/* No pinta nada: deja en el <head> el título, la descripción, la
+          dirección canónica y las alternativas por idioma de la página que
+          se esté viendo. */}
+      <Metadatos />
+
       <Navbar currentPage={currentPage} onNavigate={handleNavigate} onOpenAvailability={openAvailability} />
 
       {/* Detras del cristal, la pagina se desenfoca y se apaga — sin eso, una
@@ -234,23 +263,47 @@ const AppShell: React.FC = () => {
         }`}
       >
         <main>
+          {/* LAS MISMAS SEIS PÁGINAS, DOS VECES: una por idioma.
+              No son dos webs. Es la misma, montada en las direcciones que le
+              tocan a cada idioma (`/proyectos` y `/en/projects`), porque una
+              versión que no tiene dirección propia no existe para Google. Las
+              direcciones las pone `src/lib/rutas.ts`; aquí sólo se recorren. */}
           <Routes>
-            <Route
-              path="/"
-              element={
-                <HomeMain
-                  introDone={introPlayed}
-                  onNavigate={handleNavigate}
-                  onOpenAvailability={openAvailability}
-                  onSelectStory={handleSelectStory}
+            {IDIOMAS.map((idi) => (
+              <React.Fragment key={idi}>
+                <Route
+                  path={ruta(idi, 'inicio')}
+                  element={
+                    <HomeMain
+                      introDone={introPlayed}
+                      onNavigate={handleNavigate}
+                      onOpenAvailability={openAvailability}
+                      onSelectStory={handleSelectStory}
+                    />
+                  }
                 />
-              }
-            />
-            <Route path="/proyectos" element={<ProjectsPage onOpenAvailability={openAvailability} />} />
-            <Route path="/acerca-de" element={<About onOpenAvailability={openAvailability} />} />
-            <Route path="/contacto" element={<Contact onOpen={openAvailability} />} />
-            <Route path="/trabajo/:id" element={<WorkProjectRoute onOpenAvailability={openAvailability} />} />
-            <Route path="/proyecto/:id" element={<ProjectCaseStudy onOpenAvailability={openAvailability} />} />
+                <Route
+                  path={ruta(idi, 'proyectos')}
+                  element={<ProjectsPage onOpenAvailability={openAvailability} />}
+                />
+                <Route
+                  path={ruta(idi, 'equipo')}
+                  element={<About onOpenAvailability={openAvailability} />}
+                />
+                <Route
+                  path={ruta(idi, 'contacto')}
+                  element={<Contact onOpen={openAvailability} />}
+                />
+                <Route
+                  path={ruta(idi, 'trabajo', ':id')}
+                  element={<WorkProjectRoute onOpenAvailability={openAvailability} />}
+                />
+                <Route
+                  path={ruta(idi, 'proyecto', ':id')}
+                  element={<ProjectCaseStudy onOpenAvailability={openAvailability} />}
+                />
+              </React.Fragment>
+            ))}
             <Route
               path="*"
               element={
@@ -292,14 +345,22 @@ const AppShell: React.FC = () => {
   );
 };
 
+/** EL ROUTER VA POR FUERA DE TODO, y ese orden importa: el idioma ahora se
+ *  lee de la dirección, así que su proveedor tiene que estar DENTRO del router
+ *  para poder consultarla. Antes estaba por encima, cuando el idioma vivía en
+ *  el navegador y no en la dirección.
+ *
+ *  `basename` es la subcarpeta en la que está colgado el sitio. Vite la
+ *  inyecta al compilar, así que esto vale igual en GitHub Pages
+ *  (`/New-Portafolio-2.0/`) que en el dominio de Mayurlin (`/`). */
 export default function App() {
   return (
-    <IdiomaProvider>
-      <ContentProvider>
-        <HashRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <IdiomaProvider>
+        <ContentProvider>
           <AppShell />
-        </HashRouter>
-      </ContentProvider>
-    </IdiomaProvider>
+        </ContentProvider>
+      </IdiomaProvider>
+    </BrowserRouter>
   );
 }

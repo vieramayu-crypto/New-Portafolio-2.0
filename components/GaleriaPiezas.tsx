@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
 import { VideoNube } from './VideoNube';
 import { useIdioma, segun } from '../src/lib/idioma';
+import { ruta } from '../src/lib/rutas';
 import { crearT } from '../src/lib/textos';
 
 /** UNA GALERÍA DE PIEZAS: un marco, una pieza a la vez, y debajo una línea
@@ -308,7 +309,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
               >
                 {pieza.hotelId ? (
                   <Link
-                    to={`/trabajo/${pieza.hotelId}`}
+                    to={ruta(idioma, 'trabajo', pieza.hotelId)}
                     className="font-serif text-lg text-[#1a1918] underline-offset-4 hover:underline md:text-2xl"
                   >
                     {pieza.hotel}

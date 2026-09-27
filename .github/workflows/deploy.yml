@@ -24,6 +24,10 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      # El prerenderizado abre la web en un Chromium de verdad para guardar el
+      # HTML ya dibujado de cada pagina. Sin este paso no hay navegador en el
+      # runner y la compilacion se queda sin las 32 copias.
+      - run: npx playwright install --with-deps chromium
       - run: npm run build
         env:
           # Este repo (New-Portafolio-2.0) vive en su propia subcarpeta de

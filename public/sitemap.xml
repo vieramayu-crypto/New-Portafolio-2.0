@@ -1,9 +1,292 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://mayurlintravel.eu/</loc>
-    <lastmod>2026-09-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/" />
+    <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/proyectos</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyectos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/projects" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyectos" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/projects</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyectos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/projects" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyectos" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/acerca-de</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/acerca-de" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/team" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/acerca-de" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/team</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/acerca-de" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/team" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/acerca-de" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/contacto</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/contacto" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/contacto" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/contacto" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/contacto" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/ritz-carlton-abama</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/ritz-carlton-abama" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/ritz-carlton-abama</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/ritz-carlton-abama" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/intercontinental-lisboa</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/intercontinental-lisboa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/intercontinental-lisboa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/intercontinental-lisboa" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/intercontinental-lisboa</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/intercontinental-lisboa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/intercontinental-lisboa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/intercontinental-lisboa" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/vestige-binidufa</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/vestige-binidufa" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/vestige-binidufa</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/vestige-binidufa" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/deltapark-vitalresort</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/deltapark-vitalresort" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/deltapark-vitalresort" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/deltapark-vitalresort" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/deltapark-vitalresort</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/deltapark-vitalresort" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/deltapark-vitalresort" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/deltapark-vitalresort" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/honeymoon-petra-villas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/honeymoon-petra-villas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/honeymoon-petra-villas" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/honeymoon-petra-villas" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/honeymoon-petra-villas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/honeymoon-petra-villas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/honeymoon-petra-villas" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/honeymoon-petra-villas" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/gpro-valparaiso</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/gpro-valparaiso" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/gpro-valparaiso</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/gpro-valparaiso" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/hotel-esplendido</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/hotel-esplendido" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/hotel-esplendido" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/hotel-esplendido" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/hotel-esplendido</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/hotel-esplendido" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/hotel-esplendido" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/hotel-esplendido" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/district-hive</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/district-hive" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/district-hive" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/district-hive" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/district-hive</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/district-hive" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/district-hive" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/district-hive" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/trabajo/welmoon-villas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/welmoon-villas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/welmoon-villas" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/welmoon-villas" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/work/welmoon-villas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/trabajo/welmoon-villas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/work/welmoon-villas" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/trabajo/welmoon-villas" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/proyecto/ritz-carlton-abama</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyecto/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/project/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyecto/ritz-carlton-abama" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/project/ritz-carlton-abama</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyecto/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/project/ritz-carlton-abama" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyecto/ritz-carlton-abama" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/proyecto/vestige-binidufa</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyecto/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/project/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyecto/vestige-binidufa" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/project/vestige-binidufa</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyecto/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/project/vestige-binidufa" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyecto/vestige-binidufa" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/proyecto/gpro-valparaiso</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyecto/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/project/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyecto/gpro-valparaiso" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mayurlintravel.eu/en/project/gpro-valparaiso</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mayurlintravel.eu/proyecto/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mayurlintravel.eu/en/project/gpro-valparaiso" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mayurlintravel.eu/proyecto/gpro-valparaiso" />
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
