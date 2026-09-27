@@ -78,6 +78,14 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     portada: publicImage('sec6-portada.jpg'),
   },
   {
+    id: 'v-deltapark',
+    hotelName: 'Deltapark Vitalresort',
+    hotelId: 'deltapark-vitalresort',
+    descripcion: 'Spa, lago Thun y arquitectura alpina contemporánea.',
+    src: 'https://livid.com/embed/BHmN51jTIGSH?autoplay=1&loop=1&muted=1',
+    portada: publicImage('sec3-gal08-fachada-h.jpg'),
+  },
+  {
     // Esta entrada era la última que apuntaba a un vídeo que no era suyo: el
     // de Abama bajo el nombre de InterContinental, que es atribuir un trabajo
     // a quien no lo hizo. Ya lleva el suyo, y con esto no queda en la web
