@@ -1275,11 +1275,27 @@ es un rótulo de estado, no navegación.
 
 ## La web en dos idiomas (ES / EN)
 
-El interruptor vive al lado del menú, con las dos abreviaturas y nada más:
-en la cabecera cuando el menú está cerrado, y **dentro del panel, arriba a la
-derecha junto a `[ CERRAR ]`**, cuando está abierto. No puede ir al pie del
-panel: medido en un móvil de 390x844 cae en y=851, siete píxeles por debajo
-del borde, y hay que desplazar el menú para encontrarlo.
+El interruptor vive al lado del menú: en la cabecera cuando el menú está
+cerrado, y **dentro del panel, arriba a la derecha junto a `[ CERRAR ]`**,
+cuando está abierto. No puede ir al pie del panel: medido en un móvil de
+390x844 cae en y=851, siete píxeles por debajo del borde, y hay que desplazar
+el menú para encontrarlo.
+
+**SÓLO SE VE EL IDIOMA ACTIVO, DOS LETRAS.** Enseñaba las dos abreviaturas a
+la vez con una barra en medio ("ES | EN") y Mayurlin lo paró: *"ocupa mucho
+espacio, más de lo que me gustaría... actualmente la sección está ocupada por
+cuatro letras, quiero que solamente sean dos"*. Medido: 58 px en móvil y 62 en
+escritorio, la mitad de ellos para decir algo que el visitante ya sabe porque
+está leyendo la web en ese idioma. Ahora son 30 y 33 px.
+
+Al pulsar se abre un cuadrito con el otro idioma, alineado a la derecha para
+que nunca se salga por el lado de fuera en un móvil estrecho, y elegirlo
+cambia la web y lo cierra. También se cierra al tocar fuera y con Escape: sin
+lo de tocar fuera, en móvil se queda abierto encima del contenido.
+
+**El chevrón de 7 px no sobra.** Dos letras sueltas en una cabecera se leen
+como un rótulo, no como algo que se pueda tocar: es la única señal de que ahí
+hay un idioma que cambiar.
 
 **REGLA DE ESCRITURA, PEDIDO EXPLÍCITO DE MAYURLIN: nada de guiones para
 separar palabras o ideas**, ni en español ni en inglés. Ni guion largo ni
