@@ -23,6 +23,7 @@ import { HotelDetail } from './components/HotelDetail';
 import { PhotoZoomTransition } from './components/PhotoZoomTransition';
 import { IntroLoader } from './components/IntroLoader';
 import { ContentProvider, useSiteContent } from './src/lib/content';
+import { IdiomaProvider } from './src/lib/idioma';
 import {
   hayHistorialPropio,
   pedirAncla,
@@ -288,10 +289,12 @@ const AppShell: React.FC = () => {
 
 export default function App() {
   return (
-    <ContentProvider>
-      <HashRouter>
-        <AppShell />
-      </HashRouter>
-    </ContentProvider>
+    <IdiomaProvider>
+      <ContentProvider>
+        <HashRouter>
+          <AppShell />
+        </HashRouter>
+      </ContentProvider>
+    </IdiomaProvider>
   );
 }
