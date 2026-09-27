@@ -732,9 +732,9 @@ entorpecería el flujo. La idea es que estén los cuatro directamente ahí".
   Honeymoon `sec4`, GPRO `sec5`, Espléndido `sec6`, InterContinental `sec7`,
   Welmoon `sec8`, District Hive `sec9`. Dos entradas llevaban la portada de
   otro hotel por dar por hecho que sí lo seguía.
-- **Las cinco piezas horizontales son reales y distintas**: Abama, Vestige
-  Collection Binidufà, GPRO Valparaíso, Hotel Espléndido e InterContinental
-  Lisboa. Ya no queda ninguna prestada. InterContinental fue la última en
+- **Las seis piezas horizontales son reales y distintas**: Abama, Vestige
+  Collection Binidufà, GPRO Valparaíso, Hotel Espléndido, InterContinental
+  Lisboa y Deltapark Vitalresort. Ya no queda ninguna prestada. InterContinental fue la última en
   llegar: hasta entonces apuntaba al vídeo de Abama bajo su nombre, que es
   atribuir un trabajo a quien no lo hizo.
 - **TODO VÍDEO HORIZONTAL VA EN LA GALERÍA DE SU HOTEL. Sin excepciones.**

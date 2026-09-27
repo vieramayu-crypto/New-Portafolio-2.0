@@ -329,7 +329,7 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // lobby + arrival, room + balcony, breakfast, spa, wellness + lake, dusk
   // facade, closing overhead aerial. Denser rhythm than the others: two
   // pairs run back-to-back twice instead of always alternating with solos.
-  ({ photos, y }) => (
+  ({ photos, y, embed }) => (
     <>
       {photos[0] && (
         <Bleed>
@@ -351,6 +351,15 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
             />
           )}
         </div>
+      )}
+      {/* EL VÍDEO VA ENTRE LAS DOS PRIMERAS PAREJAS. Tercer elemento de ocho:
+          no es lo primero, está en la primera mitad y tiene una vertical 3/4 a
+          cada lado. La aérea a sangre de este hotel es la foto 1, dos
+          elementos por encima, así que no se leen dos bandas anchas seguidas. */}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {(photos[3] || photos[4]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">

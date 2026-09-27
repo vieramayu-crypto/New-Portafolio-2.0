@@ -442,6 +442,10 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Romantic Escape',
     layoutVariant: 2,
+    // Su hueco en el mosaico es la foto2 (ver HUECO_VIDEO, variante 2). Esa
+    // foto -- la aérea del lago Thun -- ya está en galleryPhotos, así que no
+    // desaparece de ningún sitio.
+    galleryEmbed: 'https://livid.com/embed/BHmN51jTIGSH?autoplay=1&loop=1&muted=1',
     caseStudy: {
       season: 'Septiembre · Verano',
       duration: '3 días',
