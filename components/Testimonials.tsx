@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { TESTIMONIALS } from '../data/collaborations';
 import type { Testimonial } from '../types';
+import { traducirTestimonio } from '../data/textosEn';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 const AUTO_ADVANCE_MS = 9000;
 
@@ -90,7 +93,13 @@ export const Testimonials: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const t = TESTIMONIALS[index];
+  const { idioma } = useIdioma();
+  const txt = crearT(idioma);
+  // Las citas, en el idioma activo. Se traducen aquí y no en el dato para que
+  // el orden que eligió Mayurlin, que es el del array, siga siendo el único.
+  const citas = TESTIMONIALS.map((item) => traducirTestimonio(item, idioma));
+
+  const t = citas[index];
   if (!t) return null;
 
   const go = (delta: number) =>
@@ -112,7 +121,7 @@ export const Testimonials: React.FC = () => {
           rejilla toma la altura de la más alta. Sale exacta a cualquier ancho
           y se ajusta sola si mañana se cambia un testimonio. */}
       <div className="relative grid">
-        {TESTIMONIALS.map((item) => (
+        {citas.map((item) => (
           <div
             key={`medidor-${item.id}`}
             aria-hidden
@@ -141,18 +150,18 @@ export const Testimonials: React.FC = () => {
       <div className="flex items-center justify-center gap-6 pt-12 md:pt-14">
         <button
           onClick={() => go(-1)}
-          aria-label="Testimonio anterior"
+          aria-label={txt('testimonioAnterior')}
           className="p-2 text-[#1a1918]/50 transition-colors hover:text-[#1a1918]"
         >
           <span className="text-2xl leading-none">&#8249;</span>
         </button>
 
         <div className="flex items-center gap-3">
-          {TESTIMONIALS.map((item, i) => (
+          {citas.map((item, i) => (
             <button
               key={item.id}
               onClick={() => setIndex(i)}
-              aria-label={`Ver testimonio de ${item.brandName}`}
+              aria-label={`${txt('verTestimonioDe')} ${item.brandName}`}
               aria-current={i === index}
               className="p-1.5 -m-1.5"
             >
@@ -167,7 +176,7 @@ export const Testimonials: React.FC = () => {
 
         <button
           onClick={() => go(1)}
-          aria-label="Siguiente testimonio"
+          aria-label={txt('testimonioSiguiente')}
           className="p-2 text-[#1a1918]/50 transition-colors hover:text-[#1a1918]"
         >
           <span className="text-2xl leading-none">&#8250;</span>

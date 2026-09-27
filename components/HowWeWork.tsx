@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { publicImage, useSiteContent } from '../src/lib/content';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 // One photo per step, matched by index. Photos live in code (not content.json)
 // so Mayurlin can rewrite the step copy without needing to touch image paths.
@@ -14,6 +16,7 @@ const STEP_PHOTOS = [
 const AUTO_ADVANCE_MS = 7500;
 
 export const HowWeWork: React.FC = () => {
+  const t = crearT(useIdioma().idioma);
   const { howWeWork } = useSiteContent();
   const steps = howWeWork.steps;
   const [index, setIndex] = useState(0);
@@ -112,7 +115,7 @@ export const HowWeWork: React.FC = () => {
                     goNext();
                   }
                 }}
-                aria-label="Ver el siguiente paso"
+                aria-label={t('siguientePaso')}
                 className="cursor-pointer"
               >
                 <div>
@@ -131,7 +134,7 @@ export const HowWeWork: React.FC = () => {
                   <div className="clear-left pt-8 md:pt-12">
                     <div className="font-serif text-xl text-[#1a1918] md:text-2xl">{step.title}</div>
                     <div className="mt-1 text-[11px] font-sans uppercase tracking-[0.25em] text-[#5a5854] md:text-xs">
-                      Paso {index + 1} de {steps.length}
+                      {t('paso')} {index + 1} {t('pasoDe')} {steps.length}
                     </div>
                   </div>
                 </div>

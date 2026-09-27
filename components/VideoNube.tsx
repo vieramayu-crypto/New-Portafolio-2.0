@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 /**
  * Vídeo del servicio en la nube de Mayurlin.
@@ -95,6 +97,7 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
   recorte = RECORTE_POR_DEFECTO,
   alCargar,
 }) => {
+  const t = crearT(useIdioma().idioma);
   // El horizontal sale del vertical por 16/9, para que al crecer la imagen
   // conserve su forma en vez de estirarse.
   const r = Math.max(0, recorte);
@@ -124,7 +127,7 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
         referrerPolicy="strict-origin-when-cross-origin"
         src={src}
         onLoad={alCargar}
-        title="Vídeo de producción para hotel"
+        title={t('videoTitulo')}
       />
     </div>
   );

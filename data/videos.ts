@@ -19,6 +19,8 @@ export interface VideoHorizontal {
   hotelId?: string;
   /** Una línea corta: qué es esta pieza. */
   descripcion?: string;
+  /** La misma línea en inglés. Si falta, se queda la española. */
+  descripcionEn?: string;
   src: string;
   portada: string;
 }
@@ -46,6 +48,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'The Ritz-Carlton Tenerife, Abama',
     hotelId: 'ritz-carlton-abama',
     descripcion: 'Arquitectura, jardines y experiencia de estancia.',
+    descripcionEn: 'Architecture, gardens and the experience of the stay.',
     src: 'https://livid.com/embed/oSYQOQcPwP5R?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec1-gal4-playa-h.jpg'),
   },
@@ -54,6 +57,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'Vestige Collection, Binidufà',
     hotelId: 'vestige-binidufa',
     descripcion: 'Finca, patios y piscina en el interior de Menorca.',
+    descripcionEn: 'Estate, courtyards and pool in the interior of Menorca.',
     src: 'https://livid.com/embed/wbn5AZWOb8V9?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec2-gal01-aerea-h.jpg'),
   },
@@ -62,6 +66,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
     descripcion: 'Jardines, piscina y spa sobre la Bahía de Palma.',
+    descripcionEn: 'Gardens, pool and spa above the Bay of Palma.',
     // OJO CON EL NOMBRE DEL ARCHIVO: dice "MUESTRA ... LOW RESOLU", y durante
     // varias rondas se dio por hecho que era una copia de baja calidad que
     // había que sustituir. Mayurlin lo aclaró: el título miente, el vídeo es
@@ -74,6 +79,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'Hotel Espléndido',
     hotelId: 'hotel-esplendido',
     descripcion: 'Terrazas y piscina frente a la Bahía de Port de Sóller.',
+    descripcionEn: 'Terraces and pool facing the Bay of Port de Sóller.',
     src: 'https://livid.com/embed/rx3uWQWDbVyM?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec6-portada.jpg'),
   },
@@ -82,6 +88,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'Deltapark Vitalresort',
     hotelId: 'deltapark-vitalresort',
     descripcion: 'Spa, lago Thun y arquitectura alpina contemporánea.',
+    descripcionEn: 'Spa, Lake Thun and contemporary alpine architecture.',
     src: 'https://livid.com/embed/BHmN51jTIGSH?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec3-gal08-fachada-h.jpg'),
   },
@@ -94,6 +101,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     hotelName: 'InterContinental Lisboa',
     hotelId: 'intercontinental-lisboa',
     descripcion: 'Interiores, servicio y experiencia de ciudad.',
+    descripcionEn: 'Interiors, service and the experience of the city.',
     src: 'https://livid.com/embed/AnikHPeM1YCc?autoplay=1&loop=1&muted=1',
     // Llevaba `sec3-gal08`, que es de Deltapark: la miniatura de un hotel
     // enseñaba la fachada de otro. Las fotos de InterContinental son `sec7`.
@@ -118,6 +126,9 @@ export interface VideoVertical {
   hotel: string;
   tipo: string;
   titular: string;
+  /** El rótulo y la línea grande en inglés. Si faltan, se queda el español. */
+  tipoEn?: string;
+  titularEn?: string;
   src: string;
   hotelId?: string;
   /** Marca las que hay que sustituir antes de migrar al dominio propio. */
@@ -153,6 +164,8 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     hotelId: 'deltapark-vitalresort',
     tipo: 'Bienestar',
     titular: 'El lago marca el ritmo y el resort lo sigue.',
+    tipoEn: 'Wellbeing',
+    titularEn: 'The lake sets the pace and the resort follows.',
     src: 'https://livid.com/embed/ZEpjpzzaB-K0?autoplay=1&loop=1&muted=1',
   },
   {
@@ -160,6 +173,8 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     hotel: 'Stic Urban',
     tipo: 'Restaurante',
     titular: 'La sala llena, a la hora a la que de verdad se llena.',
+    tipoEn: 'Restaurant',
+    titularEn: 'A full room, at the hour when it really fills up.',
     src: 'https://livid.com/embed/aBvRZRirC6Bl?autoplay=1&loop=1&muted=1',
   },
   {
@@ -167,6 +182,8 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     hotel: 'Stic Urban',
     tipo: 'Spa',
     titular: 'Un spa se enseña por la luz y el ritmo, no por el catálogo.',
+    tipoEn: 'Spa',
+    titularEn: 'A spa is shown by its light and its pace, not by a catalogue.',
     src: 'https://livid.com/embed/AFaBlCH42ZBt?autoplay=1&loop=1&muted=1',
   },
   {
@@ -174,6 +191,8 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     hotel: 'Stic Urban',
     tipo: 'Azotea',
     titular: 'La azotea a la hora en que justifica la reserva.',
+    tipoEn: 'Rooftop',
+    titularEn: 'The rooftop at the hour that justifies the booking.',
     src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
   },
 ];

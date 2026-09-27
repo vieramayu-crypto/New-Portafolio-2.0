@@ -4,6 +4,9 @@ import { useVolver } from '../App';
 import { motion } from 'motion/react';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { HOTEL_STORIES } from '../data/hotels';
+import { traducirCaso } from '../data/textosEn';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -25,7 +28,10 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const volver = useVolver();
-  const caseStudy = CASE_STUDIES.find((c) => c.slug === id);
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
+  const casoBase = CASE_STUDIES.find((c) => c.slug === id);
+  const caseStudy = casoBase ? traducirCaso(casoBase, idioma) : undefined;
   const hotel = caseStudy ? HOTEL_STORIES.find((h) => h.id === caseStudy.hotelId) : undefined;
 
   if (!caseStudy || !hotel) {
@@ -46,12 +52,12 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
           className="absolute left-6 top-24 z-10 flex items-center gap-2 font-sans text-xs uppercase tracking-[0.15em] text-white/90 transition-colors hover:text-white sm:top-28 md:left-12 md:text-sm"
         >
           <span aria-hidden="true">&larr;</span>
-          <span>Volver</span>
+          <span>{t('volver')}</span>
         </button>
 
         <div className="absolute inset-x-0 bottom-0 px-6 pb-10 text-center md:px-12 md:pb-14">
           <span className="text-[11px] font-sans uppercase tracking-[0.28em] text-white/75 md:text-xs">
-            Caso de estudio
+            {t('casoDeEstudio')}
           </span>
           <h1 className="mt-3 font-serif text-3xl text-white sm:text-4xl md:text-5xl">{caseStudy.heading}</h1>
         </div>
@@ -83,13 +89,13 @@ export const ProjectCaseStudy: React.FC<ProjectCaseStudyProps> = ({ onOpenAvaila
             onClick={onOpenAvailability}
             className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
           >
-            Iniciar un proyecto
+            {t('iniciarProyecto')}
           </button>
           <Link
             to={`/trabajo/${hotel.id}`}
             className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
           >
-            Ver galería completa
+            {t('verGaleriaCompleta')}
           </Link>
         </div>
       </div>

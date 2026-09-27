@@ -2,18 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSiteContent } from "../src/lib/content";
 import { sendInquiry, type InquiryOutcome } from "../src/lib/inquiry";
+import { useIdioma, segun } from "../src/lib/idioma";
+import { crearT } from "../src/lib/textos";
 
 /** Los campos comparten el hairline del resto del sitio: sin caja, sin relleno,
  *  sin sombra. Serif grande para lo que el visitante escribe. */
 const fieldClass =
   "block w-full border-0 bg-transparent p-0 font-serif text-xl text-[#1a1918] outline-none placeholder:text-[#5a5854]/50 md:text-[23px]";
 
-const SCOPE_OPTIONS = [
-  "Fotografía",
-  "Vídeo",
-  "Fotografía y vídeo",
-  "Banco de imágenes y vídeos",
-  "Producción continua",
+/** Lo que se elige en estas dos listas viaja dentro del correo, así que va en
+ *  el idioma en el que el visitante rellenó el formulario. */
+const CLAVES_ALCANCE = [
+  "alcanceFoto",
+  "alcanceVideo",
+  "alcanceFotoVideo",
+  "alcanceBanco",
+  "alcanceContinua",
 ];
 
 /** Antes aquí había tramos de precio (menos de 2.500€, 2.500-5.000€...). Se
@@ -21,11 +25,7 @@ const SCOPE_OPTIONS = [
  *  precio antes de saber qué necesita el hotel, y a quien tiene presupuesto
  *  grande le da una señal equivocada. Lo que sí sirve para priorizar es en qué
  *  punto está el proyecto, que es lo que se pregunta ahora. */
-const STAGE_OPTIONS = [
-  "Presupuesto aprobado",
-  "Pendiente de aprobación",
-  "Explorando opciones",
-];
+const CLAVES_ETAPA = ["etapaAprobado", "etapaPendiente", "etapaExplorando"];
 
 interface FieldProps {
   label: string;
@@ -72,6 +72,8 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
   onClose,
 }) => {
   const { contact } = useSiteContent();
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
   const panelRef = useRef<HTMLElement | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
@@ -147,7 +149,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
     e.preventDefault();
     if (sending) return;
     setSending(true);
-    const resultado = await sendInquiry(contact.emailAddress, form, file);
+    const resultado = await sendInquiry(contact.emailAddress, form, file, idioma);
     setOutcome(resultado);
     setSending(false);
     setSubmitted(true);
@@ -202,7 +204,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                 <div className="relative px-6 pb-9 pt-16 md:px-[clamp(34px,6vw,84px)] md:pb-[clamp(56px,5.5vw,76px)] md:pt-[clamp(50px,5.5vw,76px)]">
                   <button
                     onClick={onClose}
-                    aria-label="Cerrar"
+                    aria-label={t('cerrar')}
                     className="absolute right-4 top-4 z-[3] flex h-10 w-10 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/20 text-xl text-[#1a1918] transition-colors hover:bg-white/40 md:right-6 md:top-6 md:h-[42px] md:w-[42px]"
                   >
                     ×
@@ -214,22 +216,29 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         ✓
                       </div>
                       <h2 className="font-serif text-3xl text-[#1a1918] md:text-4xl">
-                        {outcome === "correo" ? "Tu consulta está lista" : "Consulta enviada"}
+                        {outcome === "correo" ? t('consultaLista') : t('consultaEnviada')}
                       </h2>
                       {outcome === "correo" ? (
                         <>
                           {/* Sin fingir: el envío no salió, así que se dice y se
                               le da la vía alternativa ya preparada. */}
                           <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                            No hemos podido enviarla desde aquí, así que hemos abierto tu cliente de
-                            correo con la consulta para{" "}
+                            {segun(
+                              idioma,
+                              'No hemos podido enviarla desde aquí, así que hemos abierto tu cliente de correo con la consulta para ',
+                              'We could not send it from here, so we have opened your email client with the enquiry for ',
+                            )}
                             <span className="font-medium text-[#1a1918]">
-                              {form.propertyName || "tu propiedad"}
+                              {form.propertyName || t('tuPropiedad')}
                             </span>{" "}
-                            ya redactada. Solo falta que la envíes.
+                            {segun(
+                              idioma,
+                              'ya redactada. Solo falta que la envíes.',
+                              'already written. All that is left is to send it.',
+                            )}
                           </p>
                           <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                            ¿No se abrió? Escríbenos a{" "}
+                            {t('noSeAbrio')} {t('escribenosA')}{" "}
                             <a
                               href={`mailto:${contact.emailAddress}`}
                               className="font-medium text-[#1a1918] underline underline-offset-4"
@@ -242,17 +251,29 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                       ) : (
                         <>
                           <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                            Gracias,{" "}
-                            <span className="font-medium text-[#1a1918]">{form.name}</span>. Hemos
-                            recibido tu consulta para{" "}
+                            {segun(idioma, 'Gracias, ', 'Thank you, ')}
+                            <span className="font-medium text-[#1a1918]">{form.name}</span>
+                            {segun(
+                              idioma,
+                              '. Hemos recibido tu consulta para ',
+                              '. We have your enquiry for ',
+                            )}
                             <span className="font-medium text-[#1a1918]">
-                              {form.propertyName || "tu propiedad"}
+                              {form.propertyName || t('tuPropiedad')}
                             </span>{" "}
-                            y te respondemos al correo que nos has dejado.
+                            {segun(
+                              idioma,
+                              'y te respondemos al correo que nos has dejado.',
+                              'and we will reply to the address you left us.',
+                            )}
                           </p>
                           {outcome === "enviado-sin-adjunto" && (
                             <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
-                              El archivo que adjuntaste no se pudo enviar. Mándanoslo respondiendo a{" "}
+                              {segun(
+                                idioma,
+                                'El archivo que adjuntaste no se pudo enviar. Mándanoslo respondiendo a ',
+                                'The file you attached could not be sent. Send it to us at ',
+                              )}
                               <a
                                 href={`mailto:${contact.emailAddress}`}
                                 className="font-medium text-[#1a1918] underline underline-offset-4"
@@ -268,7 +289,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         onClick={() => setSubmitted(false)}
                         className="text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] underline underline-offset-4"
                       >
-                        Enviar otra consulta
+                        {t('enviarOtraConsulta')}
                       </button>
                     </div>
                   ) : (
@@ -292,7 +313,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         onSubmit={handleSubmit}
                         className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-[34px] md:gap-y-7"
                       >
-                        <Field label="Nombre" htmlFor="inq-name">
+                        <Field label={t('campoNombre')} htmlFor="inq-name">
                           <input
                             id="inq-name"
                             required
@@ -305,7 +326,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Email" htmlFor="inq-email">
+                        <Field label={t('campoEmail')} htmlFor="inq-email">
                           <input
                             id="inq-email"
                             required
@@ -319,7 +340,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Hotel o empresa" htmlFor="inq-property">
+                        <Field label={t('campoHotelEmpresa')} htmlFor="inq-property">
                           <input
                             id="inq-property"
                             required
@@ -331,7 +352,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           />
                         </Field>
 
-                        <Field label="Ubicación (opcional)" htmlFor="inq-location">
+                        <Field label={t('campoUbicacionOpc')} htmlFor="inq-location">
                           <input
                             id="inq-location"
                             value={form.location}
@@ -345,19 +366,19 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         {/* Instagram y web en una sola casilla: quien contesta
                             va a abrir una cosa o la otra, y pedir las dos por
                             separado es una casilla más sin ganar nada. */}
-                        <Field label="Instagram o web (opcional)" htmlFor="inq-link" wide>
+                        <Field label={t('campoEnlaceOpc')} htmlFor="inq-link" wide>
                           <input
                             id="inq-link"
                             value={form.link}
                             onChange={(e) =>
                               setForm({ ...form, link: e.target.value })
                             }
-                            placeholder="@tuhotel o tuhotel.com"
+                            placeholder={t('phWeb')}
                             className={fieldClass}
                           />
                         </Field>
 
-                        <Field label="¿Qué necesitas producir? (opcional)" htmlFor="inq-scope">
+                        <Field label={t('campoAlcanceOpc')} htmlFor="inq-scope">
                           <select
                             id="inq-scope"
                             value={form.scope}
@@ -366,16 +387,16 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             }
                             className={fieldClass}
                           >
-                            <option value="">Selecciona</option>
-                            {SCOPE_OPTIONS.map((option) => (
-                              <option key={option} value={option}>
-                                {option}
+                            <option value="">{t('selecciona')}</option>
+                            {CLAVES_ALCANCE.map((clave) => (
+                              <option key={clave} value={t(clave)}>
+                                {t(clave)}
                               </option>
                             ))}
                           </select>
                         </Field>
 
-                        <Field label="En qué punto está (opcional)" htmlFor="inq-stage">
+                        <Field label={t('campoEtapaOpc')} htmlFor="inq-stage">
                           <select
                             id="inq-stage"
                             value={form.stage}
@@ -384,16 +405,16 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             }
                             className={fieldClass}
                           >
-                            <option value="">Selecciona</option>
-                            {STAGE_OPTIONS.map((option) => (
-                              <option key={option} value={option}>
-                                {option}
+                            <option value="">{t('selecciona')}</option>
+                            {CLAVES_ETAPA.map((clave) => (
+                              <option key={clave} value={t(clave)}>
+                                {t(clave)}
                               </option>
                             ))}
                           </select>
                         </Field>
 
-                        <Field label="Proyecto" htmlFor="inq-message" wide>
+                        <Field label={t('campoProyecto')} htmlFor="inq-message" wide>
                           <textarea
                             id="inq-message"
                             required
@@ -401,7 +422,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             onChange={(e) =>
                               setForm({ ...form, message: e.target.value })
                             }
-                            placeholder="Objetivo, fechas, dónde se va a usar y, si ya lo sabes, qué espacios te importan más y quién aprueba el contenido."
+                            placeholder={t('phMensaje')}
                             className={`${fieldClass} h-48 min-h-[190px] resize-y`}
                           />
                         </Field>
@@ -409,10 +430,10 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                         {/* Adjunto opcional. El estilo no es el del navegador:
                             el `input` real se esconde y la etiqueta hace de
                             botón, para que no rompa el hairline del resto. */}
-                        <Field label="Briefing (opcional)" wide>
+                        <Field label={t('campoBriefingOpc')} wide>
                           <div className="flex flex-wrap items-center gap-4">
                             <label className="cursor-pointer border-b border-[#1a1918]/65 pb-1.5 font-sans text-[12px] uppercase tracking-[0.2em] text-[#1a1918] transition-colors hover:border-[#1a1918]">
-                              {file ? "Cambiar archivo" : "Adjuntar archivo"}
+                              {file ? t('cambiarArchivo') : t('adjuntarArchivo')}
                               <input
                                 type="file"
                                 accept=".pdf,.doc,.docx,.ppt,.pptx,.key,.pages,.txt,.rtf,.odt,image/*"
@@ -428,7 +449,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                                   onClick={() => setFile(null)}
                                   className="ml-3 underline underline-offset-4"
                                 >
-                                  quitar
+                                  {t('quitarArchivo')}
                                 </button>
                               </span>
                             )}
@@ -441,7 +462,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             disabled={sending}
                             className="border-b border-[#1a1918]/65 pb-3 text-[12px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] disabled:opacity-50"
                           >
-                            {sending ? "Enviando…" : "Enviar consulta →"}
+                            {sending ? t('enviando') : `${t('enviarConsulta')} →`}
                           </button>
                         </div>
                       </form>

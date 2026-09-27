@@ -10,6 +10,8 @@ import {
 } from 'react-router-dom';
 import { Page, HotelStory } from './types';
 import { HOTEL_STORIES } from './data/hotels';
+import { traducirHotel } from './data/textosEn';
+import { useIdioma } from './src/lib/idioma';
 import { Navbar } from './components/Navbar';
 import { HomeMain } from './components/HomeMain';
 import { About } from './components/About';
@@ -23,6 +25,7 @@ import { HotelDetail } from './components/HotelDetail';
 import { PhotoZoomTransition } from './components/PhotoZoomTransition';
 import { IntroLoader } from './components/IntroLoader';
 import { ContentProvider, useSiteContent } from './src/lib/content';
+import { IdiomaProvider } from './src/lib/idioma';
 import {
   hayHistorialPropio,
   pedirAncla,
@@ -101,6 +104,7 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
   const navigate = useNavigate();
   const volver = useVolver();
   const { hotels: hotelContent } = useSiteContent();
+  const { idioma } = useIdioma();
   const idx = HOTEL_STORIES.findIndex((s) => s.id === id);
 
   if (idx === -1) {
@@ -110,7 +114,9 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
   }
 
   const total = HOTEL_STORIES.length;
-  const base = HOTEL_STORIES[idx];
+  // El idioma primero (rótulo, sitio, país, datos del rodaje y los textos
+  // alternativos de las fotos), y encima lo que Mayurlin edita en content.
+  const base = traducirHotel(HOTEL_STORIES[idx], idioma);
   const story: HotelStory = {
     ...base,
     hotelName: hotelContent[idx]?.hotelName ?? base.hotelName,
@@ -118,8 +124,8 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
     description: hotelContent[idx]?.description ?? base.description,
     quote: hotelContent[idx]?.quote ?? base.quote,
   };
-  const prevStory = HOTEL_STORIES[(idx - 1 + total) % total];
-  const nextStory = HOTEL_STORIES[(idx + 1) % total];
+  const prevStory = traducirHotel(HOTEL_STORIES[(idx - 1 + total) % total], idioma);
+  const nextStory = traducirHotel(HOTEL_STORIES[(idx + 1) % total], idioma);
 
   return (
     <HotelDetail
@@ -288,10 +294,12 @@ const AppShell: React.FC = () => {
 
 export default function App() {
   return (
-    <ContentProvider>
-      <HashRouter>
-        <AppShell />
-      </HashRouter>
-    </ContentProvider>
+    <IdiomaProvider>
+      <ContentProvider>
+        <HashRouter>
+          <AppShell />
+        </HashRouter>
+      </ContentProvider>
+    </IdiomaProvider>
   );
 }

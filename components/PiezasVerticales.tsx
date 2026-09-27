@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { VIDEOS_VERTICALES } from '../data/videos';
 import type { VideoVertical } from '../data/videos';
 import { VideoNube } from './VideoNube';
+import { useIdioma, segun } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 /** EL CUARTO CARRUSEL HERMANO.
  *
@@ -37,6 +39,7 @@ const TarjetaPieza: React.FC<{ pieza: VideoVertical; indice: number; medidor?: b
   indice,
   medidor,
 }) => {
+  const { idioma } = useIdioma();
   /* Mismas clases de flotado que las otras dos, con la anchura subida un
      escalón: una pieza 9:16 al ancho de una foto 3:4 se queda estrecha y el
      vídeo, que es lo que hay que ver, sale diminuto. */
@@ -70,7 +73,7 @@ const TarjetaPieza: React.FC<{ pieza: VideoVertical; indice: number; medidor?: b
         </div>
 
         <p className="font-serif text-[1.45rem] leading-[1.3] text-[#1a1918] sm:text-3xl md:text-[2.35rem] md:leading-[1.28] lg:text-[2.6rem]">
-          {pieza.titular}
+          {segun(idioma, pieza.titular, pieza.titularEn ?? pieza.titular)}
         </p>
 
         <div className="clear-left pt-8 md:pt-10">
@@ -85,7 +88,7 @@ const TarjetaPieza: React.FC<{ pieza: VideoVertical; indice: number; medidor?: b
             <div className="font-serif text-xl text-[#1a1918] md:text-2xl">{pieza.hotel}</div>
           )}
           <div className="mt-1 text-[11px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-xs">
-            {pieza.tipo}
+            {segun(idioma, pieza.tipo, pieza.tipoEn ?? pieza.tipo)}
           </div>
         </div>
       </div>
@@ -94,6 +97,8 @@ const TarjetaPieza: React.FC<{ pieza: VideoVertical; indice: number; medidor?: b
 };
 
 export const PiezasVerticales: React.FC = () => {
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
   const piezas = VIDEOS_VERTICALES.filter((p) => !p.provisional);
   const [indice, setIndice] = useState(0);
   const [parado, setParado] = useState(false);
@@ -123,10 +128,10 @@ export const PiezasVerticales: React.FC = () => {
       <div className="mx-auto max-w-5xl px-6 md:px-12">
         <div className="mb-12 md:mb-16">
           <h2 className="font-serif text-[8vw] leading-[1.06] text-[#1a1918] sm:text-[6vw] md:text-[3.2vw]">
-            Piezas verticales
+            {t('verticalesTituloSuelto')}
           </h2>
           <p className="mt-4 max-w-[52ch] font-sans text-[14px] leading-[1.7] text-[#5a5854] md:text-sm">
-            Para las redes del hotel, en el formato en que se publican.
+            {t('verticalesSubtituloSuelto')}
           </p>
         </div>
 
@@ -189,7 +194,7 @@ export const PiezasVerticales: React.FC = () => {
                   setParado(true);
                   setIndice(i);
                 }}
-                aria-label={`Ver la pieza de ${p.tipo}`}
+                aria-label={`${t('verPieza')} ${segun(idioma, p.tipo, p.tipoEn ?? p.tipo)}`}
                 aria-current={i === indice}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   i === indice ? 'w-7 bg-[#1a1918]' : 'w-1.5 bg-[#1a1918]/25 hover:bg-[#1a1918]/45'
