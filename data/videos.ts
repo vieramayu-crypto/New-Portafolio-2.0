@@ -138,6 +138,24 @@ export interface VideoVertical {
  */
 export const VIDEOS_VERTICALES: VideoVertical[] = [
   {
+    // ABRE LA GALERÍA, y no es casualidad. Es la única pieza vertical con
+    // ficha de hotel detrás, así que su firma enlaza; las tres de Stic Urban
+    // no, porque ese hotel no tiene página. Poniéndola primero, lo primero
+    // que se ve de este formato es un hotel con nombre, fotos y galería.
+    //
+    // OJO CON EL RÓTULO: desde este entorno no se puede ver el vídeo (el
+    // proveedor está bloqueado), así que `tipo` y `titular` se escribieron
+    // sobre lo que es el hotel -- un Vitalresort a orillas del lago Thun, con
+    // un spa de 2.000 m² -- y no sobre lo que enseña el plano. Si la pieza va
+    // de otra cosa, es cambiar estas dos líneas.
+    id: 'deltapark-bienestar',
+    hotel: 'Deltapark Vitalresort',
+    hotelId: 'deltapark-vitalresort',
+    tipo: 'Bienestar',
+    titular: 'El lago marca el ritmo y el resort lo sigue.',
+    src: 'https://livid.com/embed/ZEpjpzzaB-K0?autoplay=1&loop=1&muted=1',
+  },
+  {
     id: 'stic-restaurante',
     hotel: 'Stic Urban',
     tipo: 'Restaurante',
