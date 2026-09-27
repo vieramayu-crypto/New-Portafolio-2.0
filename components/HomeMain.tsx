@@ -4,6 +4,7 @@ import { HOTEL_STORIES } from '../data/hotels';
 import { traducirHotel } from '../data/textosEn';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
+import { ruta } from '../src/lib/rutas';
 import { HotelStory, Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { HeroSection } from './HeroSection';
@@ -292,14 +293,14 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
                     {caseStudy && (
                       <Link
-                        to={`/proyecto/${caseStudy.slug}`}
+                        to={ruta(idioma, 'proyecto', caseStudy.slug)}
                         className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                       >
                         {t('verProyecto')}
                       </Link>
                     )}
                     <Link
-                      to={`/trabajo/${story.id}`}
+                      to={ruta(idioma, 'trabajo', story.id)}
                       className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                     >
                       {t('verGaleria')}
@@ -314,7 +315,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
               (/proyectos), que es lo que se puede enviar por correo. */}
           <div className="flex justify-center pt-4 pb-4">
             <Link
-              to="/proyectos"
+              to={ruta(idioma, 'proyectos')}
               className="inline-block bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
               {t('verTodosProyectos')}

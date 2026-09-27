@@ -1363,6 +1363,105 @@ trabajo tirado. Los otros tres sí se pasaron por el diccionario, porque eran
 tres o cuatro frases cada uno. Si `AvailabilityModal` vuelve a usarse alguna
 vez, hay que traducirlo antes de enseñarlo.
 
+## Que Google pueda ver la web (dirección, cabecera y prerenderizado)
+
+Tres cosas hacían que de toda la web Google viera **una sola página**. Las tres
+se arreglaron a la vez, porque dependen unas de otras.
+
+### 1. Las direcciones ya no van detrás de una almohadilla
+
+Era `HashRouter`, así que las rutas eran `/#/proyectos`. Google ignora todo lo
+que va detrás de la almohadilla: las nueve galerías, los tres casos y las
+páginas del menú no podían posicionar por separado. Ahora es `BrowserRouter`
+con `basename={import.meta.env.BASE_URL}`, que vale igual en la subcarpeta de
+GitHub Pages que en la raíz del dominio de Mayurlin.
+
+Para que un enlace directo funcione en un hosting que no sabe de enrutadores,
+el prerenderizado guarda un **`404.html` con el esqueleto sin dibujar**:
+GitHub Pages lo sirve cuando no encuentra archivo, la aplicación arranca y el
+enrutador resuelve. Es también lo que mantiene vivos los enlaces antiguos de
+`LEGACY_HOTEL_IDS` (llegan con estado 404 y redirigen solos; en el hosting
+propio conviene poner redirecciones 301 de verdad).
+
+### 2. El inglés tiene dirección propia
+
+| español | inglés |
+|---|---|
+| `/` | `/en` |
+| `/proyectos` | `/en/projects` |
+| `/acerca-de` | `/en/team` |
+| `/contacto` | `/en/contact` |
+| `/trabajo/:hotel` | `/en/work/:hotel` |
+| `/proyecto/:caso` | `/en/project/:caso` |
+
+**El inglés lleva sus propias palabras**, no las españolas con un prefijo:
+`/en/proyectos` funcionaría igual para Google, pero un director de marketing
+de Londres lee la dirección. El español no lleva prefijo porque es el idioma
+por defecto.
+
+**EL IDIOMA ES AHORA LA DIRECCIÓN, no `localStorage`.** Antes vivía en el
+navegador: dos personas abriendo el mismo enlace veían idiomas distintos, no se
+podía mandar "la versión inglesa" por correo, y Google no sabía que existía. Se
+quitó el recuerdo entre visitas a propósito: ya no hace falta, porque quien
+entra en inglés guarda un enlace que YA es inglés, y una redirección automática
+acabaría enseñándole a alguien un idioma distinto del que le mandaron.
+
+Cambiar de idioma **conserva la página**: desde la galería de Abama en español
+se va a la galería de Abama en inglés, no a la portada. Y como es una
+navegación de verdad, el botón de atrás del navegador deshace el cambio.
+
+**Todo pasa por `src/lib/rutas.ts`.** Ningún componente escribe una ruta a
+mano: piden `ruta(idioma, 'trabajo', id)`. Si cambia una palabra, cambia en un
+sitio.
+
+### 3. Cada página tiene su cabecera, y el HTML ya llega dibujado
+
+- **`src/lib/seo.ts`** tiene el título y la descripción de cada página en cada
+  idioma. **No se ven en la web**: son lo que sale en el resultado de Google y
+  en la vista previa al pegar un enlace. Por eso viven en código y no en
+  `content.json`. Lo de los hoteles y los casos SÍ sale del copy que Mayurlin
+  edita, recortado, así que cambiar el texto de Abama cambia lo que Google
+  enseña de Abama sin tocar nada más.
+- **`src/lib/Metadatos.tsx`** lo escribe en el `<head>` al navegar: título,
+  descripción, dirección canónica, alternativas `hreflang` y etiquetas de vista
+  previa (con la foto de portada del hotel cuando la hay). Sin librería: como
+  el prerenderizado usa un navegador de verdad, basta con escribir en el DOM.
+- **`index.html` ya sólo lleva el respaldo**, lo que ve quien cae en una ruta
+  que no existe. Se quitó de ahí todo lo que ahora es propio de cada página
+  para que no hubiera dos versiones peleándose, y se quitó `keywords`, que
+  ningún buscador lee desde 2009.
+- **`scripts/prerender.mjs`** abre la web compilada en Chromium, recorre las 32
+  direcciones y guarda el HTML ya dibujado en `dist/<ruta>/index.html`. Antes
+  lo primero que recibía cualquiera era `<div id="root"></div>`.
+  **Recorre la página entera de arriba abajo antes de guardarla**: media web
+  entra con una animación que arranca al asomar por la pantalla, y sin ese
+  paseo todo lo de abajo se guardaría con la opacidad a cero, que es justo el
+  texto escondido que un buscador descuenta.
+- **`scripts/sitemap.mjs`** genera el sitemap de la misma lista, con las
+  alternativas por idioma dentro de cada entrada. El anterior listaba una sola
+  dirección.
+- **`scripts/rutas-del-sitio.mjs`** es la lista única que usan los dos. Compila
+  `src/lib/rutas.ts` con esbuild en vez de copiar las palabras de las rutas; los
+  identificadores de hotel y de caso sí los lee con una expresión regular, y
+  **falla en voz alta** si deja de reconocerlos, para no generar un sitemap a
+  medias en silencio.
+
+**Todo se declara contra `https://mayurlintravel.eu`, nunca contra la
+subcarpeta de GitHub Pages**, para que el taller no compita en Google con el
+sitio de verdad y no haya que tocar una etiqueta el día de la migración.
+
+### El despliegue ahora necesita un navegador
+
+`npm run build` es `vite build` + sitemap + prerenderizado, así que el workflow
+instala Chromium (`npx playwright install --with-deps chromium`). En local,
+`PRERENDER_CHROMIUM=/opt/pw-browsers/chromium` reutiliza el que ya hay. Si
+alguna vez hace falta compilar sin prerenderizar, está `npm run build:solo`.
+
+**Para probar enlaces directos en local NO vale `http-server`**: devuelve su
+propio 404 en vez del nuestro, así que los enlaces antiguos y las rutas sin
+archivo parecen rotas cuando no lo están. Hace falta un servidor que imite a
+GitHub Pages, es decir que sirva `404.html` cuando no encuentra el archivo.
+
 ## Migración futura a hosting propio
 
 Cuando Mayurlin migre todo el sitio a su dominio propio: el único lugar

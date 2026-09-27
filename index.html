@@ -4,33 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- SEO principal -->
+    <!-- SEO DE RESPALDO, Y SÓLO DE RESPALDO.
+         El título, la descripción, la dirección canónica, las alternativas por
+         idioma y las etiquetas de vista previa los escribe cada página desde
+         `src/lib/Metadatos.tsx`, y el prerenderizado los graba en el HTML de
+         cada carpeta. Lo que queda aquí es lo que ve quien cae en una ruta que
+         no existe (el `404.html`, que es este mismo esqueleto sin dibujar).
+
+         Se quitó de aquí todo lo que ahora es propio de cada página, para que
+         no hubiera dos versiones peleándose. Y se quitó `keywords`: Google
+         dejó de usarla en 2009 y ningún buscador la lee hoy. -->
     <title>Mayu Travel · Producción Visual para Hoteles de Lujo</title>
     <meta
       name="description"
-      content="Estudio de producción visual para hoteles de lujo: cine, fotografía y contenido editorial. 35+ propiedades en cinco países, incluyendo propiedades dentro de Marriott International, IHG Hotels &amp; Resorts y Wyndham."
+      content="Fotografía y vídeo para hoteles de lujo. Más de 35 propiedades en cinco países, entre ellas hoteles de Marriott, IHG y Wyndham."
     />
-    <meta name="keywords" content="producción visual hoteles de lujo, fotografía de hoteles Europa, reels cinematográficos para hoteles, creador de contenido para hoteles de lujo, producción de vídeo para hoteles, fotógrafo de hoteles Marriott, contenido de hoteles IHG, contenido visual hotelero España, Mayu Travel, Mayurlin Viera" />
     <meta name="author" content="Mayurlin Viera, Mayu Travel" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://mayurlintravel.eu/" />
 
-    <!-- Open Graph (redes sociales y LinkedIn) -->
+    <!-- Constantes de la vista previa: lo que no cambia de una página a otra.
+         El resto (título, descripción, dirección y foto) lo pone cada página. -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mayurlintravel.eu/" />
-    <meta property="og:title" content="Mayu Travel · Producción Visual para Hoteles de Lujo" />
-    <meta property="og:description" content="Cine, fotografía y contenido editorial para hoteles de lujo. 35+ propiedades en cinco países, incluyendo propiedades dentro de Marriott International, IHG Hotels &amp; Resorts y Wyndham." />
+    <meta property="og:site_name" content="Mayu Travel" />
     <meta property="og:image" content="https://mayurlintravel.eu/images/og-cover.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:site_name" content="Mayu Travel" />
-
-    <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mayu Travel · Producción Visual para Hoteles de Lujo" />
-    <meta name="twitter:description" content="Cine, fotografía y contenido editorial para hoteles de lujo. 35+ propiedades en cinco países." />
-    <meta name="twitter:image" content="https://mayurlintravel.eu/images/og-cover.jpg" />
 
     <!-- Datos estructurados — JSON-LD -->
     <script type="application/ld+json">

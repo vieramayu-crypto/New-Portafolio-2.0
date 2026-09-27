@@ -7,6 +7,7 @@ import { HotelStory } from '../types';
 import { useSiteContent } from '../src/lib/content';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
+import { ruta } from '../src/lib/rutas';
 
 interface WorkModalProps {
   open: boolean;
@@ -184,7 +185,8 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
  *  miniaturas (que no se distinguía) y el "Ver portafolio" sí navega de
  *  verdad, a la ficha completa del hotel. */
 export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
-  const t = crearT(useIdioma().idioma);
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
   const navigate = useNavigate();
   const { hotels: hotelContent } = useSiteContent();
   const [active, setActive] = useState(0);
@@ -229,7 +231,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
   }, [open]);
 
   const openPortfolio = () => {
-    navigate(`/trabajo/${current.id}`);
+    navigate(ruta(idioma, 'trabajo', current.id));
     onClose();
   };
 
@@ -307,7 +309,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                     {currentCase && (
                       <button
                         onClick={() => {
-                          navigate(`/proyecto/${currentCase.slug}`);
+                          navigate(ruta(idioma, 'proyecto', currentCase.slug));
                           onClose();
                         }}
                         className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
