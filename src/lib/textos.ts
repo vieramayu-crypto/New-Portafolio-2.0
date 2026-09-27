@@ -81,13 +81,17 @@ export const TEXTOS: Diccionario = {
   // Vídeo
   reproducirVideo: { es: 'Reproducir vídeo', en: 'Play video' },
   videoTitulo: { es: 'Vídeo de producción para hotel', en: 'Hotel production film' },
+  verPieza: { es: 'Ver', en: 'See' },
   piezaAnterior: { es: 'Pieza anterior', en: 'Previous piece' },
   piezaSiguiente: { es: 'Pieza siguiente', en: 'Next piece' },
   saltarIntro: { es: 'Saltar la introducción', en: 'Skip the intro' },
 
   // Carruseles
+  verTestimonioDe: { es: 'Ver testimonio de', en: 'See the testimonial from' },
   testimonioAnterior: { es: 'Testimonio anterior', en: 'Previous testimonial' },
   testimonioSiguiente: { es: 'Siguiente testimonio', en: 'Next testimonial' },
+  paso: { es: 'Paso', en: 'Step' },
+  pasoDe: { es: 'de', en: 'of' },
   siguientePaso: { es: 'Ver el siguiente paso', en: 'See the next step' },
 
   // Formularios
@@ -133,7 +137,86 @@ export const TEXTOS: Diccionario = {
 
   // Varios
   materialEnPreparacion: { es: 'Material en preparación', en: 'In preparation' },
+  heroAlt: {
+    es: 'Mayu Travel, producción visual para hoteles de lujo',
+    en: 'Mayu Travel, visual production for luxury hotels',
+  },
   retratoPareja: { es: 'Mayurlin y Yerfran', en: 'Mayurlin and Yerfran' },
+
+  // Acerca de / Equipo
+  aboutTituloLinea1: { es: 'Fotografía,', en: 'Photography,' },
+  aboutTituloLinea2: { es: 'vídeo y', en: 'film and' },
+
+  // Galerías de vídeo
+  videoPresentacion: { es: 'Vídeo de presentación', en: 'Presentation film' },
+  videosTitulo: {
+    es: 'Vídeos para mostrar la experiencia de tu hotel',
+    en: 'Films that show the experience of your hotel',
+  },
+  videosSubtitulo: {
+    es: 'Una pieza que presenta la propiedad entera, para su web y sus campañas.',
+    en: 'One piece that presents the whole property, for its website and its campaigns.',
+  },
+  verticalesTitulo: {
+    es: 'Piezas verticales para sus redes',
+    en: 'Vertical pieces for their social channels',
+  },
+  verticalesSubtitulo: {
+    es: 'Centradas en un espacio, la gastronomía o el servicio.',
+    en: 'Built around one space, the food or the service.',
+  },
+  verticalesTituloSuelto: { es: 'Piezas verticales', en: 'Vertical pieces' },
+  verticalesSubtituloSuelto: {
+    es: 'Para las redes del hotel, en el formato en que se publican.',
+    en: "For the hotel's own channels, in the format they are published in.",
+  },
+
+  // Proyectos
+  verTodasPropiedades: { es: 'Ver todas las propiedades', en: 'See every property' },
+
+  // Formulario: campos que sólo tiene la consulta larga
+  campoHotelEmpresa: { es: 'Hotel o empresa', en: 'Hotel or company' },
+  campoUbicacionOpc: { es: 'Ubicación (opcional)', en: 'Location (optional)' },
+  campoEnlaceOpc: { es: 'Instagram o web (opcional)', en: 'Instagram or website (optional)' },
+  campoAlcanceOpc: {
+    es: '¿Qué necesitas producir? (opcional)',
+    en: 'What do you need produced? (optional)',
+  },
+  campoEtapaOpc: { es: 'En qué punto está (opcional)', en: 'Where the project stands (optional)' },
+  campoProyecto: { es: 'Proyecto', en: 'Project' },
+  campoBriefingOpc: { es: 'Briefing (opcional)', en: 'Briefing (optional)' },
+  campoEmail: { es: 'Email', en: 'Email' },
+  adjuntarArchivo: { es: 'Adjuntar archivo', en: 'Attach a file' },
+  cambiarArchivo: { es: 'Cambiar archivo', en: 'Change the file' },
+  quitarArchivo: { es: 'quitar', en: 'remove' },
+  enviando: { es: 'Enviando…', en: 'Sending…' },
+  enviarConsulta: { es: 'Enviar consulta', en: 'Send enquiry' },
+  consultaLista: { es: 'Tu consulta está lista', en: 'Your enquiry is ready' },
+  consultaEnviada: { es: 'Consulta enviada', en: 'Enquiry sent' },
+  tuPropiedad: { es: 'tu propiedad', en: 'your property' },
+  noSeAbrio: { es: '¿No se abrió?', en: 'Did it not open?' },
+  escribenosA: { es: 'Escríbenos a', en: 'Write to us at' },
+
+  // Qué necesita producir
+  alcanceFoto: { es: 'Fotografía', en: 'Photography' },
+  alcanceVideo: { es: 'Vídeo', en: 'Film' },
+  alcanceFotoVideo: { es: 'Fotografía y vídeo', en: 'Photography and film' },
+  alcanceBanco: { es: 'Banco de imágenes y vídeos', en: 'Photo and film library' },
+  alcanceContinua: { es: 'Producción continua', en: 'Ongoing production' },
+
+  // En qué punto está
+  etapaAprobado: { es: 'Presupuesto aprobado', en: 'Budget approved' },
+  etapaPendiente: { es: 'Pendiente de aprobación', en: 'Awaiting approval' },
+  etapaExplorando: { es: 'Explorando opciones', en: 'Exploring options' },
+
+  // Alcance digital
+  perfilAudienciaValor: {
+    es: '70% con base en Europa, interesada en viajes y hotelería.',
+    en: '70% based in Europe, interested in travel and hospitality.',
+  },
+
+  // Pie de página
+  derechosReservados: { es: 'Todos los derechos reservados.', en: 'All rights reserved.' },
 };
 
 /** El texto en el idioma que toque. Si falta la clave devuelve la propia

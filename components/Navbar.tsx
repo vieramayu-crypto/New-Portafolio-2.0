@@ -133,13 +133,23 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
                 <img src={mayuLogoBlack} alt="MAYU" className="h-[22px] md:h-[26px] w-auto" />
               </button>
 
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                aria-label={t('menuCerrar')}
-                className="text-xs font-sans tracking-[0.2em] uppercase text-[#1a1918] hover:opacity-60 transition-opacity p-2"
-              >
-                {t('menuCerrarCorchetes')}
-              </button>
+              {/* EL INTERRUPTOR VA AQUÍ, no en la banda de abajo.
+                  Con el menú abierto la cabecera queda por debajo de esta capa
+                  y su interruptor no se puede tocar, así que hay que repetirlo
+                  dentro. Primero estaba al pie del panel, y medido en un móvil
+                  de 390x844 caía en y=851: siete píxeles por debajo del borde,
+                  invisible sin desplazar el menú. Aquí arriba queda en el
+                  mismo sitio en el que estaba antes de abrir. */}
+              <div className="flex items-center gap-5">
+                <Idiomas />
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-label={t('menuCerrar')}
+                  className="text-xs font-sans tracking-[0.2em] uppercase text-[#1a1918] hover:opacity-60 transition-opacity p-2"
+                >
+                  {t('menuCerrarCorchetes')}
+                </button>
+              </div>
             </div>
 
             {/* Main Page Links + Photo */}
@@ -187,9 +197,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
 
             {/* Bottom Menu Info */}
             <div className="flex items-center justify-between pt-8 border-t border-[#1a1918]/10 text-xs font-sans tracking-[0.15em] text-[#5a5854] gap-4">
-              {/* El interruptor también aquí: con el menú abierto, la cabecera
-                  queda por debajo de esta capa y no se podría alcanzar. */}
-              <Idiomas className="shrink-0" />
               <a
                 href="https://instagram.com/mayurlintravel"
                 target="_blank"

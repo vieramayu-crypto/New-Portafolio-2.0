@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 /** Lo mínimo que el índice necesita saber de un hotel. */
 export interface HotelDelIndice {
@@ -42,6 +44,7 @@ export const IndiceHoteles: React.FC<IndiceHotelesProps> = ({
   visible,
   pie,
 }) => {
+  const t = crearT(useIdioma().idioma);
   const [abierto, setAbierto] = useState(false);
 
   /* Cerrar el selector tocando fuera. Antes la única salida era volver a
@@ -104,7 +107,7 @@ export const IndiceHoteles: React.FC<IndiceHotelesProps> = ({
               solo en cuanto se abre, y ahí sigue estando "Ir a un hotel". */}
           <button
             onClick={() => setAbierto(!abierto)}
-            aria-label={`Ir a un hotel (${hoteles.length})`}
+            aria-label={`${t('irAUnHotel')} (${hoteles.length})`}
             aria-expanded={abierto}
             className="mt-glass mt-glass-light pointer-events-auto relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-md text-[13px] text-[#1a1918] shadow-[0_2px_20px_rgba(26,25,24,0.14)] transition-all duration-300 hover:bg-[#1a1918] hover:text-[#f5f3ed]"
           >
@@ -127,7 +130,7 @@ export const IndiceHoteles: React.FC<IndiceHotelesProps> = ({
                     blanca. */}
                 <div className="no-scrollbar max-h-80 space-y-1 overflow-y-auto p-3">
                   <div className="mb-1 border-b border-[#1a1918]/15 px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.2em] text-[#5a5854]">
-                    Ir a un hotel
+                    {t('irAUnHotel')}
                   </div>
                   {hoteles.map((hotel) => (
                     <button

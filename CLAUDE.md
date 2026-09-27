@@ -1273,6 +1273,80 @@ es un rótulo de estado, no navegación.
   hubo una ronda donde un padding asimétrico rompió tanto el centrado de los
   logos como el espacio antes del footer.
 
+## La web en dos idiomas (ES / EN)
+
+El interruptor vive al lado del menú, con las dos abreviaturas y nada más:
+en la cabecera cuando el menú está cerrado, y **dentro del panel, arriba a la
+derecha junto a `[ CERRAR ]`**, cuando está abierto. No puede ir al pie del
+panel: medido en un móvil de 390x844 cae en y=851, siete píxeles por debajo
+del borde, y hay que desplazar el menú para encontrarlo.
+
+**REGLA DE ESCRITURA, PEDIDO EXPLÍCITO DE MAYURLIN: nada de guiones para
+separar palabras o ideas**, ni en español ni en inglés. Ni guion largo ni
+corto entre frases: coma, punto o punto y coma, que es lo que hace el inglés
+bien escrito. Los únicos permitidos son los de un nombre propio (Ritz-Carlton)
+y los rangos de cifras que ya venían del español (3–5, 40–50). Sus palabras:
+*"no quiero guiones más que los guiones que deben estar por obligación"*.
+
+**El inglés NO es una traducción literal.** "Proyectos destacados" es
+"Selected work", no "Featured projects". Donde el español dice "Treinta y
+cinco propiedades", el inglés dice "35 properties": escribirlo en letra
+obligaría a "thirty-five" y ahí no entra un guion. El inglés es **británico**
+("organised", "enquiry", "12 March"), porque los hoteles a los que va esto
+están en Europa.
+
+### Dónde vive cada cosa
+
+| Qué | Español | Inglés |
+|---|---|---|
+| Textos que ella edita sin tocar código | `public/images/content.json` | `public/images/content.en.json` |
+| Copia de seguridad dentro del bundle | `DEFAULT_CONTENT` en `src/lib/content.tsx` | `DEFAULT_CONTENT_EN` en `src/lib/content.en.ts` |
+| Rótulos de interfaz (menús, botones, `aria-label`) | `src/lib/textos.ts` | el mismo archivo, campo `en` |
+| Datos de hotel, casos y testimonios | `data/hotels.ts`, `data/caseStudies.ts`, `data/collaborations.ts` | `data/textosEn.ts` |
+| Rótulos de los vídeos | `data/videos.ts` | el mismo archivo, campos `descripcionEn`, `tipoEn`, `titularEn` |
+| Mecanismo (estado, `localStorage`, `lang` del documento) | `src/lib/idioma.tsx` | — |
+
+**Los cuatro archivos emparejados hay que editarlos siempre a la vez**:
+`content.json` con `content.en.json`, y cada uno con su gemelo dentro del
+bundle. Si se edita uno solo, el otro idioma sigue mostrando lo viejo.
+
+### Cómo se aplica
+
+- `ContentProvider` (`src/lib/content.tsx`) elige el archivo y los valores por
+  defecto según el idioma activo, y pinta ya el texto del bundle antes de que
+  llegue el `fetch`: si no, quien pulsa EN se queda mirando el español
+  mientras viaja la petición.
+- **Si `content.en.json` falta o llega roto, se queda el inglés del bundle**,
+  nunca el español. Verificado abortando la petición: la web sigue entera en
+  inglés.
+- Los datos de hotel se traducen con `traducirHotel(story, idioma)` **antes**
+  de superponer `content.json`, que es quien manda sobre el nombre y el copy.
+  Los 129 textos alternativos de las fotos van indexados por su propio texto
+  español (112 distintos: varias fotos del avance de Inicio se repiten en la
+  galería), así que se traducen una vez y no dos.
+- Los `caption` de `data/hotels.ts` **no se pintan en ninguna parte**, así que
+  no tienen versión inglesa.
+- El correo del formulario sale en el idioma en que se rellenó
+  (`src/lib/inquiry.ts`): quien escribe desde la web inglesa ve abrirse un
+  correo en inglés, no uno en español con sus datos dentro.
+- Las citas de los clientes en casos y testimonios **van traducidas**. Son
+  palabras de personas reales y la versión inglesa es una traducción: quien
+  lee en inglés no puede leerlas en español, y dejar la prueba más fuerte de
+  la web en un idioma que no entiende sería peor.
+
+### Componentes muertos, sin traducir a propósito
+
+`AvailabilityModal.tsx`, `CollaborationCard.tsx` y `DigitalReach.tsx` no los
+importa nadie: no se pintan. `WorkModal.tsx` sí está montado en `App.tsx`,
+pero `setIsWorkOpen` nunca se llama con `true`, así que tampoco se abre.
+
+De esos cuatro, el único que se quedó **sin traducir es
+`AvailabilityModal.tsx`**: es un formulario entero, duplicado del que sí se
+usa (`InquiryModal`), y traducir treinta rótulos de algo que no se pinta es
+trabajo tirado. Los otros tres sí se pasaron por el diccionario, porque eran
+tres o cuatro frases cada uno. Si `AvailabilityModal` vuelve a usarse alguna
+vez, hay que traducirlo antes de enseñarlo.
+
 ## Migración futura a hosting propio
 
 Cuando Mayurlin migre todo el sitio a su dominio propio: el único lugar

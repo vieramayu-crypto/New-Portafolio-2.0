@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useIdioma } from './idioma';
+import { DEFAULT_CONTENT_EN } from './content.en';
 
 /** Builds a URL to a file in public/images/, correct in both dev and the built site. */
 export function publicImage(filename: string): string {
   return `${import.meta.env.BASE_URL}images/${filename}`;
 }
 
+/** Los dos archivos que Mayurlin puede editar en su hosting sin recompilar:
+ *  uno por idioma. El inglés vive aparte a propósito, para que pueda retocar
+ *  una frase en español sin miedo a romper la versión inglesa, y al revés. */
 const CONTENT_URL = publicImage('content.json');
+const CONTENT_URL_EN = publicImage('content.en.json');
 
 export interface HotelContent {
   seccion: number;
@@ -543,12 +549,14 @@ function isOverviewBox(v: unknown): v is OverviewBox {
 
 // Merges fetched JSON over the defaults field by field, so a missing or
 // malformed field never breaks the page -- it just falls back silently.
-function mergeContent(fetched: unknown): SiteContent {
-  if (!fetched || typeof fetched !== 'object') return DEFAULT_CONTENT;
+// `base` son los defaults del idioma activo: el inglés cae al inglés, nunca
+// al español, que es lo que haría que media web apareciera traducida a medias.
+function mergeContent(fetched: unknown, base: SiteContent): SiteContent {
+  if (!fetched || typeof fetched !== 'object') return base;
   const f = fetched as Partial<SiteContent>;
 
   const hotels = Array.isArray(f.hotels)
-    ? DEFAULT_CONTENT.hotels.map((defaultHotel, i) => {
+    ? base.hotels.map((defaultHotel, i) => {
         const h = f.hotels?.[i];
         if (!h || typeof h !== 'object') return defaultHotel;
         return {
@@ -560,22 +568,22 @@ function mergeContent(fetched: unknown): SiteContent {
           featuredLine: isNonEmptyString(h.featuredLine) ? h.featuredLine : defaultHotel.featuredLine,
         };
       })
-    : DEFAULT_CONTENT.hotels;
+    : base.hotels;
 
   const milestoneItems =
     Array.isArray(f.milestones?.items) && f.milestones!.items.every(isMilestoneItem) && f.milestones!.items.length > 0
       ? f.milestones!.items
-      : DEFAULT_CONTENT.milestones.items;
+      : base.milestones.items;
 
   const howWeWorkSteps =
     Array.isArray(f.howWeWork?.steps) && f.howWeWork!.steps.every(isHowWeWorkStep) && f.howWeWork!.steps.length > 0
       ? f.howWeWork!.steps
-      : DEFAULT_CONTENT.howWeWork.steps;
+      : base.howWeWork.steps;
 
   const faqQuestions =
     Array.isArray(f.faq?.questions) && f.faq!.questions.every(isFaqEntry) && f.faq!.questions.length > 0
       ? f.faq!.questions
-      : DEFAULT_CONTENT.faq.questions;
+      : base.faq.questions;
 
   const stringList = (value: unknown, fallback: string[]): string[] =>
     Array.isArray(value) && value.length > 0 && value.every(isNonEmptyString)
@@ -585,234 +593,234 @@ function mergeContent(fetched: unknown): SiteContent {
   const titledList = (value: unknown, fallback: TitledItem[]): TitledItem[] =>
     Array.isArray(value) && value.length > 0 && value.every(isTitledItem) ? (value as TitledItem[]) : fallback;
 
-  const benefits = stringList(f.valueBlock?.benefits, DEFAULT_CONTENT.valueBlock.benefits);
+  const benefits = stringList(f.valueBlock?.benefits, base.valueBlock.benefits);
 
   // Cada titular necesita su párrafo: si el JSON trae menos de los que hay
   // titulares, se completa con los de por defecto en vez de dejar huecos.
   const benefitDetails = stringList(
     f.valueBlock?.benefitDetails,
-    DEFAULT_CONTENT.valueBlock.benefitDetails
+    base.valueBlock.benefitDetails
   );
 
-  const createItems = titledList(f.whatWeCreate?.items, DEFAULT_CONTENT.whatWeCreate.items);
-  const whyUsItems = titledList(f.whyUs?.items, DEFAULT_CONTENT.whyUs.items);
-  const wayToWorkItems = titledList(f.waysToWork?.items, DEFAULT_CONTENT.waysToWork.items);
+  const createItems = titledList(f.whatWeCreate?.items, base.whatWeCreate.items);
+  const whyUsItems = titledList(f.whyUs?.items, base.whyUs.items);
+  const wayToWorkItems = titledList(f.waysToWork?.items, base.waysToWork.items);
 
   const overviewBoxes =
     Array.isArray(f.about?.overview?.boxes) &&
     f.about!.overview!.boxes.every(isOverviewBox) &&
     f.about!.overview!.boxes.length > 0
       ? f.about!.overview!.boxes
-      : DEFAULT_CONTENT.about.overview.boxes;
+      : base.about.overview.boxes;
 
   return {
     hero: {
-      eyebrow: isNonEmptyString(f.hero?.eyebrow) ? f.hero!.eyebrow : DEFAULT_CONTENT.hero.eyebrow,
+      eyebrow: isNonEmptyString(f.hero?.eyebrow) ? f.hero!.eyebrow : base.hero.eyebrow,
       titleLead: isNonEmptyString(f.hero?.titleLead)
         ? f.hero!.titleLead
-        : DEFAULT_CONTENT.hero.titleLead,
+        : base.hero.titleLead,
       titleEmphasis: isNonEmptyString(f.hero?.titleEmphasis)
         ? f.hero!.titleEmphasis
-        : DEFAULT_CONTENT.hero.titleEmphasis,
-      subline: isNonEmptyString(f.hero?.subline) ? f.hero!.subline : DEFAULT_CONTENT.hero.subline,
+        : base.hero.titleEmphasis,
+      subline: isNonEmptyString(f.hero?.subline) ? f.hero!.subline : base.hero.subline,
       glassLabel: isNonEmptyString(f.hero?.glassLabel)
         ? f.hero!.glassLabel
-        : DEFAULT_CONTENT.hero.glassLabel,
+        : base.hero.glassLabel,
       ctaLabel: isNonEmptyString(f.hero?.ctaLabel)
         ? f.hero!.ctaLabel
-        : DEFAULT_CONTENT.hero.ctaLabel,
+        : base.hero.ctaLabel,
       secondaryLabel: isNonEmptyString(f.hero?.secondaryLabel)
         ? f.hero!.secondaryLabel
-        : DEFAULT_CONTENT.hero.secondaryLabel,
+        : base.hero.secondaryLabel,
     },
     whatWeCreate: {
       heading: isNonEmptyString(f.whatWeCreate?.heading)
         ? f.whatWeCreate!.heading
-        : DEFAULT_CONTENT.whatWeCreate.heading,
+        : base.whatWeCreate.heading,
       items: createItems,
       ctaLabel: isNonEmptyString(f.whatWeCreate?.ctaLabel)
         ? f.whatWeCreate!.ctaLabel
-        : DEFAULT_CONTENT.whatWeCreate.ctaLabel,
+        : base.whatWeCreate.ctaLabel,
     },
     whyUs: {
-      heading: isNonEmptyString(f.whyUs?.heading) ? f.whyUs!.heading : DEFAULT_CONTENT.whyUs.heading,
-      intro: isNonEmptyString(f.whyUs?.intro) ? f.whyUs!.intro : DEFAULT_CONTENT.whyUs.intro,
+      heading: isNonEmptyString(f.whyUs?.heading) ? f.whyUs!.heading : base.whyUs.heading,
+      intro: isNonEmptyString(f.whyUs?.intro) ? f.whyUs!.intro : base.whyUs.intro,
       items: whyUsItems,
-      ctaLabel: isNonEmptyString(f.whyUs?.ctaLabel) ? f.whyUs!.ctaLabel : DEFAULT_CONTENT.whyUs.ctaLabel,
+      ctaLabel: isNonEmptyString(f.whyUs?.ctaLabel) ? f.whyUs!.ctaLabel : base.whyUs.ctaLabel,
     },
     waysToWork: {
       eyebrow: isNonEmptyString(f.waysToWork?.eyebrow)
         ? f.waysToWork!.eyebrow
-        : DEFAULT_CONTENT.waysToWork.eyebrow,
+        : base.waysToWork.eyebrow,
       heading: isNonEmptyString(f.waysToWork?.heading)
         ? f.waysToWork!.heading
-        : DEFAULT_CONTENT.waysToWork.heading,
-      intro: isNonEmptyString(f.waysToWork?.intro) ? f.waysToWork!.intro : DEFAULT_CONTENT.waysToWork.intro,
+        : base.waysToWork.heading,
+      intro: isNonEmptyString(f.waysToWork?.intro) ? f.waysToWork!.intro : base.waysToWork.intro,
       items: wayToWorkItems,
       scopeLabel: isNonEmptyString(f.waysToWork?.scopeLabel)
         ? f.waysToWork!.scopeLabel
-        : DEFAULT_CONTENT.waysToWork.scopeLabel,
+        : base.waysToWork.scopeLabel,
       scopeNote: isNonEmptyString(f.waysToWork?.scopeNote)
         ? f.waysToWork!.scopeNote
-        : DEFAULT_CONTENT.waysToWork.scopeNote,
+        : base.waysToWork.scopeNote,
       scopeItems:
         Array.isArray(f.waysToWork?.scopeItems) &&
         f.waysToWork!.scopeItems.every(isMilestoneItem) &&
         f.waysToWork!.scopeItems.length > 0
           ? f.waysToWork!.scopeItems
-          : DEFAULT_CONTENT.waysToWork.scopeItems,
+          : base.waysToWork.scopeItems,
       ctaLabel: isNonEmptyString(f.waysToWork?.ctaLabel)
         ? f.waysToWork!.ctaLabel
-        : DEFAULT_CONTENT.waysToWork.ctaLabel,
+        : base.waysToWork.ctaLabel,
     },
     valueBlock: {
-      claim: isNonEmptyString(f.valueBlock?.claim) ? f.valueBlock!.claim : DEFAULT_CONTENT.valueBlock.claim,
+      claim: isNonEmptyString(f.valueBlock?.claim) ? f.valueBlock!.claim : base.valueBlock.claim,
       benefits,
       benefitDetails,
       ctaLabel: isNonEmptyString(f.valueBlock?.ctaLabel)
         ? f.valueBlock!.ctaLabel
-        : DEFAULT_CONTENT.valueBlock.ctaLabel,
+        : base.valueBlock.ctaLabel,
     },
     closingCta: {
       heading: isNonEmptyString(f.closingCta?.heading)
         ? f.closingCta!.heading
-        : DEFAULT_CONTENT.closingCta.heading,
+        : base.closingCta.heading,
       ctaLabel: isNonEmptyString(f.closingCta?.ctaLabel)
         ? f.closingCta!.ctaLabel
-        : DEFAULT_CONTENT.closingCta.ctaLabel,
+        : base.closingCta.ctaLabel,
       secondaryLabel: isNonEmptyString(f.closingCta?.secondaryLabel)
         ? f.closingCta!.secondaryLabel
-        : DEFAULT_CONTENT.closingCta.secondaryLabel,
+        : base.closingCta.secondaryLabel,
     },
     about: {
       flipWords:
         Array.isArray(f.about?.flipWords) && f.about!.flipWords.every(isNonEmptyString) && f.about!.flipWords.length > 0
           ? f.about!.flipWords
-          : DEFAULT_CONTENT.about.flipWords,
+          : base.about.flipWords,
       introStatement: isNonEmptyString(f.about?.introStatement)
         ? f.about!.introStatement
-        : DEFAULT_CONTENT.about.introStatement,
-      legacyQuote: isNonEmptyString(f.about?.legacyQuote) ? f.about!.legacyQuote : DEFAULT_CONTENT.about.legacyQuote,
+        : base.about.introStatement,
+      legacyQuote: isNonEmptyString(f.about?.legacyQuote) ? f.about!.legacyQuote : base.about.legacyQuote,
       overview: {
         heading: isNonEmptyString(f.about?.overview?.heading)
           ? f.about!.overview!.heading
-          : DEFAULT_CONTENT.about.overview.heading,
+          : base.about.overview.heading,
         paragraph: isNonEmptyString(f.about?.overview?.paragraph)
           ? f.about!.overview!.paragraph
-          : DEFAULT_CONTENT.about.overview.paragraph,
+          : base.about.overview.paragraph,
         boxes: overviewBoxes,
         ctaLabel: isNonEmptyString(f.about?.overview?.ctaLabel)
           ? f.about!.overview!.ctaLabel
-          : DEFAULT_CONTENT.about.overview.ctaLabel,
+          : base.about.overview.ctaLabel,
       },
       mayurlin: {
-        name: isNonEmptyString(f.about?.mayurlin?.name) ? f.about!.mayurlin.name : DEFAULT_CONTENT.about.mayurlin.name,
-        role: isNonEmptyString(f.about?.mayurlin?.role) ? f.about!.mayurlin.role : DEFAULT_CONTENT.about.mayurlin.role,
-        bio: isNonEmptyString(f.about?.mayurlin?.bio) ? f.about!.mayurlin.bio : DEFAULT_CONTENT.about.mayurlin.bio,
+        name: isNonEmptyString(f.about?.mayurlin?.name) ? f.about!.mayurlin.name : base.about.mayurlin.name,
+        role: isNonEmptyString(f.about?.mayurlin?.role) ? f.about!.mayurlin.role : base.about.mayurlin.role,
+        bio: isNonEmptyString(f.about?.mayurlin?.bio) ? f.about!.mayurlin.bio : base.about.mayurlin.bio,
       },
       yerfran: {
-        name: isNonEmptyString(f.about?.yerfran?.name) ? f.about!.yerfran.name : DEFAULT_CONTENT.about.yerfran.name,
-        role: isNonEmptyString(f.about?.yerfran?.role) ? f.about!.yerfran.role : DEFAULT_CONTENT.about.yerfran.role,
-        bio: isNonEmptyString(f.about?.yerfran?.bio) ? f.about!.yerfran.bio : DEFAULT_CONTENT.about.yerfran.bio,
+        name: isNonEmptyString(f.about?.yerfran?.name) ? f.about!.yerfran.name : base.about.yerfran.name,
+        role: isNonEmptyString(f.about?.yerfran?.role) ? f.about!.yerfran.role : base.about.yerfran.role,
+        bio: isNonEmptyString(f.about?.yerfran?.bio) ? f.about!.yerfran.bio : base.about.yerfran.bio,
       },
       together: {
         heading: isNonEmptyString(f.about?.together?.heading)
           ? f.about!.together!.heading
-          : DEFAULT_CONTENT.about.together.heading,
+          : base.about.together.heading,
         description: isNonEmptyString(f.about?.together?.description)
           ? f.about!.together!.description
-          : DEFAULT_CONTENT.about.together.description,
+          : base.about.together.description,
       },
       closingStatement: isNonEmptyString(f.about?.closingStatement)
         ? f.about!.closingStatement
-        : DEFAULT_CONTENT.about.closingStatement,
+        : base.about.closingStatement,
     },
     contact: {
-      headingLines: stringList(f.contact?.headingLines, DEFAULT_CONTENT.contact.headingLines),
+      headingLines: stringList(f.contact?.headingLines, base.contact.headingLines),
       introMain: isNonEmptyString(f.contact?.introMain)
         ? f.contact!.introMain
-        : DEFAULT_CONTENT.contact.introMain,
+        : base.contact.introMain,
       introSub: isNonEmptyString(f.contact?.introSub)
         ? f.contact!.introSub
-        : DEFAULT_CONTENT.contact.introSub,
+        : base.contact.introSub,
       ctaLabel: isNonEmptyString(f.contact?.ctaLabel)
         ? f.contact!.ctaLabel
-        : DEFAULT_CONTENT.contact.ctaLabel,
+        : base.contact.ctaLabel,
       emailAddress: isNonEmptyString(f.contact?.emailAddress)
         ? f.contact!.emailAddress
-        : DEFAULT_CONTENT.contact.emailAddress,
+        : base.contact.emailAddress,
       directLabel: isNonEmptyString(f.contact?.directLabel)
         ? f.contact!.directLabel
-        : DEFAULT_CONTENT.contact.directLabel,
+        : base.contact.directLabel,
       modalKicker: isNonEmptyString(f.contact?.modalKicker)
         ? f.contact!.modalKicker
-        : DEFAULT_CONTENT.contact.modalKicker,
+        : base.contact.modalKicker,
       modalTitle: isNonEmptyString(f.contact?.modalTitle)
         ? f.contact!.modalTitle
-        : DEFAULT_CONTENT.contact.modalTitle,
+        : base.contact.modalTitle,
       modalCopy: isNonEmptyString(f.contact?.modalCopy)
         ? f.contact!.modalCopy
-        : DEFAULT_CONTENT.contact.modalCopy,
+        : base.contact.modalCopy,
     },
     milestones: {
       eyebrow: isNonEmptyString(f.milestones?.eyebrow)
         ? f.milestones!.eyebrow
-        : DEFAULT_CONTENT.milestones.eyebrow,
+        : base.milestones.eyebrow,
       items: milestoneItems,
       affiliations: isNonEmptyString(f.milestones?.affiliations)
         ? f.milestones!.affiliations
-        : DEFAULT_CONTENT.milestones.affiliations,
+        : base.milestones.affiliations,
       footnote: isNonEmptyString(f.milestones?.footnote)
         ? f.milestones!.footnote
-        : DEFAULT_CONTENT.milestones.footnote,
+        : base.milestones.footnote,
     },
     howWeWork: {
       eyebrow: isNonEmptyString(f.howWeWork?.eyebrow)
         ? f.howWeWork!.eyebrow
-        : DEFAULT_CONTENT.howWeWork.eyebrow,
+        : base.howWeWork.eyebrow,
       heading: isNonEmptyString(f.howWeWork?.heading)
         ? f.howWeWork!.heading
-        : DEFAULT_CONTENT.howWeWork.heading,
+        : base.howWeWork.heading,
       steps: howWeWorkSteps,
     },
     faq: {
-      heading: isNonEmptyString(f.faq?.heading) ? f.faq!.heading : DEFAULT_CONTENT.faq.heading,
+      heading: isNonEmptyString(f.faq?.heading) ? f.faq!.heading : base.faq.heading,
       questions: faqQuestions,
     },
     projects: {
       caseSectionLabel: isNonEmptyString(f.projects?.caseSectionLabel)
         ? f.projects!.caseSectionLabel
-        : DEFAULT_CONTENT.projects.caseSectionLabel,
+        : base.projects.caseSectionLabel,
       caseSectionLine: isNonEmptyString(f.projects?.caseSectionLine)
         ? f.projects!.caseSectionLine
-        : DEFAULT_CONTENT.projects.caseSectionLine,
+        : base.projects.caseSectionLine,
       gallerySectionLabel: isNonEmptyString(f.projects?.gallerySectionLabel)
         ? f.projects!.gallerySectionLabel
-        : DEFAULT_CONTENT.projects.gallerySectionLabel,
+        : base.projects.gallerySectionLabel,
       gallerySectionLine: isNonEmptyString(f.projects?.gallerySectionLine)
         ? f.projects!.gallerySectionLine
-        : DEFAULT_CONTENT.projects.gallerySectionLine,
+        : base.projects.gallerySectionLine,
       heading: isNonEmptyString(f.projects?.heading)
         ? f.projects!.heading
-        : DEFAULT_CONTENT.projects.heading,
+        : base.projects.heading,
       subline: isNonEmptyString(f.projects?.subline)
         ? f.projects!.subline
-        : DEFAULT_CONTENT.projects.subline,
+        : base.projects.subline,
       caseLabel: isNonEmptyString(f.projects?.caseLabel)
         ? f.projects!.caseLabel
-        : DEFAULT_CONTENT.projects.caseLabel,
+        : base.projects.caseLabel,
       caseLinkLabel: isNonEmptyString(f.projects?.caseLinkLabel)
         ? f.projects!.caseLinkLabel
-        : DEFAULT_CONTENT.projects.caseLinkLabel,
+        : base.projects.caseLinkLabel,
       galleryLinkLabel: isNonEmptyString(f.projects?.galleryLinkLabel)
         ? f.projects!.galleryLinkLabel
-        : DEFAULT_CONTENT.projects.galleryLinkLabel,
+        : base.projects.galleryLinkLabel,
       closingHeading: isNonEmptyString(f.projects?.closingHeading)
         ? f.projects!.closingHeading
-        : DEFAULT_CONTENT.projects.closingHeading,
+        : base.projects.closingHeading,
       ctaLabel: isNonEmptyString(f.projects?.ctaLabel)
         ? f.projects!.ctaLabel
-        : DEFAULT_CONTENT.projects.ctaLabel,
+        : base.projects.ctaLabel,
     },
     hotels,
   };
@@ -821,22 +829,28 @@ function mergeContent(fetched: unknown): SiteContent {
 const ContentContext = createContext<SiteContent>(DEFAULT_CONTENT);
 
 export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
+  const { idioma } = useIdioma();
+  const base = idioma === 'en' ? DEFAULT_CONTENT_EN : DEFAULT_CONTENT;
+  const [content, setContent] = useState<SiteContent>(base);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(CONTENT_URL, { cache: 'no-store' })
+    // Al cambiar de idioma se pinta ya el texto que lleva dentro el bundle, sin
+    // esperar al fetch: si no, quien pulsa EN se queda mirando el español
+    // mientras viaja la petición.
+    setContent(base);
+    fetch(idioma === 'en' ? CONTENT_URL_EN : CONTENT_URL, { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (!cancelled && data) setContent(mergeContent(data));
+        if (!cancelled && data) setContent(mergeContent(data, base));
       })
       .catch(() => {
-        // content.json missing/unreachable -- keep the built-in defaults.
+        // El JSON falta o no se alcanza: se queda lo que trae el bundle.
       });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [idioma, base]);
 
   return <ContentContext.Provider value={content}>{children}</ContentContext.Provider>;
 };

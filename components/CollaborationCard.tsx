@@ -1,11 +1,15 @@
 import React from 'react';
 import { CollaborationCase } from '../types';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 interface CollaborationCardProps {
   collaboration: CollaborationCase;
 }
 
 export const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaboration }) => {
+  const t = crearT(useIdioma().idioma);
+
   return (
     <div className="group space-y-4">
       <div className="relative aspect-[4/5] overflow-hidden border border-[#1a1918]/10 bg-[#eeebe3]">
@@ -19,7 +23,7 @@ export const CollaborationCard: React.FC<CollaborationCardProps> = ({ collaborat
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(circle_at_30%_20%,#f5f3ed,#e8e5dc)] px-6 text-center">
             <span className="font-serif text-3xl text-[#1a1918]/25">MV</span>
             <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-[#5a5854]">
-              Material en preparación
+              {t('materialEnPreparacion')}
             </span>
           </div>
         )}

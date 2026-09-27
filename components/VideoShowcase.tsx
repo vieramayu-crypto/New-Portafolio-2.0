@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GaleriaPiezas, PIEZAS_HORIZONTALES, PIEZAS_VERTICALES } from './GaleriaPiezas';
 import { VideoNube } from './VideoNube';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 /** El bloque de vídeo de Inicio: DOS galerías, una por formato, y ya NO van
  *  seguidas -- ver `VideoVerticalesInicio` al final de este archivo.
@@ -27,17 +29,21 @@ import { VideoNube } from './VideoNube';
  *  `PiezasVerticales.tsx` (la opción C) sigue en el repositorio sin usar, a
  *  propósito: ella dijo que podríamos volver.
  */
-export const VideoShowcase: React.FC = () => (
-  <>
-    <div aria-hidden className="h-px w-full bg-[#1a1918]/12" />
+export const VideoShowcase: React.FC = () => {
+  const t = crearT(useIdioma().idioma);
 
-    <GaleriaPiezas
-      piezas={PIEZAS_HORIZONTALES}
-      titulo="Vídeos para mostrar la experiencia de tu hotel"
-      subtitulo="Una pieza que presenta la propiedad entera, para su web y sus campañas."
-    />
-  </>
-);
+  return (
+    <>
+      <div aria-hidden className="h-px w-full bg-[#1a1918]/12" />
+
+      <GaleriaPiezas
+        piezas={PIEZAS_HORIZONTALES}
+        titulo={t('videosTitulo')}
+        subtitulo={t('videosSubtitulo')}
+      />
+    </>
+  );
+};
 
 /** LAS PIEZAS VERTICALES VIVEN ARRIBA, ENTRE "QUÉ CREAMOS" Y "UNA PRODUCCIÓN,
  *  DOS DESTINOS".
@@ -54,14 +60,18 @@ export const VideoShowcase: React.FC = () => (
  *  Va con `alterno` a propósito: sus dos vecinas son marfil `#fbfaf6`, y sin
  *  el cambio de fondo las tres se leerían como un solo bloque.
  */
-export const VideoVerticalesInicio: React.FC = () => (
-  <GaleriaPiezas
-    piezas={PIEZAS_VERTICALES}
-    titulo="Piezas verticales para sus redes"
-    subtitulo="Centradas en un espacio, la gastronomía o el servicio."
-    alterno
-  />
-);
+export const VideoVerticalesInicio: React.FC = () => {
+  const t = crearT(useIdioma().idioma);
+
+  return (
+    <GaleriaPiezas
+      piezas={PIEZAS_VERTICALES}
+      titulo={t('verticalesTitulo')}
+      subtitulo={t('verticalesSubtitulo')}
+      alterno
+    />
+  );
+};
 
 /** LA BANDA DE RESPIRO, entre "Por qué Mayu Travel" y "Formas de trabajar
  *  juntos". Es el único vídeo de la web SIN NINGÚN TEXTO: ni titular, ni

@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
+import { traducirHotel } from '../data/textosEn';
+import { useIdioma } from '../src/lib/idioma';
 import { useSiteContent } from '../src/lib/content';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
@@ -42,6 +44,7 @@ const rise = (delay: number) => ({
  *  justo lo que la auditoría pedía evitar. */
 export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }) => {
   const { projects, hotels: hotelContent } = useSiteContent();
+  const { idioma } = useIdioma();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -106,11 +109,15 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenAvailability }
     };
   }, []);
 
-  const stories = HOTEL_STORIES.map((story, i) => ({
-    ...story,
-    hotelName: hotelContent[i]?.hotelName ?? story.hotelName,
-    description: hotelContent[i]?.description ?? story.description,
-  }));
+  const stories = HOTEL_STORIES.map((base, i) => {
+    // Igual que en Inicio: primero el idioma, y encima lo que Mayurlin edita.
+    const story = traducirHotel(base, idioma);
+    return {
+      ...story,
+      hotelName: hotelContent[i]?.hotelName ?? story.hotelName,
+      description: hotelContent[i]?.description ?? story.description,
+    };
+  });
 
   // Ya no se separan en dos bloques con diseños distintos: los nueve van
   // seguidos, con el mismo mosaico, y lo que distingue a uno con caso

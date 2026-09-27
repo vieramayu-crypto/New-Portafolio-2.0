@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { HERO_PHOTO, HERO_PHOTO_MOBILE } from '../data/media';
 import { useSiteContent } from '../src/lib/content';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 interface HeroSectionProps {
   /** El hero se monta debajo del video de intro. Si la entrada arrancara al
@@ -47,6 +49,7 @@ const SETTLED = { opacity: 1, y: 0, filter: 'blur(0px)' } as const;
  *     768px).
  */
 export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvailability }) => {
+  const t = crearT(useIdioma().idioma);
   const { hero, milestones } = useSiteContent();
   const animate = introDone ? SETTLED : undefined;
 
@@ -69,7 +72,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           <source media="(min-width: 768px)" srcSet={HERO_PHOTO} />
           <img
             src={HERO_PHOTO_MOBILE}
-            alt="Mayu Travel, visual production for luxury hotels"
+            alt={t('heroAlt')}
             // LAS DOS FOTOS ENTRAN TAL CUAL, SIN UN SOLO FILTRO. Las graduó
             // ella: cálidas, claras y con su propio degradado. Ni `grayscale`,
             // ni `brightness`, ni `contrast`, ni el `saturate(.84)` que

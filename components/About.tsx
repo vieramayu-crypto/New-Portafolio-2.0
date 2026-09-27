@@ -4,6 +4,8 @@ import { FlipWords } from './FlipWords';
 import { HowWeWork } from './HowWeWork';
 import { COUPLE_PHOTO, MAYU_PORTRAIT, YERFRAN_PORTRAIT } from '../data/media';
 import { useSiteContent } from '../src/lib/content';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 interface AboutProps {
   onOpenAvailability: () => void;
@@ -11,6 +13,7 @@ interface AboutProps {
 
 export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
   const content = useSiteContent();
+  const t = crearT(useIdioma().idioma);
 
   return (
     // `overflow-x-clip`, no `hidden`: los retratos entran desplazados 30px a
@@ -26,8 +29,8 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
           transition={{ duration: 0.9, ease: 'easeOut' }}
           className="font-serif font-medium text-[16vw] leading-[1.08] text-[#1a1918] sm:text-[13vw] md:text-[10.5vw]"
         >
-          <span className="block">Fotografía,</span>
-          <span className="block">vídeo y</span>
+          <span className="block">{t('aboutTituloLinea1')}</span>
+          <span className="block">{t('aboutTituloLinea2')}</span>
           <FlipWords words={content.about.flipWords} />
         </motion.h1>
       </section>
@@ -50,7 +53,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
       >
         <img
           src={COUPLE_PHOTO}
-          alt="Mayurlin y Yerfran"
+          alt={t('retratoPareja')}
           referrerPolicy="no-referrer"
           className="absolute inset-0 h-full w-full object-cover object-[50%_32%] grayscale contrast-110"
         />
@@ -187,7 +190,7 @@ export const About: React.FC<AboutProps> = ({ onOpenAvailability }) => {
               onClick={onOpenAvailability}
               className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
-              Consultar disponibilidad
+              {t('consultarDisponibilidad')}
             </button>
           </div>
         </div>

@@ -3,6 +3,8 @@ import introHorizontalMp4 from '../src/assets/videos/intro-horizontal.mp4';
 import introHorizontalWebm from '../src/assets/videos/intro-horizontal.webm';
 import introVerticalMp4 from '../src/assets/videos/intro-vertical.mp4';
 import introVerticalWebm from '../src/assets/videos/intro-vertical.webm';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 const FAILSAFE_MS = 6000;
 
@@ -30,6 +32,7 @@ interface IntroLoaderProps {
 }
 
 export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
+  const t = crearT(useIdioma().idioma);
   const [phase, setPhase] = useState<'playing' | 'fading' | 'done'>(() =>
     yaVistoEnEstaSesion() ? 'done' : 'playing'
   );
@@ -118,7 +121,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onDone }) => {
       // pantalla por instinto antes de buscar una cruz.
       role="button"
       tabIndex={0}
-      aria-label="Saltar la introducción"
+      aria-label={t('saltarIntro')}
       onClick={finish}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') finish();

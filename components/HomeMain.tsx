@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { HOTEL_STORIES } from '../data/hotels';
+import { traducirHotel } from '../data/textosEn';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 import { HotelStory, Page } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { HeroSection } from './HeroSection';
@@ -72,20 +75,28 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   const [isValueBlockVisible, setIsValueBlockVisible] = useState<boolean>(false);
 
   const { hotels: hotelContent } = useSiteContent();
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
 
   // Structural data (photos, layout, ids, routing) stays in code; the
   // editable text fields are overlaid from content.json at runtime.
   const hotelStories = useMemo(
     () =>
-      HOTEL_STORIES.map((story, i) => ({
+      HOTEL_STORIES.map((base, i) => {
+        // Primero el idioma (rótulo, sitio, país, datos del rodaje y los
+        // textos alternativos de las fotos), y encima lo que Mayurlin edita en
+        // `content.json`, que es quien manda sobre el nombre y el copy.
+        const story = traducirHotel(base, idioma);
+        return {
         ...story,
         hotelName: hotelContent[i]?.hotelName ?? story.hotelName,
         coupleName: hotelContent[i]?.coupleName ?? story.coupleName,
         description: hotelContent[i]?.description ?? story.description,
         quote: hotelContent[i]?.quote ?? story.quote,
         featuredLine: hotelContent[i]?.featuredLine,
-      })),
-    [hotelContent]
+        };
+      }),
+    [hotelContent, idioma]
   );
 
   // Subconjunto que realmente se pinta en Inicio, en el orden fijo de la
@@ -254,7 +265,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
             className="mx-auto max-w-3xl px-6 pb-4 text-center md:pb-10"
           >
             <h2 className="font-serif text-3xl leading-[1.15] md:text-[2.9rem]">
-              Proyectos destacados
+              {t('proyectosDestacados')}
             </h2>
           </motion.div>
 
@@ -284,14 +295,14 @@ export const HomeMain: React.FC<HomeMainProps> = ({
                         to={`/proyecto/${caseStudy.slug}`}
                         className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                       >
-                        Ver proyecto
+                        {t('verProyecto')}
                       </Link>
                     )}
                     <Link
                       to={`/trabajo/${story.id}`}
                       className="border-b border-[#1a1918]/65 pb-1.5 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                     >
-                      Ver galería
+                      {t('verGaleria')}
                     </Link>
                   </div>
                 </div>
@@ -306,7 +317,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
               to="/proyectos"
               className="inline-block bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
-              Ver todos los proyectos
+              {t('verTodosProyectos')}
             </Link>
           </div>
 
@@ -329,7 +340,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
               lo que hay que leer aqui. */}
           <div className="mb-14 text-center">
             <span className="font-sans text-[11px] uppercase tracking-[0.3em] text-[#5a5854] md:text-xs">
-              Lo que dicen los equipos con los que trabajamos
+              {t('loQueDicenEquipos')}
             </span>
           </div>
           <Testimonials />

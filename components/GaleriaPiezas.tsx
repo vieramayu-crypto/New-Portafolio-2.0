@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
 import { VideoNube } from './VideoNube';
+import { useIdioma, segun } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 /** UNA GALERÍA DE PIEZAS: un marco, una pieza a la vez, y debajo una línea
  *  fina que dice de quién es. Nada detrás ni al lado.
@@ -26,6 +28,10 @@ interface Pieza {
   formato: Formato;
   hotel: string;
   tipo: string;
+  /** El mismo rótulo en inglés. Las listas se construyen una sola vez al
+   *  cargar el módulo, así que no pueden saber qué idioma está activo: se
+   *  traen los dos y el componente elige al pintar. */
+  tipoEn?: string;
   src: string;
   hotelId?: string;
 }
@@ -37,6 +43,7 @@ export const PIEZAS_HORIZONTALES: Pieza[] = VIDEOS_HORIZONTALES.map((v) => ({
   formato: 'h' as Formato,
   hotel: v.hotelName,
   tipo: v.descripcion ?? 'Vídeo de presentación',
+  tipoEn: v.descripcionEn ?? 'Presentation film',
   src: v.src,
   hotelId: v.hotelId,
 }));
@@ -48,6 +55,7 @@ export const PIEZAS_VERTICALES: Pieza[] = VIDEOS_VERTICALES.filter(
   formato: 'v' as Formato,
   hotel: v.hotel,
   tipo: v.tipo,
+  tipoEn: v.tipoEn,
   src: v.src,
   hotelId: v.hotelId,
 }));
@@ -77,6 +85,8 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
   subtitulo,
   alterno,
 }) => {
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
   const total = PIEZAS.length;
 
   /* TRES ÍNDICES, NO UNO, Y AHÍ ESTÁ TODO EL ARREGLO DEL PARPADEO NEGRO.
@@ -281,7 +291,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
         <div className="mt-7 flex items-center justify-between gap-4 md:mt-9">
           <button
             onClick={() => ir(-1)}
-            aria-label="Pieza anterior"
+            aria-label={t('piezaAnterior')}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[#1a1918] transition-colors duration-300 hover:bg-[#1a1918]/[0.06]"
           >
             <Flecha hacia="izq" />
@@ -307,7 +317,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
                   <div className="font-serif text-lg text-[#1a1918] md:text-2xl">{pieza.hotel}</div>
                 )}
                 <div className="mt-1.5 text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
-                  {pieza.tipo}
+                  {segun(idioma, pieza.tipo, pieza.tipoEn ?? pieza.tipo)}
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -315,7 +325,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
 
           <button
             onClick={() => ir(1)}
-            aria-label="Pieza siguiente"
+            aria-label={t('piezaSiguiente')}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[#1a1918] transition-colors duration-300 hover:bg-[#1a1918]/[0.06]"
           >
             <Flecha hacia="der" />
@@ -334,7 +344,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
                 setSentido(n > i ? 1 : -1);
                 setI(n);
               }}
-              aria-label={`Ver ${p.hotel}`}
+              aria-label={`${t('verPieza')} ${p.hotel}`}
               aria-current={n === i}
               className={`h-[3px] rounded-full transition-all duration-300 ${
                 p.formato === 'h' ? 'w-9' : 'w-4'

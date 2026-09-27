@@ -6,6 +6,9 @@ import { VideoNube } from './VideoNube';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
 import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
+import { traducirCaso } from '../data/textosEn';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 interface HotelDetailProps {
   story: HotelStory;
@@ -87,6 +90,7 @@ interface GalleryVideoProps {
 }
 
 const GalleryVideo: React.FC<GalleryVideoProps> = ({ video, y }) => {
+  const t = crearT(useIdioma().idioma);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -111,7 +115,7 @@ const GalleryVideo: React.FC<GalleryVideoProps> = ({ video, y }) => {
       {!isPlaying && (
         <button
           onClick={handlePlay}
-          aria-label="Reproducir vídeo"
+          aria-label={t('reproducirVideo')}
           className="absolute inset-0 flex items-center justify-center"
         >
           <span className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/95 shadow-lg flex items-center justify-center transition-transform group-hover:scale-105">
@@ -1015,8 +1019,11 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   nextStory,
   onOpenAvailability,
 }) => {
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
   const [creditsOpen, setCreditsOpen] = useState(false);
-  const caseStudy = CASE_STUDIES.find((c) => c.hotelId === story.id);
+  const casoBase = CASE_STUDIES.find((c) => c.hotelId === story.id);
+  const caseStudy = casoBase ? traducirCaso(casoBase, idioma) : undefined;
   const [heroLoaded, setHeroLoaded] = useState(false);
 
   // STRICT CONSTRAINT: Maximum 14 photos in the gallery
@@ -1099,7 +1106,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
           className="absolute top-24 sm:top-28 left-6 md:left-12 z-10 flex items-center gap-2 text-xs md:text-sm font-sans tracking-[0.15em] uppercase text-white/90 hover:text-white transition-colors"
         >
           <span aria-hidden="true">&larr;</span>
-          <span>Volver</span>
+          <span>{t('volver')}</span>
         </button>
 
         {/* Los datos del rodaje, en una sola línea al pie de la portada: se leen
@@ -1115,7 +1122,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
               {story.caseStudy?.season && <span>{story.caseStudy.season}</span>}
               {story.caseStudy?.duration && <span>{story.caseStudy.duration}</span>}
               {story.caseStudy?.usage && <span>{story.caseStudy.usage}</span>}
-              {story.publishedByHotel && <span>Publicado por el hotel</span>}
+              {story.publishedByHotel && <span>{t('publicadoPorHotel')}</span>}
             </div>
           </motion.div>
         )}
@@ -1129,7 +1136,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
 
         <div className="grid grid-cols-3 gap-3 md:gap-6 mt-16 md:mt-20">
           <div>
-            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Propiedad</span>
+            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">{t('propiedad')}</span>
             <a
               href={venueMapUrl}
               target="_blank"
@@ -1140,17 +1147,17 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
             </a>
           </div>
           <div>
-            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Ubicación</span>
+            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">{t('ubicacion')}</span>
             <span className="text-xs sm:text-sm md:text-base font-sans text-[#1a1918]">
               {story.location}
             </span>
           </div>
           <div>
-            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">Créditos</span>
+            <span className="block text-[12px] sm:text-xs md:text-sm text-[#5a5854] mb-2">{t('creditos')}</span>
             <button
               onClick={() => setCreditsOpen((v) => !v)}
               aria-expanded={creditsOpen}
-              aria-label={creditsOpen ? 'Cerrar créditos' : 'Ver créditos'}
+              aria-label={creditsOpen ? t('creditosCerrar') : t('creditosVer')}
               className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#1a1918] text-[#f5f3ed] flex items-center justify-center mx-auto hover:opacity-80 transition-opacity"
             >
               <motion.span
@@ -1174,8 +1181,8 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
               className="overflow-hidden"
             >
               <div className="pt-6 space-y-1.5 text-xs sm:text-sm text-[#5a5854] font-sans">
-                <div>Fotografía y dirección creativa · Mayurlin Viera</div>
-                <div>Producción audiovisual · Yerfran</div>
+                <div>{t('creditoMayurlin')}</div>
+                <div>{t('creditoYerfran')}</div>
               </div>
             </motion.div>
           )}
@@ -1190,7 +1197,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
               to={`/proyecto/${caseStudy.slug}`}
               className="inline-block bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
-              Ver el proyecto completo
+              {t('verProyectoCompleto')}
             </Link>
           </div>
         )}
@@ -1213,20 +1220,20 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
       {onOpenAvailability && (
         <section className="mx-auto max-w-[1600px] px-6 pb-20 text-center md:px-10 md:pb-28 lg:px-16">
           <h2 className="mx-auto max-w-[22ch] font-serif text-3xl leading-[1.15] text-[#1a1918] md:max-w-none md:text-[2.6rem]">
-            ¿Buscas algo así para tu hotel?
+            {t('buscasAlgoAsi')}
           </h2>
           <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row md:mt-11">
             <button
               onClick={onOpenAvailability}
               className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
             >
-              Iniciar un proyecto
+              {t('iniciarProyecto')}
             </button>
             <Link
               to="/proyectos"
               className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
             >
-              Ver todo el trabajo
+              {t('verTodoTrabajo')}
             </Link>
           </div>
         </section>
@@ -1235,7 +1242,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
       {/* Navigation between hotel portfolios — no re-load, no intro re-play */}
       {onNavigateStory && (prevStory || nextStory) && (
         <nav
-          aria-label="Navegación entre hoteles"
+          aria-label={t('navegacionHoteles')}
           className="max-w-[1600px] mx-auto px-6 md:px-10 lg:px-16 pb-20 md:pb-28 border-t border-[#1a1918]/10 pt-10 md:pt-14"
         >
           <div className="flex items-stretch justify-between gap-4 md:gap-10">
@@ -1248,7 +1255,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
                   <span aria-hidden="true" className="transition-transform group-hover:-translate-x-1">
                     &larr;
                   </span>
-                  Anterior
+                  {t('anterior')}
                 </span>
                 <span className="mt-2 md:mt-3 font-serif text-sm md:text-lg tracking-wide text-[#1a1918]">
                   {prevStory.hotelName}
@@ -1264,7 +1271,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
                 className="group flex flex-col items-end text-right flex-1 max-w-[46%] hover:opacity-70 transition-opacity"
               >
                 <span className="text-[11px] md:text-xs font-sans tracking-[0.25em] uppercase text-[#5a5854] flex items-center gap-2">
-                  Siguiente
+                  {t('siguiente')}
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
                     &rarr;
                   </span>

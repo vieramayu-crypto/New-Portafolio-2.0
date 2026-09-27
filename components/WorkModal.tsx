@@ -5,6 +5,8 @@ import { HOTEL_STORIES } from '../data/hotels';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { HotelStory } from '../types';
 import { useSiteContent } from '../src/lib/content';
+import { useIdioma } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 interface WorkModalProps {
   open: boolean;
@@ -30,6 +32,7 @@ interface HotelCarouselProps {
  *  seco. Las nueve miniaturas en fila no se distinguían entre sí; esto deja
  *  claro cuál es cuál y cómo pasar de una a otra (flechas o deslizando). */
 const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNavigate }) => {
+  const txt = crearT(useIdioma().idioma);
   const total = stories.length;
   const pistaRef = useRef<HTMLDivElement>(null);
   const arrastreX = useRef<number | null>(null);
@@ -157,14 +160,14 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
 
       <button
         onClick={() => onNavigate('prev')}
-        aria-label="Hotel anterior"
+        aria-label={txt('hotelAnterior')}
         className="absolute left-1 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/70 text-[#1a1918] shadow-sm backdrop-blur-sm transition-colors hover:bg-white sm:left-2 sm:h-10 sm:w-10"
       >
         <ArrowIcon direction="left" />
       </button>
       <button
         onClick={() => onNavigate('next')}
-        aria-label="Siguiente hotel"
+        aria-label={txt('hotelSiguiente')}
         className="absolute right-1 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/70 text-[#1a1918] shadow-sm backdrop-blur-sm transition-colors hover:bg-white sm:right-2 sm:h-10 sm:w-10"
       >
         <ArrowIcon direction="right" />
@@ -181,6 +184,7 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
  *  miniaturas (que no se distinguía) y el "Ver portafolio" sí navega de
  *  verdad, a la ficha completa del hotel. */
 export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
+  const t = crearT(useIdioma().idioma);
   const navigate = useNavigate();
   const { hotels: hotelContent } = useSiteContent();
   const [active, setActive] = useState(0);
@@ -267,7 +271,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
               <div className="no-scrollbar relative flex min-h-0 flex-1 flex-col overflow-y-auto">
                 <button
                   onClick={onClose}
-                  aria-label="Cerrar"
+                  aria-label={t('cerrar')}
                   className="absolute right-4 top-4 z-[3] flex h-10 w-10 items-center justify-center rounded-full border border-[#1a1918]/20 bg-white/20 text-xl text-[#1a1918] transition-colors hover:bg-white/40 md:right-6 md:top-6 md:h-[42px] md:w-[42px]"
                 >
                   ×
@@ -295,7 +299,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                       onClick={openPortfolio}
                       className="bg-[#1a1918] px-8 py-4 text-[12px] font-sans uppercase tracking-[0.22em] font-medium text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
                     >
-                      Ver galería
+                      {t('verGaleria')}
                     </button>
                     {/* Solo los hoteles con caso documentado ofrecen la
                         segunda salida: llamar "proyecto" a una galería sin
@@ -308,7 +312,7 @@ export const WorkModal: React.FC<WorkModalProps> = ({ open, onClose }) => {
                         }}
                         className="border-b border-[#1a1918]/65 pb-2 text-[11px] font-sans uppercase tracking-[0.22em] text-[#1a1918] transition-colors hover:border-[#1a1918] md:text-[12px]"
                       >
-                        Ver proyecto
+                        {t('verProyecto')}
                       </button>
                     )}
                   </div>
