@@ -183,7 +183,10 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     // (piscina, jacuzzi en la habitación, pareja, vistas).
     //
     // LECCIÓN, PARA NO REPETIRLA: con un vídeo que no se puede ver, deducir el
-    // rótulo de lo que ES el hotel no funciona. Hay que preguntar de qué va.
+    // rótulo de lo que ES el hotel no funciona, y emparejar a ciegas tampoco.
+    // Hubo que corregirlo DOS veces: primero el rótulo, y luego el reparto,
+    // porque las direcciones estaban cruzadas. Las de ahora las confirmó ella
+    // mirando la web.
     //
     // "Habitación" y no "Despertar" porque el rótulo también le dice a un
     // hotel qué sabemos rodar, y la habitación es el primer activo que pide
@@ -196,7 +199,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     titular: 'La mañana entra por la ventana, y el día empieza ahí.',
     tipoEn: 'Room',
     titularEn: 'Morning comes in through the window, and the day starts there.',
-    src: 'https://livid.com/embed/r-awOhn9HWPr?autoplay=1&loop=1&muted=1',
+    src: 'https://livid.com/embed/go09mrrDKdd2?autoplay=1&loop=1&muted=1',
   },
   {
     id: 'gpro-dia',
@@ -206,7 +209,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     titular: 'Un día entero en el hotel, sin salir de él.',
     tipoEn: 'A day',
     titularEn: 'A whole day at the hotel, without leaving it.',
-    src: 'https://livid.com/embed/go09mrrDKdd2?autoplay=1&loop=1&muted=1',
+    src: 'https://livid.com/embed/r-awOhn9HWPr?autoplay=1&loop=1&muted=1',
   },
   {
     id: 'stic-restaurante',
