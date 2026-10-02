@@ -1462,6 +1462,63 @@ propio 404 en vez del nuestro, así que los enlaces antiguos y las rutas sin
 archivo parecen rotas cuando no lo están. Hace falta un servidor que imite a
 GitHub Pages, es decir que sirva `404.html` cuando no encuentra el archivo.
 
+## Los reproductores de vídeo tienen un tope: DOS a la vez
+
+Mayurlin, en móvil: *"cuando entro tengo que darle play a cada uno de los
+vídeos... carga lento y los vídeos no se reproducen automáticamente"*. Dos
+causas, y la primera la había metido yo.
+
+### 1. El prerenderizado disparaba descargas que nadie veía
+
+La copia estática que genera `scripts/prerender.mjs` llevaba dentro los
+`<iframe>` de vídeo **con su dirección puesta** y las fotos **sin carga
+diferida**. Medido en Inicio: dos reproductores y doce fotos saliendo a la red
+ANTES de que arrancara React, compitiendo con el propio código de la web. Y
+como React monta con `createRoot().render()`, que **tira entero** lo que haya
+dentro de `#root`, esos reproductores se construían, se destruían y se
+volvían a construir. El peor escenario posible para que un móvil conceda la
+reproducción automática.
+
+**REGLA: esa copia no la ve nadie.** Su único trabajo es llevar el texto para
+quien no ejecuta JavaScript. Todo lo que haya dentro y pida red es gasto puro.
+Por eso ahora el prerenderizado quita los `<iframe>` y pone `loading="lazy"` en
+todas las fotos antes de guardar. El contenido de un marco incrustado no cuenta
+como contenido de la página para un buscador, así que no se pierde nada.
+
+### 2. Siete reproductores vivos a la vez
+
+Inicio mide **14,7 pantallas de móvil** y tiene siete piezas de vídeo
+repartidas. Cada una es un marco de otro dominio: en cuanto existe, descarga su
+código y pide vídeo. Y ninguno se apagaba nunca, a propósito, para que pasar
+por delante dos veces no reconstruyera nada.
+
+Medido a 390px antes del arreglo: **siete funcionando a la vez** al 60% de la
+página, dos de ellos **desde el instante de abrirla** (las dos galerías no
+esperaban a nada), y en casi ningún punto del recorrido más de uno visible.
+
+| | antes | después |
+|---|---|---|
+| reproductores a la vez (pico) | 7 | **2** |
+| al abrir la página | 2 | **1** |
+| al final de la página | 7 | **1** |
+
+**LA DISTANCIA SOLA NO BASTA, Y SE PROBÓ.** Encender al acercarse y apagar al
+alejarse arregla los extremos pero no el medio, porque los hoteles con pieza
+están juntos: con la distancia de apagado en 2.400 px el pico seguía en cinco.
+Y no se puede apretar más sin tocar la distancia de ENCENDIDO, que es el
+"segundo y medio antes" que pidió ella y no se toca.
+
+Así que `src/lib/cerca.ts` reparte turnos: todos los bloques dicen si se
+quieren encender, y sólo viven **los dos más cercanos al centro de la
+pantalla**. Lo usan los tres sitios que montan vídeo: `GaleriaPiezas`,
+`BandaVideo` y `HotelSectionBlock`. Si se añade un cuarto, que use el mismo
+gancho.
+
+**NO SE PUDO COMPROBAR LA REPRODUCCIÓN EN SÍ.** Desde este entorno el
+proveedor de vídeo está bloqueado, así que lo medido es cuántos reproductores
+hay vivos, no si arrancan. Que siete pasen a dos es la causa más probable del
+fallo, pero hace falta que ella lo confirme en su móvil.
+
 ## Migración futura a hosting propio
 
 Cuando Mayurlin migre todo el sitio a su dominio propio: el único lugar

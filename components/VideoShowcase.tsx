@@ -3,6 +3,7 @@ import { GaleriaPiezas, PIEZAS_HORIZONTALES, PIEZAS_VERTICALES } from './Galeria
 import { VideoNube } from './VideoNube';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
+import { useCercaDePantalla } from '../src/lib/cerca';
 
 /** El bloque de vídeo de Inicio: DOS galerías, una por formato, y ya NO van
  *  seguidas -- ver `VideoVerticalesInicio` al final de este archivo.
@@ -93,30 +94,12 @@ export const VideoVerticalesInicio: React.FC = () => {
 const PIEZA_BANDA = PIEZAS_HORIZONTALES.find((p) => p.id === 'v-binidufa') ?? PIEZAS_HORIZONTALES[0];
 
 export const BandaVideo: React.FC = () => {
-  const [cerca, setCerca] = useState(false);
   const caja = useRef<HTMLDivElement>(null);
 
-  /* Se monta al acercarse, igual que los vídeos de los mosaicos: es el sexto
-     reproductor de Inicio y está en el último tercio, así que cargarlo de
-     entrada sería pagarlo siempre para que lo vea menos gente. */
-  useEffect(() => {
-    const el = caja.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setCerca(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (e) => {
-        if (e[0]?.isIntersecting) {
-          setCerca(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: '1800px 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  /* Misma política que los mosaicos de hotel: se enciende al acercarse y se
+   *  apaga cuando queda muy lejos, para no dejar un reproductor corriendo a
+   *  catorce pantallas de distancia. Ver `src/lib/cerca.ts`. */
+  const cerca = useCercaDePantalla(caja);
 
   if (!PIEZA_BANDA) return null;
 

@@ -131,6 +131,37 @@ async function main() {
       window.scrollTo(0, 0);
       await new Promise((r) => setTimeout(r, 400));
     });
+    // EL RECORTE QUE EVITA QUE ESTA COPIA DESCARGUE NADA.
+    //
+    // React monta con `createRoot().render()`, que TIRA entero lo que haya
+    // dentro de `#root` y lo vuelve a dibujar. Así que esta copia no se ve
+    // nunca: su único trabajo es llevar el texto para quien no ejecuta
+    // JavaScript. Todo lo que haya aquí dentro y pida red es gasto puro.
+    //
+    // Y era mucho gasto. Medido en Inicio: dos reproductores de vídeo y doce
+    // fotos sin carga diferida, saliendo a la red ANTES de que arrancara
+    // React, compitiendo con el propio código de la web. En un móvil con
+    // datos eso se nota, y además los reproductores se montaban, se
+    // destruían al entrar React y se volvían a montar: el peor escenario
+    // posible para que un navegador de móvil conceda la reproducción
+    // automática.
+    //
+    // LOS VÍDEOS SE QUITAN DEL TODO. El contenido de un marco incrustado no
+    // cuenta como contenido de la página para un buscador, así que no se
+    // pierde nada y se ahorra toda su descarga. Los monta React cuando toca,
+    // uno a la vez, como siempre.
+    //
+    // LAS FOTOS SE QUEDAN, pero con carga diferida. El texto alternativo y la
+    // dirección sí valen para el buscador. `lazy` no retrasa lo que se ve al
+    // entrar: sólo evita que el navegador se traiga de golpe lo que está
+    // doce pantallas más abajo.
+    await pagina.evaluate(() => {
+      document.querySelectorAll('iframe').forEach((f) => f.remove());
+      document.querySelectorAll('img').forEach((i) => {
+        i.setAttribute('loading', 'lazy');
+        i.setAttribute('decoding', 'async');
+      });
+    });
     const html = await pagina.evaluate(() => '<!DOCTYPE html>\n' + document.documentElement.outerHTML);
     await pagina.close();
 
