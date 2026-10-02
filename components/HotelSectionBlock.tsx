@@ -1,3 +1,4 @@
+import { useCercaDePantalla } from '../src/lib/cerca';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { HotelStory, PhotoItem } from '../types';
@@ -257,38 +258,21 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
    *  sección de sitio. */
   const huecoVideo = story.galleryEmbed ? HUECO_VIDEO[variant] : null;
 
-  /* SE MONTA AL ACERCARSE, NO AL CARGAR. Con tres hoteles con pieza en la
-   *  vitrina serían tres reproductores descargando a la vez nada más abrir
-   *  Inicio, más los de las dos galerías. El observador los enciende antes de
-   *  que el bloque entre en pantalla y no los vuelve a apagar: apagarlos haría
-   *  que el vídeo se reconstruyera cada vez que se pasa por delante.
+  /* SE MONTA AL ACERCARSE Y SE APAGA AL ALEJARSE.
    *
-   *  LA DISTANCIA ES EL "SEGUNDO Y MEDIO ANTES" QUE PIDIÓ MAYURLIN, TRADUCIDO.
-   *  El navegador no sabe cuándo va a llegar alguien a un punto de la página,
-   *  así que un adelanto en tiempo sólo se puede expresar en distancia: a una
-   *  velocidad de scroll corriente (800-1.000 px/s), 1.200 px más de margen
-   *  son aproximadamente ese segundo y medio. De 600 se pasa a 1.800. */
-  const MARGEN_VIDEO = '1800px 0px';
-  const [videoCerca, setVideoCerca] = useState(false);
-  useEffect(() => {
-    if (huecoVideo === null) return;
-    const el = sectionRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setVideoCerca(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entradas) => {
-        if (entradas[0]?.isIntersecting) {
-          setVideoCerca(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: MARGEN_VIDEO },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [huecoVideo]);
+   *  Antes se encendía y no se apagaba nunca, a propósito, para que pasar por
+   *  delante dos veces no reconstruyera el vídeo. El precio resultó ser alto:
+   *  medido en un móvil de 390px, al 60% de Inicio había SIETE reproductores
+   *  funcionando a la vez y casi nunca más de uno visible. Eso es lo que
+   *  volvía lenta la página y lo que, muy probablemente, hacía que el
+   *  navegador dejara de conceder la reproducción automática.
+   *
+   *  La distancia de encendido NO cambia: sigue siendo el "segundo y medio
+   *  antes" que pidió Mayurlin. Lo que se añade es una distancia de apagado
+   *  mucho mayor, así que ir y volver sigue sin reconstruir nada y sólo se
+   *  apaga el que está tan lejos que no le sirve a nadie. Ver
+   *  `src/lib/cerca.ts`. */
+  const videoCerca = useCercaDePantalla(sectionRef, { activo: huecoVideo !== null });
 
   /* LA CLASE DEL HUECO CUANDO LO OCUPA EL VÍDEO. Tres cambios sobre la de la
    *  foto, y los tres tienen motivo:

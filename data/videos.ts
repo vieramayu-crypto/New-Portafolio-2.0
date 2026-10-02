@@ -174,31 +174,38 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     // rodajes en tres años) y tiene ficha, caso de estudio y pieza
     // horizontal propia, así que su firma enlaza igual que la de Deltapark.
     //
-    // MISMO AVISO QUE ARRIBA, Y AQUÍ PESA MÁS: desde este entorno no se puede
-    // ver el vídeo, así que `tipo` y `titular` están escritos sobre lo que ES
-    // el hotel (el spa más grande de Mallorca, y jardines privados sobre la
-    // Bahía de Palma, que es lo que dicen su propia ficha y su caso), no sobre
-    // lo que enseña el plano. Ella los tituló "Vertical 2" y "Vertical 3", que
-    // no dice de qué va ninguno: el reparto spa / jardines es una suposición
-    // razonada, no una lectura. Si están cambiados, se intercambian las cuatro
-    // líneas de rótulo y ya está.
-    id: 'gpro-spa',
+    // ESTOS DOS RÓTULOS LOS DICTA ELLA, no son una lectura del plano: desde
+    // este entorno el proveedor está bloqueado y no se puede ver ninguno de
+    // los dos vídeos. La primera versión los etiquetó "Spa" y "Jardines"
+    // deduciéndolo de lo que es el hotel, y las dos estaban mal. Mayurlin lo
+    // corrigió: a la primera la llama "Despertar en Valparaíso" (mañana,
+    // habitación, luz dorada, cama) y a la segunda "Un día en Valparaíso"
+    // (piscina, jacuzzi en la habitación, pareja, vistas).
+    //
+    // LECCIÓN, PARA NO REPETIRLA: con un vídeo que no se puede ver, deducir el
+    // rótulo de lo que ES el hotel no funciona. Hay que preguntar de qué va.
+    //
+    // "Habitación" y no "Despertar" porque el rótulo también le dice a un
+    // hotel qué sabemos rodar, y la habitación es el primer activo que pide
+    // cualquiera. "Un día" es suyo tal cual: dice que es un recorrido y no un
+    // espacio, y no se confunde con el de al lado.
+    id: 'gpro-habitacion',
     hotel: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
-    tipo: 'Spa',
-    titular: 'Dentro hay el spa más grande de Mallorca.',
-    tipoEn: 'Spa',
-    titularEn: 'Inside is the largest spa in Mallorca.',
+    tipo: 'Habitación',
+    titular: 'La mañana entra por la ventana, y el día empieza ahí.',
+    tipoEn: 'Room',
+    titularEn: 'Morning comes in through the window, and the day starts there.',
     src: 'https://livid.com/embed/r-awOhn9HWPr?autoplay=1&loop=1&muted=1',
   },
   {
-    id: 'gpro-jardines',
+    id: 'gpro-dia',
     hotel: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
-    tipo: 'Jardines',
-    titular: 'Donde acaba el jardín empieza la Bahía de Palma.',
-    tipoEn: 'Gardens',
-    titularEn: 'Where the garden ends, the Bay of Palma begins.',
+    tipo: 'Un día',
+    titular: 'Un día entero en el hotel, sin salir de él.',
+    tipoEn: 'A day',
+    titularEn: 'A whole day at the hotel, without leaving it.',
     src: 'https://livid.com/embed/go09mrrDKdd2?autoplay=1&loop=1&muted=1',
   },
   {

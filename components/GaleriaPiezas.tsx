@@ -6,6 +6,7 @@ import { VideoNube } from './VideoNube';
 import { useIdioma, segun } from '../src/lib/idioma';
 import { ruta } from '../src/lib/rutas';
 import { crearT } from '../src/lib/textos';
+import { useCercaDePantalla } from '../src/lib/cerca';
 
 /** UNA GALERÍA DE PIEZAS: un marco, una pieza a la vez, y debajo una línea
  *  fina que dice de quién es. Nada detrás ni al lado.
@@ -89,6 +90,20 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
   const { idioma } = useIdioma();
   const t = crearT(idioma);
   const total = PIEZAS.length;
+
+  /* EL REPRODUCTOR NO EXISTE HASTA QUE LA GALERÍA SE ACERCA.
+   *
+   *  Esto era lo más caro de toda la web y no se veía. Las dos galerías
+   *  montaban su reproductor NADA MÁS ABRIR la página, aunque vivan a seis y
+   *  a once pantallas de distancia: dos marcos de otro dominio descargando
+   *  vídeo mientras el móvil todavía está trayendo la foto del hero y el
+   *  código de la web. Medido: dos reproductores en marcha con la página
+   *  recién abierta y sin que nadie hubiera bajado nada.
+   *
+   *  Ahora esperan su turno, como ya hacían los mosaicos de hotel y la banda
+   *  de respiro. Ver `src/lib/cerca.ts`. */
+  const marcoRef = useRef<HTMLDivElement>(null);
+  const cerca = useCercaDePantalla(marcoRef);
 
   /* TRES ÍNDICES, NO UNO, Y AHÍ ESTÁ TODO EL ARREGLO DEL PARPADEO NEGRO.
    *
@@ -253,13 +268,14 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
               más durante medio segundo; el deslizamiento costaba el parpadeo
               en cada flecha. */}
           <div
+            ref={marcoRef}
             className="relative"
             style={{
               aspectRatio: `${proporcion}`,
               width: `min(100%, calc(var(--alto) * ${proporcion}))`,
             }}
           >
-            {unicas.map((p) => {
+            {cerca && unicas.map((p) => {
               const esVisible = p.id === pieza.id;
               const esSaliente = p.id === saliente && !esVisible;
               return (
