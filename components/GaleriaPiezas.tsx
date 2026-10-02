@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
 import { VideoNube } from './VideoNube';
-import { useIdioma, segun } from '../src/lib/idioma';
+import { useIdioma } from '../src/lib/idioma';
 import { ruta } from '../src/lib/rutas';
 import { crearT } from '../src/lib/textos';
 import { useCercaDePantalla } from '../src/lib/cerca';
@@ -29,11 +29,6 @@ interface Pieza {
   id: string;
   formato: Formato;
   hotel: string;
-  tipo: string;
-  /** El mismo rótulo en inglés. Las listas se construyen una sola vez al
-   *  cargar el módulo, así que no pueden saber qué idioma está activo: se
-   *  traen los dos y el componente elige al pintar. */
-  tipoEn?: string;
   src: string;
   hotelId?: string;
 }
@@ -44,8 +39,6 @@ export const PIEZAS_HORIZONTALES: Pieza[] = VIDEOS_HORIZONTALES.map((v) => ({
   id: v.id,
   formato: 'h' as Formato,
   hotel: v.hotelName,
-  tipo: v.descripcion ?? 'Vídeo de presentación',
-  tipoEn: v.descripcionEn ?? 'Presentation film',
   src: v.src,
   hotelId: v.hotelId,
 }));
@@ -56,8 +49,6 @@ export const PIEZAS_VERTICALES: Pieza[] = VIDEOS_VERTICALES.filter(
   id: v.id,
   formato: 'v' as Formato,
   hotel: v.hotel,
-  tipo: v.tipo,
-  tipoEn: v.tipoEn,
   src: v.src,
   hotelId: v.hotelId,
 }));
@@ -303,8 +294,18 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
       </div>
 
       <div className="mx-auto max-w-6xl px-6 md:px-12">
-        {/* EL PIE: quién es, y la navegación. Una sola línea fina, como la de
-            los datos de rodaje en la ficha de hotel. */}
+        {/* EL PIE: QUIÉN ES, Y NADA MÁS.
+            Debajo del nombre había un rótulo que decía de qué iba la pieza, y
+            Mayurlin lo quitó con un argumento que vale para toda la web:
+            "sus títulos hacen alusión al espacio... habitación, spa, azotea.
+            Eso es obvio. No entiendo qué valor tiene para una encargada de
+            marketing. Si este nombre no aporta nada... mejor eliminarlo".
+
+            Tenía razón. Era una cartela de museo: describía lo que el ojo
+            acababa de ver, y gastaba en lo obvio el único hueco donde se
+            podía decir algo. Si algún día hay algo que SÍ aporte (que el
+            hotel publicó la pieza, o la decisión que hay detrás de ella),
+            este es su sitio. Mientras no lo haya, va vacío. */}
         <div className="mt-7 flex items-center justify-between gap-4 md:mt-9">
           <button
             onClick={() => ir(-1)}
@@ -333,9 +334,6 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
                 ) : (
                   <div className="font-serif text-lg text-[#1a1918] md:text-2xl">{pieza.hotel}</div>
                 )}
-                <div className="mt-1.5 text-[10px] font-sans uppercase tracking-[0.22em] text-[#5a5854] md:text-[11px]">
-                  {segun(idioma, pieza.tipo, pieza.tipoEn ?? pieza.tipo)}
-                </div>
               </motion.div>
             </AnimatePresence>
           </div>

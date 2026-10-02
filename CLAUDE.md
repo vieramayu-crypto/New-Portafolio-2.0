@@ -1519,6 +1519,35 @@ proveedor de vídeo está bloqueado, así que lo medido es cuántos reproductore
 hay vivos, no si arrancan. Que siete pasen a dos es la causa más probable del
 fallo, pero hace falta que ella lo confirme en su móvil.
 
+## El pie de las galerías de vídeo: sólo el nombre del hotel
+
+Debajo del nombre había un rótulo diciendo de qué iba la pieza (`HABITACIÓN`,
+`SPA`, `AZOTEA`, o una frase resumen en las horizontales). **Se quitó**, y el
+argumento de Mayurlin vale para toda la web:
+
+> *"Sus títulos hacen alusión al espacio. Es decir, habitación, spa, azotea.
+> Eso es obvio. No entiendo qué valor tiene para una encargada de marketing de
+> una agencia que vea eso. Si este nombre no aporta nada... mejor eliminarlo."*
+
+Tenía razón. Era una cartela de museo: describía lo que el ojo acababa de ver,
+y gastaba en lo obvio el único hueco donde se podía decir algo. Peor que
+neutro, porque quien lee *habitación, spa, azotea* concluye "filman sitios
+bonitos", que es justo lo que hace cualquiera con una cámara.
+
+**REGLA GENERAL: un rótulo que describe lo que ya se ve, fuera.** Si algún día
+hay algo que SÍ aporte, ese hueco sigue ahí. Por orden de valor:
+
+1. **Que el hotel lo publicó.** La prueba más fuerte que hay y no se puede
+   fingir. Ya existe el concepto (`publishedByHotel`) y se marca sólo donde
+   hay certeza.
+2. **La decisión detrás de la pieza.** No qué se ve, sino para qué se hizo.
+   Demuestra criterio, que es lo que promete Acerca de ("decidimos qué se
+   rueda y qué no").
+3. **Dónde acabó.** Si fue al canal del hotel, a @mayurlintravel o a los dos.
+   Convertiría "Una producción, dos destinos" de promesa en prueba.
+
+Mientras no haya nada de eso, va vacío.
+
 ## Migración futura a hosting propio
 
 Cuando Mayurlin migre todo el sitio a su dominio propio: el único lugar
