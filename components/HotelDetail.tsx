@@ -148,6 +148,21 @@ const Bleed: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 // ratio mix, so no two hotel portfolios read as the same template reordered.
 // All blocks are conditional on the photo existing, same as before, so a
 // hotel with only 3 photos loaded still renders a complete-feeling page.
+//
+// EL VÍDEO VA SIEMPRE EN LA PARTE ALTA: tercer o cuarto bloque, nunca más
+// abajo. Es regla de Mayurlin y vale para las nueve variantes. Se saltó una
+// vez, en la 8: el vídeo quedó octavo de diez y ella lo vio enterrado --
+// "recuerda que te dije que todos los vídeos deben quedar en la parte alta,
+// puede ser de segundo, tercero, pero nunca al fondo".
+//
+// Y NO VA SEGUNDO SIN MÁS: todas las variantes abren con una foto a sangre, y
+// el vídeo también lo es. Pegados, tres anchos completos seguidos se leen
+// como un solo bloque. Por eso el hueco bueno es el que queda justo después
+// de la primera pieza estrecha.
+//
+// AUDITORÍA (bloque del vídeo / bloques totales): v0 3/11 · v1 4/11 ·
+// v2 4/13 · v3 sin vídeo · v4 3/14 · v5 3/14 · v6 4/14 · v7 sin vídeo ·
+// v8 3/10.
 const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // 0 -- THE RITZ-CARLTON TENERIFE, ABAMA: a guided walk through the property --
   // facade, grounds + room, private cove, architecture + pool, spa, dining.
@@ -939,17 +954,13 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // Slot map:
   //   0 panorámica badlands (landscape bleed) →
   //   1 badlands aéreo vertical (portrait solo) →
+  //   VÍDEO a sangre →
   //   2+3 hombre caminando + mujer al atardecer (portrait pair, human moments) →
   //   4 aérea del cañón (landscape bleed) →
   //   5+6 logo + ducha exterior (portrait pair, details) →
-  //   VÍDEO a sangre →
   //   7+8 cápsula + piscina + jacuzzi (landscape pair, closing).
   //
-  // EL VÍDEO VA ANTES DEL PAR DE CIERRE Y NO ANTES: es un resumen del sitio
-  // entero, no un punto del paseo, así que colocarlo a mitad del recorrido
-  // rompería la cronología que pidió Mayurlin. Y no se pega a ninguna de las
-  // dos fotos a sangre (la panorámica de arriba y la aérea del cañón): tres
-  // piezas de ancho completo seguidas se leen como una sola.
+  // Nota: el VÍDEO va en tercer lugar, justo detrás del vertical de apertura.
   ({ photos, y, embed }) => (
     <>
       {photos[0] && (
@@ -961,6 +972,11 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
         <div className="w-full flex justify-center">
           <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[46%]" />
         </div>
+      )}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {(photos[2] || photos[3]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
@@ -998,11 +1014,6 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
             <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[48%]" />
           )}
         </div>
-      )}
-      {embed && (
-        <Bleed>
-          <GalleryEmbed src={embed} />
-        </Bleed>
       )}
       {(photos[7] || photos[8]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
