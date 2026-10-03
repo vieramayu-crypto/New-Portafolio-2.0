@@ -942,8 +942,15 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   //   2+3 hombre caminando + mujer al atardecer (portrait pair, human moments) →
   //   4 aérea del cañón (landscape bleed) →
   //   5+6 logo + ducha exterior (portrait pair, details) →
+  //   VÍDEO a sangre →
   //   7+8 cápsula + piscina + jacuzzi (landscape pair, closing).
-  ({ photos, y }) => (
+  //
+  // EL VÍDEO VA ANTES DEL PAR DE CIERRE Y NO ANTES: es un resumen del sitio
+  // entero, no un punto del paseo, así que colocarlo a mitad del recorrido
+  // rompería la cronología que pidió Mayurlin. Y no se pega a ninguna de las
+  // dos fotos a sangre (la panorámica de arriba y la aérea del cañón): tres
+  // piezas de ancho completo seguidas se leen como una sola.
+  ({ photos, y, embed }) => (
     <>
       {photos[0] && (
         <Bleed>
@@ -991,6 +998,11 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
             <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[48%]" />
           )}
         </div>
+      )}
+      {embed && (
+        <Bleed>
+          <GalleryEmbed src={embed} />
+        </Bleed>
       )}
       {(photos[7] || photos[8]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">

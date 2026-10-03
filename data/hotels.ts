@@ -1049,6 +1049,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     year: '2026',
     category: 'Romantic Escape',
     layoutVariant: 8,
+    galleryEmbed: 'https://livid.com/embed/MBGcS28bxsD7?autoplay=1&loop=1&muted=1',
     caseStudy: {
       season: 'Octubre · Otoño',
       duration: '4 días',

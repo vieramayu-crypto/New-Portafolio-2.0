@@ -90,8 +90,11 @@ export const VideoVerticalesInicio: React.FC = () => {
  *  el botón que cierra la página, que es donde se decide.
  *
  *  PARA CAMBIAR LA PIEZA: sólo esta constante.
+ *
+ *  Era la de Binidufà, puesta aquí de forma provisional mientras District
+ *  Hive no tuviera pieza propia. Ya la tiene y la banda es suya.
  */
-const PIEZA_BANDA = PIEZAS_HORIZONTALES.find((p) => p.id === 'v-binidufa') ?? PIEZAS_HORIZONTALES[0];
+const PIEZA_BANDA = PIEZAS_HORIZONTALES.find((p) => p.id === 'v-district-hive') ?? PIEZAS_HORIZONTALES[0];
 
 export const BandaVideo: React.FC = () => {
   const caja = useRef<HTMLDivElement>(null);
