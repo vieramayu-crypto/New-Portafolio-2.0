@@ -257,6 +257,41 @@ body {
   z-index: 1;
 }
 
+/* EL VELO DE LA BANDA DEL HERO.
+
+   Va aquí y no en una utilidad de Tailwind por una razón concreta: la regla
+   de arriba (`.mt-glass > *`) declara `position: relative` sin condición y
+   esta hoja va DESPUÉS de las utilidades, así que se llevaba por delante el
+   `absolute` del velo. Resultado: un div de 979 x 0 px que no tapaba nada --
+   medido, el fondo bajo "Iniciar un proyecto" apenas se movía de 209 a 189
+   con un velo del 38%.
+
+   Y hace falta que sea un hijo, no el fondo del propio cristal: lo que borra
+   el texto blanco no es la grava, es el destello de `.mt-glass::after`, que
+   en su núcleo llega al 50% de blanco. Un color de fondo queda DEBAJO del
+   destello y no lo doma; este hijo hereda el `z-index: 1` de la regla de
+   arriba, así que queda por encima del destello y por debajo de las cifras.
+
+   Medido sobre los glifos reales, con el reflejo congelado fase a fase a lo
+   largo de sus 22 s y quedándose con el píxel más claro de todo el ciclo:
+
+     velo    INICIAR UN PROYECTO   peor de la banda
+     ----    -------------------   ----------------
+     0%              1,73               1,51
+     10%             2,11               1,82
+     16%             2,39               2,07
+     22%             2,70               2,35
+     28%             3,06               2,63   <- puesto
+     36%             3,68               3,11
+
+   El 28% es el mínimo que deja el CTA por encima de 3, el mismo nivel que
+   Mayurlin ya aprobó para el párrafo del hero. No sube más porque pidió
+   conservar el estilo minimalista. */
+.mt-hero-velo {
+  position: absolute;
+  inset: 0;
+}
+
 /* Reflejos que NO van a la vez.
 
    Cuando varias cajas de cristal comparten pantalla, todas arrancan el mismo
