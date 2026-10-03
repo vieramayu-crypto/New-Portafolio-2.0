@@ -263,7 +263,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           la fotografía, no sobre el fondo de la sección. Ahora el marfil está
           desde el primer fotograma y lo que entra son las cifras. */}
       <div
-        className="mt-glass mt-glass-halo mt-hero-cifras relative z-[3] w-full text-[#1a1918] md:text-white
+        className="mt-glass mt-hero-cifras relative z-[3] w-full text-[#1a1918] md:text-white
                    md:absolute md:inset-x-0 md:bottom-[clamp(22px,3vw,42px)] md:mx-auto md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:overflow-hidden md:rounded-[10px]"
       >
         {/* EL VELO QUE SOSTIENE EL BLANCO.
@@ -285,7 +285,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             sigue en tinta. */}
         <div
           aria-hidden
-          className="mt-hero-velo pointer-events-none hidden rounded-[10px] bg-[#1a1918]/[.28] md:block"
+          className="mt-hero-velo pointer-events-none hidden rounded-[10px] bg-[#1a1918]/[.25] md:block"
         />
         <motion.div {...rise(0.42)} animate={animate} className="relative z-[1] md:h-full">
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica

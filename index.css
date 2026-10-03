@@ -193,60 +193,15 @@ body {
   }
 }
 
-/* El canto del cristal tambien recoge la luz: el borde de un pixel se enciende
-   y se apaga en fase con el barrido, y por fuera acompana un halo blanco muy
-   abierto. Va en su propia clase y no en `.mt-glass` porque una animacion gana
-   a cualquier declaracion normal, y en `.mt-glass` se llevaria por delante la
-   sombra del modal, que hereda de ahi. */
-.mt-glass-halo {
-  animation: mt-glass-halo 22s ease-in-out infinite;
-}
+/* AQUI VIVIA `.mt-glass-halo`: una animacion de 22 s que, al pasar el
+   reflejo, encendia un anillo blanco de 1 px alrededor de la caja
+   (`0 0 0 1px rgba(255,255,255,.38)`) y un resplandor exterior de 26 px.
+   La unica caja que la usaba era la banda del hero y Mayurlin la rechazo al
+   verla: "hay un borde blanco que sale alrededor de la caja y no me gusta
+   para nada". No volver a ponerla.
 
-@keyframes mt-glass-halo {
-  0%,
-  100% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.09),
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 0 16px rgba(255, 255, 255, 0.04),
-      0 14px 40px rgba(0, 0, 0, 0.06);
-  }
-  18% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.34),
-      0 0 0 1px rgba(255, 255, 255, 0.38),
-      0 0 26px rgba(255, 255, 255, 0.26),
-      0 14px 40px rgba(0, 0, 0, 0.06);
-  }
-  34% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.32),
-      0 0 24px rgba(255, 255, 255, 0.22),
-      0 14px 40px rgba(0, 0, 0, 0.06);
-  }
-  50% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.09),
-      0 0 0 1px rgba(255, 255, 255, 0.06),
-      0 0 16px rgba(255, 255, 255, 0.04),
-      0 14px 40px rgba(0, 0, 0, 0.06);
-  }
-  68% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.34),
-      0 0 25px rgba(255, 255, 255, 0.24),
-      0 14px 40px rgba(0, 0, 0, 0.06);
-  }
-  84% {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.28),
-      0 0 0 1px rgba(255, 255, 255, 0.3),
-      0 0 23px rgba(255, 255, 255, 0.21),
-      0 14px 40px rgba(0, 0, 0, 0.06);
-  }
-}
+   Lo que cruza el cristal (`.mt-glass::after`) no es esto y sigue ahi: aquel
+   anima el box-shadow del borde, este es el destello que viaja por dentro. */
 
 /* El contenido de una caja de cristal va por encima del borde y del destello.
    Sin esto el barrido pinta sobre el texto: en la banda del hero pasa
@@ -281,12 +236,14 @@ body {
      10%             2,11               1,82
      16%             2,39               2,07
      22%             2,70               2,35
-     28%             3,06               2,63   <- puesto
+     28%             3,06               2,63
      36%             3,68               3,11
 
-   El 28% es el mínimo que deja el CTA por encima de 3, el mismo nivel que
-   Mayurlin ya aprobó para el párrafo del hero. No sube más porque pidió
-   conservar el estilo minimalista. */
+   Esa tabla se midió con el halo todavía puesto. Mayurlin aprobó el 28% al
+   verlo y pidió bajarlo un 10%: al 25%, y ya sin halo, el CTA se queda en
+   2,83 y lo peor de la banda en 2,48 ("Ver proyectos"). Es su decisión --
+   ninguna de las opciones llegaba al 4,5 de la norma (eso sólo se alcanzaba
+   con el texto en tinta) y quiere conservar el estilo minimalista. */
 .mt-hero-velo {
   position: absolute;
   inset: 0;
