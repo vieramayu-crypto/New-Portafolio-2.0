@@ -263,10 +263,31 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           la fotografía, no sobre el fondo de la sección. Ahora el marfil está
           desde el primer fotograma y lo que entra son las cifras. */}
       <div
-        className="mt-glass mt-glass-halo mt-hero-cifras relative z-[3] w-full text-[#1a1918]
+        className="mt-glass mt-glass-halo mt-hero-cifras relative z-[3] w-full text-[#1a1918] md:text-white
                    md:absolute md:inset-x-0 md:bottom-[clamp(22px,3vw,42px)] md:mx-auto md:h-[76px] md:w-[min(68vw,1120px)] md:min-w-[680px] md:overflow-hidden md:rounded-[10px]"
       >
-        <motion.div {...rise(0.42)} animate={animate} className="md:h-full">
+        {/* EL VELO QUE SOSTIENE EL BLANCO.
+            El texto de la banda pasó a blanco porque es más congruente con el
+            titular, pero el cristal tiene un destello que llega al 50% de
+            blanco y debajo hay grava clara: medido sobre los glifos, "Iniciar
+            un proyecto" se quedaba en 1,73:1, prácticamente invisible, y es el
+            botón que trae trabajo. Este velo le da al blanco contra qué
+            apoyarse, y va al mínimo que deja el CTA por encima de 3:1 -- el
+            mismo nivel que ella ya aprobó para el párrafo del hero.
+
+            El `position: absolute` vive en `.mt-hero-velo` (en `index.css`) y
+            no aquí: `.mt-glass > *` declara `position: relative` y esa hoja
+            va después de las utilidades de Tailwind, así que con la utilidad
+            `absolute` este div salía de 0 px de alto y no tapaba nada. La
+            tabla de medidas está junto a esa clase.
+
+            Sólo en escritorio: en móvil la banda vive sobre marfil y el texto
+            sigue en tinta. */}
+        <div
+          aria-hidden
+          className="mt-hero-velo pointer-events-none hidden rounded-[10px] bg-[#1a1918]/[.28] md:block"
+        />
+        <motion.div {...rise(0.42)} animate={animate} className="relative z-[1] md:h-full">
         {/* Las columnas son algo mas anchas que en el prototipo: la metrica
             aprobada ("4 clientes recurrentes") es mas larga que la que habia
             ("6 anos") y con el reparto original partia en dos lineas. */}
@@ -277,7 +298,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
           {milestones.items.map((item, i) => (
             <div
               key={item.label}
-              className={`md:border-l md:border-[#1a1918]/[.18] md:pl-5 ${
+              className={`md:border-l md:border-white/30 md:pl-5 ${
                 i === 0 ? 'pl-0' : 'border-l border-[#1a1918]/15 pl-4'
               }`}
             >
@@ -303,7 +324,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 aquí primero. */}
             <button
               onClick={onOpenAvailability}
-              className="group relative uppercase tracking-[0.18em] text-[#1a1918] transition-opacity hover:opacity-70"
+              className="group relative uppercase tracking-[0.18em] text-[#1a1918] transition-opacity hover:opacity-70 md:text-white"
             >
               {hero.ctaLabel}
               <motion.span
@@ -312,7 +333,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 1.5, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transformOrigin: 'left' }}
-                className="absolute -bottom-[3px] left-0 block h-px w-full bg-[#1a1918]/65"
+                className="absolute -bottom-[3px] left-0 block h-px w-full bg-[#1a1918]/65 md:bg-white/75"
               />
             </button>
             {/* Ruta secundaria: nunca compite en peso con el CTA comercial,
@@ -321,7 +342,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
               onClick={() =>
                 document.getElementById('hotel-section')?.scrollIntoView({ behavior: 'smooth' })
               }
-              className="uppercase tracking-[0.18em] text-[#1a1918]/65 transition-opacity hover:text-[#1a1918]"
+              className="uppercase tracking-[0.18em] text-[#1a1918]/65 transition-opacity hover:text-[#1a1918] md:text-white/80 md:hover:text-white"
             >
               {hero.secondaryLabel}
             </button>
