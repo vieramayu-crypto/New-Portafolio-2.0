@@ -107,6 +107,24 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     // enseñaba la fachada de otro. Las fotos de InterContinental son `sec7`.
     portada: publicImage('sec7-gal02-fachada-h.jpg'),
   },
+  {
+    // LA PIEZA QUE OCUPA LA BANDA DE RESPIRO DE INICIO. Hasta ahora ese hueco
+    // lo llenaba la de Binidufà, puesta de forma provisional mientras no
+    // hubiera una pieza propia; ya la hay y la banda es suya
+    // (`PIEZA_BANDA` en `components/VideoShowcase.tsx`).
+    //
+    // Y COMO ES HORIZONTAL, VA TAMBIÉN EN SU HOTEL: `galleryEmbed` de
+    // `district-hive` en `data/hotels.ts` la mete en el mosaico de Inicio y
+    // en su página de portafolio. Es la regla de siempre -- una pieza
+    // horizontal vive en la galería del hotel que la pagó, no suelta.
+    id: 'v-district-hive',
+    hotelName: 'District Hive',
+    hotelId: 'district-hive',
+    descripcion: 'Una cápsula de cristal en el desierto de Gorafe.',
+    descripcionEn: 'A glass capsule in the Gorafe desert.',
+    src: 'https://livid.com/embed/MBGcS28bxsD7?autoplay=1&loop=1&muted=1',
+    portada: publicImage('sec9-gal01-aerea-h.jpg'),
+  },
 ];
 
 
