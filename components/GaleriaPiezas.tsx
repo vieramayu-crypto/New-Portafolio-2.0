@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { VIDEOS_HORIZONTALES, VIDEOS_VERTICALES } from '../data/videos';
 import { VideoNube } from './VideoNube';
-import { useIdioma } from '../src/lib/idioma';
+import { useIdioma, segun } from '../src/lib/idioma';
 import { ruta } from '../src/lib/rutas';
 import { crearT } from '../src/lib/textos';
 import { useCercaDePantalla } from '../src/lib/cerca';
@@ -29,6 +29,8 @@ interface Pieza {
   id: string;
   formato: Formato;
   hotel: string;
+  /** El nombre en inglés, sólo cuando difiere. Ver `data/videos.ts`. */
+  hotelEn?: string;
   src: string;
   hotelId?: string;
 }
@@ -39,6 +41,7 @@ export const PIEZAS_HORIZONTALES: Pieza[] = VIDEOS_HORIZONTALES.map((v) => ({
   id: v.id,
   formato: 'h' as Formato,
   hotel: v.hotelName,
+  hotelEn: v.hotelNameEn,
   src: v.src,
   hotelId: v.hotelId,
 }));
@@ -324,15 +327,16 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.28, ease: 'easeOut' }}
               >
+                {/* `nombre` resuelve el idioma una vez; ver `hotelEn` arriba. */}
                 {pieza.hotelId ? (
                   <Link
                     to={ruta(idioma, 'trabajo', pieza.hotelId)}
                     className="font-serif text-lg text-[#1a1918] underline-offset-4 hover:underline md:text-2xl"
                   >
-                    {pieza.hotel}
+                    {segun(idioma, pieza.hotel, pieza.hotelEn ?? pieza.hotel)}
                   </Link>
                 ) : (
-                  <div className="font-serif text-lg text-[#1a1918] md:text-2xl">{pieza.hotel}</div>
+                  <div className="font-serif text-lg text-[#1a1918] md:text-2xl">{segun(idioma, pieza.hotel, pieza.hotelEn ?? pieza.hotel)}</div>
                 )}
               </motion.div>
             </AnimatePresence>
@@ -359,7 +363,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
                 setSentido(n > i ? 1 : -1);
                 setI(n);
               }}
-              aria-label={`${t('verPieza')} ${p.hotel}`}
+              aria-label={`${t('verPieza')} ${segun(idioma, p.hotel, p.hotelEn ?? p.hotel)}`}
               aria-current={n === i}
               className={`h-[3px] rounded-full transition-all duration-300 ${
                 p.formato === 'h' ? 'w-9' : 'w-4'

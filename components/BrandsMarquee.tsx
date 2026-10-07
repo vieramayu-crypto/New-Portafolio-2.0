@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useSiteContent } from '../src/lib/content';
+import { useIdioma, segun } from '../src/lib/idioma';
 
 const ELEGANT = 'font-serif italic tracking-wide text-2xl md:text-3xl';
 const SANS_BOLD_UPPER = 'font-sans font-bold uppercase tracking-wide text-xl md:text-2xl';
@@ -7,9 +8,12 @@ const SANS_MEDIUM_UPPER = 'font-sans font-medium uppercase tracking-[0.1em] text
 const SERIF_WIDE = 'font-serif tracking-[0.15em] text-2xl md:text-3xl';
 const SERIF_SEMI = 'font-serif font-semibold tracking-wide text-2xl md:text-3xl';
 
-const BRANDS: { name: string; sub?: string; className: string }[] = [
+/** `subEn` SOLO DONDE EL SUBTITULO CAMBIA DE IDIOMA. Santorini, Menorca,
+ *  Mallorca o Sóller se escriben igual en los dos; Lisboa no, y la propiedad
+ *  se presenta como InterContinental Lisbon en su web inglesa. */
+const BRANDS: { name: string; sub?: string; subEn?: string; className: string }[] = [
   { name: 'The Ritz-Carlton', className: SERIF_WIDE },
-  { name: 'InterContinental', sub: 'LISBOA', className: SERIF_SEMI },
+  { name: 'InterContinental', sub: 'LISBOA', subEn: 'LISBON', className: SERIF_SEMI },
   { name: 'Holiday Inn Express', className: SANS_MEDIUM_UPPER },
   { name: 'numa', className: 'font-sans font-bold lowercase text-2xl md:text-3xl' },
   { name: 'Dolce', sub: 'BARCELONA RESORT', className: SERIF_WIDE },
@@ -32,14 +36,18 @@ const BRANDS: { name: string; sub?: string; className: string }[] = [
   { name: 'COEO', sub: 'STAY & SHARE', className: SANS_BOLD_UPPER },
 ];
 
-const BrandLogo: React.FC<{ brand: (typeof BRANDS)[number] }> = ({ brand }) => (
-  <div className="flex flex-col items-center justify-center px-10 md:px-14 shrink-0 text-[#1a1918]/70">
-    <span className={brand.className}>{brand.name}</span>
-    {brand.sub && (
-      <span className="mt-1 text-[11px] font-sans uppercase tracking-[0.3em] text-[#5a5854]">{brand.sub}</span>
-    )}
-  </div>
-);
+const BrandLogo: React.FC<{ brand: (typeof BRANDS)[number] }> = ({ brand }) => {
+  const { idioma } = useIdioma();
+  const sub = brand.sub && segun(idioma, brand.sub, brand.subEn ?? brand.sub);
+  return (
+    <div className="flex flex-col items-center justify-center px-10 md:px-14 shrink-0 text-[#1a1918]/70">
+      <span className={brand.className}>{brand.name}</span>
+      {sub && (
+        <span className="mt-1 text-[11px] font-sans uppercase tracking-[0.3em] text-[#5a5854]">{sub}</span>
+      )}
+    </div>
+  );
+};
 
 interface BrandsMarqueeProps {
   /** Cuántas marcas pintar. Inicio muestra solo las primeras: veintidós

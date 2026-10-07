@@ -159,7 +159,7 @@ export const TEXTOS: Diccionario = {
   },
   verticalesTitulo: {
     es: 'Piezas verticales para sus redes',
-    en: 'Vertical pieces for their social channels',
+    en: 'Vertical pieces for your social channels',
   },
   verticalesSubtitulo: {
     es: 'Centradas en un espacio, la gastronomía o el servicio.',
