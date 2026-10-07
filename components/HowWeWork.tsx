@@ -149,7 +149,10 @@ export const HowWeWork: React.FC = () => {
             <button
               key={s.number}
               onClick={() => goTo(i)}
-              aria-label={`Ir al paso ${i + 1}: ${s.title}`}
+              // El rótulo que oye un lector de pantalla también se traduce: estaba
+              // escrito en español dentro del código, así que en /en decía
+              // "Ir al paso 1: We define the project with you".
+              aria-label={`${t('irAlPaso')} ${i + 1}: ${s.title}`}
               aria-current={i === index}
               className="p-1.5 -m-1.5"
             >

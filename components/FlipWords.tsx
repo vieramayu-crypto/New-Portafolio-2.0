@@ -19,7 +19,13 @@ export const FlipWords: React.FC<FlipWordsProps> = ({ words, className = '', int
 
   return (
     <span className={`inline-block relative ${className}`}>
-      <AnimatePresence mode="wait">
+      {/* LA KEY ES LA LISTA ENTERA, NO SÓLO LA PALABRA A LA VISTA.
+          Al cambiar de idioma, `AnimatePresence` sacaba la palabra anterior con
+          su medio segundo de salida -- y esa palabra era la del idioma viejo,
+          así que durante ese rato se leía "Photography, film and Dirección".
+          Cambiando la key, React tira el bloque entero y monta el nuevo: no
+          queda nada del idioma anterior que animar. */}
+      <AnimatePresence mode="wait" key={words.join('|')}>
         <motion.span
           key={words[index]}
           initial={{ opacity: 0, y: 8, filter: 'blur(8px)' }}

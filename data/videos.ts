@@ -65,7 +65,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     id: 'v-gpro',
     hotelName: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
-    descripcion: 'Jardines, piscina y spa sobre la Bahía de Palma.',
+    descripcion: 'Jardines, piscina y spa sobre la bahía de Palma.',
     descripcionEn: 'Gardens, pool and spa above the Bay of Palma.',
     // OJO CON EL NOMBRE DEL ARCHIVO: dice "MUESTRA ... LOW RESOLU", y durante
     // varias rondas se dio por hecho que era una copia de baja calidad que
@@ -78,7 +78,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     id: 'v-esplendido',
     hotelName: 'Hotel Espléndido',
     hotelId: 'hotel-esplendido',
-    descripcion: 'Terrazas y piscina frente a la Bahía de Port de Sóller.',
+    descripcion: 'Terrazas y piscina frente a la bahía de Port de Sóller.',
     descripcionEn: 'Terraces and pool facing the Bay of Port de Sóller.',
     src: 'https://livid.com/embed/rx3uWQWDbVyM?autoplay=1&loop=1&muted=1',
     portada: publicImage('sec6-portada.jpg'),
@@ -229,6 +229,17 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     titularEn: 'A whole day at the hotel, without leaving it.',
     src: 'https://livid.com/embed/r-awOhn9HWPr?autoplay=1&loop=1&muted=1',
   },
+  // LA AZOTEA ABRE EL TRAMO DE STIC URBAN. Antes cerraba, detras del
+  // restaurante y del spa; Mayurlin la quiere primera de las tres.
+  {
+    id: 'stic-roof',
+    hotel: 'Stic Urban',
+    tipo: 'Azotea',
+    titular: 'La azotea a la hora en que justifica la reserva.',
+    tipoEn: 'Rooftop',
+    titularEn: 'The rooftop at the hour that justifies the booking.',
+    src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
+  },
   {
     id: 'stic-restaurante',
     hotel: 'Stic Urban',
@@ -246,14 +257,5 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     tipoEn: 'Spa',
     titularEn: 'A spa is shown by its light and its pace, not by a catalogue.',
     src: 'https://livid.com/embed/AFaBlCH42ZBt?autoplay=1&loop=1&muted=1',
-  },
-  {
-    id: 'stic-roof',
-    hotel: 'Stic Urban',
-    tipo: 'Azotea',
-    titular: 'La azotea a la hora en que justifica la reserva.',
-    tipoEn: 'Rooftop',
-    titularEn: 'The rooftop at the hour that justifies the booking.',
-    src: 'https://livid.com/embed/RU8PsfvjtTor?autoplay=1&loop=1&muted=1',
   },
 ];

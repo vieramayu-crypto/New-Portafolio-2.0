@@ -13,6 +13,7 @@
  */
 
 import type { Idioma } from './idioma';
+import { texto } from './textos';
 
 const WEB3FORMS_KEY = '9b7fed74-124f-416b-ad48-57237c33b3f7';
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
@@ -31,9 +32,16 @@ export interface InquiryFields {
    *  mirar una cosa o la otra, y pedir las dos por separado es una casilla
    *  más que rellenar sin ganar nada. */
   link?: string;
+  /** CLAVE del diccionario (`alcanceFotoVideo`), no el texto que se ve.
+   *
+   *  Guardaba el texto ya traducido, y eso rompía el formulario al cambiar de
+   *  idioma: el estado conservaba "Fotografía y vídeo" mientras la lista ya
+   *  mostraba opciones inglesas, así que la selección desaparecía de la vista
+   *  y el correo salía mezclando rótulos ingleses con respuestas españolas.
+   *  Con la clave, la elección sobrevive al cambio y se traduce al redactar. */
   scope?: string;
-  /** En qué punto está el proyecto. Sustituye al tramo de presupuesto: el
-   *  formulario ya no pregunta cifras. */
+  /** En qué punto está el proyecto, también por clave (`etapaAprobado`).
+   *  Sustituye al tramo de presupuesto: el formulario ya no pregunta cifras. */
   stage?: string;
   message?: string;
 }
@@ -87,8 +95,11 @@ export function buildInquiryBody(f: InquiryFields, idioma: Idioma = 'es'): strin
   lines.push(`${r.propiedad}: ${f.propertyName.trim()}`);
   if (f.location?.trim()) lines.push(`${r.ubicacion}: ${f.location.trim()}`);
   if (f.link?.trim()) lines.push(`${r.enlace}: ${f.link.trim()}`);
-  if (f.scope?.trim()) lines.push(`${r.servicio}: ${f.scope.trim()}`);
-  if (f.stage?.trim()) lines.push(`${r.estado}: ${f.stage.trim()}`);
+  // Las dos listas viajan como clave y se traducen aquí, al idioma en el que
+  // el visitante rellenó el formulario. `texto` devuelve la propia clave si no
+  // la encuentra, así que un valor viejo nunca deja la línea vacía.
+  if (f.scope?.trim()) lines.push(`${r.servicio}: ${texto(idioma, f.scope.trim())}`);
+  if (f.stage?.trim()) lines.push(`${r.estado}: ${texto(idioma, f.stage.trim())}`);
   if (f.availabilityDate?.trim()) lines.push(`${r.fechas}: ${f.availabilityDate.trim()}`);
   if (f.message?.trim()) lines.push('', r.detalles, f.message.trim());
   return lines.join('\n');

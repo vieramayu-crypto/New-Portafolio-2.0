@@ -139,7 +139,10 @@ const HotelCarousel: React.FC<HotelCarouselProps> = ({ stories, active, onNaviga
               if (diff === -1) onNavigate('prev');
               else if (diff === 1) onNavigate('next');
             }}
-            aria-label={clickable ? `Ver ${story.hotelName}` : undefined}
+            // Estaba fijo en espanol. El modal sigue montado pero hoy no hay
+            // ninguna accion que lo abra; se traduce igual para que no se
+            // estrene en espanol el dia que vuelva.
+            aria-label={clickable ? `${txt('verPieza')} ${story.hotelName}` : undefined}
             aria-hidden={!clickable || undefined}
             tabIndex={clickable ? 0 : -1}
             style={{

@@ -11,7 +11,14 @@ const fieldClass =
   "block w-full border-0 bg-transparent p-0 font-serif text-xl text-[#1a1918] outline-none placeholder:text-[#5a5854]/50 md:text-[23px]";
 
 /** Lo que se elige en estas dos listas viaja dentro del correo, así que va en
- *  el idioma en el que el visitante rellenó el formulario. */
+ *  el idioma en el que el visitante rellenó el formulario.
+ *
+ *  POR ESO EL `value` DE CADA OPCIÓN ES LA CLAVE, no el texto traducido. Con
+ *  el texto dentro del estado, cambiar de idioma con el formulario a medias
+ *  dejaba la selección huérfana: la lista ya mostraba las opciones inglesas y
+ *  el valor guardado seguía siendo el español, así que el campo se veía vacío
+ *  y el correo salía mezclando rótulos ingleses con respuestas españolas.
+ *  `buildInquiryBody` traduce la clave al redactar. */
 const CLAVES_ALCANCE = [
   "alcanceFoto",
   "alcanceVideo",
@@ -271,7 +278,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                             <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a5854]">
                               {segun(
                                 idioma,
-                                'El archivo que adjuntaste no se pudo enviar. Mándanoslo respondiendo a ',
+                                'El archivo que adjuntaste no se pudo enviar. Mándanoslo por correo a ',
                                 'The file you attached could not be sent. Send it to us at ',
                               )}
                               <a
@@ -389,7 +396,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           >
                             <option value="">{t('selecciona')}</option>
                             {CLAVES_ALCANCE.map((clave) => (
-                              <option key={clave} value={t(clave)}>
+                              <option key={clave} value={clave}>
                                 {t(clave)}
                               </option>
                             ))}
@@ -407,7 +414,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                           >
                             <option value="">{t('selecciona')}</option>
                             {CLAVES_ETAPA.map((clave) => (
-                              <option key={clave} value={t(clave)}>
+                              <option key={clave} value={clave}>
                                 {t(clave)}
                               </option>
                             ))}

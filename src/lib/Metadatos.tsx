@@ -8,6 +8,7 @@ import { HOTEL_STORIES } from '../../data/hotels';
 import { CASE_STUDIES } from '../../data/caseStudies';
 import { traducirCaso } from '../../data/textosEn';
 import {
+  DATOS_ESTRUCTURADOS,
   alternativas,
   imagenPublica,
   metadatos,
@@ -60,6 +61,36 @@ function fijarEnlace(rel: string, href: string, hreflang?: string) {
   if (hreflang) el.setAttribute('hreflang', hreflang);
   el.setAttribute(MARCA, '');
   document.head.appendChild(el);
+}
+
+/** PONE LOS DATOS ESTRUCTURADOS EN EL IDIOMA DE LA PÁGINA.
+ *
+ *  El bloque JSON-LD vive escrito a mano en `index.html` y es uno solo, así
+ *  que las páginas inglesas declaraban en español su descripción, el cargo, los
+ *  países y los servicios. Aquí se sustituyen esos cinco campos; todo lo demás
+ *  (nombre, direcciones, redes) se queda intacto porque identifica la marca.
+ *
+ *  SE REESCRIBE EL BLOQUE EXISTENTE, no se añade otro: dos JSON-LD del mismo
+ *  negocio con datos distintos es peor que uno en el idioma equivocado. Y si
+ *  el JSON viniera roto, se deja como está en vez de tirar la página.
+ */
+function fijarDatosEstructurados(idioma: 'es' | 'en') {
+  const el = document.head.querySelector<HTMLScriptElement>(
+    'script[type="application/ld+json"]'
+  );
+  if (!el || !el.textContent) return;
+  try {
+    const datos = JSON.parse(el.textContent);
+    const campos = DATOS_ESTRUCTURADOS[idioma];
+    datos.description = campos.description;
+    if (datos.founder) datos.founder.jobTitle = campos.jobTitle;
+    datos.areaServed = campos.areaServed.map((name: string) => ({ '@type': 'Country', name }));
+    datos.serviceType = campos.serviceType;
+    datos.knowsAbout = campos.knowsAbout;
+    el.textContent = JSON.stringify(datos, null, 2);
+  } catch {
+    /* JSON-LD ilegible: mejor dejarlo como estaba que dejarlo a medias. */
+  }
 }
 
 export const Metadatos: React.FC = () => {
@@ -131,6 +162,7 @@ export const Metadatos: React.FC = () => {
 
     fijarEnlace('canonical', canonica);
     alternativas(clave, param).forEach((a) => fijarEnlace('alternate', a.href, a.hreflang));
+    fijarDatosEstructurados(idioma);
   }, [pathname, idioma, contenido]);
 
   return null;

@@ -321,7 +321,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     // Va entre el salón y la vasija; el sitio lo fija la variante 1 de GALLERY_LAYOUTS.
     galleryEmbed: 'https://livid.com/embed/wbn5AZWOb8V9?autoplay=1&loop=1&muted=1',
     description:
-      'En un valle al norte de Menorca, Vestige Binidufà restaura una possessió agrícola del siglo XVIII, en un entorno de 800 hectáreas que comparte con Son Ermità: piedra, barro y materiales naturales que toman su tono directamente del paisaje que los rodea, con la herencia morisca todavía presente en su nombre.',
+      'En un valle al norte de Menorca, Vestige Binidufà ocupa una possessió agrícola restaurada del siglo XVIII, en un entorno de 800 hectáreas que comparte con Son Ermità: piedra, barro y materiales naturales que toman su tono directamente del paisaje que los rodea, con la herencia morisca todavía presente en su nombre.',
     quote: 'Piedra, tierra y silencio. El norte de Menorca como siempre ha sido.',
     photos: [
       {
@@ -745,8 +745,8 @@ export const HOTEL_STORIES: HotelStory[] = [
     // Va detrás del cartel del jardín; el sitio lo fija la variante 4 de GALLERY_LAYOUTS.
     galleryEmbed: 'https://livid.com/embed/bAN6qRGuhiHw?autoplay=1&loop=1&muted=1',
     description:
-      'En lo alto del barrio de Bonanova, rodeado de jardines privados con vistas a la Bahía de Palma, GPRO Valparaíso Palace & Spa alberga el spa más grande de Mallorca, un retiro sereno de agua, piedra y vegetación mediterránea.',
-    quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
+      'En lo alto del barrio de Bonanova, rodeado de jardines privados con vistas a la bahía de Palma, GPRO Valparaíso Palace & Spa alberga el spa más grande de Mallorca, un retiro sereno de agua, piedra y vegetación mediterránea.',
+    quote: 'Jardines, agua y la bahía de Palma extendiéndose más allá de cada terraza.',
     photos: [
       {
         id: 'hd-1',
@@ -767,7 +767,7 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'hd-3',
         url: publicImage('sec5-foto3-v.jpg'),
-        alt: 'Huésped en albornoz leyendo el folleto de tratamientos con vistas a la Bahía de Palma',
+        alt: 'Huésped en albornoz leyendo el folleto de tratamientos con vistas a la bahía de Palma',
         caption: 'Tratamientos con vistas a la bahía',
         aspectRatio: 'portrait',
         isBlackAndWhite: false
@@ -825,7 +825,7 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'hd-gal-7',
         url: publicImage('sec5-foto3-v.jpg'),
-        alt: 'Huésped en albornoz leyendo el folleto de tratamientos con vistas a la Bahía de Palma',
+        alt: 'Huésped en albornoz leyendo el folleto de tratamientos con vistas a la bahía de Palma',
         caption: 'Tratamientos con vistas a la bahía',
         aspectRatio: 'portrait',
         isBlackAndWhite: false
@@ -904,7 +904,7 @@ export const HOTEL_STORIES: HotelStory[] = [
     // foto ya está en galleryPhotos, así que no desaparece de ningún sitio.
     galleryEmbed: 'https://livid.com/embed/rx3uWQWDbVyM?autoplay=1&loop=1&muted=1',
     description:
-      'En el paseo marítimo de la Bahía de Port de Sóller, con la Serra de Tramuntana de fondo, Hotel Espléndido combina fachadas de piedra caliza, terrazas frente al mar y el tranvía histórico que todavía recorre el paseo.',
+      'En el paseo marítimo de la bahía de Port de Sóller, con la Serra de Tramuntana de fondo, Hotel Espléndido combina fachadas de piedra caliza, terrazas frente al mar y el tranvía histórico que todavía recorre el paseo.',
     quote: 'Piedra, mar y el eco del tranvía sobre los adoquines de Sóller.',
     photos: [
       {
@@ -926,7 +926,7 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'vde-3',
         url: publicImage('sec6-foto3-h.jpg'),
-        alt: 'Pareja conversando en la terraza con vistas a la Bahía de Sóller',
+        alt: 'Pareja conversando en la terraza con vistas a la bahía de Sóller',
         caption: 'Terraza frente a la bahía',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
@@ -976,8 +976,8 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'vde-gal-6',
         url: publicImage('sec6-gal06-bahia-panoramica-v.jpg'),
-        alt: 'Panorámica de la Bahía de Port de Sóller con gaviotas, veleros y la playa de piedras blancas',
-        caption: 'La Bahía de Sóller, entre las gaviotas',
+        alt: 'Panorámica de la bahía de Port de Sóller con gaviotas, veleros y la playa de piedras blancas',
+        caption: 'La bahía de Sóller, entre las gaviotas',
         aspectRatio: 'portrait',
         isBlackAndWhite: false
       },
@@ -992,7 +992,7 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'vde-gal-8',
         url: publicImage('sec6-gal08-piscina-pareja-h.jpg'),
-        alt: 'Pareja nadando en la piscina de la azotea con vistas a la Bahía de Sóller y su faro',
+        alt: 'Pareja nadando en la piscina de la azotea con vistas a la bahía de Sóller y su faro',
         caption: 'La piscina, frente al faro',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
@@ -1024,7 +1024,7 @@ export const HOTEL_STORIES: HotelStory[] = [
       {
         id: 'vde-gal-12',
         url: publicImage('sec6-foto3-h.jpg'),
-        alt: 'Pareja conversando en la terraza con vistas a la Bahía de Sóller',
+        alt: 'Pareja conversando en la terraza con vistas a la bahía de Sóller',
         caption: 'Terraza frente a la bahía',
         aspectRatio: 'landscape',
         isBlackAndWhite: false

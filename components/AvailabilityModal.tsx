@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { openInquiryMail } from '../src/lib/inquiry';
 import { useSiteContent } from '../src/lib/content';
+import { useIdioma, segun } from '../src/lib/idioma';
+import { crearT } from '../src/lib/textos';
 
 interface AvailabilityModalProps {
   isOpen: boolean;
@@ -16,6 +18,8 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
   const [sent, setSent] = useState(false);
   const [composed, setComposed] = useState('');
   const { contact } = useSiteContent();
+  const { idioma } = useIdioma();
+  const t = crearT(idioma);
 
   // El sitio es estático: la solicitud se entrega abriendo el correo del
   // visitante ya redactado. Se guarda el texto compuesto por si su navegador
@@ -58,7 +62,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
           >
             <button
               onClick={onClose}
-              aria-label="Cerrar"
+              aria-label={t('cerrar')}
               className="absolute top-4 right-4 text-xs font-sans tracking-widest uppercase text-[#5a5854] hover:text-[#1a1918] p-2 -m-2"
             >
               [ ✕ ]
@@ -69,14 +73,17 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                 <div className="w-12 h-12 bg-[#1a1918] text-[#f5f3ed] rounded-full mx-auto flex items-center justify-center font-serif">
                   ✓
                 </div>
-                <h3 className="font-serif text-2xl text-[#1a1918]">Tu solicitud está lista</h3>
+                <h3 className="font-serif text-2xl text-[#1a1918]">{t('dispLista')}</h3>
                 <p className="text-xs text-[#5a5854] leading-relaxed">
-                  Gracias {name}. Abrimos tu correo con la consulta de {propertyName || 'tu propiedad'}
-                  {availabilityDate ? ` para ${availabilityDate}` : ''} ya redactada — sólo queda enviarla.
-                  Respondemos en 48 h.
+                  {segun(
+                    idioma,
+                    `Gracias ${name}. Abrimos tu correo con la consulta de ${propertyName || t('tuPropiedad')}${availabilityDate ? ` para ${availabilityDate}` : ''} ya redactada: sólo queda enviarla.`,
+                    `Thank you ${name}. We are opening your email with the enquiry for ${propertyName || t('tuPropiedad')}${availabilityDate ? ` for ${availabilityDate}` : ''} already written: all that is left is to send it.`
+                  )}{' '}
+                  {t('disp48h')}
                 </p>
                 <p className="text-xs text-[#5a5854] leading-relaxed">
-                  ¿No se abrió?{' '}
+                  {t('noSeAbrio')}{' '}
                   <a
                     href={`mailto:${contact.emailAddress}`}
                     className="font-medium text-[#1a1918] underline underline-offset-2"
@@ -93,71 +100,71 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                   onClick={handleReset}
                   className="mt-4 bg-[#1a1918] text-[#f5f3ed] px-6 py-2.5 text-xs font-sans tracking-widest uppercase"
                 >
-                  Cerrar
+                  {t('cerrar')}
                 </button>
               </div>
             ) : (
               <div className="space-y-6">
                 <div>
                   <span className="text-[11px] font-sans tracking-[0.25em] uppercase text-[#5a5854] block mb-1">
-                    Atención rápida
+                    {t('dispEyebrow')}
                   </span>
-                  <h3 className="font-serif text-2xl text-[#1a1918]">Consultar disponibilidad</h3>
+                  <h3 className="font-serif text-2xl text-[#1a1918]">{t('dispTitulo')}</h3>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1">
                     <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
-                      Nombre
+                      {t('campoNombre')}
                     </label>
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Tu nombre"
+                      placeholder={t('phNombre')}
                       className="w-full bg-white border border-[#1a1918]/20 p-2.5 text-base focus:outline-none focus:border-[#1a1918]"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
-                      Correo
+                      {t('campoCorreo')}
                     </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="correo@ejemplo.com"
+                      placeholder={t('phCorreo')}
                       className="w-full bg-white border border-[#1a1918]/20 p-2.5 text-base focus:outline-none focus:border-[#1a1918]"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
-                      Propiedad / Marca
+                      {t('campoPropiedadMarca')}
                     </label>
                     <input
                       type="text"
                       required
                       value={propertyName}
                       onChange={(e) => setPropertyName(e.target.value)}
-                      placeholder="Nombre del hotel o marca"
+                      placeholder={t('phHotelMarca')}
                       className="w-full bg-white border border-[#1a1918]/20 p-2.5 text-base focus:outline-none focus:border-[#1a1918]"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-[11px] font-sans tracking-widest uppercase text-[#5a5854] block">
-                      Fechas de disponibilidad
+                      {t('campoFechasDisp')}
                     </label>
                     <input
                       type="text"
                       required
                       value={availabilityDate}
                       onChange={(e) => setAvailabilityDate(e.target.value)}
-                      placeholder="ej. semana del 12 de marzo"
+                      placeholder={t('phSemanaEjemplo')}
                       className="w-full bg-white border border-[#1a1918]/20 p-2.5 text-base focus:outline-none focus:border-[#1a1918]"
                     />
                   </div>
@@ -166,7 +173,7 @@ export const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, on
                     type="submit"
                     className="w-full bg-[#1a1918] text-[#f5f3ed] py-3 text-xs font-sans tracking-[0.2em] uppercase font-medium hover:bg-[#5a5854] transition-colors mt-2"
                   >
-                    Consultar disponibilidad
+                    {t('dispTitulo')}
                   </button>
                 </form>
               </div>
