@@ -48,7 +48,7 @@
       },
       {
         "title": "Vuelven a llamarnos",
-        "description": "Cuatro hoteles han repetido. GPRO Valparaíso, tres veces."
+        "description": "Cuatro hoteles han repetido. GPRO Valparaíso, tres veces en total."
       }
     ],
     "ctaLabel": "Conocer al equipo"
@@ -108,8 +108,8 @@
   },
   "about": {
     "flipWords": [
-      "Dirección",
-      "Producción"
+      "dirección",
+      "producción"
     ],
     "introStatement": "Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.",
     "legacyQuote": "Decidimos qué se rueda y qué no. Un hotel no se cuenta enseñándolo todo, sino eligiendo lo que hace que alguien quiera estar ahí.",
@@ -293,15 +293,15 @@
       "seccion": 6,
       "hotelName": "GPRO VALPARAÍSO PALACE & SPA",
       "coupleName": "Spa mediterráneo",
-      "description": "Fotografías de habitaciones, jardines y spa realizadas en 2023, 2024 y 2026, según el registro del estudio. Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.",
-      "quote": "Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.",
+      "description": "Fotografías de habitaciones, jardines y spa realizadas en 2023, 2024 y 2026, según el registro del estudio. Jardines privados sobre la bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.",
+      "quote": "Jardines, agua y la bahía de Palma extendiéndose más allá de cada terraza.",
       "featuredLine": "Tres producciones para un mismo hotel."
     },
     {
       "seccion": 7,
       "hotelName": "HOTEL ESPLÉNDIDO",
       "coupleName": "Bahía y piedra",
-      "description": "Estancia, servicio y vida junto a la Bahía de Sóller. Piedra caliza y terrazas frente a la bahía, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.",
+      "description": "Estancia, servicio y vida junto a la bahía de Sóller. Piedra caliza y terrazas frente a la bahía, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.",
       "quote": "Piedra, mar y el eco del tranvía sobre los adoquines de Sóller."
     },
     {

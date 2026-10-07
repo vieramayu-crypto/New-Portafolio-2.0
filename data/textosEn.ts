@@ -162,7 +162,7 @@ export const ALT_EN: Record<string, string> = {
   'Piscina interior del spa con cascada de agua': 'The indoor spa pool with its water cascade',
   'Llegada a la habitación con una maleta y un plato de frutas de bienvenida':
     'Arrival in the room with a suitcase and a welcome plate of fruit',
-  'Huésped en albornoz leyendo el folleto de tratamientos con vistas a la Bahía de Palma':
+  'Huésped en albornoz leyendo el folleto de tratamientos con vistas a la bahía de Palma':
     'A guest in a robe reading the treatments booklet with views over the Bay of Palma',
   'Anfitrión recibiendo a un huésped en el mostrador de recepción de GPRO Valparaíso':
     'A host welcoming a guest at the GPRO Valparaíso reception desk',
@@ -192,7 +192,7 @@ export const ALT_EN: Record<string, string> = {
     'The entrance to Hotel Espléndido with the Davant la Mar bistro',
   'Vista elevada del tranvía histórico y la playa de Port de Sóller':
     'Elevated view of the historic tram and the beach at Port de Sóller',
-  'Pareja conversando en la terraza con vistas a la Bahía de Sóller':
+  'Pareja conversando en la terraza con vistas a la bahía de Sóller':
     'A couple talking on the terrace with views over the Bay of Sóller',
   'Fachada del Hotel Espléndido iluminada de noche, con el tranvía naranja de época y la terraza del bistró':
     'The Hotel Espléndido facade lit at night, with the vintage orange tram and the bistro terrace',
@@ -204,11 +204,11 @@ export const ALT_EN: Record<string, string> = {
     'A woman with a wicker basket and a lace kaftan walking into the Hotel Espléndido spa',
   'Piscina interior del spa iluminada en turquesa con una celosía blanca decorativa':
     'The indoor spa pool lit in turquoise with a white decorative lattice',
-  'Panorámica de la Bahía de Port de Sóller con gaviotas, veleros y la playa de piedras blancas':
+  'Panorámica de la bahía de Port de Sóller con gaviotas, veleros y la playa de piedras blancas':
     'Panorama of the Bay of Port de Sóller with gulls, sailing boats and the white pebble beach',
   'Mujer con vestido turquesa sentada en la playa de piedras, vista desde la habitación entre las palmeras':
     'A woman in a turquoise dress sitting on the pebble beach, seen from the room through the palm trees',
-  'Pareja nadando en la piscina de la azotea con vistas a la Bahía de Sóller y su faro':
+  'Pareja nadando en la piscina de la azotea con vistas a la bahía de Sóller y su faro':
     'A couple swimming in the rooftop pool with views over the Bay of Sóller and its lighthouse',
   'Mujer con bañador blanco al borde de la piscina de la azotea bebiendo de un coco verde':
     'A woman in a white swimsuit at the edge of the rooftop pool drinking from a green coconut',
@@ -261,9 +261,236 @@ export const ALT_EN: Record<string, string> = {
   'Vista del pinar desde la cama, a través del gran ventanal abovedado':
     'The pine wood seen from the bed, through the great vaulted window',
   'Desayuno servido en la mesa de madera con un cruasán, fruta, mermelada y una lámpara cálida':
-    'Breakfast served on the timber table with a croissant, fruit, jam and a warm lamp',
+    'Breakfast served on the timber table with a croissant, fruit, jam and a lamp casting warm light',
   'Bañera de madera con estufa de leña y velas encendidas en la terraza, cielo nocturno entre los pinos':
     'A timber tub with a wood burner and candles lit on the deck, the night sky through the pines',
+};
+
+/** PIES DE FOTO, EN INGLÉS.
+ *
+ *  Indexados por su texto español, igual que `ALT_EN`: hay 129 repartidos por
+ *  las nueve galerías y sólo 107 distintos, porque varias fotos del avance de
+ *  Inicio se repiten dentro de la galería del hotel.
+ *
+ *  HOY NO LOS PINTA NINGÚN COMPONENTE. Estaban sin capa inglesa por eso mismo,
+ *  y la auditoría los dejó fuera de las correcciones obligatorias justamente
+ *  porque no los ve nadie. Se traducen igual: el día que una galería los
+ *  muestre, la web inglesa no va a estrenarse con 129 frases en español. */
+export const CAPTION_EN: Record<string, string> = {
+  'Alta cocina para cerrar el día':
+    'Fine dining to close the day',
+  'Atardecer sobre el lago':
+    'Sunset over the lake',
+  'Café en el balcón, frente al lago':
+    'Coffee on the balcony, facing the lake',
+  'Café, buenos días':
+    'Coffee, and good morning',
+  'Café, servido con cuidado':
+    'Coffee, served with care',
+  'Cava y la guía al sol':
+    'Cava and the hotel guide in the sun',
+  'Cúpulas blancas sobre el Egeo':
+    'White domes above the Aegean',
+  'De camino a la terraza':
+    'On the way to the terrace',
+  'De camino a recepción':
+    'On the way to reception',
+  'De camino al spa':
+    'On the way to the spa',
+  'Desayuno en la habitación':
+    'Breakfast in the room',
+  'Desayuno frente a la caldera':
+    'Breakfast facing the caldera',
+  'Desayuno, entre madera cálida':
+    'Breakfast, among warm timber',
+  'Descanso, junto a la piedra':
+    'Rest, beside the stone',
+  'Descanso, tallado en la roca':
+    'Rest, carved into the rock',
+  'El baño, entre madera y piedra':
+    'The bathroom, between timber and stone',
+  'El borde de la piscina, con fruta':
+    'The edge of the pool, with fruit',
+  'El camino hacia la possessió':
+    'The path up to the possessió',
+  'El comité de bienvenida de Welmoon':
+    'The Welmoon welcoming committee',
+  'El complejo visto desde el aire':
+    'The resort seen from the air',
+  'El complejo, visto desde arriba':
+    'The resort, seen from above',
+  'El complejo, visto desde el aire':
+    'The resort, seen from the air',
+  'El desayuno, visto desde arriba':
+    'Breakfast, seen from above',
+  'El detalle en cada habitación':
+    'The detail in every room',
+  'El detalle Welmoon':
+    'The Welmoon touch',
+  'El gimnasio, frente al mar':
+    'The gym, facing the sea',
+  'El interior, bajo el techo abovedado':
+    'The interior, under the vaulted ceiling',
+  'El jacuzzi a la luz de las velas':
+    'The jacuzzi by candlelight',
+  'El jacuzzi del spa, frente al jardín':
+    'The spa jacuzzi, facing the garden',
+  'El logo, sobre el desierto':
+    'The logo, above the desert',
+  'El paisaje de Gorafe, hasta el embalse':
+    'The Gorafe landscape, out to the reservoir',
+  'El pinar, desde la cama':
+    'The pine wood, from the bed',
+  'El registro, entre mármol azul y latón':
+    'Checking in, among blue marble and brass',
+  'El resort visto desde el aire':
+    'The resort seen from the air',
+  'El servicio, en el desayuno':
+    'The service, at breakfast',
+  'El servicio, en la habitación':
+    'The service, in the room',
+  'El spa más grande de Mallorca':
+    'The largest spa in Mallorca',
+  'El techo de cristal hacia el bosque':
+    'The glass roof towards the forest',
+  'El tranvía histórico junto a la bahía':
+    'The historic tram beside the bay',
+  'El vestíbulo, bajo las lámparas de cristal':
+    'The lobby, under the glass chandeliers',
+  'La bahía de Sóller, entre las gaviotas':
+    'The bay of Sóller, among the gulls',
+  'La cala del resort':
+    'The resort cove',
+  'La cama exterior, junto a la villa':
+    'The outdoor bed, beside the villa',
+  'La cama, entre cojines bordados':
+    'The bed, among embroidered cushions',
+  'La cena, entre luz cálida y mármol':
+    'Dinner, among warm light and marble',
+  'La chimenea del vestíbulo':
+    'The lobby fireplace',
+  'La cápsula, al borde del cañón':
+    'The capsule, at the edge of the canyon',
+  'La cápsula, al caer la tarde':
+    'The capsule, as the evening falls',
+  'La cápsula, con su piscina sobre el desierto':
+    'The capsule, with its pool above the desert',
+  'La cápsula, vista desde el jacuzzi':
+    'The capsule, seen from the jacuzzi',
+  'La ducha exterior, junto a la cápsula':
+    'The outdoor shower, beside the capsule',
+  'La entrada, con la cúpula azul de fondo':
+    'The entrance, with the blue dome behind',
+  'La entrada, desde la avenida':
+    'The entrance, from the avenue',
+  'La entrada, en el paseo marítimo':
+    'The entrance, on the seafront promenade',
+  'La fachada de piedra, entre colinas':
+    'The stone facade, among the hills',
+  'La fachada morisca, entre palmeras y fuentes':
+    'The Moorish facade, among palm trees and fountains',
+  'La fachada, al anochecer':
+    'The facade, at dusk',
+  'La fachada, al caer la noche':
+    'The facade, as night falls',
+  'La fachada, sobre la colina':
+    'The facade, above the hill',
+  'La finca vista desde el aire':
+    'The estate seen from the air',
+  'La guía del hotel, sobre la cama':
+    'The hotel guide, on the bed',
+  'La habitación, con Lisboa de fondo':
+    'The room, with Lisbon behind',
+  'La icónica escalinata de la Ciudadela':
+    'The iconic staircase of Ciutadella',
+  'La luz de la mañana entra en la suite':
+    'Morning light comes into the suite',
+  'La piscina exterior, entre las palmeras':
+    'The outdoor pool, among the palm trees',
+  'La piscina interior del spa':
+    'The indoor pool at the spa',
+  'La piscina principal, entre las palmeras':
+    'The main pool, among the palm trees',
+  'La piscina, frente a los cruceros en la caldera':
+    'The pool, facing the cruise ships in the caldera',
+  'La piscina, frente al faro':
+    'The pool, facing the lighthouse',
+  'La piscina, un balcón de piedra sobre la caldera':
+    'The pool, a stone balcony above the caldera',
+  'La piscina, vista desde el aire':
+    'The pool, seen from the air',
+  'La playa, vista desde la habitación':
+    'The beach, seen from the room',
+  'La primera luz, al abrirse la cortina':
+    'The first light, as the curtain opens',
+  'La propiedad, apenas visible en el desierto':
+    'The property, barely visible in the desert',
+  'La villa, entre los pinos':
+    'The villa among the pines',
+  'La zona de relajación, frente al lago':
+    'The relaxation area, facing the lake',
+  'Lisboa, justo a las puertas del hotel':
+    'Lisbon, right outside the hotel',
+  'Lista para observar las estrellas':
+    'Ready for stargazing',
+  'Llegada a la suite':
+    'Arrival at the suite',
+  'Los campos que rodean la finca':
+    'The fields around the estate',
+  'Los detalles de la bienvenida':
+    'The details of the welcome',
+  'Los pequeños detalles del servicio':
+    'The small details of the service',
+  'Luz de media tarde en la suite':
+    'Mid afternoon light in the suite',
+  'Materiales nacidos del paisaje':
+    'Materials born of the landscape',
+  'Palmeras y cielo abierto':
+    'Palm trees and open sky',
+  'Recepción, la primera bienvenida':
+    'Reception, the first welcome',
+  'Sabores de la isla en el desayuno':
+    'Flavours of the island at breakfast',
+  'Simetría entre el agua y la arquitectura':
+    'Symmetry between the water and the architecture',
+  'Sombra al borde de la piscina':
+    'Shade at the edge of the pool',
+  'Terraza frente a la bahía':
+    'Terrace facing the bay',
+  'Toda la caldera, desde la piscina':
+    'The whole caldera, from the pool',
+  'Tratamientos con vistas a la bahía':
+    'Treatments with views over the bay',
+  'Un brindis, antes de que empiece el día':
+    'A toast, before the day begins',
+  'Un coco al borde de la piscina':
+    'A coconut at the edge of the pool',
+  'Un detalle de la habitación':
+    'A detail of the room',
+  'Un detalle del spa alpino':
+    'A detail of the alpine spa',
+  'Un momento de calma en el patio':
+    'A quiet moment in the courtyard',
+  'Un momento de calma en el spa':
+    'A quiet moment at the spa',
+  'Un momento de calma en la sauna':
+    'A quiet moment in the sauna',
+  'Un momento en el gimnasio':
+    'A moment in the gym',
+  'Un paseo junto a la cápsula':
+    'A walk beside the capsule',
+  'Un paseo por las zonas comunes':
+    'A walk through the shared spaces',
+  'Un paseo por los jardines del resort':
+    'A walk through the resort gardens',
+  'Un vistazo al mapa del complejo':
+    'A look at the map of the resort',
+  'Una bienvenida con cava en la habitación':
+    'A welcome with cava in the room',
+  'Yoga bajo la cabaña junto al campo de golf':
+    'Yoga under the pavilion beside the golf course',
+  'Últimos reflejos sobre Imerovigli':
+    'The last light over Imerovigli',
 };
 
 interface HotelEn {
@@ -371,7 +598,7 @@ export const CASO_EN: Record<string, { heading: string; sections: { title: strin
       },
       {
         title: 'Production',
-        body: 'Four days on the property. Three film pieces and fifty photographs: facade and gardens, rooms, dining and the water areas, covered at different hours of the day to use the light each space has of its own.',
+        body: 'Four days on the property. Three film pieces and fifty photographs: facade and gardens, rooms, dining and the water areas, covered at different hours of the day to make use of the light in each space.',
       },
       {
         title: 'Delivery',
@@ -392,11 +619,11 @@ export const CASO_EN: Record<string, { heading: string; sections: { title: strin
     sections: [
       {
         title: 'Context',
-        body: 'In a valley in the north of Menorca, Vestige Collection, Binidufà restores an agricultural possessió from the eighteenth century, surrounded by a working farm. The shoot took place in June, at the start of the season.',
+        body: 'In a valley in the north of Menorca, Vestige Collection, Binidufà occupies a restored agricultural estate from the eighteenth century, surrounded by a working farm. The shoot took place in June, at the start of the season.',
       },
       {
         title: 'Direction',
-        body: 'Stone, clay and natural materials that take their tone from the landscape around them. The direction avoids contrast: everything that enters the frame shares the same palette of earth, lime and shade, and the Moorish inheritance is still there even in the name of the estate.',
+        body: 'Stone, clay and natural materials that take their tone from the landscape around them. The direction avoids contrast: everything that enters the frame shares the same palette of earth, lime and shade, and the Moorish heritage is still there even in the name of the estate.',
       },
       {
         title: 'Production',
@@ -417,7 +644,7 @@ export const CASO_EN: Record<string, { heading: string; sections: { title: strin
     sections: [
       {
         title: 'Context',
-        body: 'High in Bonanova, Palma de Mallorca, GPRO Valparaíso Palace & Spa holds the largest spa on the island. A returning client since 2023: three shoots in three years, each in the high summer season.',
+        body: 'High in Bonanova, Palma de Mallorca, GPRO Valparaíso Palace & Spa houses the largest spa on the island. A returning client: three shoots, in 2023, 2024 and 2026, each in the high summer season.',
       },
       {
         title: 'Direction',
@@ -433,7 +660,7 @@ export const CASO_EN: Record<string, { heading: string; sections: { title: strin
       },
       {
         title: 'Evidence',
-        body: 'Francisco Dominguez, Marketing Director, after three shoots together: “Thank you both, as always, for the professionalism and the craft you have shown throughout. And what can I say about the excellent material you have left us. It will be a pleasure to have you back in our house.”',
+        body: 'Francisco Dominguez, Marketing Director, after three shoots together: “Thank you both, as always, for the professionalism and the craft you have shown throughout. And what can I say about the excellent material you have left us? It will be a pleasure to welcome you back.”',
       },
       {
         title: 'Gallery',
@@ -448,7 +675,7 @@ export const CASO_EN: Record<string, { heading: string; sections: { title: strin
 export const TESTIMONIO_EN: Record<string, { quote: string; role?: string; repeatNote?: string }> = {
   't-gpro': {
     quote:
-      'Thank you both, as always, for the professionalism and the craft you have shown throughout. And what can I say about the excellent material you have left us. It will be a pleasure to have you back in our house.',
+      'Thank you both, as always, for the professionalism and the craft you have shown throughout. And what can I say about the excellent material you have left us? It will be a pleasure to welcome you back.',
     role: 'Marketing Director',
     repeatNote: '3 shoots together',
   },
@@ -492,7 +719,11 @@ export const TESTIMONIO_EN: Record<string, { quote: string; role?: string; repea
 
 function fotosEn(fotos?: PhotoItem[]): PhotoItem[] | undefined {
   if (!fotos) return fotos;
-  return fotos.map((f) => ({ ...f, alt: ALT_EN[f.alt] ?? f.alt }));
+  return fotos.map((f) => ({
+    ...f,
+    alt: ALT_EN[f.alt] ?? f.alt,
+    caption: f.caption ? CAPTION_EN[f.caption] ?? f.caption : f.caption,
+  }));
 }
 
 /** La ficha de un hotel en el idioma activo. En español devuelve el mismo

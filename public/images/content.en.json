@@ -44,11 +44,11 @@
       },
       {
         "title": "A hotel still running",
-        "description": "35 properties have taught us how to shoot without interrupting the service or the guests."
+        "description": "35 properties have taught us how to shoot without disrupting service or disturbing guests."
       },
       {
         "title": "They call us back",
-        "description": "Four hotels have booked us again. GPRO Valparaíso, three times."
+        "description": "Four hotels have booked us again. GPRO Valparaíso, three times in total."
       }
     ],
     "ctaLabel": "Meet the team"
@@ -97,7 +97,7 @@
     ],
     "benefitDetails": [
       "Photography and film in the formats and with the usage rights set out in the proposal.",
-      "When the project suits our audience, part of the material is published on @mayurlintravel, to an international community of travel and hospitality."
+      "When the project suits our audience, part of the material is published on @mayurlintravel, to an international community interested in travel and hospitality."
     ],
     "ctaLabel": "Start a project"
   },
@@ -108,14 +108,14 @@
   },
   "about": {
     "flipWords": [
-      "Direction",
-      "Production"
+      "direction",
+      "production"
     ],
     "introStatement": "Mayu Travel is a visual production studio for luxury hospitality. We work as a pair and build every project out of the property itself: its architecture, its rhythm, its service and the way it wants to be remembered.",
-    "legacyQuote": "We decide what gets shot and what doesn't. You don't tell a hotel by showing everything, but by choosing what makes someone want to be there.",
+    "legacyQuote": "We decide what gets shot and what doesn't. You don't tell a hotel's story by showing everything, but by choosing what makes someone want to be there.",
     "overview": {
       "heading": "Your creative partner in hospitality.",
-      "paragraph": "We are Mayurlin Viera and Yerfran. We work with your team to define what to show of your hotel and how to tell it in photography and film. We plan and carry out the production in a visual style that holds true to your brand.",
+      "paragraph": "We are Mayurlin Viera and Yerfran. We work with your team to define what to show of your hotel and how to tell its story through photography and film. We plan and carry out the production in a visual style that holds true to your brand.",
       "boxes": [
         {
           "label": "Focus",
@@ -123,11 +123,11 @@
         },
         {
           "label": "Approach",
-          "value": "A proposal of its own for every hotel"
+          "value": "A proposal tailored to each hotel"
         },
         {
           "label": "Relationship",
-          "value": "Direct with the people creating the work"
+          "value": "Direct contact with the people creating the work"
         },
         {
           "label": "Delivery",
@@ -248,7 +248,7 @@
     "galleryLinkLabel": "View gallery",
     "closingHeading": "Every project begins with a conversation.",
     "ctaLabel": "Start a project",
-    "subline": "Photography and film production for hotels and stays with an identity of their own."
+    "subline": "Photography and film production for hotels and accommodation with an identity of their own."
   },
   "hotels": [
     {
@@ -263,7 +263,7 @@
       "seccion": 2,
       "hotelName": "INTERCONTINENTAL LISBOA",
       "coupleName": "City heights",
-      "description": "Interiors, service in the room and the experience of the city in Lisbon. Contemporary architecture on one of the city's seven hills, facing Parque Eduardo VII, with the skyline and the Tagus behind.",
+      "description": "Interiors, room service and the experience of the city in Lisbon. Contemporary architecture on one of the city's seven hills, facing Parque Eduardo VII, with the skyline and the Tagus behind.",
       "quote": "All of Lisbon unfolds from the top of this hill.",
       "featuredLine": "The hotel and the city around it."
     },
@@ -293,7 +293,7 @@
       "seccion": 6,
       "hotelName": "GPRO VALPARAÍSO PALACE & SPA",
       "coupleName": "Mediterranean spa",
-      "description": "Photographs of rooms, gardens and spa made in 2023, 2024 and 2026, according to the studio's records. Private gardens above the Bay of Palma, high in Bonanova, with the largest spa in Mallorca inside.",
+      "description": "Photographs of rooms, gardens and spa made in 2023, 2024 and 2026, according to the studio's records. Private gardens above the Bay of Palma, high in Bonanova, at a hotel with the largest spa in Mallorca.",
       "quote": "Gardens, water and the Bay of Palma stretching out beyond every terrace.",
       "featuredLine": "Three productions for the same hotel."
     },

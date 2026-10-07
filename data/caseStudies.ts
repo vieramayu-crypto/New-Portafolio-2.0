@@ -69,7 +69,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       {
         number: '01',
         title: 'Contexto',
-        body: 'En un valle al norte de Menorca, Vestige Collection, Binidufà restaura una possessió agrícola del siglo XVIII rodeada de finca agrícola en activo. El rodaje se hizo en junio, al principio de la temporada.',
+        body: 'En un valle al norte de Menorca, Vestige Collection, Binidufà ocupa una possessió agrícola restaurada del siglo XVIII, rodeada de una finca agrícola en activo. El rodaje se hizo en junio, al principio de la temporada.',
       },
       {
         number: '02',
@@ -102,12 +102,12 @@ export const CASE_STUDIES: CaseStudy[] = [
       {
         number: '01',
         title: 'Contexto',
-        body: 'En lo alto de Bonanova, Palma de Mallorca, GPRO Valparaíso Palace & Spa alberga el spa más grande de la isla. Cliente recurrente desde 2023: tres rodajes en tres años, coincidiendo con la temporada alta de verano.',
+        body: 'En lo alto de Bonanova, Palma de Mallorca, GPRO Valparaíso Palace & Spa alberga el spa más grande de la isla. Cliente recurrente: tres rodajes, en 2023, 2024 y 2026, coincidiendo con la temporada alta de verano.',
       },
       {
         number: '02',
         title: 'Dirección',
-        body: 'El hilo visual es el agua, la piedra y la vegetación mediterránea: jardines privados, el spa como protagonista, y la Bahía de Palma como horizonte constante en cada plano exterior.',
+        body: 'El hilo visual es el agua, la piedra y la vegetación mediterránea: jardines privados, el spa como protagonista, y la bahía de Palma como horizonte constante en cada plano exterior.',
       },
       {
         number: '03',

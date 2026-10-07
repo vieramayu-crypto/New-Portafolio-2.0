@@ -236,7 +236,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
       {
         title: 'Vuelven a llamarnos',
-        description: 'Cuatro hoteles han repetido. GPRO Valparaíso, tres veces.',
+        description: 'Cuatro hoteles han repetido. GPRO Valparaíso, tres veces en total.',
       },
     ],
     ctaLabel: 'Conocer al equipo',
@@ -286,7 +286,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     secondaryLabel: 'Ver proyectos',
   },
   about: {
-    flipWords: ['Dirección', 'Producción'],
+    flipWords: ['dirección', 'producción'],
     introStatement:
       'Mayu Travel es un estudio de producción visual especializado en hotelería de lujo. Trabajamos en pareja y construimos cada proyecto desde la propiedad misma: su arquitectura, su ritmo, su servicio y la forma en que quiere ser recordada.',
     legacyQuote:
@@ -327,7 +327,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     headingLines: ['Hablemos', 'de tu', 'hotel.'],
     introMain: 'Cuéntanos qué fotografías o vídeos necesitas, dónde y para cuándo.',
     introSub:
-      'Si encaja, te respondemos con disponibilidad y los próximos pasos. No hace falta que traigas un briefing completo.',
+      'No hace falta tener el proyecto completamente definido.',
     ctaLabel: 'Iniciar un proyecto',
     emailAddress: 'mayuviera@gmail.com',
     directLabel: 'O escríbenos a',
@@ -466,8 +466,8 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'GPRO VALPARAÍSO PALACE & SPA',
       coupleName: 'Spa mediterráneo',
       description:
-        'Fotografías de habitaciones, jardines y spa realizadas en 2023, 2024 y 2026, según el registro del estudio. Jardines privados sobre la Bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
-      quote: 'Jardines, agua y la Bahía de Palma extendiéndose más allá de cada terraza.',
+        'Fotografías de habitaciones, jardines y spa realizadas en 2023, 2024 y 2026, según el registro del estudio. Jardines privados sobre la bahía de Palma, en lo alto de Bonanova, con el spa más grande de Mallorca en su interior.',
+      quote: 'Jardines, agua y la bahía de Palma extendiéndose más allá de cada terraza.',
       featuredLine: 'Tres producciones para un mismo hotel.',
     },
     {
@@ -475,7 +475,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       hotelName: 'HOTEL ESPLÉNDIDO',
       coupleName: 'Bahía y piedra',
       description:
-        'Estancia, servicio y vida junto a la Bahía de Sóller. Piedra caliza y terrazas frente a la bahía, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
+        'Estancia, servicio y vida junto a la bahía de Sóller. Piedra caliza y terrazas frente a la bahía, con la Serra de Tramuntana detrás y el tranvía histórico cruzando el paseo.',
       quote: 'Piedra, mar y el eco del tranvía sobre los adoquines de Sóller.',
     },
     {

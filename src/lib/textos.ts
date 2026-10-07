@@ -174,6 +174,24 @@ export const TEXTOS: Diccionario = {
   // Proyectos
   verTodasPropiedades: { es: 'Ver todas las propiedades', en: 'See every property' },
 
+  // Sólo lo oye un lector de pantalla: el rótulo de los cuatro puntos que
+  // recorren los pasos del proceso en Acerca de. Lleva detrás el número y el
+  // título del paso, que ya vienen traducidos.
+  irAlPaso: { es: 'Ir al paso', en: 'Go to step' },
+
+  // FORMULARIO ANTIGUO (`AvailabilityModal`), HOY SIN USAR. El formulario
+  // vivo es `InquiryModal`. Estas claves existen para que el componente no
+  // tenga ni una frase en español escrita dentro: si algún día se reactiva,
+  // se reactiva en los dos idiomas.
+  dispEyebrow: { es: 'Atención rápida', en: 'Quick response' },
+  dispTitulo: { es: 'Consultar disponibilidad', en: 'Check availability' },
+  dispLista: { es: 'Tu solicitud está lista', en: 'Your request is ready' },
+  disp48h: { es: 'Respondemos en 48 h.', en: 'We reply within 48 hours.' },
+  campoPropiedadMarca: { es: 'Propiedad / Marca', en: 'Property or brand' },
+  phHotelMarca: { es: 'Nombre del hotel o marca', en: 'Hotel or brand name' },
+  campoFechasDisp: { es: 'Fechas de disponibilidad', en: 'Dates of availability' },
+  phSemanaEjemplo: { es: 'ej. semana del 12 de marzo', en: 'e.g. the week of 12 March' },
+
   // Formulario: campos que sólo tiene la consulta larga
   campoHotelEmpresa: { es: 'Hotel o empresa', en: 'Hotel or company' },
   campoUbicacionOpc: { es: 'Ubicación (opcional)', en: 'Location (optional)' },
@@ -184,7 +202,10 @@ export const TEXTOS: Diccionario = {
   },
   campoEtapaOpc: { es: 'En qué punto está (opcional)', en: 'Where the project stands (optional)' },
   campoProyecto: { es: 'Proyecto', en: 'Project' },
-  campoBriefingOpc: { es: 'Briefing (opcional)', en: 'Briefing (optional)' },
+  // En ingles "brief" es el documento que se adjunta; "briefing" es la sesion
+  // en la que se informa. El espanol conserva "briefing" a proposito: es la voz
+  // del sector tal y como la usa Mayurlin.
+  campoBriefingOpc: { es: 'Briefing (opcional)', en: 'Brief (optional)' },
   campoEmail: { es: 'Email', en: 'Email' },
   adjuntarArchivo: { es: 'Adjuntar archivo', en: 'Attach a file' },
   cambiarArchivo: { es: 'Cambiar archivo', en: 'Change the file' },

@@ -152,3 +152,70 @@ export function alternativas(clave: Clave, param?: string) {
   }));
   return [...porIdioma, { hreflang: 'x-default', href: urlPublica(ruta('es', clave, param)) }];
 }
+
+/** LOS CAMPOS DESCRIPTIVOS DE LOS DATOS ESTRUCTURADOS, POR IDIOMA.
+ *
+ *  El bloque JSON-LD del `index.html` es uno solo y estaba escrito en español,
+ *  así que las dieciséis páginas inglesas declaraban a Google sus servicios y
+ *  sus países en español. No es texto que vea nadie, pero es justo lo que un
+ *  buscador lee para saber de qué va el estudio.
+ *
+ *  SÓLO CAMBIA LO QUE DESCRIBE. El nombre, el nombre alternativo, las
+ *  direcciones y las redes son identificadores de marca y se quedan igual en
+ *  los dos idiomas: traducirlos partiría la identidad en dos. Tampoco se
+ *  añade ningún servicio que no estuviera ya.
+ */
+export const DATOS_ESTRUCTURADOS: Record<Idioma, {
+  description: string;
+  jobTitle: string;
+  areaServed: string[];
+  serviceType: string[];
+  knowsAbout: string[];
+}> = {
+  es: {
+    description:
+      'Estudio de producción visual para hoteles de lujo: cine, fotografía y contenido editorial. Más de 35 propiedades en cinco países, incluyendo propiedades dentro de Marriott International, IHG Hotels & Resorts y Wyndham.',
+    jobTitle: 'Productora Visual y Directora de Contenido',
+    areaServed: ['España', 'Portugal', 'Grecia', 'Suiza', 'Países Bajos'],
+    serviceType: [
+      'Fotografía de hoteles de lujo',
+      'Producción de vídeo para hoteles',
+      'Reels cinematográficos para hoteles',
+      'Contenido visual editorial',
+      'Contenido de marketing hotelero',
+    ],
+    knowsAbout: [
+      'Producción visual para hoteles de lujo',
+      'Fotografía de hoteles',
+      'Creación de contenido cinematográfico',
+      'Marketing de hotelería de lujo',
+      'Propiedades de Marriott International',
+      'Propiedades de IHG Hotels & Resorts',
+      'Propiedades de Wyndham Hotels & Resorts',
+      'Colecciones de hoteles boutique',
+    ],
+  },
+  en: {
+    description:
+      'Visual production studio for luxury hotels: film, photography and editorial content. More than 35 properties in five countries, including properties within Marriott International, IHG Hotels & Resorts and Wyndham.',
+    jobTitle: 'Visual Producer and Content Director',
+    areaServed: ['Spain', 'Portugal', 'Greece', 'Switzerland', 'Netherlands'],
+    serviceType: [
+      'Luxury hotel photography',
+      'Film production for hotels',
+      'Cinematic reels for hotels',
+      'Editorial visual content',
+      'Hotel marketing content',
+    ],
+    knowsAbout: [
+      'Visual production for luxury hotels',
+      'Hotel photography',
+      'Cinematic content creation',
+      'Luxury hospitality marketing',
+      'Properties within Marriott International',
+      'Properties within IHG Hotels & Resorts',
+      'Properties within Wyndham Hotels & Resorts',
+      'Boutique hotel collections',
+    ],
+  },
+};
