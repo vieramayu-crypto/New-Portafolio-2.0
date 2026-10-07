@@ -15,6 +15,10 @@ export interface VideoHorizontal {
   id: string;
   /** Qué hotel es, para el rótulo de debajo del carrusel. */
   hotelName: string;
+  /** Sólo si el nombre cambia de idioma. Hoy únicamente InterContinental, que
+   *  en su web inglesa se presenta como Lisbon. Los demás nombres son marcas y
+   *  se escriben igual en los dos idiomas. */
+  hotelNameEn?: string;
   /** El hotel de `data/hotels.ts` al que lleva el botón, si lo tiene. */
   hotelId?: string;
   /** Una línea corta: qué es esta pieza. */
@@ -99,6 +103,7 @@ export const VIDEOS_HORIZONTALES: VideoHorizontal[] = [
     // ninguna pieza prestada.
     id: 'v-intercontinental',
     hotelName: 'InterContinental Lisboa',
+    hotelNameEn: 'InterContinental Lisbon',
     hotelId: 'intercontinental-lisboa',
     descripcion: 'Interiores, servicio y experiencia de ciudad.',
     descripcionEn: 'Interiors, service and the experience of the city.',

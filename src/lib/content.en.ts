@@ -97,7 +97,7 @@ export const DEFAULT_CONTENT_EN: SiteContent = {
     ],
     ctaLabel: 'Start a project',
     scopeLabel: 'A typical shoot',
-    scopeNote: 'So you have a sense of it before writing. Every project is shaped around what the hotel needs.',
+    scopeNote: 'So you have a sense of it before getting in touch. Every project is shaped around what the hotel needs.',
     scopeItems: [
       {
         value: '3–5',
@@ -285,7 +285,7 @@ export const DEFAULT_CONTENT_EN: SiteContent = {
     },
     {
       seccion: 2,
-      hotelName: 'INTERCONTINENTAL LISBOA',
+      hotelName: 'INTERCONTINENTAL LISBON',
       coupleName: 'City heights',
       description: 'Interiors, room service and the experience of the city in Lisbon. Contemporary architecture on one of the city\'s seven hills, facing Parque Eduardo VII, with the skyline and the Tagus behind.',
       quote: 'All of Lisbon unfolds from the top of this hill.',
@@ -317,7 +317,7 @@ export const DEFAULT_CONTENT_EN: SiteContent = {
       seccion: 6,
       hotelName: 'GPRO VALPARAÍSO PALACE & SPA',
       coupleName: 'Mediterranean spa',
-      description: 'Photographs of rooms, gardens and spa made in 2023, 2024 and 2026, according to the studio\'s records. Private gardens above the Bay of Palma, high in Bonanova, at a hotel with the largest spa in Mallorca.',
+      description: 'Private gardens above the Bay of Palma, high in Bonanova, at a hotel with the largest spa in Mallorca.',
       quote: 'Gardens, water and the Bay of Palma stretching out beyond every terrace.',
       featuredLine: 'Three productions for the same hotel.',
     },

@@ -132,8 +132,12 @@ export const Metadatos: React.FC = () => {
       if (base) {
         const caso = traducirCaso(base, idioma);
         const hotel = HOTEL_STORIES.find((h) => h.id === caso.hotelId);
+        const i = HOTEL_STORIES.findIndex((h) => h.id === caso.hotelId);
+        const nombre = toTitleCase(
+          contenido.hotels[i]?.hotelName ?? hotel?.hotelName ?? caso.heading
+        );
         propios = {
-          titulo: `${caso.heading} · Mayu Travel`,
+          titulo: `${nombre} · ${idioma === 'en' ? 'Case' : 'Caso'} · Mayu Travel`,
           descripcion: caso.sections[0]?.body,
           imagen: imagenPublica(hotel?.coverImage),
         };

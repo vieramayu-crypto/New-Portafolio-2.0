@@ -54,13 +54,13 @@ export const ALT_EN: Record<string, string> = {
 
   // InterContinental Lisboa
   'Vista vertical de la fachada del InterContinental Lisboa, el edificio completo sobre la colina':
-    'Vertical view of the InterContinental Lisboa facade, the whole building on the hill',
+    'Vertical view of the InterContinental Lisbon facade, the whole building on the hill',
   'El tranvía amarillo número 28 pasando por una calle empedrada de Lisboa':
     'The yellow number 28 tram passing along a cobbled street in Lisbon',
   'Camarero sirviendo café con un vaso de zumo de naranja en primer plano':
     'A waiter pouring coffee with a glass of orange juice in the foreground',
   'Vista en esquina de la fachada del InterContinental Lisboa, con la marquesina de la entrada':
-    'Corner view of the InterContinental Lisboa facade, with the entrance canopy',
+    'Corner view of the InterContinental Lisbon facade, with the entrance canopy',
   'Recepción del hotel con mostrador dorado y un panel de mármol azul iluminado':
     'The hotel reception with a gold counter and a lit blue marble panel',
   'Vestíbulo del hotel con lámparas colgantes de globos de cristal ámbar':

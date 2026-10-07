@@ -134,18 +134,32 @@ const WorkProjectRoute: React.FC<{ onOpenAvailability: () => void }> = ({ onOpen
   }
 
   const total = HOTEL_STORIES.length;
-  // El idioma primero (rótulo, sitio, país, datos del rodaje y los textos
-  // alternativos de las fotos), y encima lo que Mayurlin edita en content.
-  const base = traducirHotel(HOTEL_STORIES[idx], idioma);
-  const story: HotelStory = {
-    ...base,
-    hotelName: hotelContent[idx]?.hotelName ?? base.hotelName,
-    coupleName: hotelContent[idx]?.coupleName ?? base.coupleName,
-    description: hotelContent[idx]?.description ?? base.description,
-    quote: hotelContent[idx]?.quote ?? base.quote,
+
+  /** LA FICHA LISTA PARA PINTAR: el idioma primero (rótulo, sitio, país, datos
+   *  del rodaje y los textos alternativos de las fotos), y encima lo que
+   *  Mayurlin edita en content.
+   *
+   *  ESTO VALE PARA LAS TRES, no sólo para la que se está viendo. Antes la
+   *  ficha de al lado (los enlaces de anterior y siguiente del pie) salía sólo
+   *  de `traducirHotel`, que no toca el nombre, así que esos dos enlaces
+   *  mostraban el nombre estructural de `data/hotels.ts` y no el publicado.
+   *  Se vio con InterContinental, que en inglés es Lisbon y ahí seguía
+   *  diciendo Lisboa, pero el fallo era general: cualquier nombre que ella
+   *  cambiara en `content.json` no llegaba a esos dos enlaces. */
+  const fichaCompleta = (i: number): HotelStory => {
+    const base = traducirHotel(HOTEL_STORIES[i], idioma);
+    return {
+      ...base,
+      hotelName: hotelContent[i]?.hotelName ?? base.hotelName,
+      coupleName: hotelContent[i]?.coupleName ?? base.coupleName,
+      description: hotelContent[i]?.description ?? base.description,
+      quote: hotelContent[i]?.quote ?? base.quote,
+    };
   };
-  const prevStory = traducirHotel(HOTEL_STORIES[(idx - 1 + total) % total], idioma);
-  const nextStory = traducirHotel(HOTEL_STORIES[(idx + 1) % total], idioma);
+
+  const story = fichaCompleta(idx);
+  const prevStory = fichaCompleta((idx - 1 + total) % total);
+  const nextStory = fichaCompleta((idx + 1) % total);
 
   return (
     <HotelDetail
