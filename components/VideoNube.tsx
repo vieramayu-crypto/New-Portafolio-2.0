@@ -54,9 +54,15 @@ import { crearT } from '../src/lib/textos';
  *
  * Así que se tapa, que es lo que hace cualquier reproductor de televisión: el
  * iframe crece unos píxeles y el contenedor recorta el sobrante. Crece EN
- * PROPORCIÓN (el horizontal sale del vertical por 16/9), así que la imagen no
- * se deforma: sólo se pierde ese par de píxeles de borde. A 900 px de alto,
- * 4 px son un 0,9%: invisible.
+ * PROPORCIÓN -- y la proporción es la de ESTA caja, no una fija: ver el
+ * cálculo de `rx` más abajo, que es justo lo que estaba mal para los
+ * verticales. Así la imagen no se deforma: sólo se pierde ese par de píxeles
+ * de borde. A 900 px de alto, 4 px son un 0,9%: invisible.
+ *
+ * Y NO CRECER EN PROPORCIÓN NO ES UN DETALLE ESTÉTICO. El reproductor de
+ * dentro respeta la forma del vídeo: si el iframe no la tiene, centra la
+ * imagen y rellena lo que sobra con sus propias barras. Eso es lo que dejaba
+ * una línea negra fina en el borde de los verticales.
  *
  * REGLA PARA LOS PRÓXIMOS VÍDEOS: pegar la dirección y ya. Si algo no se
  * reproduce, se mira en el panel del servicio antes que en este archivo.
@@ -98,10 +104,29 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
   alCargar,
 }) => {
   const t = crearT(useIdioma().idioma);
-  // El horizontal sale del vertical por 16/9, para que al crecer la imagen
-  // conserve su forma en vez de estirarse.
+
+  /* EL CRECIMIENTO HORIZONTAL SALE DE LA PROPORCIÓN DE ESTA CAJA, no de 16/9.
+   *
+   *  Estaba escrito a 16/9 fijo, y para los verticales eso era al revés: una
+   *  caja 9:16 que crece 5 px de alto tiene que crecer 2,81 a los lados
+   *  (5 x 9/16), no 8,89 (5 x 16/9). Medido en la galería a 1440x900, el
+   *  iframe del vertical quedaba en 437,95 x 757 -- proporción 0,5785 contra
+   *  los 0,5625 de la caja, un 2,8% más ancho de lo que le tocaba.
+   *
+   *  Y UN IFRAME DESPROPORCIONADO SE NOTA, porque el reproductor de dentro sí
+   *  respeta la forma del vídeo: lo centraba en 425,81 px y rellenaba los
+   *  12,14 que sobraban con sus propias barras negras, 6,07 por lado. El
+   *  recorte se comía 8,89, así que quedaban 2,82 px de margen -- y con el
+   *  ancho de la caja en 420,1875 px ese margen se iba en el redondeo de
+   *  subpíxel, por un lado sí y por el otro no. De ahí la línea negra fina
+   *  que Mayurlin veía SÓLO en el borde derecho de todos los verticales.
+   *
+   *  Con la proporción correcta el iframe conserva la forma de la caja, el
+   *  vídeo lo llena entero y no hay barras que tapar. */
   const r = Math.max(0, recorte);
-  const rx = +(r * (16 / 9)).toFixed(2);
+  const alturaPorAncho = parseFloat(proporcion) / 100;
+  const anchoPorAltura = alturaPorAncho > 0 ? 1 / alturaPorAncho : 16 / 9;
+  const rx = +(r * anchoPorAltura).toFixed(2);
 
   return (
     <div
