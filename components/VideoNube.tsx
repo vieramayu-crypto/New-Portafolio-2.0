@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
+import { useGeneracionDeVideo } from '../src/lib/regreso';
 
 /**
  * Vídeo del servicio en la nube de Mayurlin.
@@ -105,6 +106,19 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
 }) => {
   const t = crearT(useIdioma().idioma);
 
+  /* AL VOLVER DE OTRA APLICACIÓN, EL MARCO SE REHACE.
+   *
+   *  Los navegadores de móvil sueltan los marcos de otros dominios cuando la
+   *  pestaña se va al fondo: al volver queda el hueco oscuro y el reproductor
+   *  ya no está dentro. Como `key`, este número hace que React tire el marco
+   *  viejo y monte uno nuevo, que vuelve a cargar la dirección del proveedor
+   *  -- con su arranque automático y su bucle -- y se reproduce solo.
+   *
+   *  Va en el `<iframe>` y no en el contenedor a propósito: lo que hay que
+   *  rehacer es el marco, no la caja que lo recorta. Ver `src/lib/regreso.ts`
+   *  para el umbral de tiempo y por qué no hay otra forma de hacerlo. */
+  const generacion = useGeneracionDeVideo();
+
   /* EL CRECIMIENTO HORIZONTAL SALE DE LA PROPORCIÓN DE ESTA CAJA, no de 16/9.
    *
    *  Estaba escrito a 16/9 fijo, y para los verticales eso era al revés: una
@@ -139,6 +153,7 @@ export const VideoNube: React.FC<VideoNubeProps> = ({
       }}
     >
       <iframe
+        key={generacion}
         style={{
           position: 'absolute',
           top: -r,
