@@ -117,18 +117,10 @@ async function main() {
   await writeFile(path.join(DIST, '404.html'), esqueleto);
 
   if (!hayNavegador()) {
-    // En GitHub Actions esto NO se perdona: ahí el navegador se instala en su
-    // propio paso y si falta es un error de configuración que hay que
-    // arreglar. Dejarlo pasar publicaría una web peor sin que nadie se
-    // entere, que es la peor forma de romper algo.
-    if (process.env.GITHUB_ACTIONS === 'true') {
-      console.error(
-        '\nERROR: no hay navegador y esto es GitHub Actions.\n' +
-          'El paso `npx playwright install --with-deps chromium` tiene que ir\n' +
-          'antes de `npm run build`. Ver .github/workflows/deploy.yml.\n'
-      );
-      process.exit(1);
-    }
+    // ESTE SCRIPT NUNCA TUMBA UNA COMPILACION. Avisa y sigue, aqui y en
+    // cualquier sitio. Quien comprueba que el paquete salio entero son los
+    // flujos de `.github/workflows`, que cuentan las 32 paginas antes de
+    // publicar nada: ahi se puede mirar el resultado, y aqui no.
     console.warn(
       '\n' +
         '====================================================================\n' +
