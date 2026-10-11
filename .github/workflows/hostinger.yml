@@ -1,16 +1,26 @@
 # LA RAMA QUE LEE HOSTINGER.
 #
-# Hostinger NO compila: su conexion con GitHub hace un clone del repositorio
-# y copia los archivos tal cual. Y lo que hay en `main` es codigo fuente --
-# React y TypeScript --, que un navegador no sabe leer.
+# Hostinger SI compila: al ver un package.json ejecuta `npm install` y
+# `npm run build`, y publica lo que quede en `dist`. El problema no es que
+# compile, es QUE NO PUEDE compilar esta web: el prerenderizado abre las 32
+# paginas en un navegador de verdad, y en un hosting compartido ese navegador
+# no se puede instalar -- hacen falta permisos de administrador para sus
+# librerias.
 #
-# Asi que este flujo compila la web y deja el resultado en una rama aparte,
-# `hostinger`, con los archivos en su raiz: index.html, assets/, images/, las
-# 32 carpetas de las paginas y el .htaccess. Esa rama es la que se conecta en
-# hPanel, y es lo unico que Hostinger necesita ver.
+# ASI QUE SE LE DA COMPILADO Y SE LE DEJA "COMPILAR". La rama `hostinger`
+# lleva dos cosas:
 #
-# NO TOCA NADA MAS. `main` sigue siendo el codigo, y GitHub Pages sigue
-# compilandose con `deploy.yml` y su propia ruta.
+#   dist/           la web entera, ya hecha aqui, con las 32 paginas
+#   package.json    un guion de compilacion que solo escribe una linea
+#
+# Hostinger hace su `npm install` (no hay una sola dependencia que instalar,
+# asi que es instantaneo), llama a `npm run build`, recibe un `echo`, y
+# publica `dist`. Todo lo que el espera encontrar esta ahi, y lo que de
+# verdad cuesta -- compilar y prerenderizar -- ya se hizo en GitHub, que si
+# tiene navegador.
+#
+# NO TOCA NADA MAS. `main` sigue siendo el codigo, y GitHub Pages se sigue
+# compilando con `deploy.yml` y su propia ruta.
 #
 # POR QUE LA RAMA NO INFLA EL REPOSITORIO. Las fotos pesan 130 MB, pero son
 # exactamente los mismos archivos que ya estan en `public/images`: git guarda
@@ -66,23 +76,51 @@ jobs:
       - name: Comprobar que el paquete esta entero
         run: |
           echo "Ruta usada: ${{ inputs.ruta || '/' }}"
-          test -f dist/index.html        || { echo "FALTA index.html"; exit 1; }
-          test -f dist/.htaccess         || { echo "FALTA .htaccess"; exit 1; }
-          test -f dist/404.html          || { echo "FALTA 404.html"; exit 1; }
-          test -f dist/sitemap.xml       || { echo "FALTA sitemap.xml"; exit 1; }
-          test -d dist/images            || { echo "FALTAN las fotos"; exit 1; }
+          test -f dist/index.html  || { echo "FALTA index.html"; exit 1; }
+          test -f dist/.htaccess   || { echo "FALTA .htaccess"; exit 1; }
+          test -f dist/404.html    || { echo "FALTA 404.html"; exit 1; }
+          test -f dist/sitemap.xml || { echo "FALTA sitemap.xml"; exit 1; }
+          test -d dist/images      || { echo "FALTAN las fotos"; exit 1; }
+          # LAS 32 PAGINAS SON EL MOTIVO DE TODO ESTO. Si el prerenderizado se
+          # salto -- no tumba la compilacion, solo avisa --, aqui se nota y no
+          # se publica nada: una web sin sus copias llega vacia a cualquier
+          # buscador, y eso es peor que no publicar.
           paginas=$(find dist -name index.html | wc -l)
           echo "Paginas prerenderizadas: $paginas"
           test "$paginas" -eq 32 || { echo "Esperaba 32 paginas, hay $paginas"; exit 1; }
           echo "Como quedaron las rutas:"
           grep -o 'src="[^"]*\.js"' dist/index.html
 
+      - name: Preparar lo que Hostinger espera encontrar
+        run: |
+          mkdir -p publicacion
+          mv dist publicacion/dist
+          # EL GUION DE COMPILACION QUE NO COMPILA NADA. Sin una sola
+          # dependencia: el `npm install` de Hostinger no tiene nada que
+          # descargar y termina al instante.
+          cat > publicacion/package.json <<'JSON'
+          {
+            "name": "mayu-travel-web",
+            "version": "1.0.0",
+            "private": true,
+            "description": "La web de Mayu Travel, ya compilada. Se genera sola desde el repositorio del codigo; no se edita a mano.",
+            "scripts": {
+              "build": "echo 'Nada que compilar: la web ya viene hecha desde GitHub Actions, en dist/.'"
+            }
+          }
+          JSON
+          # Y su candado, por si el hosting usa `npm ci` en vez de `npm
+          # install`: sin el, `npm ci` se niega a arrancar.
+          (cd publicacion && npm install --package-lock-only --silent)
+          echo "Esto es lo que va a ver Hostinger:"
+          ls -a publicacion
+
       # La rama se rehace entera en cada vuelta, sin arrastrar historia: lo que
       # importa es el estado actual del sitio, no como llego hasta aqui. Esa
       # historia ya esta en `main`.
       - name: Dejarlo en la rama hostinger
         run: |
-          cd dist
+          cd publicacion
           git init -q
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
