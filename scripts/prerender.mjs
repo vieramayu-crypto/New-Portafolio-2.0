@@ -87,10 +87,72 @@ function servidor(esqueleto) {
   });
 }
 
+/** ¿Hay un navegador que abrir?
+ *
+ *  Playwright trae el suyo, pero se descarga aparte (`playwright install`) y
+ *  en un hosting compartido no se puede: hace falta permiso de administrador
+ *  para las librerías del sistema que necesita. Por eso aquí se comprueba
+ *  antes en vez de dejar que reviente a mitad.
+ *
+ *  `PRERENDER=0` lo salta a mano, para una compilación rápida en la que las
+ *  copias no importan. */
+function hayNavegador() {
+  if (process.env.PRERENDER === '0') return false;
+  try {
+    const ruta = process.env.PRERENDER_CHROMIUM || chromium.executablePath();
+    return !!ruta && existsSync(ruta);
+  } catch {
+    // `executablePath()` revienta si Playwright ni siquiera sabe dónde
+    // buscarlo. Es la misma respuesta: no hay navegador.
+    return false;
+  }
+}
+
 async function main() {
   const esqueleto = await readFile(path.join(DIST, 'index.html'), 'utf8');
-  // El 404 de GitHub Pages, con el esqueleto todavía sin dibujar.
+  // El 404 de GitHub Pages, con el esqueleto todavía sin dibujar. Se escribe
+  // ANTES de mirar si hay navegador, a propósito: aunque no se pueda
+  // prerenderizar, el enrutamiento por enlace directo tiene que seguir
+  // funcionando.
   await writeFile(path.join(DIST, '404.html'), esqueleto);
+
+  if (!hayNavegador()) {
+    // En GitHub Actions esto NO se perdona: ahí el navegador se instala en su
+    // propio paso y si falta es un error de configuración que hay que
+    // arreglar. Dejarlo pasar publicaría una web peor sin que nadie se
+    // entere, que es la peor forma de romper algo.
+    if (process.env.GITHUB_ACTIONS === 'true') {
+      console.error(
+        '\nERROR: no hay navegador y esto es GitHub Actions.\n' +
+          'El paso `npx playwright install --with-deps chromium` tiene que ir\n' +
+          'antes de `npm run build`. Ver .github/workflows/deploy.yml.\n'
+      );
+      process.exit(1);
+    }
+    console.warn(
+      '\n' +
+        '====================================================================\n' +
+        '  SIN NAVEGADOR: LA WEB SE COMPILA, PERO SIN LAS 32 COPIAS\n' +
+        '====================================================================\n' +
+        '  El prerenderizado abre la web en un navegador de verdad para\n' +
+        '  guardar el HTML ya dibujado de cada página. Aquí no hay navegador\n' +
+        '  y en un hosting compartido no se puede instalar, así que se salta.\n' +
+        '\n' +
+        '  QUE SIGUE FUNCIONANDO: la web entera. Quien la abra la ve igual.\n' +
+        '\n' +
+        '  QUE SE PIERDE: lo que recibe un buscador o una red social cuando\n' +
+        '  pide una página sin ejecutar JavaScript. Sin las copias, lo que\n' +
+        '  reciben es un documento vacío: sin texto, sin título propio y sin\n' +
+        '  descripción. Es justo lo que se arregló en las rondas de SEO.\n' +
+        '\n' +
+        '  COMO SE HACE BIEN: compilar en GitHub Actions, que sí tiene\n' +
+        '  navegador, y que el hosting sirva el resultado ya hecho. Eso es\n' +
+        '  la rama `hostinger` de este repositorio: lleva la web compilada y\n' +
+        '  no necesita compilar nada aquí.\n' +
+        '====================================================================\n'
+    );
+    process.exit(0);
+  }
 
   const paginas = await rutasDelSitio();
   const direcciones = paginas.flatMap((p) => Object.values(p.porIdioma));
