@@ -1,0 +1,89 @@
+# LA RAMA QUE LEE HOSTINGER.
+#
+# Hostinger NO compila: su conexion con GitHub hace un clone del repositorio
+# y copia los archivos tal cual. Y lo que hay en `main` es codigo fuente --
+# React y TypeScript --, que un navegador no sabe leer.
+#
+# Asi que este flujo compila la web y deja el resultado en una rama aparte,
+# `hostinger`, con los archivos en su raiz: index.html, assets/, images/, las
+# 32 carpetas de las paginas y el .htaccess. Esa rama es la que se conecta en
+# hPanel, y es lo unico que Hostinger necesita ver.
+#
+# NO TOCA NADA MAS. `main` sigue siendo el codigo, y GitHub Pages sigue
+# compilandose con `deploy.yml` y su propia ruta.
+#
+# POR QUE LA RAMA NO INFLA EL REPOSITORIO. Las fotos pesan 130 MB, pero son
+# exactamente los mismos archivos que ya estan en `public/images`: git guarda
+# por contenido, asi que no se duplican. Lo unico nuevo en cada compilacion
+# son el JavaScript, el CSS y los 32 HTML, que juntos no llegan a un mega.
+name: Publicar en mi dominio (Hostinger)
+
+on:
+  # Cada vez que main cambia, la rama de Hostinger se pone al dia sola.
+  push:
+    branches: [main]
+  # Y a mano, por si hace falta rehacerla sin tocar el codigo.
+  workflow_dispatch:
+    inputs:
+      ruta:
+        description: 'Donde vive la web. Deja / si va en la raiz del dominio. Si va en una subcarpeta o subdominio con carpeta propia, escribela entre barras: /portfolio/'
+        required: true
+        default: '/'
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hostinger
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+
+      - name: Compilar para el dominio propio
+        run: npm run build
+        env:
+          # En un push automatico no hay `inputs`, asi que cae a la raiz, que
+          # es donde va a vivir la web.
+          VITE_BASE: ${{ inputs.ruta || '/' }}
+
+      - name: Comprobar que el paquete esta entero
+        run: |
+          echo "Ruta usada: ${{ inputs.ruta || '/' }}"
+          test -f dist/index.html        || { echo "FALTA index.html"; exit 1; }
+          test -f dist/.htaccess         || { echo "FALTA .htaccess"; exit 1; }
+          test -f dist/404.html          || { echo "FALTA 404.html"; exit 1; }
+          test -f dist/sitemap.xml       || { echo "FALTA sitemap.xml"; exit 1; }
+          test -d dist/images            || { echo "FALTAN las fotos"; exit 1; }
+          paginas=$(find dist -name index.html | wc -l)
+          echo "Paginas prerenderizadas: $paginas"
+          test "$paginas" -eq 32 || { echo "Esperaba 32 paginas, hay $paginas"; exit 1; }
+          echo "Como quedaron las rutas:"
+          grep -o 'src="[^"]*\.js"' dist/index.html
+
+      # La rama se rehace entera en cada vuelta, sin arrastrar historia: lo que
+      # importa es el estado actual del sitio, no como llego hasta aqui. Esa
+      # historia ya esta en `main`.
+      - name: Dejarlo en la rama hostinger
+        run: |
+          cd dist
+          git init -q
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q -b hostinger
+          git add -A
+          git commit -q -m "Web compilada desde ${GITHUB_SHA::7}"
+          git push -q --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            hostinger
+          echo "Listo. Hostinger puede tirar de la rama 'hostinger'."
