@@ -26,6 +26,11 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      # El prerenderizado abre la web en un Chromium de verdad para guardar el
+      # HTML ya dibujado de cada pagina. Sin este paso no hay navegador en el
+      # runner y la compilacion se para. `deploy.yml` ya lo tenia; estos dos
+      # flujos no, y por eso fallaban.
+      - run: npx playwright install --with-deps chromium
       - name: Compilar para la ruta indicada
         run: npm run build
         env:
