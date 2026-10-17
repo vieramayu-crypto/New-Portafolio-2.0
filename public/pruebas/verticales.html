@@ -52,8 +52,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* ---------------- GRID / MARQUEE ---------------- */
 .grid{position:absolute;right:62px;top:0;bottom:0;width:calc(3*var(--col) + 2*var(--gap));z-index:1;pointer-events:none}
 .capa{position:absolute;inset:0;z-index:6;pointer-events:auto;cursor:pointer;
-  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-html.mob .capa{display:none}
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;touch-action:pan-y}
 .col{position:absolute;top:0;width:var(--col);will-change:transform;animation:colDown 58.4s linear infinite}
 .c1{left:0;top:-62px}
 .c2{left:calc(var(--col) + var(--gap));top:-208px}
@@ -193,6 +193,8 @@ html.mob .grid{order:2;flex:1;min-height:0;position:relative;right:auto;top:auto
   --gw:calc(100vw - 2*var(--tm));--gap:9px;--r:10px;
   --col:calc((var(--gw) - var(--gap))/2);--pitch:calc(var(--col)*16/9 + var(--gap));
   width:var(--gw);margin:0 var(--tm);overflow:hidden}
+/* Un 30% mas lento que en escritorio, solo aqui: 58,4 / 0,7 = 83,4s. */
+html.mob .col{animation-duration:83.4s}
 html.mob .c1{left:0;top:calc(var(--pitch)*-.20)}
 html.mob .c2{left:calc(var(--col) + var(--gap));top:calc(var(--pitch)*-.66)}
 html.mob .c3{display:none}
@@ -781,12 +783,41 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
     detener(columnaEn(e.clientX));
   });
 
-  /* EN MOVIL NO HAY PAUSA POR TOQUE. Se probaron las dos formas (un toque que
-     fija y otro que suelta, y parar mientras el dedo esta encima) y las dos
-     molestan: al apoyar el dedo el navegador saca la seleccion de texto, la
-     marca azul de copiar. La capa se apaga entera en movil, asi que ahi no se
-     intercepta nada. */
-  capa.addEventListener('pointerleave',function(){ detener(null); });
+  capa.addEventListener('pointerleave',function(e){
+    if(e.pointerType==='touch')return;
+    detener(null);
+  });
+
+  /* MOVIL: un toque fija la columna y otro la suelta.
+     LA CLAVE ES DISTINGUIR UN TOQUE DE UN DESPLAZAMIENTO. Antes valia
+     cualquier contacto, asi que al bajar por la pagina la columna se quedaba
+     fijada. Ahora solo cuenta si el dedo se movio menos de 12px y levanto
+     antes de medio segundo; si se movio mas, o el navegador manda
+     `pointercancel` porque el gesto paso a ser scroll, no pasa nada.
+     `touch-action:pan-y` deja pasar el desplazamiento vertical a traves de la
+     capa, y `user-select:none` con `-webkit-touch-callout:none` evitan la
+     marca azul de seleccion al mantener el dedo encima. */
+  var fijada=null, tx=0, ty=0, tt=0, valido=false;
+  capa.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='touch')return;
+    tx=e.clientX; ty=e.clientY; tt=Date.now(); valido=true;
+  });
+  capa.addEventListener('pointermove',function(e){
+    if(e.pointerType!=='touch'||!valido)return;
+    if(Math.abs(e.clientX-tx)>12||Math.abs(e.clientY-ty)>12) valido=false;
+  });
+  capa.addEventListener('pointercancel',function(e){
+    if(e.pointerType!=='touch')return;
+    valido=false;
+  });
+  capa.addEventListener('pointerup',function(e){
+    if(e.pointerType!=='touch'||!valido)return;
+    valido=false;
+    if(Date.now()-tt>500)return;
+    var c=columnaEn(e.clientX);
+    fijada=(fijada===c)?null:c;
+    detener(fijada);
+  });
 
   /* 3. menu (mob + tab) */
   var hdr=document.querySelector('.hdr'),
