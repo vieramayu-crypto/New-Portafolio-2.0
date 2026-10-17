@@ -1,0 +1,243 @@
+/* EL MOSAICO DE PIEZAS VERTICALES -- SOLO LA RUTA DE PRUEBA.
+ *
+ *  Nada de aquí se aplica a la web publicada: estas clases sólo existen
+ *  dentro de `MosaicoVerticales.tsx`, que hoy únicamente monta la ruta
+ *  escondida `/pruebas/inicio-mosaico`. El prefijo `mv-` es para que ninguna
+ *  regla se cruce con las de Tailwind ni con `index.css`.
+ *
+ *  QUÉ ES. Seis piezas verticales reproduciéndose a la vez en tres columnas
+ *  (dos en móvil) que se desplazan solas en sentidos alternos, con el texto
+ *  del bloque a la izquierda. Viene de la prueba de
+ *  `public/pruebas/verticales.html`, ya aprobada por Mayurlin en móvil y en
+ *  escritorio.
+ *
+ *  LO QUE CAMBIA RESPECTO A LA PRUEBA, Y POR QUÉ. Aquella era una página
+ *  suelta con el lienzo entero a escala (`transform: scale`) sobre una
+ *  referencia de 1280x800. Aquí no: un lienzo escalado dentro de la web
+ *  congela el tamaño del texto (quien tenga la letra grande del sistema no
+ *  la vería crecer) y se dispara en pantallas muy anchas. En su lugar el
+ *  mosaico se mide en `vw`, que reproduce esa misma escala donde importa:
+ *  a 1.440px la columna sale a 230px y el margen derecho a 62px, los mismos
+ *  números de la prueba, y el texto usa la tipografía responsive de la casa.
+ */
+
+.mv {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #fbfaf6;
+}
+.mv--alterno {
+  background: #f5f3ed;
+}
+
+/* ---------------- MÓVIL: el texto arriba y dos columnas debajo ----------- */
+
+.mv-lienzo {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+}
+
+/* La cabecera es la MISMA del bloque de siempre (`GaleriaPiezas`), clase por
+   clase: serif de 30px con 20 caracteres de ancho máximo y el subtítulo a 14
+   con interlineado 1,7. Si aquella cambia, ésta también. */
+.mv-texto {
+  flex: none;
+  padding: 4rem 1.5rem 1rem;
+  text-align: center;
+}
+.mv-texto h2 {
+  margin: 0 auto;
+  max-width: 20ch;
+  font-size: 30px;
+  line-height: 1.15;
+  color: #1a1918;
+}
+.mv-texto p {
+  margin: 1rem auto 0;
+  max-width: 46ch;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #5a5854;
+}
+
+.mv-rejilla {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: calc(100vw - 2 * var(--mv-margen));
+  margin: 0 var(--mv-margen) var(--mv-margen);
+  overflow: hidden;
+
+  --mv-margen: 24px;
+  --mv-gap: 9px;
+  --mv-col: calc((100vw - 2 * var(--mv-margen) - var(--mv-gap)) / 2);
+  --mv-alto: calc(var(--mv-col) * 16 / 9);
+  --mv-paso: calc(var(--mv-alto) + var(--mv-gap));
+  /* Un 30% más lento que en escritorio: 58,4 / 0,7. Pedido de ella al
+     probarlo en el móvil. */
+  --mv-dur: 83.4s;
+}
+
+.mv-col {
+  position: absolute;
+  top: 0;
+  width: var(--mv-col);
+  will-change: transform;
+  animation: mv-baja var(--mv-dur) linear infinite;
+}
+/* Las columnas arrancan desfasadas: alineadas se leen como una rejilla y se
+   pierde la sensación de cinta. */
+.mv-c1 {
+  left: 0;
+  top: calc(var(--mv-paso) * -0.2);
+}
+.mv-c2 {
+  left: calc(var(--mv-col) + var(--mv-gap));
+  top: calc(var(--mv-paso) * -0.66);
+  animation-name: mv-sube;
+}
+.mv-c3 {
+  display: none;
+}
+
+@keyframes mv-baja {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+@keyframes mv-sube {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mv-col {
+    animation: none;
+  }
+}
+
+.mv-celda {
+  position: relative;
+  width: 100%;
+  height: var(--mv-alto);
+  margin-bottom: var(--mv-gap);
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0f0f0e;
+}
+
+/* EL RECORTE DE `VideoNube`, TAL CUAL. El reproductor pinta una línea fina en
+   el borde DENTRO del marco, y desde fuera de un iframe de otro dominio no se
+   puede ni mirar. Se tapa creciendo 5px de alto y 2,81 por lado (5 * 9/16, en
+   proporción, para no deformar la imagen) y recortando el sobrante. */
+.mv-celda iframe {
+  position: absolute;
+  top: -5px;
+  left: -2.81px;
+  display: block;
+  width: calc(100% + 5.62px);
+  height: calc(100% + 10px);
+  border: 0;
+}
+
+/* LA CAPA QUE RECOGE EL PUNTERO.
+   No vale un `:hover` sobre la columna: el puntero no llega al documento
+   cuando está encima de un iframe de otro dominio. Así que va una capa propia
+   por delante y la columna se deduce por la x. `touch-action: pan-y` deja
+   pasar el desplazamiento vertical, y las tres reglas de selección quitan la
+   marca azul de copiar que salía al mantener el dedo. */
+.mv-capa {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  cursor: pointer;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------------- ESCRITORIO: el texto a la izquierda ------------------- */
+
+@media (min-width: 1024px) {
+  .mv-lienzo {
+    display: block;
+    height: 100svh;
+    min-height: 0;
+  }
+
+  /* El texto vive en el mismo contenedor que el resto de la Home
+     (`max-w-6xl` con `px-12`), así que su borde izquierdo cae exactamente
+     donde el de las tarjetas de "Qué creamos". Sin medir nada por JavaScript:
+     es el mismo contenedor. */
+  .mv-texto {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 3;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+    transform: translateY(-50%);
+  }
+  /* EL MISMO CONTENEDOR QUE EL RESTO DE LA HOME, Y EN EL MISMO ORDEN:
+     `max-w-6xl` centrado y DENTRO el `px-12`. Puestos al revés el texto cae
+     48px a la izquierda de las tarjetas de "Qué creamos", que es justo lo que
+     pasó al medirlo la primera vez. */
+  .mv-interior {
+    margin: 0 auto;
+    max-width: 72rem;
+    padding: 0 3rem;
+  }
+  /* Hasta donde empieza el mosaico y ni un píxel más, para que el párrafo no
+     se meta por debajo de los vídeos. */
+  .mv-texto h2 {
+    margin: 0;
+    max-width: 11ch;
+    font-size: clamp(44px, 6.2vw, 92px);
+    line-height: 0.94;
+  }
+  .mv-texto p {
+    margin: 1.75rem 0 0;
+    max-width: 30ch;
+    font-size: clamp(15px, 1.4vw, 20px);
+    line-height: 1.48;
+  }
+
+  .mv-rejilla {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: var(--mv-margen);
+    width: calc(3 * var(--mv-col) + 2 * var(--mv-gap));
+    margin: 0;
+
+    --mv-margen: clamp(20px, 4.3vw, 70px);
+    --mv-gap: 13px;
+    --mv-col: clamp(170px, 16vw, 250px);
+    --mv-dur: 58.4s;
+  }
+
+  .mv-c1 {
+    top: calc(var(--mv-paso) * -0.15);
+  }
+  .mv-c2 {
+    top: calc(var(--mv-paso) * -0.49);
+  }
+  .mv-c3 {
+    left: calc(2 * (var(--mv-col) + var(--mv-gap)));
+    top: calc(var(--mv-paso) * -0.79);
+    display: block;
+  }
+}
