@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO DE RESPALDO, Y SÓLO DE RESPALDO.
+         El título, la descripción, la dirección canónica, las alternativas por
+         idioma y las etiquetas de vista previa los escribe cada página desde
+         `src/lib/Metadatos.tsx`, y el prerenderizado los graba en el HTML de
+         cada carpeta. Lo que queda aquí es lo que ve quien cae en una ruta que
+         no existe (el `404.html`, que es este mismo esqueleto sin dibujar).
+
+         Se quitó de aquí todo lo que ahora es propio de cada página, para que
+         no hubiera dos versiones peleándose. Y se quitó `keywords`: Google
+         dejó de usarla en 2009 y ningún buscador la lee hoy. -->
+    <title>Mayu Travel · Producción Visual para Hoteles de Lujo</title>
+    <meta
+      name="description"
+      content="Fotografía y vídeo para hoteles de lujo. Más de 35 propiedades en cinco países, entre ellas hoteles de Marriott, IHG y Wyndham."
+    />
+    <meta name="author" content="Mayurlin Viera, Mayu Travel" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Constantes de la vista previa: lo que no cambia de una página a otra.
+         El resto (título, descripción, dirección y foto) lo pone cada página. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mayu Travel" />
+    <meta property="og:image" content="https://mayurlintravel.eu/images/og-cover.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Datos estructurados — JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Mayu Travel",
+      "alternateName": "Mayurlin Viera Producción Visual",
+      "url": "https://mayurlintravel.eu",
+      "description": "Estudio de producción visual para hoteles de lujo: cine, fotografía y contenido editorial. Más de 35 propiedades en cinco países, incluyendo propiedades dentro de Marriott International, IHG Hotels & Resorts y Wyndham.",
+      "founder": {
+        "@type": "Person",
+        "name": "Mayurlin Viera",
+        "jobTitle": "Productora Visual y Directora de Contenido",
+        "url": "https://mayurlintravel.eu"
+      },
+      "areaServed": [
+        { "@type": "Country", "name": "España" },
+        { "@type": "Country", "name": "Portugal" },
+        { "@type": "Country", "name": "Grecia" },
+        { "@type": "Country", "name": "Suiza" },
+        { "@type": "Country", "name": "Países Bajos" }
+      ],
+      "serviceType": [
+        "Fotografía de hoteles de lujo",
+        "Producción de vídeo para hoteles",
+        "Reels cinematográficos para hoteles",
+        "Contenido visual editorial",
+        "Contenido de marketing hotelero"
+      ],
+      "knowsAbout": [
+        "Producción visual para hoteles de lujo",
+        "Fotografía de hoteles",
+        "Creación de contenido cinematográfico",
+        "Marketing de hotelería de lujo",
+        "Propiedades de Marriott International",
+        "Propiedades de IHG Hotels & Resorts",
+        "Propiedades de Wyndham Hotels & Resorts",
+        "Colecciones de hoteles boutique"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/mayurlintravel"
+      ]
+    }
+    </script>
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/assets/index-DcWd_RsF.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DgaSt9ui.css">
+  </head>
+  <body class="bg-[#fbfaf6] text-[#1a1918] font-sans antialiased selection:bg-[#1a1918] selection:text-[#fbfaf6]">
+    <div id="root"></div>
+  </body>
+</html>
