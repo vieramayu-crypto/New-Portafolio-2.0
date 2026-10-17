@@ -758,7 +758,7 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
   capa.className='capa';
   capa.setAttribute('aria-hidden','true');
   rejilla.appendChild(capa);
-  var fijada=null;
+
   function columnaEn(x){
     var hit=null;
     Array.prototype.forEach.call(document.querySelectorAll('.col'),function(c){
@@ -773,20 +773,29 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
       c.style.animationPlayState = (c===col ? 'paused' : '');
     });
   }
+  /* ESCRITORIO: se para la columna bajo el cursor y se suelta al salir. */
   capa.addEventListener('pointermove',function(e){
     if(e.pointerType==='touch')return;
     detener(columnaEn(e.clientX));
   });
-  capa.addEventListener('pointerleave',function(e){
-    if(e.pointerType==='touch')return;
-    detener(fijada);
-  });
+
+  /* MOVIL: se para MIENTRAS el dedo esta encima y se suelta al levantarlo.
+     Antes un toque fijaba la columna y hacia falta otro para soltarla, asi
+     que al desplazarse con el dedo la columna se quedaba parada para siempre.
+     `pointercancel` es la pieza que lo arregla: el navegador lo dispara en
+     cuanto decide que el gesto es un desplazamiento y no un toque, asi que
+     al hacer scroll se reanuda sola sin esperar a que se levante el dedo. */
   capa.addEventListener('pointerdown',function(e){
     if(e.pointerType!=='touch')return;
-    var c=columnaEn(e.clientX);
-    fijada=(fijada===c)?null:c;
-    detener(fijada);
+    detener(columnaEn(e.clientX));
   });
+
+  ['pointerup','pointercancel','pointerleave','touchend','touchcancel']
+    .forEach(function(ev){
+      capa.addEventListener(ev,function(e){
+        detener(null);
+      });
+    });
 
   /* 3. menu (mob + tab) */
   var hdr=document.querySelector('.hdr'),
