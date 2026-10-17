@@ -174,9 +174,14 @@ html.mob .logo .s{font-size:7px}
 html.mob .mnav>a,html.mob .sep,html.mob .cta{display:none}
 html.mob .mnav{margin-left:auto;gap:0}
 html.mob .menu-btn{display:flex}
-html.mob .hero{order:1;flex:none;padding:26px var(--tm) 18px}
-html.mob .hero h1{font-size:var(--h1);line-height:.94;letter-spacing:-.05em}
-html.mob .hero p{font-size:var(--fp);line-height:1.45;margin:16px 0 0;max-width:34ch}
+html.mob .hero{order:1;flex:none;padding:22px var(--tm) 16px;text-align:center}
+html.mob .hero h1{font-size:30px;line-height:1.15;letter-spacing:0;max-width:20ch;margin:0 auto}
+/* Los cuatro cortes del titular son de escritorio. En movil el texto fluye
+   como una sola frase, igual que en la web, asi ocupa dos lineas y no cuatro. */
+html.mob .hero h1 .ln{display:inline;overflow:visible}
+html.mob .hero h1 .ln:not(:last-child)::after{content:" "}
+html.mob .hero h1 .ln>span{display:inline;white-space:normal;font-size:1em;letter-spacing:0}
+html.mob .hero p{font-size:14px;line-height:1.7;margin:16px auto 0;max-width:46ch}
 html.mob .acts{margin-top:18px;gap:8px;flex-wrap:wrap}
 html.mob .acts .pill{width:104px;height:var(--btn);border-radius:16px;font-size:13px}
 html.mob .acts .tkt{width:var(--btn);height:var(--btn)}
@@ -206,9 +211,9 @@ html.mob .panel,html.tab .panel{display:block;max-height:0;overflow:hidden;trans
 html.mob-l .stage{display:grid;grid-template-columns:minmax(0,1fr) var(--lgw,46vw);grid-template-rows:auto 1fr;
   column-gap:18px;height:100svh}
 html.mob-l .hdr{grid-column:1 / -1;grid-row:1}
-html.mob-l .hero{grid-column:1;grid-row:2;align-self:center;padding:10px var(--tm)}
+html.mob-l .hero{grid-column:1;grid-row:2;align-self:center;padding:10px var(--tm);text-align:left}
 html.mob-l .hero h1{font-size:clamp(34px,5.4vw,52px)}
-html.mob-l .hero p{font-size:13px;margin-top:10px}
+html.mob-l .hero p{font-size:13px;margin:10px 0 0}
 html.mob-l .acts{margin-top:12px;flex-wrap:wrap;row-gap:8px}
 html.mob-l .hero{min-width:0}
 html.mob-l .grid{grid-column:2;grid-row:2;margin:0 var(--tm) 0 0;--gw:calc(var(--lgw,46vw) - var(--tm))}
