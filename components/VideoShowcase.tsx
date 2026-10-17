@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GaleriaPiezas, PIEZAS_HORIZONTALES, PIEZAS_VERTICALES } from './GaleriaPiezas';
 import { VideoNube } from './VideoNube';
+import { MosaicoVerticales } from './MosaicoVerticales';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
 import { useCercaDePantalla } from '../src/lib/cerca';
@@ -61,8 +62,24 @@ export const VideoShowcase: React.FC = () => {
  *  Va con `alterno` a propósito: sus dos vecinas son marfil `#fbfaf6`, y sin
  *  el cambio de fondo las tres se leerían como un solo bloque.
  */
-export const VideoVerticalesInicio: React.FC = () => {
+export const VideoVerticalesInicio: React.FC<{ mosaico?: boolean }> = ({ mosaico }) => {
   const t = crearT(useIdioma().idioma);
+
+  /* `mosaico` ES SÓLO PARA LA RUTA ESCONDIDA `/pruebas/inicio-mosaico`.
+     Enseña las seis piezas a la vez en tres columnas que se desplazan, en vez
+     de una cada vez. Mismo copy, mismos datos, mismo idioma: lo único que
+     cambia es la forma. Inicio no pasa la bandera, así que la web publicada
+     no se entera de que existe. Ver `MosaicoVerticales.tsx`, que explica por
+     qué todavía no está publicado. */
+  if (mosaico) {
+    return (
+      <MosaicoVerticales
+        titulo={t('verticalesTitulo')}
+        subtitulo={t('verticalesSubtitulo')}
+        alterno
+      />
+    );
+  }
 
   return (
     <GaleriaPiezas

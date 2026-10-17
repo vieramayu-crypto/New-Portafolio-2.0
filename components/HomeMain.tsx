@@ -40,6 +40,11 @@ interface HomeMainProps {
   onNavigate: (page: Page) => void;
   onOpenAvailability: () => void;
   onSelectStory?: (story: HotelStory) => void;
+  /** SÓLO la ruta escondida `/pruebas/inicio-mosaico` la pone a `true`: el
+   *  bloque de piezas verticales se enseña como mosaico de seis vídeos a la
+   *  vez en vez de la galería de una cada vez. Todo lo demás es idéntico, y
+   *  sin la bandera esta Home es exactamente la publicada. */
+  mosaicoVerticales?: boolean;
 }
 
 function renderTwoLineHotelName(name: string) {
@@ -65,6 +70,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
   onNavigate,
   onOpenAvailability,
   onSelectStory,
+  mosaicoVerticales,
 }) => {
   const [activeStoryIndex, setActiveStoryIndex] = useState<number>(0);
 
@@ -207,7 +213,7 @@ export const HomeMain: React.FC<HomeMainProps> = ({
       {/* Las piezas verticales, arriba y no al final. Abajo quedaban al 80%
           de la página y Mayurlin no las encontraba. El porqué completo está
           en `VideoShowcase.tsx`. */}
-      <VideoVerticalesInicio />
+      <VideoVerticalesInicio mosaico={mosaicoVerticales} />
 
       <ValueBlock />
       <VideoShowcase />
