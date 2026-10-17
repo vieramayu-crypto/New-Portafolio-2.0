@@ -51,7 +51,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 /* ---------------- GRID / MARQUEE ---------------- */
 .grid{position:absolute;right:62px;top:0;bottom:0;width:calc(3*var(--col) + 2*var(--gap));z-index:1;pointer-events:none}
-.capa{position:absolute;inset:0;z-index:6;pointer-events:auto;cursor:pointer}
+.capa{position:absolute;inset:0;z-index:6;pointer-events:auto;cursor:pointer;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+html.mob .capa{display:none}
 .col{position:absolute;top:0;width:var(--col);will-change:transform;animation:colDown 58.4s linear infinite}
 .c1{left:0;top:-62px}
 .c2{left:calc(var(--col) + var(--gap));top:-208px}
@@ -779,23 +781,12 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
     detener(columnaEn(e.clientX));
   });
 
-  /* MOVIL: se para MIENTRAS el dedo esta encima y se suelta al levantarlo.
-     Antes un toque fijaba la columna y hacia falta otro para soltarla, asi
-     que al desplazarse con el dedo la columna se quedaba parada para siempre.
-     `pointercancel` es la pieza que lo arregla: el navegador lo dispara en
-     cuanto decide que el gesto es un desplazamiento y no un toque, asi que
-     al hacer scroll se reanuda sola sin esperar a que se levante el dedo. */
-  capa.addEventListener('pointerdown',function(e){
-    if(e.pointerType!=='touch')return;
-    detener(columnaEn(e.clientX));
-  });
-
-  ['pointerup','pointercancel','pointerleave','touchend','touchcancel']
-    .forEach(function(ev){
-      capa.addEventListener(ev,function(e){
-        detener(null);
-      });
-    });
+  /* EN MOVIL NO HAY PAUSA POR TOQUE. Se probaron las dos formas (un toque que
+     fija y otro que suelta, y parar mientras el dedo esta encima) y las dos
+     molestan: al apoyar el dedo el navegador saca la seleccion de texto, la
+     marca azul de copiar. La capa se apaga entera en movil, asi que ahi no se
+     intercepta nada. */
+  capa.addEventListener('pointerleave',function(){ detener(null); });
 
   /* 3. menu (mob + tab) */
   var hdr=document.querySelector('.hdr'),
