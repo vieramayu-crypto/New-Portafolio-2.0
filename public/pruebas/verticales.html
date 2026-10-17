@@ -712,11 +712,7 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
     root.style.setProperty('--W',W);
     root.style.setProperty('--H',H);
     root.classList.toggle('tall',H>845);
-    var extra=Math.max(0,Math.min(3,Math.floor((W-1294)/218.33)));
     root.classList.remove('ex1','ex2','ex3');
-    if(extra>=1)root.classList.add('ex1');
-    if(extra>=2)root.classList.add('ex2');
-    if(extra>=3)root.classList.add('ex3');
     alinearHero(s);
   }
 
@@ -727,11 +723,14 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
      parrafo no se meta debajo de los videos al desplazarse el bloque. */
   function alinearHero(s){
     var tarjeta=document.querySelector('#que-creamos .tarjeta');
-    var c1=document.querySelector('.c1');
-    if(!tarjeta||!c1||!s) return;
-    var t=tarjeta.getBoundingClientRect(), g=c1.getBoundingClientRect();
+    if(!tarjeta||!s) return;
+    var visibles=Array.prototype.filter.call(document.querySelectorAll('.col'),
+      function(c){return getComputedStyle(c).display!=='none';});
+    if(!visibles.length) return;
+    var bordeMosaico=Math.min.apply(null,visibles.map(function(c){return c.getBoundingClientRect().left;}));
+    var t=tarjeta.getBoundingClientRect();
     var izq=t.left/s;
-    var ancho=Math.max(280,(g.left-t.left)/s - 24);
+    var ancho=Math.max(280,(bordeMosaico-t.left)/s - 24);
     root.style.setProperty('--hero-izq',izq.toFixed(2)+'px');
     root.style.setProperty('--hero-ancho',ancho.toFixed(2)+'px');
   }
