@@ -145,9 +145,10 @@ html.mob .util{display:none}
 .tkt svg{width:22px;height:22px;transform:rotate(-45deg)}
 
 /* ---------------- HERO ---------------- */
-html.desk .hero{position:absolute;left:86px;top:calc(200px + (var(--H,800) - 800)*0.5px);width:480px;z-index:3}
+html.desk .hero{position:absolute;left:var(--hero-izq,86px);top:calc(200px + (var(--H,800) - 800)*0.5px);
+  width:var(--hero-ancho,480px);z-index:3}
 html.desk .hero h1{position:relative;margin:0}
-html.desk .hero p{position:absolute;top:344px;left:0;width:460px;margin:0}
+html.desk .hero p{position:absolute;top:344px;left:0;width:min(460px,var(--hero-ancho,480px));margin:0}
 html.desk .acts{position:absolute;top:460px;left:0}
 .hero h1{font-family:var(--display);font-weight:400;font-size:80px;line-height:75.3px;letter-spacing:0}
 .hero h1 .ln{display:block;overflow:hidden}
@@ -162,7 +163,7 @@ html.desk .acts{position:absolute;top:460px;left:0}
 .inst .circ svg{width:13px;height:13px;transform:rotate(-45deg)}
 /* ---------------- MOBILE ---------------- */
 
-html.mob{--tm:16px;--hp:14px;--hh:60px;--h1:clamp(42px,13.2vw,62px);--fp:15px;--btn:52px}
+html.mob{--tm:24px;--hp:14px;--hh:60px;--h1:clamp(42px,13.2vw,62px);--fp:15px;--btn:52px}
 html.mob .stage{display:flex;flex-direction:column;height:100svh;min-height:0;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 html.mob .hdr{order:0;position:relative;flex:none;margin:0 var(--tm);border-radius:0 0 var(--r) var(--r);
@@ -214,7 +215,7 @@ html.mob-l .grid{grid-column:2;grid-row:2;margin:0 var(--tm) 0 0;--gw:calc(var(-
 
 /* ---------------- TABLET ---------------- */
 
-html.tab{--tm:clamp(20px,3.2vw,40px);--hh:142px;--h1:clamp(54px,7.4vw,80px);--hp:22px}
+html.tab{--tm:24px;--hh:142px;--h1:clamp(54px,7.4vw,80px);--hp:22px}
 html.tab .stage{height:100svh;min-height:0}
 html.tab .hdr{position:relative;margin:0 var(--tm);border-radius:0 0 var(--r) var(--r);
   box-shadow:0 0 0 1px var(--nav-line),0 16px 36px -24px rgba(15,15,14,.3)}
@@ -545,6 +546,7 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
 .rise{opacity:0;transform:translateY(22px);filter:blur(8px);
   transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1),filter .75s cubic-bezier(.4,0,.2,1)}
 .rise.on{opacity:1;transform:none;filter:none}
+@media (min-width:768px){html.tab{--tm:48px}}
 @media (prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;filter:none;transition:none}}
 </style>
 <script>
@@ -715,6 +717,23 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
     if(extra>=1)root.classList.add('ex1');
     if(extra>=2)root.classList.add('ex2');
     if(extra>=3)root.classList.add('ex3');
+    alinearHero(s);
+  }
+
+  /* El texto de la izquierda, a la misma linea que las tarjetas de arriba.
+     Se mide la tarjeta real y se divide por la escala del lienzo, porque el
+     hero vive dentro de un `transform: scale` y las secciones no.
+     El ancho tambien se recorta hasta donde empieza el mosaico, para que el
+     parrafo no se meta debajo de los videos al desplazarse el bloque. */
+  function alinearHero(s){
+    var tarjeta=document.querySelector('#que-creamos .tarjeta');
+    var c1=document.querySelector('.c1');
+    if(!tarjeta||!c1||!s) return;
+    var t=tarjeta.getBoundingClientRect(), g=c1.getBoundingClientRect();
+    var izq=t.left/s;
+    var ancho=Math.max(280,(g.left-t.left)/s - 24);
+    root.style.setProperty('--hero-izq',izq.toFixed(2)+'px');
+    root.style.setProperty('--hero-ancho',ancho.toFixed(2)+'px');
   }
   function refrescar(){fit();construir();repartir();}
   refrescar();
