@@ -755,8 +755,8 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
      capa propia por delante y deducir la columna por la x del puntero.
      Esa capa se come el clic sobre el video; aqui no estorba, porque las
      piezas van solas, en bucle y sin sonido.
-     EN EL MOVIL NO HAY PUNTERO QUE SE POSE, asi que un toque fija la columna y
-     otro la suelta. Las demas nunca se paran. */
+     EN EL MOVIL NO HAY PUNTERO QUE SE POSE: un toque frena la columna, se
+     queda quieta 3,5 s y arranca sola. Las demas nunca se paran. */
   var rejilla=document.querySelector('.grid');
   var capa=document.createElement('div');
   capa.className='capa';
@@ -772,23 +772,72 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
     });
     return hit;
   }
-  function detener(col){
-    Array.prototype.forEach.call(document.querySelectorAll('.col'),function(c){
-      c.style.animationPlayState = (c===col ? 'paused' : '');
+
+  /* FRENAR Y ARRANCAR CON CURVA, NO DE GOLPE.
+     `animation-play-state` solo tiene dos estados, asi que con el no se puede
+     frenar poco a poco: o va o no va. Lo que si se puede tocar en continuo es
+     la VELOCIDAD de la animacion, `playbackRate`, a traves de la API de
+     animaciones del navegador. Un bucle de fotogramas la lleva de 1 a 0 para
+     frenar y de 0 a 1 para arrancar, y la curva es lo que da la sensacion de
+     peso: al frenar, una curva simetrica que entra y sale despacio; al
+     arrancar, una que se pasa un 10% de la velocidad normal y vuelve. Ese
+     pequeno exceso es justo lo que hace que no parezca un interruptor.
+     Si el navegador no tuviera `getAnimations`, se cae al corte de siempre. */
+  var FRENO=650, ESPERA=3500, ARRANQUE=900, EXCESO=1.70158;
+  function suave(u){ return u<.5 ? 4*u*u*u : 1-Math.pow(-2*u+2,3)/2; }
+  function conExceso(u){ var s=EXCESO, v=u-1; return 1+(s+1)*v*v*v+s*v*v; }
+  function animDe(col){ return col.getAnimations ? (col.getAnimations()[0]||null) : null; }
+
+  var rampas={}, esperas={}, fijada=null, bajoCursor=null;
+  function clave(c){ return c.className; }
+  function cortar(col){
+    var k=clave(col);
+    if(rampas[k]){ cancelAnimationFrame(rampas[k]); rampas[k]=0; }
+    if(esperas[k]){ clearTimeout(esperas[k]); esperas[k]=0; }
+  }
+  function llevar(col,dur,tasa,alAcabar){
+    var a=animDe(col);
+    if(!a){ col.style.animationPlayState = tasa(1)<.01 ? 'paused' : ''; if(alAcabar) alAcabar(); return; }
+    var k=clave(col), t0=performance.now();
+    rampas[k]=requestAnimationFrame(function paso(t){
+      var u=Math.min(1,(t-t0)/dur);
+      a.playbackRate=Math.max(0,tasa(u));
+      if(u<1) rampas[k]=requestAnimationFrame(paso);
+      else { rampas[k]=0; if(alAcabar) alAcabar(); }
     });
   }
-  /* ESCRITORIO: se para la columna bajo el cursor y se suelta al salir. */
+  /* La frenada dura menos si la columna ya venia lenta, para que interrumpir
+     un arranque a medias no se quede colgado medio segundo. */
+  function frenar(col,alParar){
+    cortar(col);
+    var a=animDe(col), v0=a?a.playbackRate:1;
+    llevar(col, FRENO*Math.max(.35,v0), function(u){ return v0*(1-suave(u)); }, alParar);
+  }
+  function soltar(col){
+    cortar(col);
+    var a=animDe(col), v0=a?a.playbackRate:0;
+    llevar(col, ARRANQUE, function(u){ return v0+(1-v0)*conExceso(u); });
+  }
+
+  /* ESCRITORIO: se para la columna bajo el cursor y se suelta al salir. No
+     lleva temporizador: mientras el cursor siga encima, se queda quieta. */
   capa.addEventListener('pointermove',function(e){
     if(e.pointerType==='touch')return;
-    detener(columnaEn(e.clientX));
+    var c=columnaEn(e.clientX);
+    if(c===bajoCursor)return;
+    if(bajoCursor) soltar(bajoCursor);
+    bajoCursor=c;
+    if(c) frenar(c);
   });
-
   capa.addEventListener('pointerleave',function(e){
     if(e.pointerType==='touch')return;
-    detener(null);
+    if(bajoCursor) soltar(bajoCursor);
+    bajoCursor=null;
   });
 
-  /* MOVIL: un toque fija la columna y otro la suelta.
+  /* MOVIL: un toque frena la columna, espera 3,5 s quieta y arranca sola.
+     Los 3,5 s se cuentan desde que esta PARADA del todo, no desde el toque,
+     asi que la quietud dura lo que dice. Otro toque antes la arranca ya.
      LA CLAVE ES DISTINGUIR UN TOQUE DE UN DESPLAZAMIENTO. Antes valia
      cualquier contacto, asi que al bajar por la pagina la columna se quedaba
      fijada. Ahora solo cuenta si el dedo se movio menos de 12px y levanto
@@ -797,7 +846,17 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
      `touch-action:pan-y` deja pasar el desplazamiento vertical a traves de la
      capa, y `user-select:none` con `-webkit-touch-callout:none` evitan la
      marca azul de seleccion al mantener el dedo encima. */
-  var fijada=null, tx=0, ty=0, tt=0, valido=false;
+  function fijar(col){
+    if(fijada && fijada!==col) soltar(fijada);
+    fijada=col;
+    if(!col) return;
+    frenar(col,function(){
+      esperas[clave(col)]=setTimeout(function(){
+        if(fijada===col){ fijada=null; soltar(col); }
+      },ESPERA);
+    });
+  }
+  var tx=0, ty=0, tt=0, valido=false;
   capa.addEventListener('pointerdown',function(e){
     if(e.pointerType!=='touch')return;
     tx=e.clientX; ty=e.clientY; tt=Date.now(); valido=true;
@@ -815,8 +874,8 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
     valido=false;
     if(Date.now()-tt>500)return;
     var c=columnaEn(e.clientX);
-    fijada=(fijada===c)?null:c;
-    detener(fijada);
+    if(fijada===c){ fijada=null; soltar(c); }
+    else fijar(c);
   });
 
   /* 3. menu (mob + tab) */
