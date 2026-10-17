@@ -779,13 +779,19 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
      la VELOCIDAD de la animacion, `playbackRate`, a traves de la API de
      animaciones del navegador. Un bucle de fotogramas la lleva de 1 a 0 para
      frenar y de 0 a 1 para arrancar, y la curva es lo que da la sensacion de
-     peso: al frenar, una curva simetrica que entra y sale despacio; al
-     arrancar, una que se pasa un 10% de la velocidad normal y vuelve. Ese
-     pequeno exceso es justo lo que hace que no parezca un interruptor.
+     peso. Las dos son simetricas: entran y salen despacio.
+     EL ARRANQUE NO PUEDE EMPEZAR CON FUERZA. La primera version usaba una
+     curva con exceso de las de siempre, que sale disparada: a los 100ms ya
+     iba al 45% de la velocidad normal y se notaba el tiron. Ahora el arranque
+     son DOS TRAMOS, los dos con la misma curva simetrica: de 0 al 110% de la
+     velocidad en el primer 62% del tiempo, y del 110% al 100% en el resto.
+     Asi la aceleracion sale de cero, crece y vuelve a cero en el pico, y otra
+     vez al final: no hay un solo punto donde de un tiron. A los 100ms va al
+     0,7% de la velocidad. El exceso sigue ahi, pero ya no es un latigazo sino
+     una inercia.
      Si el navegador no tuviera `getAnimations`, se cae al corte de siempre. */
-  var FRENO=650, ESPERA=3500, ARRANQUE=900, EXCESO=1.70158;
+  var FRENO=650, ESPERA=3500, ARRANQUE=1400, PICO=1.10, SUBIDA=.62;
   function suave(u){ return u<.5 ? 4*u*u*u : 1-Math.pow(-2*u+2,3)/2; }
-  function conExceso(u){ var s=EXCESO, v=u-1; return 1+(s+1)*v*v*v+s*v*v; }
   function animDe(col){ return col.getAnimations ? (col.getAnimations()[0]||null) : null; }
 
   var rampas={}, esperas={}, fijada=null, bajoCursor=null;
@@ -816,7 +822,10 @@ html.intro .hero h1 .ln>span{transform:translateY(110%)}
   function soltar(col){
     cortar(col);
     var a=animDe(col), v0=a?a.playbackRate:0;
-    llevar(col, ARRANQUE, function(u){ return v0+(1-v0)*conExceso(u); });
+    llevar(col, ARRANQUE, function(u){
+      return u<SUBIDA ? v0+(PICO-v0)*suave(u/SUBIDA)
+                      : PICO+(1-PICO)*suave((u-SUBIDA)/(1-SUBIDA));
+    });
   }
 
   /* ESCRITORIO: se para la columna bajo el cursor y se suelta al salir. No
