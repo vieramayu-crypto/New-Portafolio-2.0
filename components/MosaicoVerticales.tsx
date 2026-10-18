@@ -76,6 +76,37 @@ const HUECOS_MOVIL = 6;
 const CERCA = 90;
 const LEJOS = 320;
 
+/** CUÁNTOS VÍDEOS PUEDEN ESTAR DESCARGANDO A LA VEZ.
+ *
+ *  ESTE NÚMERO ES EL ARREGLO DE "LOS VÍDEOS SE QUEDAN COLGADOS". Antes cada
+ *  celda pedía su archivo nada más montarse, así que doce descargas salían a
+ *  la red a la vez y se ahogaban entre ellas: cada una avanzaba a un doceavo
+ *  de la velocidad y ninguna juntaba búfer para empezar. Medido con la red a
+ *  10 Mbps, que no es poca: DIEZ SEGUNDOS sin que arrancara ni uno, y doce
+ *  recuadros negros esperando. Es justo lo que vio Mayurlin.
+ *
+ *  Ahora se pide de dos en dos, por orden de cercanía al centro de la
+ *  pantalla, y las demás esperan su turno enseñando su portada, que pesa
+ *  veinte veces menos. Dos y no uno porque con uno el mosaico tarda demasiado
+ *  en llenarse; dos y no cuatro porque a partir de ahí vuelven a estorbarse. */
+const DESCARGAS_A_LA_VEZ = 2;
+
+/** QUÉ FORMATO PIDE ESTE NAVEGADOR, PREGUNTADO ANTES DE PEDIR NADA.
+ *
+ *  El respaldo por `error` funciona, pero es caro: el navegador se descarga
+ *  medio mp4, descubre que no sabe decodificarlo, lo tira y empieza el webm de
+ *  cero. Medido en el Chromium de este entorno, que no lleva H.264: CINCO
+ *  SEGUNDOS tirados por pieza. `canPlayType` lo resuelve antes de gastar un
+ *  byte. El respaldo por `error` se queda igualmente, por si el navegador
+ *  dice que sí y luego no puede. */
+const prefiereWebm = (): boolean => {
+  if (typeof document === 'undefined') return false;
+  const v = document.createElement('video');
+  const mp4 = v.canPlayType('video/mp4; codecs="avc1.4d401f"');
+  if (mp4 === 'probably' || mp4 === 'maybe') return false;
+  return !!v.canPlayType('video/webm; codecs="vp9"');
+};
+
 /** EL FRENO Y EL ARRANQUE, CON CURVA. `animation-play-state` sólo tiene dos
  *  estados, así que con él no se puede frenar poco a poco. Lo que sí se puede
  *  tocar en continuo es la VELOCIDAD de la animación, `playbackRate`, por la
@@ -115,6 +146,9 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
     const rejilla = rejillaRef.current;
     const capa = capaRef.current;
     if (!rejilla || !capa) return;
+
+    /* Una sola vez por montaje: no cambia mientras la pestaña viva. */
+    const webm = prefiereWebm();
 
     const columnas = (): HTMLDivElement[] =>
       Array.from(rejilla.querySelectorAll<HTMLDivElement>('.mv-col'));
@@ -170,19 +204,83 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
       v.autoplay = true;
       v.setAttribute('playsinline', '');
       v.setAttribute('aria-label', `Pieza vertical: ${pieza.hotel}`);
-      v.preload = 'auto';
-      /* La portada tapa el hueco mientras llega el primer fotograma, así que
-         nunca se ve un recuadro negro. La saca el mismo script que comprime. */
+      v.dataset.pieza = celda.dataset.pieza || '0';
+      /* SE MONTA SIN DIRECCIÓN. El vídeo nace con su portada puesta y sin
+         pedir un solo byte; quien reparte las descargas es `encolar`. Así la
+         celda se ve desde el primer momento como una foto en vez de como un
+         agujero negro, y la red se dedica a los dos que de verdad tocan. */
+      v.preload = 'none';
       v.poster = publicVideo(`${pieza.archivo}.jpg`);
       v.dataset.respaldo = '0';
       v.addEventListener('error', () => {
-        if (v.dataset.respaldo === '1') return;
+        if (v.dataset.respaldo === '1' || !pieza.archivo) return;
         v.dataset.respaldo = '1';
-        v.src = publicVideo(`${pieza.archivo}.webm`);
+        v.src = publicVideo(`${pieza.archivo}.${webm ? 'mp4' : 'webm'}`);
         v.load();
       });
-      v.src = publicVideo(`${pieza.archivo}.mp4`);
       celda.appendChild(v);
+    };
+
+    /** ¿Está este vídeo descargando ahora mismo? Tiene dirección puesta pero
+     *  todavía no hay suficiente para reproducir sin cortes. */
+    const descargando = (v: HTMLVideoElement) => !!v.getAttribute('src') && v.readyState < 3;
+
+    /** REPARTIR LAS DESCARGAS: las más cercanas al centro primero, y antes una
+     *  pieza que no haya pedido nadie que la cuarta copia de la misma. Las
+     *  copias salen casi gratis, porque para cuando les toca el archivo ya
+     *  está en la caché del navegador. */
+    const encolar = () => {
+      const centro = window.innerHeight / 2;
+      const todos: HTMLVideoElement[] = Array.from(
+        rejilla.querySelectorAll<HTMLVideoElement>('.mv-celda video'),
+      );
+      let enMarcha = todos.filter(descargando).length;
+      if (enMarcha >= DESCARGAS_A_LA_VEZ) return;
+
+      /* DOS CONJUNTOS DISTINTOS, Y LA DIFERENCIA IMPORTA.
+         `bajando` son las piezas que están descargando AHORA: a ésas no se
+         les pide otra copia, porque serían los mismos bytes dos veces.
+         `yaPedidas` son las que ya tiene alguien, descargando o no, y sólo
+         sirve para ordenar: primero una pieza que no esté en pantalla, luego
+         las copias.
+         LA PRIMERA VERSIÓN USABA UN SOLO CONJUNTO y dejaba fuera a las copias
+         para siempre: la mitad de las celdas visibles se quedaban en su
+         portada sin moverse nunca, que es justo lo que Mayurlin vio como
+         vídeos colgados. */
+      const bajando = new Set(todos.filter(descargando).map((v) => v.dataset.pieza));
+      const yaPedidas = new Set(
+        todos.filter((v) => v.getAttribute('src')).map((v) => v.dataset.pieza),
+      );
+      const candidatos = todos
+        .filter((v) => !v.getAttribute('src'))
+        .map((v) => {
+          const r = v.getBoundingClientRect();
+          const visible = r.bottom > 0 && r.top < window.innerHeight;
+          return {
+            v,
+            visible,
+            nueva: !yaPedidas.has(v.dataset.pieza),
+            dist: Math.abs(r.top + r.height / 2 - centro),
+          };
+        })
+        .filter((c) => c.visible)
+        .sort((a, b) => (a.nueva === b.nueva ? a.dist - b.dist : a.nueva ? -1 : 1));
+
+      for (const c of candidatos) {
+        if (enMarcha >= DESCARGAS_A_LA_VEZ) break;
+        const pieza = PIEZAS[Number(c.v.dataset.pieza) || 0];
+        if (!pieza?.archivo) continue;
+        /* LA MISMA PIEZA NO SE PIDE DOS VECES A LA VEZ. Hay varias celdas por
+           pieza, y sin esto dos copias salían juntas a por el mismo archivo:
+           el doble de datos para el mismo fotograma. Se comprueba aquí dentro
+           y no al ordenar, porque la lista se calcula antes del bucle. */
+        if (bajando.has(c.v.dataset.pieza)) continue;
+        c.v.preload = 'auto';
+        c.v.src = publicVideo(`${pieza.archivo}.${webm ? 'webm' : 'mp4'}`);
+        c.v.load();
+        bajando.add(c.v.dataset.pieza);
+        enMarcha += 1;
+      }
     };
 
     /* Soltar el decodificador de verdad: parar, vaciar la dirección y pedir
@@ -257,7 +355,11 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
              `document.hidden` manda sobre todo lo demás: con la pestaña en
              segundo plano no reproduce nadie. */
           const aLaVista = !document.hidden && fuera === 0;
-          if (aLaVista && puesto.paused) {
+          /* `readyState < 3` es "todavía no hay con qué reproducir sin
+             cortes". Pedirle `play()` ahí no acelera nada y además lo deja
+             marcado como reproduciendo sin que avance un fotograma, que es
+             precisamente lo que parecía colgado. */
+          if (aLaVista && puesto.paused && puesto.readyState >= 3) {
             const intento = puesto.play();
             if (intento) intento.catch(() => undefined);
           } else if (!aLaVista && !puesto.paused) {
@@ -265,6 +367,8 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
           }
         });
       });
+
+      encolar();
     };
 
     /* ---------- frenar y arrancar con curva ---------- */

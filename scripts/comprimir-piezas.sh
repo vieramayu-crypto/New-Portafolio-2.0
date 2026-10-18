@@ -45,14 +45,19 @@ mkdir -p "$SALIDA"
 #
 # La columna que manda es la última: a 168px de ancho, que es lo que ocupa de
 # verdad una celda en el móvil, cualquiera de las tres pasa de 40 dB, que es
-# donde la diferencia deja de verse. Así que 28, que ahorra un 23% sobre 26 y
-# deja margen de sobra. Si algún día hace falta aligerar más, 30 sigue siendo
-# defendible; de ahí para arriba ya se ensucia.
+# donde la diferencia deja de verse.
+#
+# SE ELIGIÓ 30, Y NO POR AHORRAR DISCO. Con 28 el conjunto pesaba 13,8 MB y
+# Mayurlin vio los vídeos colgados: en una conexión normal, siete piezas que
+# se piden a la vez no juntan búfer para arrancar ninguna. Cada MB que se
+# quita es un segundo menos de recuadro parado. A 41,85 dB al tamaño real,
+# bajar de 28 a 30 no se ve; que el vídeo tarde diez segundos en arrancar, sí.
+# De 30 para arriba ya se ensucia, así que ahí está el suelo.
 #
 # El webm es sólo el respaldo (lo usa un navegador que no entienda H.264, que
 # hoy no es casi ninguno), así que va un punto por debajo.
-CRF_MP4=28
-CRF_WEBM=36
+CRF_MP4=30
+CRF_WEBM=38
 ANCHO=540
 ALTO=960
 
@@ -90,11 +95,16 @@ for origen in "$ORIGENES"/*.mp4 "$ORIGENES"/*.mov "$ORIGENES"/*.MP4 "$ORIGENES"/
     -c:v libvpx-vp9 -crf $CRF_WEBM -b:v 0 -row-mt 1 -deadline good -cpu-used 2 \
     -an "$SALIDA/$nombre.webm"
 
-  # La portada: un fotograma del segundo 1, que casi nunca es el negro de
-  # entrada. Es lo que se ve mientras el vídeo todavía no ha llegado.
+  # LA PORTADA ES LO PRIMERO QUE SE VE, ASÍ QUE PESA LO MÍNIMO.
+  # Mientras el vídeo no tiene ni un fotograma, la celda enseña esto; si la
+  # portada tampoco ha llegado, lo que se ve es un rectángulo negro, que es
+  # lo que salía en la captura de Mayurlin. A la mitad de ancho y con más
+  # compresión baja de unos 80 KB a unos 20: llegan las siete en el primer
+  # segundo y ninguna celda nace negra. Se nota poco porque debajo entra el
+  # vídeo a los pocos segundos.
   ffmpeg -hide_banner -v error -y -ss 1 -i "$origen" -frames:v 1 \
-    -vf "scale=${ANCHO}:${ALTO}:force_original_aspect_ratio=increase,crop=${ANCHO}:${ALTO}" \
-    -q:v 4 "$SALIDA/$nombre.jpg"
+    -vf "scale=$((ANCHO/2)):$((ALTO/2)):force_original_aspect_ratio=increase,crop=$((ANCHO/2)):$((ALTO/2))" \
+    -q:v 6 "$SALIDA/$nombre.jpg"
 done
 
 echo
