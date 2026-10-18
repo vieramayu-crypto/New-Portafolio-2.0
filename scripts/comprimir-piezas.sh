@@ -36,10 +36,23 @@ ORIGENES="${1:?Falta la carpeta de originales}"
 SALIDA="${2:?Falta la carpeta de salida}"
 mkdir -p "$SALIDA"
 
-# Calidad: 26 en H.264 y 34 en VP9 son equivalentes a esta resolución. Subir
-# el número adelgaza el archivo y ensucia la imagen.
-CRF_MP4=26
-CRF_WEBM=34
+# CALIDAD. Medido sobre la pieza más pesada (Stic Urban, azotea, 30s de 4K),
+# comparando cada compresión contra una copia casi sin comprimir:
+#
+#   crf 26 -> 5,94 MB | 38,98 dB a 540px | 45,07 dB al tamaño real de móvil
+#   crf 28 -> 4,55 MB | 37,72 dB        | 43,49 dB
+#   crf 30 -> 3,44 MB | 36,48 dB        | 41,85 dB
+#
+# La columna que manda es la última: a 168px de ancho, que es lo que ocupa de
+# verdad una celda en el móvil, cualquiera de las tres pasa de 40 dB, que es
+# donde la diferencia deja de verse. Así que 28, que ahorra un 23% sobre 26 y
+# deja margen de sobra. Si algún día hace falta aligerar más, 30 sigue siendo
+# defendible; de ahí para arriba ya se ensucia.
+#
+# El webm es sólo el respaldo (lo usa un navegador que no entienda H.264, que
+# hoy no es casi ninguno), así que va un punto por debajo.
+CRF_MP4=28
+CRF_WEBM=36
 ANCHO=540
 ALTO=960
 
