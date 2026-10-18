@@ -135,10 +135,35 @@
   background: #0f0f0e;
 }
 
-/* EL RECORTE DE `VideoNube`, TAL CUAL. El reproductor pinta una línea fina en
-   el borde DENTRO del marco, y desde fuera de un iframe de otro dominio no se
-   puede ni mirar. Se tapa creciendo 5px de alto y 2,81 por lado (5 * 9/16, en
-   proporción, para no deformar la imagen) y recortando el sobrante. */
+/* EL VÍDEO LLENA SU CELDA, Y UN 2% DE MÁS.
+   Mayurlin: "en algún punto de su reproducción le salen líneas negras en los
+   bordes, en unos a la izquierda, en otros abajo o arriba". Medido: el vídeo
+   quedaba en 230,38 x 409,58 dentro de una celda de 230,39 x 409,59, y además
+   le entraba el `object-fit: contain` que trae Tailwind por defecto, que es
+   el que deja banda cuando la proporción no cuadra al píxel.
+   Dos centésimas de píxel no se verían quietas, pero la columna se mueve con
+   `translate3d` en valores fraccionarios, así que la costura cae en un píxel
+   distinto en cada fotograma y se pasea por los cuatro bordes. Sobre marfil
+   claro, se nota.
+   `cover` quita la banda por definición y el `scale(1.02)` se come el
+   redondeo: un 2% de 230px son cuatro píxeles de margen, invisibles en el
+   encuadre y suficientes para que no asome nunca el fondo. */
+.mv-celda video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1.02);
+  transform-origin: center;
+}
+
+/* El recorte de `VideoNube`, para cuando la pieza venga del proveedor: su
+   reproductor pinta una línea fina DENTRO del marco y desde fuera de un
+   iframe de otro dominio no se puede ni mirar. Crece 5px de alto y 2,81 por
+   lado (5 * 9/16, en proporción) y el contenedor recorta el sobrante. */
 .mv-celda iframe {
   position: absolute;
   top: -5px;
