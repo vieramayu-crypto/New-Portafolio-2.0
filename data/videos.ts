@@ -186,6 +186,25 @@ export interface VideoVertical {
  */
 export const VIDEOS_VERTICALES: VideoVertical[] = [
   {
+    // LA PIEZA DE RITZ-CARLTON, Y LA ÚNICA QUE NO ESTÁ EN EL PROVEEDOR.
+    // Mayurlin la mandó como archivo para el mosaico, así que su `src` está
+    // vacío a propósito: eso la deja fuera de la galería de siempre, que es
+    // la del proveedor, y dentro del mosaico, que va con archivos nuestros.
+    //
+    // `tipo` y `titular` ESTÁN VACÍOS Y NO SE INVENTAN. El mosaico no pinta
+    // rótulos, así que hoy no hacen falta, y ya pasó con las dos de GPRO que
+    // deducir el rótulo de lo que ES el hotel sale mal: los dicta ella
+    // después de ver la pieza. Si algún día esta pieza va a una galería con
+    // firma, hay que pedírselos antes.
+    id: 'ritz-vertical',
+    hotel: 'The Ritz-Carlton Tenerife, Abama',
+    hotelId: 'ritz-carlton-abama',
+    tipo: '',
+    titular: '',
+    src: '',
+    archivo: 'ritz-vertical',
+  },
+  {
     // ABRE LA GALERÍA, y no es casualidad. Las piezas con ficha de hotel
     // detrás van primero, porque su firma enlaza a una galería de verdad; las
     // tres de Stic Urban cierran, porque ese hotel no tiene página y su firma

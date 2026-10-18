@@ -29,12 +29,6 @@ import { publicVideo } from '../src/lib/content';
  *  tocar algo visual, mirar también allí para no dejarlos distintos.
  */
 
-/** CADA COLUMNA LLEVA SU PROPIO PAR DE PIEZAS, ALTERNADO, y eso es lo único
- *  que garantiza las seis a la vez: c1 sólo enseña la 1 y la 2, c2 la 3 y la
- *  4, c3 la 5 y la 6. Como alternan, en la franja visible de cada columna
- *  siempre hay una de cada. Repartidas al azar salían entre tres y seis,
- *  porque c2 gira al revés y se va desfasando de las otras dos.
- *  En móvil hay dos columnas, así que son tríos en vez de pares. */
 /** LAS PIEZAS, SERVIDAS POR NOSOTROS, NO POR EL PROVEEDOR.
  *
  *  Sólo entran las que tienen `archivo`, es decir las que existen como vídeo
@@ -51,15 +45,23 @@ import { publicVideo } from '../src/lib/content';
  *  reanudarlo al volver, que es exactamente lo que faltaba. */
 const PIEZAS = VIDEOS_VERTICALES.filter((v) => !v.provisional && v.archivo);
 
-const PARES = [
-  [0, 1],
-  [2, 3],
-  [4, 5],
-];
-const TRIOS = [
-  [0, 1, 2],
-  [3, 4, 5],
-];
+/** CADA COLUMNA LLEVA SU PROPIO JUEGO DE PIEZAS, Y ALTERNA ENTRE ELLAS.
+ *
+ *  Es lo único que garantiza verlas todas a la vez: si una columna sólo enseña
+ *  las piezas 1 y 4, y la siguiente la 2 y la 5, en la franja visible de cada
+ *  una siempre hay piezas distintas, caiga donde caiga el bucle. Repartidas al
+ *  azar salían entre tres y seis en pantalla, porque la columna del medio gira
+ *  al revés y se va desfasando de las otras dos.
+ *
+ *  EL REPARTO SE CALCULA, NO SE ESCRIBE A MANO. Antes eran dos listas fijas,
+ *  una de pares y otra de tríos, que daban por hecho que las piezas eran seis.
+ *  Al entrar la de Ritz pasaron a siete, y la última se habría quedado fuera
+ *  sin que nadie se enterara. Ahora se reparten por turnos: con siete piezas y
+ *  tres columnas salen 3, 2 y 2; con dos columnas, 4 y 3. */
+const repartoPorColumna = (cuantas: number, piezas: number): number[][] =>
+  Array.from({ length: cuantas }, (_, c) =>
+    Array.from({ length: piezas }, (_, i) => i).filter((i) => i % cuantas === c),
+  );
 
 /** Cuántos huecos por columna antes de clonar. Los justos para cubrir la
  *  pantalla: el clonado duplica la columna para que el `translateY(-50%)`
@@ -131,14 +133,16 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
       const n = dos ? 2 : 3;
       if (n === cuantas) return;
       cuantas = n;
+      const reparto = repartoPorColumna(n, PIEZAS.length);
       columnas().forEach((col, ci) => {
         col.innerHTML = '';
-        const lista = dos ? TRIOS[ci % TRIOS.length] : PARES[ci % PARES.length];
+        const lista = reparto[ci % reparto.length];
+        if (!lista.length) return;
         const huecos = dos ? HUECOS_MOVIL : HUECOS_ESCRITORIO;
         for (let k = 0; k < huecos; k += 1) {
           const celda = document.createElement('div');
           celda.className = 'mv-celda';
-          celda.dataset.pieza = String(lista[k % lista.length] % PIEZAS.length);
+          celda.dataset.pieza = String(lista[k % lista.length]);
           col.appendChild(celda);
         }
         Array.from(col.children).forEach((c) => col.appendChild(c.cloneNode(true)));

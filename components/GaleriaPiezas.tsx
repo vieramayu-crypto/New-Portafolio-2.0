@@ -46,8 +46,13 @@ export const PIEZAS_HORIZONTALES: Pieza[] = VIDEOS_HORIZONTALES.map((v) => ({
   hotelId: v.hotelId,
 }));
 
+/** OJO CON EL `v.src`: no es decorativo. Desde que hay piezas que sólo
+ *  existen como archivo nuestro (`archivo`, sin copia en el proveedor), una
+ *  de ellas aquí dentro sería un marco apuntando a ninguna parte. Esta
+ *  galería es la del proveedor, así que sólo entra lo que tiene dirección
+ *  suya. */
 export const PIEZAS_VERTICALES: Pieza[] = VIDEOS_VERTICALES.filter(
-  (v) => !v.provisional,
+  (v) => !v.provisional && v.src,
 ).map((v) => ({
   id: v.id,
   formato: 'v' as Formato,
