@@ -98,27 +98,81 @@
    Mayurlin: "el corte superior e inferior es abrupto, salen cortados los
    vídeos a medida que se van reproduciendo". Tenía razón: la cinta entra y
    sale por una línea recta, y sobre marfil claro ese filo se ve.
-   Se hace con una MÁSCARA sobre la rejilla, no con una capa de color encima.
-   La diferencia importa: una capa habría que pintarla del marfil exacto de la
-   sección, y hay dos marfiles (el normal y el de `alterno`), así que a la
-   primera que alguien cambie uno, el velo deja de pegar. La máscara no pinta
-   nada: vuelve transparente el propio vídeo, y por debajo asoma el fondo que
-   haya, sea el que sea.
+
+   SE HACE CON UNA MÁSCARA, no con una capa de color encima. Una capa habría
+   que pintarla del marfil exacto de la sección, y hay dos marfiles (el normal
+   y el de `alterno`), así que a la primera que alguien cambie uno el velo
+   deja de pegar. La máscara no pinta nada: vuelve transparente el propio
+   vídeo, y por debajo asoma el fondo que haya, sea el que sea.
+
+   Y VA EN CURVA, NO EN RECTA, que es la segunda corrección de Mayurlin: "se
+   nota dónde comienza y dónde finaliza, hay un punto donde se percibe el
+   on-off". Un degradado lineal cambia de pendiente DE GOLPE en sus dos
+   extremos -- de nada a bajar, y de bajar a nada -- y el ojo ve esos dos
+   codos aunque las opacidades sean correctas. Estas nueve paradas son una
+   `smoothstep` (t²·(3−2t)), que llega a los dos extremos con pendiente cero:
+   el velo nace y muere sin esquina. La ALTURA no cambia, que ella lo pidió
+   expresamente; lo único que cambia es el reparto.
+
+   Medido aplanando las celdas a un gris plano, para que lo único que varíe
+   sea la máscara, y mirando el mayor cambio de pendiente entre dos tramos de
+   3px (el "codo"), con el mismo recorrido 243 -> 16 en los dos casos:
+
+              recto   curva
+     móvil      15      8     (velo de 45px)
+     escritorio  7      4     (velo de 86px)
+
    Va en la rejilla y no en cada columna para que el desvanecido sea una sola
    línea recta de lado a lado, y no un escalón por columna. */
 .mv-rejilla {
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
+    rgba(0, 0, 0, 0.028) calc(var(--mv-velo) * 0.1),
+    rgba(0, 0, 0, 0.104) calc(var(--mv-velo) * 0.2),
+    rgba(0, 0, 0, 0.216) calc(var(--mv-velo) * 0.3),
+    rgba(0, 0, 0, 0.352) calc(var(--mv-velo) * 0.4),
+    rgba(0, 0, 0, 0.500) calc(var(--mv-velo) * 0.5),
+    rgba(0, 0, 0, 0.648) calc(var(--mv-velo) * 0.6),
+    rgba(0, 0, 0, 0.784) calc(var(--mv-velo) * 0.7),
+    rgba(0, 0, 0, 0.896) calc(var(--mv-velo) * 0.8),
+    rgba(0, 0, 0, 0.972) calc(var(--mv-velo) * 0.9),
     #000 var(--mv-velo),
     #000 calc(100% - var(--mv-velo)),
+    rgba(0, 0, 0, 0.972) calc(100% - var(--mv-velo) * 0.9),
+    rgba(0, 0, 0, 0.896) calc(100% - var(--mv-velo) * 0.8),
+    rgba(0, 0, 0, 0.784) calc(100% - var(--mv-velo) * 0.7),
+    rgba(0, 0, 0, 0.648) calc(100% - var(--mv-velo) * 0.6),
+    rgba(0, 0, 0, 0.500) calc(100% - var(--mv-velo) * 0.5),
+    rgba(0, 0, 0, 0.352) calc(100% - var(--mv-velo) * 0.4),
+    rgba(0, 0, 0, 0.216) calc(100% - var(--mv-velo) * 0.3),
+    rgba(0, 0, 0, 0.104) calc(100% - var(--mv-velo) * 0.2),
+    rgba(0, 0, 0, 0.028) calc(100% - var(--mv-velo) * 0.1),
     transparent 100%
   );
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
+    rgba(0, 0, 0, 0.028) calc(var(--mv-velo) * 0.1),
+    rgba(0, 0, 0, 0.104) calc(var(--mv-velo) * 0.2),
+    rgba(0, 0, 0, 0.216) calc(var(--mv-velo) * 0.3),
+    rgba(0, 0, 0, 0.352) calc(var(--mv-velo) * 0.4),
+    rgba(0, 0, 0, 0.500) calc(var(--mv-velo) * 0.5),
+    rgba(0, 0, 0, 0.648) calc(var(--mv-velo) * 0.6),
+    rgba(0, 0, 0, 0.784) calc(var(--mv-velo) * 0.7),
+    rgba(0, 0, 0, 0.896) calc(var(--mv-velo) * 0.8),
+    rgba(0, 0, 0, 0.972) calc(var(--mv-velo) * 0.9),
     #000 var(--mv-velo),
     #000 calc(100% - var(--mv-velo)),
+    rgba(0, 0, 0, 0.972) calc(100% - var(--mv-velo) * 0.9),
+    rgba(0, 0, 0, 0.896) calc(100% - var(--mv-velo) * 0.8),
+    rgba(0, 0, 0, 0.784) calc(100% - var(--mv-velo) * 0.7),
+    rgba(0, 0, 0, 0.648) calc(100% - var(--mv-velo) * 0.6),
+    rgba(0, 0, 0, 0.500) calc(100% - var(--mv-velo) * 0.5),
+    rgba(0, 0, 0, 0.352) calc(100% - var(--mv-velo) * 0.4),
+    rgba(0, 0, 0, 0.216) calc(100% - var(--mv-velo) * 0.3),
+    rgba(0, 0, 0, 0.104) calc(100% - var(--mv-velo) * 0.2),
+    rgba(0, 0, 0, 0.028) calc(100% - var(--mv-velo) * 0.1),
     transparent 100%
   );
 }
@@ -296,33 +350,16 @@
     --mv-dur: 58.4s;
   }
 
-  /* EN ESCRITORIO EL DESVANECIDO DE ARRIBA SE MIDE EN PÍXELES, NO EN %.
-     Aquí la rejilla ocupa la sección entera, así que empieza en y=0, por
-     DEBAJO de la cabecera, que mide 90px y es una banda blanca opaca. Con el
-     7-9% de móvil, los 81px de desvanecido caían enteros detrás de ella:
-     medido, el píxel de la fila 60 seguía siendo blanco de cabecera y el
-     mosaico aparecía de golpe en el 90. Así que el velo arranca a los 94px,
-     justo donde acaba la cabecera, y dura 86 más. Abajo no hay nada que
-     esquivar, así que basta con los mismos 86px. */
+  /* EN ESCRITORIO EL VELO SE MIDE EN PÍXELES, no en %, porque aquí la
+     rejilla ocupa la sección entera y un porcentaje de 900px se dispara.
+     ARRANCA EN EL BORDE DE ARRIBA, en 0. Antes empezaba a los 94px para
+     esquivar la cabecera, y el resultado era lo que vio Mayurlin: "dejaste
+     de aprovechar el 100% del bloque, arriba hay un ligero espacio que no
+     debería estar". Ahora las columnas llegan al borde y el degradado
+     empieza justo ahí. Lo que queda detrás de la cabecera, detrás queda: es
+     una banda blanca opaca y no hay nada que ganar pintando debajo. */
   .mv-rejilla {
-    --mv-velo-tope: 94px;
-    --mv-velo-alto: 86px;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent var(--mv-velo-tope),
-      #000 calc(var(--mv-velo-tope) + var(--mv-velo-alto)),
-      #000 calc(100% - var(--mv-velo-alto)),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent var(--mv-velo-tope),
-      #000 calc(var(--mv-velo-tope) + var(--mv-velo-alto)),
-      #000 calc(100% - var(--mv-velo-alto)),
-      transparent 100%
-    );
+    --mv-velo: 86px;
   }
 
   .mv-c1 {
