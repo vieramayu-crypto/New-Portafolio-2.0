@@ -146,9 +146,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             Móvil: columna en flujo con dos grupos separados por
             `justify-between`. Escritorio: exactamente donde estaba, a media
             altura sobre el margen izquierdo. */}
+        {/* EN ESCRITORIO EL TEXTO SE CENTRA SOBRE EL HUECO QUE LE QUEDA, NO
+            SOBRE LA SECCIÓN ENTERA.
+
+            Antes iba a `top-1/2` de la sección, y la banda de cifras flota
+            sobre ese mismo espacio. En una ventana ancha y baja -- un portátil
+            con la barra del navegador, que es lo normal -- el párrafo se metía
+            debajo de la banda. Medido barriendo nueve anchos por siete altos:
+            a 1440x768 la banda le comía 18px, a 1512x768 30px y a 1920x700
+            los 76px enteros, o sea sus dos últimas líneas.
+
+            Ahora el bloque ocupa desde DEBAJO DE LA CABECERA (90px medidos,
+            más aire) hasta donde empieza la banda
+            (su alto, su separación del borde y 20px de aire) y se centra ahí
+            dentro. Lo de la cabecera no es un detalle: al centrar sobre el
+            hueco sin contarla, el rótulo "ESTUDIO · HOTELERÍA" se metía
+            debajo de ella a 1920x700, y a 1440x900 la tocaba por 5px. El solape deja de ser posible por construcción, a
+            cualquier proporción de pantalla. En una ventana alta el texto sube
+            unos 60px respecto a donde estaba; es el precio, y es el que
+            Mayurlin eligió al pedir que no se tape nunca. */}
         <div
           className="relative z-[3] flex flex-1 flex-col justify-between gap-10 px-7 pb-[clamp(26px,4.5vh,44px)] pt-[calc(39.8vw_+_56px)]
-                     md:absolute md:inset-y-auto md:left-[clamp(22px,3.4vw,54px)] md:right-auto md:top-1/2 md:block md:-translate-y-[52%] md:gap-0 md:p-0"
+                     md:absolute md:bottom-[calc(76px_+_clamp(22px,3vw,42px)_+_20px)] md:left-[clamp(22px,3.4vw,54px)] md:right-auto md:top-[102px] md:translate-y-0 md:flex-col md:justify-center md:gap-0 md:p-0"
         >
           {/* GRUPO SUPERIOR: el rótulo y el titular se leen como una unidad.
               El hueco entre ellos era de 57 px medidos y dejaba el rótulo
@@ -157,7 +176,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.1)}
               animate={animate}
-              className="m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
+              className="mt-hero-rotulo m-0 mb-5 text-[10px] uppercase tracking-[0.24em] text-white/[.78] md:mb-10 md:tracking-[0.28em] md:text-white/[.72]"
             >
               {hero.eyebrow}
             </motion.p>
@@ -166,6 +185,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
                 audiovisual para / hoteles de lujo." -- sale del ancho máximo
                 en `ch`, no de saltos escritos a mano: así aguanta otros anchos
                 y otro idioma.
+
+                EL CUERPO TAMBIÉN MIRA EL ALTO, PERO SÓLO EN VENTANAS BAJAS.
+                Escalar sólo con `vw` dejaba el titular en 104px dentro de una
+                ventana de 700px de alto: el bloque medía 648px y encima de la
+                banda cabían 562, así que no entraba ni colocándolo perfecto.
+                Pero meter el alto en el `clamp` de aquí encogía también la
+                composición que Mayurlin aprobó a 1440x900 (de 93,6 a 88,2px),
+                y eso no se toca. Así que la regla vive en `index.css`, bajo
+                `.mt-hero-titular`, y sólo se activa por debajo de 860px de
+                alto. Ver allí los números.
 
                 EL CUERPO LO MANDA LA FIGURA, no una cifra redonda. El encargo
                 pedía 34-40 px a 390, pero a ese tamaño el renglón más largo
@@ -177,7 +206,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.h1
               {...rise(0.18)}
               animate={animate}
-              className="m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,6.5vw,104px)] md:leading-[1.05] md:tracking-[-0.045em]"
+              className="mt-hero-titular m-0 max-w-[13ch] font-serif text-[clamp(29px,8.3vw,35px)] font-normal leading-[1.12] tracking-[-0.03em] md:max-w-[16ch] md:text-[clamp(48px,6.5vw,104px)] md:leading-[1.05] md:tracking-[-0.045em]"
             >
               {hero.titleLead} <i>{hero.titleEmphasis}</i>
             </motion.h1>
@@ -198,7 +227,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ introDone, onOpenAvail
             <motion.p
               {...rise(0.26)}
               animate={animate}
-              className="m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_22px_rgba(0,0,0,.26)] [text-wrap:balance] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
+              className="mt-hero-parrafo m-0 max-w-[40ch] text-[16px] font-medium leading-[1.5] text-white [text-shadow:0_1px_22px_rgba(0,0,0,.26)] [text-wrap:balance] md:mt-11 md:max-w-[30ch] md:text-[clamp(20px,1.6vw,26px)] md:font-normal md:leading-[1.45]"
             >
               {hero.subline}
             </motion.p>

@@ -73,12 +73,44 @@
 
   --mv-margen: 24px;
   --mv-gap: 9px;
+  /* Cuánto mide el desvanecido de arriba y de abajo. En móvil, algo menos:
+     la franja visible es más corta y un velo grande se comería una pieza. */
+  --mv-velo: 7%;
   --mv-col: calc((100vw - 2 * var(--mv-margen) - var(--mv-gap)) / 2);
   --mv-alto: calc(var(--mv-col) * 16 / 9);
   --mv-paso: calc(var(--mv-alto) + var(--mv-gap));
   /* Un 30% más lento que en escritorio: 58,4 / 0,7. Pedido de ella al
      probarlo en el móvil. */
   --mv-dur: 83.4s;
+}
+
+/* LOS BORDES DE ARRIBA Y DE ABAJO NO SE CORTAN: SE DESVANECEN.
+   Mayurlin: "el corte superior e inferior es abrupto, salen cortados los
+   vídeos a medida que se van reproduciendo". Tenía razón: la cinta entra y
+   sale por una línea recta, y sobre marfil claro ese filo se ve.
+   Se hace con una MÁSCARA sobre la rejilla, no con una capa de color encima.
+   La diferencia importa: una capa habría que pintarla del marfil exacto de la
+   sección, y hay dos marfiles (el normal y el de `alterno`), así que a la
+   primera que alguien cambie uno, el velo deja de pegar. La máscara no pinta
+   nada: vuelve transparente el propio vídeo, y por debajo asoma el fondo que
+   haya, sea el que sea.
+   Va en la rejilla y no en cada columna para que el desvanecido sea una sola
+   línea recta de lado a lado, y no un escalón por columna. */
+.mv-rejilla {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--mv-velo),
+    #000 calc(100% - var(--mv-velo)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--mv-velo),
+    #000 calc(100% - var(--mv-velo)),
+    transparent 100%
+  );
 }
 
 .mv-col {
@@ -252,6 +284,35 @@
     --mv-gap: 13px;
     --mv-col: clamp(170px, 16vw, 250px);
     --mv-dur: 58.4s;
+  }
+
+  /* EN ESCRITORIO EL DESVANECIDO DE ARRIBA SE MIDE EN PÍXELES, NO EN %.
+     Aquí la rejilla ocupa la sección entera, así que empieza en y=0, por
+     DEBAJO de la cabecera, que mide 90px y es una banda blanca opaca. Con el
+     7-9% de móvil, los 81px de desvanecido caían enteros detrás de ella:
+     medido, el píxel de la fila 60 seguía siendo blanco de cabecera y el
+     mosaico aparecía de golpe en el 90. Así que el velo arranca a los 94px,
+     justo donde acaba la cabecera, y dura 86 más. Abajo no hay nada que
+     esquivar, así que basta con los mismos 86px. */
+  .mv-rejilla {
+    --mv-velo-tope: 94px;
+    --mv-velo-alto: 86px;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--mv-velo-tope),
+      #000 calc(var(--mv-velo-tope) + var(--mv-velo-alto)),
+      #000 calc(100% - var(--mv-velo-alto)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--mv-velo-tope),
+      #000 calc(var(--mv-velo-tope) + var(--mv-velo-alto)),
+      #000 calc(100% - var(--mv-velo-alto)),
+      transparent 100%
+    );
   }
 
   .mv-c1 {
