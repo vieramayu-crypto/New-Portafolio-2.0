@@ -468,3 +468,56 @@ body {
 .cursor-grabbing {
   cursor: grabbing;
 }
+
+
+/* ============================================================
+   EL HERO EN VENTANAS BAJAS
+   ============================================================
+
+   EL FALLO. El bloque de texto se centraba sobre la sección entera y la
+   banda de cifras flota sobre ese mismo espacio, así que en una ventana
+   ancha y baja -- un portátil con la barra del navegador, que es lo normal --
+   la banda se comía el párrafo. Barrido de nueve anchos por siete altos:
+   a 1440x768 le comía 18px, a 1512x768 30px, a 1920x700 los 76px enteros,
+   o sea sus dos últimas líneas. Mayurlin: "no solo que está mal, sino que es
+   un error imperdonable".
+
+   EL ARREGLO VA EN DOS PIEZAS. La primera está en `HeroSection.tsx`: el
+   bloque ya no se centra sobre la sección sino sobre el hueco real, de
+   debajo de la cabecera a donde empieza la banda. Eso solo no basta: a
+   1920x700 el texto medía 648px y en ese hueco caben 476, así que no entraba
+   ni colocándolo perfecto.
+
+   LA SEGUNDA PIEZA ES ÉSTA, y va aquí y no en las clases del componente por
+   un motivo concreto: metiendo el alto en el `clamp` de Tailwind, el titular
+   encogía TAMBIÉN a 1440x900 (de 93,6 a 88,2px), que es la composición que
+   ella aprobó. Con el corte en 860px de alto, a 1440x900 no cambia
+   absolutamente nada y sólo encoge donde de verdad falta sitio.
+
+   Medido después, con el aire que queda entre el párrafo y la banda:
+     1440x900   titular 93,6px (igual que siempre)   52px de aire
+     1512x800   titular 80px                         24px
+     1440x768   titular 76,8px                       19px
+     1920x700   titular 70px                         unos 20px
+     1280x600   titular 60px                         28px
+   Y el barrido entero, 63 combinaciones, sin un solo solape.
+   ============================================================ */
+
+/* LA CLASE VA REPETIDA A PROPÓSITO, no es un error de copiar y pegar.
+   Tailwind escribe sus utilidades DESPUÉS de esta hoja en el archivo final
+   (medido: mi regla en el byte 38.933 y la suya en el 52.636), y como las dos
+   tienen la misma especificidad, ganaba la suya y esto no hacía nada.
+   Repetir la clase sube la especificidad a 0,2,0 y manda ésta, sin tener que
+   recurrir a `!important`. */
+@media (min-width: 768px) and (max-height: 860px) {
+  .mt-hero-titular.mt-hero-titular {
+    font-size: clamp(44px, min(6.5vw, 10vh), 104px);
+  }
+  .mt-hero-parrafo.mt-hero-parrafo {
+    margin-top: min(44px, 4.8vh);
+    font-size: clamp(18px, min(1.6vw, 2.9vh), 26px);
+  }
+  .mt-hero-rotulo.mt-hero-rotulo {
+    margin-bottom: min(40px, 4.4vh);
+  }
+}
