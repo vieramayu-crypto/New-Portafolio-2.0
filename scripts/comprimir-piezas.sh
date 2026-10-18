@@ -61,6 +61,34 @@ CRF_WEBM=38
 ANCHO=540
 ALTO=960
 
+# EL RECORTE QUE SE COME LAS BANDAS NEGRAS DEL BORDE.
+#
+# Mayurlin: "en algún punto de su reproducción le salen líneas negras en los
+# bordes, en unos a la izquierda, en otros abajo o arriba". No era la web: las
+# bandas vienen DENTRO de los archivos, en momentos sueltos del metraje, y se
+# notan porque el mosaico va sobre marfil claro.
+#
+# CÓMO SE MIDE UNA BANDA, que es lo que costó. No vale mirar si el borde está
+# oscuro: una escena oscura también lo está. Lo que delata a una banda es que
+# la línea del borde sea mucho más oscura que la de cinco píxeles adentro,
+# donde el contenido sigue intacto. Se mide con `blend=subtract` entre las dos
+# líneas, fotograma a fotograma de todo el clip. Resultado sobre los
+# originales, contando fotogramas con más de 30 niveles de diferencia:
+#
+#   deltapark   40 en los CUATRO bordes (hasta 57)
+#   stic-roof   29 arriba (hasta 206)
+#   stic-rest.  35 a la izquierda (hasta 85)
+#   gpro-dia     4 abajo (hasta 150)
+#   ritz         4 a la derecha, 1 abajo
+#
+# Con el 1% por lado no queda ninguno. Se probó también el 1,5% y no mejora
+# nada: lo único que sigue saliendo es el marco oscuro de una puerta de cristal
+# en la pieza de Ritz, que es contenido y no un defecto, así que se queda el 1%
+# y el encuadre se mueve lo mínimo. Al recortar ANTES de escalar no cuesta
+# nitidez, porque sale igualmente de una imagen mucho mayor que los 540
+# finales.
+MARGEN=0.98
+
 for origen in "$ORIGENES"/*.mp4 "$ORIGENES"/*.mov "$ORIGENES"/*.MP4 "$ORIGENES"/*.MOV; do
   [ -e "$origen" ] || continue
   nombre="$(basename "${origen%.*}")"
@@ -84,14 +112,14 @@ for origen in "$ORIGENES"/*.mp4 "$ORIGENES"/*.mov "$ORIGENES"/*.MP4 "$ORIGENES"/
 
   # shellcheck disable=SC2086
   ffmpeg -hide_banner -v error -y -i "$origen" $fin \
-    -vf "scale=${ANCHO}:${ALTO}:force_original_aspect_ratio=increase,crop=${ANCHO}:${ALTO},format=yuv420p" \
+    -vf "crop=iw*${MARGEN}:ih*${MARGEN},scale=${ANCHO}:${ALTO}:force_original_aspect_ratio=increase,crop=${ANCHO}:${ALTO},format=yuv420p" \
     -c:v libx264 -profile:v high -preset slow -crf $CRF_MP4 \
     -g 48 -keyint_min 48 -sc_threshold 0 \
     -movflags +faststart -an "$SALIDA/$nombre.mp4"
 
   # shellcheck disable=SC2086
   ffmpeg -hide_banner -v error -y -i "$origen" $fin \
-    -vf "scale=${ANCHO}:${ALTO}:force_original_aspect_ratio=increase,crop=${ANCHO}:${ALTO},format=yuv420p" \
+    -vf "crop=iw*${MARGEN}:ih*${MARGEN},scale=${ANCHO}:${ALTO}:force_original_aspect_ratio=increase,crop=${ANCHO}:${ALTO},format=yuv420p" \
     -c:v libvpx-vp9 -crf $CRF_WEBM -b:v 0 -row-mt 1 -deadline good -cpu-used 2 \
     -an "$SALIDA/$nombre.webm"
 
@@ -103,7 +131,7 @@ for origen in "$ORIGENES"/*.mp4 "$ORIGENES"/*.mov "$ORIGENES"/*.MP4 "$ORIGENES"/
   # segundo y ninguna celda nace negra. Se nota poco porque debajo entra el
   # vídeo a los pocos segundos.
   ffmpeg -hide_banner -v error -y -ss 1 -i "$origen" -frames:v 1 \
-    -vf "scale=$((ANCHO/2)):$((ALTO/2)):force_original_aspect_ratio=increase,crop=$((ANCHO/2)):$((ALTO/2))" \
+    -vf "crop=iw*${MARGEN}:ih*${MARGEN},scale=$((ANCHO/2)):$((ALTO/2)):force_original_aspect_ratio=increase,crop=$((ANCHO/2)):$((ALTO/2))" \
     -q:v 6 "$SALIDA/$nombre.jpg"
 done
 
