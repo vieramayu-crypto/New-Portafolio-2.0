@@ -7,6 +7,14 @@ export function publicImage(filename: string): string {
   return `${import.meta.env.BASE_URL}images/${filename}`;
 }
 
+/** Los vídeos que servimos nosotros, no el proveedor, en `public/videos/`.
+ *  Mismo criterio que las fotos: la dirección se compone con `BASE_URL`, que
+ *  vale igual en la subcarpeta de GitHub Pages que en la raíz del dominio
+ *  propio, así que no hay que tocar nada el día de la migración. */
+export function publicVideo(filename: string): string {
+  return `${import.meta.env.BASE_URL}videos/${filename}`;
+}
+
 /** Los dos archivos que Mayurlin puede editar en su hosting sin recompilar:
  *  uno por idioma. El inglés vive aparte a propósito, para que pueda retocar
  *  una frase en español sin miedo a romper la versión inglesa, y al revés. */

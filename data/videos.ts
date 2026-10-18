@@ -156,6 +156,20 @@ export interface VideoVertical {
   hotelId?: string;
   /** Marca las que hay que sustituir antes de migrar al dominio propio. */
   provisional?: boolean;
+  /** EL MISMO VÍDEO, PERO SERVIDO POR NOSOTROS. Nombre del archivo, sin
+   *  extensión, dentro de `public/videos/`: de ahí salen el `.mp4`, el
+   *  `.webm` y el `.jpg` de portada que genera
+   *  `scripts/comprimir-piezas.sh`.
+   *
+   *  Lo usa el mosaico de la ruta de prueba, que no puede ir con marcos del
+   *  proveedor: con seis a la vez el navegador se queda sin decodificadores
+   *  y los clips acaban en negro o congelados al volver a la pestaña. Con
+   *  vídeo nativo el código puede pausar el que no se ve y reanudarlo al
+   *  volver, que es justo lo que un marco de otro dominio no deja hacer.
+   *
+   *  La galería de siempre sigue usando `src`, el reproductor del proveedor:
+   *  allí sólo hay uno a la vez y no hay nada que arreglar. */
+  archivo?: string;
 }
 
 /** Las piezas verticales del bloque de vídeos de Inicio.
@@ -184,6 +198,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     // un spa de 2.000 m² -- y no sobre lo que enseña el plano. Si la pieza va
     // de otra cosa, es cambiar estas dos líneas.
     id: 'deltapark-bienestar',
+    archivo: 'deltapark-bienestar',
     hotel: 'Deltapark Vitalresort',
     hotelId: 'deltapark-vitalresort',
     tipo: 'Bienestar',
@@ -216,6 +231,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
     // cualquiera. "Un día" es suyo tal cual: dice que es un recorrido y no un
     // espacio, y no se confunde con el de al lado.
     id: 'gpro-habitacion',
+    archivo: 'gpro-habitacion',
     hotel: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
     tipo: 'Habitación',
@@ -226,6 +242,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
   },
   {
     id: 'gpro-dia',
+    archivo: 'gpro-dia',
     hotel: 'GPRO Valparaíso Palace & Spa',
     hotelId: 'gpro-valparaiso',
     tipo: 'Un día',
@@ -238,6 +255,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
   // restaurante y del spa; Mayurlin la quiere primera de las tres.
   {
     id: 'stic-roof',
+    archivo: 'stic-roof',
     hotel: 'Stic Urban',
     tipo: 'Azotea',
     titular: 'La azotea a la hora en que justifica la reserva.',
@@ -247,6 +265,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
   },
   {
     id: 'stic-restaurante',
+    archivo: 'stic-restaurante',
     hotel: 'Stic Urban',
     tipo: 'Restaurante',
     titular: 'La sala llena, a la hora a la que de verdad se llena.',
@@ -256,6 +275,7 @@ export const VIDEOS_VERTICALES: VideoVertical[] = [
   },
   {
     id: 'stic-spa',
+    archivo: 'stic-spa',
     hotel: 'Stic Urban',
     tipo: 'Spa',
     titular: 'Un spa se enseña por la luz y el ritmo, no por el catálogo.',

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './mosaico-verticales.css';
-import { PIEZAS_VERTICALES } from './GaleriaPiezas';
+import { VIDEOS_VERTICALES } from '../data/videos';
+import { publicVideo } from '../src/lib/content';
 
 /** EL MOSAICO DE PIEZAS VERTICALES. HOY SÓLO VIVE EN LA RUTA DE PRUEBA.
  *
@@ -34,6 +35,22 @@ import { PIEZAS_VERTICALES } from './GaleriaPiezas';
  *  siempre hay una de cada. Repartidas al azar salían entre tres y seis,
  *  porque c2 gira al revés y se va desfasando de las otras dos.
  *  En móvil hay dos columnas, así que son tríos en vez de pares. */
+/** LAS PIEZAS, SERVIDAS POR NOSOTROS, NO POR EL PROVEEDOR.
+ *
+ *  Sólo entran las que tienen `archivo`, es decir las que existen como vídeo
+ *  comprimido en `public/videos/`. Las demás no se pintan: más vale un hueco
+ *  que un recuadro roto.
+ *
+ *  POR QUÉ NO EL REPRODUCTOR DEL PROVEEDOR. Un marco de otro dominio es una
+ *  caja cerrada: no se le puede decir que empiece, que pare, ni preguntarle si
+ *  está reproduciendo. Con seis a la vez eso se paga caro, y Mayurlin lo vio
+ *  en su móvil: al volver al navegador después de un par de minutos, los clips
+ *  salían en negro o congelados. El navegador le quita los decodificadores a
+ *  una pestaña que pasa a segundo plano, y al volver los que no caben no los
+ *  recuperan. Con vídeo nativo el código SÍ puede pausar el que no se ve y
+ *  reanudarlo al volver, que es exactamente lo que faltaba. */
+const PIEZAS = VIDEOS_VERTICALES.filter((v) => !v.provisional && v.archivo);
+
 const PARES = [
   [0, 1],
   [2, 3],
@@ -121,7 +138,7 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
         for (let k = 0; k < huecos; k += 1) {
           const celda = document.createElement('div');
           celda.className = 'mv-celda';
-          celda.dataset.pieza = String(lista[k % lista.length] % PIEZAS_VERTICALES.length);
+          celda.dataset.pieza = String(lista[k % lista.length] % PIEZAS.length);
           col.appendChild(celda);
         }
         Array.from(col.children).forEach((c) => col.appendChild(c.cloneNode(true)));
@@ -132,8 +149,72 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
 
     /* `display: none` NO cuenta como fuera de pantalla: ocultar un iframe no
        impide que descargue. Por eso la columna escondida se vacía entera. */
+    /* EL VÍDEO SE MONTA A MANO, NO CON `<source>` HIJOS.
+       Es un fallo real ya visto en esta web, no una manía: si la fuente
+       primaria empieza a descargar y falla al decodificar A MITAD, algunos
+       navegadores disparan `error` en el `<video>` en vez de pasar a la
+       siguiente `<source>`; el respaldo automático sólo vale en la elección
+       inicial. Así que se pone el mp4 a mano y, si falla, se reintenta con el
+       webm desde el manejador de error. Mismo arreglo que en
+       `components/IntroLoader.tsx`. */
+    const pintar = (celda: HTMLDivElement) => {
+      const pieza = PIEZAS[Number(celda.dataset.pieza) || 0];
+      if (!pieza?.archivo) return;
+      const v = document.createElement('video');
+      v.muted = true;
+      v.loop = true;
+      v.autoplay = true;
+      v.setAttribute('playsinline', '');
+      v.setAttribute('aria-label', `Pieza vertical: ${pieza.hotel}`);
+      v.preload = 'auto';
+      /* La portada tapa el hueco mientras llega el primer fotograma, así que
+         nunca se ve un recuadro negro. La saca el mismo script que comprime. */
+      v.poster = publicVideo(`${pieza.archivo}.jpg`);
+      v.dataset.respaldo = '0';
+      v.addEventListener('error', () => {
+        if (v.dataset.respaldo === '1') return;
+        v.dataset.respaldo = '1';
+        v.src = publicVideo(`${pieza.archivo}.webm`);
+        v.load();
+      });
+      v.src = publicVideo(`${pieza.archivo}.mp4`);
+      celda.appendChild(v);
+    };
+
+    /* Soltar el decodificador de verdad: parar, vaciar la dirección y pedir
+       una carga en vacío. Quitar el elemento a secas deja al navegador con el
+       búfer en la mano un rato largo. */
+    const tirar = (celda: HTMLDivElement, v: HTMLVideoElement) => {
+      v.pause();
+      v.removeAttribute('src');
+      v.load();
+      celda.removeChild(v);
+    };
+
+    const vaciar = () => {
+      columnas().forEach((col) => {
+        col.querySelectorAll<HTMLDivElement>('.mv-celda').forEach((celda) => {
+          const v = celda.firstElementChild as HTMLVideoElement | null;
+          if (v?.tagName === 'VIDEO') tirar(celda, v);
+        });
+      });
+    };
+
     const repartir = () => {
       const alto = window.innerHeight;
+
+      /* CON LA PESTAÑA EN SEGUNDO PLANO NO VIVE NINGUNO. No basta con
+         pausarlos: un vídeo pausado sigue teniendo su decodificador cogido, y
+         el navegador se los quita a las pestañas de atrás precisamente porque
+         son un recurso escaso. Soltarlos nosotros y volver a montarlos al
+         regresar es lo que evita el negro que vio Mayurlin. Los archivos ya
+         están en la caché del navegador, así que volver no cuesta descarga.
+         Esto tiene que estar DENTRO de `repartir`, no sólo en el manejador de
+         visibilidad: el reloj de medio segundo los remontaría igualmente. */
+      if (document.hidden) {
+        vaciar();
+        return;
+      }
 
       /* NI UN REPRODUCTOR HASTA QUE EL BLOQUE ESTÁ LLEGANDO. Sin esto, con la
          página recién abierta ya había CUATRO vivos: el bloque es la tercera
@@ -143,41 +224,40 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
          con esta puerta: cero al abrir y cero al dejar el bloque atrás. */
       const marco = rejilla.getBoundingClientRect();
       if (marco.top - alto > 200 || marco.bottom < -200) {
-        columnas().forEach((col) => {
-          col.querySelectorAll('iframe').forEach((f) => f.remove());
-        });
+        vaciar();
         return;
       }
       columnas().forEach((col) => {
         const oculta = getComputedStyle(col).display === 'none';
         col.querySelectorAll<HTMLDivElement>('.mv-celda').forEach((celda) => {
-          const marco = celda.firstElementChild;
-          const tiene = marco?.tagName === 'IFRAME';
+          const puesto = celda.firstElementChild as HTMLVideoElement | null;
+          const tiene = puesto?.tagName === 'VIDEO';
           if (oculta) {
-            if (tiene && marco) celda.removeChild(marco);
+            if (tiene && puesto) tirar(celda, puesto);
             return;
           }
           const r = celda.getBoundingClientRect();
           const fuera = Math.max(0, Math.max(r.top - alto, -r.bottom));
           if (!tiene && fuera <= CERCA) {
-            const pieza = PIEZAS_VERTICALES[Number(celda.dataset.pieza) || 0];
-            if (!pieza) return;
-            /* El bloque del proveedor, sin tocarlo: los mismos atributos que
-               `VideoNube` y la dirección intacta. Todo lo que se le ha añadido
-               alguna vez a un iframe de éstos ha empeorado la reproducción. */
-            const f = document.createElement('iframe');
-            f.setAttribute(
-              'allow',
-              'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share',
-            );
-            f.setAttribute('allowfullscreen', '');
-            f.setAttribute('frameborder', '0');
-            f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-            f.setAttribute('title', `Pieza vertical: ${pieza.hotel}`);
-            f.src = pieza.src;
-            celda.appendChild(f);
-          } else if (tiene && marco && fuera > LEJOS) {
-            celda.removeChild(marco);
+            pintar(celda);
+            return;
+          }
+          if (!tiene || !puesto) return;
+          if (fuera > LEJOS) {
+            tirar(celda, puesto);
+            return;
+          }
+          /* SÓLO SUENA LO QUE SE VE. Entre `CERCA` y `LEJOS` el vídeo existe
+             pero está parado: así el decodificador queda libre para la celda
+             que sí está en pantalla, y volver a ella no cuesta una descarga.
+             `document.hidden` manda sobre todo lo demás: con la pestaña en
+             segundo plano no reproduce nadie. */
+          const aLaVista = !document.hidden && fuera === 0;
+          if (aLaVista && puesto.paused) {
+            const intento = puesto.play();
+            if (intento) intento.catch(() => undefined);
+          } else if (!aLaVista && !puesto.paused) {
+            puesto.pause();
           }
         });
       });
@@ -330,7 +410,14 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
     };
     refrescar();
 
+    /* EL REGRESO A LA PESTAÑA, QUE ERA EL FALLO QUE ELLA VIO.
+       Al irse, se para todo y se sueltan los decodificadores; al volver, se
+       reparte otra vez y los que están a la vista vuelven a reproducir. Es lo
+       que no se podía hacer con los marcos del proveedor. */
+    const alCambiarVisibilidad = () => repartir();
+
     const reloj = window.setInterval(repartir, 500);
+    document.addEventListener('visibilitychange', alCambiarVisibilidad);
     window.addEventListener('resize', refrescar, { passive: true });
     window.addEventListener('orientationchange', refrescar, { passive: true });
     window.addEventListener('scroll', repartir, { passive: true });
@@ -343,6 +430,7 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
 
     return () => {
       window.clearInterval(reloj);
+      document.removeEventListener('visibilitychange', alCambiarVisibilidad);
       window.removeEventListener('resize', refrescar);
       window.removeEventListener('orientationchange', refrescar);
       window.removeEventListener('scroll', repartir);
@@ -355,6 +443,7 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
       rampas.forEach((r) => cancelAnimationFrame(r));
       esperas.forEach((e) => window.clearTimeout(e));
       /* Al salir de la página no se deja ni un reproductor vivo. */
+      vaciar();
       columnas().forEach((col) => {
         col.innerHTML = '';
       });
