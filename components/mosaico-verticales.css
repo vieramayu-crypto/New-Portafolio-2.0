@@ -43,9 +43,14 @@
 /* La cabecera es la MISMA del bloque de siempre (`GaleriaPiezas`), clase por
    clase: serif de 30px con 20 caracteres de ancho máximo y el subtítulo a 14
    con interlineado 1,7. Si aquella cambia, ésta también. */
+/* EL AIRE DE ARRIBA LO MANDA LA CABECERA, no el gusto. En móvil la cabecera
+   es fija, blanca y mide 57px medidos, y el titular empieza donde acabe este
+   relleno: con 64px quedaban 7 de margen y con 60 quedan 3, que es el suelo.
+   Mayurlin pidió subir el título para dar alto al mosaico; de arriba sólo
+   salen esos 4px, el resto sale de los huecos de abajo. */
 .mv-texto {
   flex: none;
-  padding: 4rem 1.5rem 1rem;
+  padding: 3.75rem 1.5rem 0.5rem;
   text-align: center;
 }
 .mv-texto h2 {
@@ -56,7 +61,7 @@
   color: #1a1918;
 }
 .mv-texto p {
-  margin: 1rem auto 0;
+  margin: 0.75rem auto 0;
   max-width: 46ch;
   font-size: 14px;
   line-height: 1.7;
@@ -68,7 +73,12 @@
   flex: 1;
   min-height: 0;
   width: calc(100vw - 2 * var(--mv-margen));
-  margin: 0 var(--mv-margen) var(--mv-margen);
+  /* SIN MARGEN ABAJO: la rejilla llega hasta el final del bloque.
+     Los 24px que había dejaban una franja de marfil que no servía para nada,
+     y encima el desvanecido terminaba antes de llegar al borde. Ahora el velo
+     muere justo donde acaba la sección, que es lo que pidió Mayurlin: "que el
+     difuminado llegue hasta el fondo de este bloque". */
+  margin: 0 var(--mv-margen) 0;
   overflow: hidden;
 
   --mv-margen: 24px;
