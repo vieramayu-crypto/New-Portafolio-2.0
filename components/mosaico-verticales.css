@@ -228,7 +228,17 @@
   margin-bottom: var(--mv-gap);
   overflow: hidden;
   border-radius: 10px;
-  background: #0f0f0e;
+  /* LA PORTADA ES EL FONDO DE LA CELDA, y el vídeo entra encima con un
+     fundido. Mayurlin: "a las columnas les cuesta aparecer, no se muestran
+     hasta que finalmente se cargan los vídeos, y después aparece de golpe".
+     Era literal: un `<video>` sin un solo fotograma se pinta NEGRO, y la
+     portada iba en el atributo `poster`, que no se pide hasta que la celda se
+     monta. Nueve recuadros negros durante dos segundos y medio, medido.
+     Ahora la foto vive en esta capa, debajo, y no se va nunca. */
+  background-color: #0f0f0e;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 /* EL VÍDEO LLENA SU CELDA, Y UN 2% DE MÁS.
@@ -254,6 +264,23 @@
   object-fit: cover;
   transform: scale(1.02);
   transform-origin: center;
+  /* INVISIBLE HASTA QUE TIENE UN FOTOGRAMA QUE ENSEÑAR. El marcador lo pone
+     el propio vídeo al disparar `loadeddata`; mientras tanto se ve la portada
+     de debajo. 0,45s es lo justo para que no se note el relevo entre la foto
+     fija y la misma imagen en movimiento. */
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.mv-celda video[data-visto='1'] {
+  opacity: 1;
+}
+
+/* Quien no quiere animaciones tampoco quiere un fundido: el relevo es seco. */
+@media (prefers-reduced-motion: reduce) {
+  .mv-celda video {
+    transition: none;
+  }
 }
 
 /* El recorte de `VideoNube`, para cuando la pieza venga del proveedor: su

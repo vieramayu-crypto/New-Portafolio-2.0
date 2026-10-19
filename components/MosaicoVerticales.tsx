@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './mosaico-verticales.css';
 import { VIDEOS_VERTICALES } from '../data/videos';
+import { MINIATURAS } from '../data/miniaturas';
 import { publicVideo } from '../src/lib/content';
 
 /** EL MOSAICO DE PIEZAS VERTICALES. HOY SÓLO VIVE EN LA RUTA DE PRUEBA.
@@ -75,6 +76,26 @@ const HUECOS_MOVIL = 6;
  *  velocidad de la cinta esa banda son unos seis segundos. */
 const CERCA = 90;
 const LEJOS = 320;
+
+/** A QUÉ DISTANCIA SE PIDEN LAS PORTADAS. ES EL ARREGLO DE "LAS COLUMNAS
+ *  TARDAN EN APARECER".
+ *
+ *  Mayurlin, en escritorio: "a las columnas les cuesta aparecer, es como si no
+ *  terminaran de cargar y no se mostraran hasta que finalmente se cargan los
+ *  vídeos, y después aparece de golpe". Medido a 12 Mbps, llegando al bloque:
+ *  a los 600ms había NUEVE RECUADROS NEGROS, y el primer fotograma no entraba
+ *  hasta los 2,6 segundos; el último, a los nueve.
+ *
+ *  La causa no era la red, era el orden. La portada se pedía en el mismo
+ *  instante en que la celda se acercaba a 90px, o sea sin un milisegundo de
+ *  margen, y encima salía a la red DETRÁS de dos vídeos de varios megas que ya
+ *  estaban descargando. Y un `<video>` sin un solo fotograma se pinta negro.
+ *
+ *  Así que las portadas se piden cuando el bloque está a pantalla y media:
+ *  son siete archivos de 3 a 28 KB, 110 en total, menos que una sola foto de
+ *  la web. Para cuando se llega, están. Los vídeos siguen pidiéndose igual de
+ *  tarde que antes: esto no adelanta ni un byte de vídeo. */
+const ANTESALA = 1400;
 
 /** CUÁNTOS VÍDEOS PUEDEN ESTAR DESCARGANDO A LA VEZ.
  *
@@ -166,6 +187,11 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
       const dos = !window.matchMedia('(min-width: 1024px)').matches;
       const n = dos ? 2 : 3;
       if (n === cuantas) return;
+      /* Al cambiar de dos columnas a tres (o al revés) se tira todo y se
+         vuelve a construir. Hay que SOLTAR los vídeos antes de vaciar el
+         HTML: un `innerHTML = ''` se lleva los elementos pero deja al
+         navegador con los decodificadores cogidos un rato largo. */
+      if (cuantas) vaciar();
       cuantas = n;
       const reparto = repartoPorColumna(n, PIEZAS.length);
       columnas().forEach((col, ci) => {
@@ -195,9 +221,79 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
        inicial. Así que se pone el mp4 a mano y, si falla, se reintenta con el
        webm desde el manejador de error. Mismo arreglo que en
        `components/IntroLoader.tsx`. */
+    /** LAS SIETE PORTADAS, PEDIDAS DE UNA VEZ Y UNA SOLA VEZ. Van por el mismo
+     *  camino que cualquier foto: al ser las mismas direcciones que luego usa
+     *  cada celda, la segunda vez salen de la caché del navegador sin tocar la
+     *  red. Se dispara desde `repartir` cuando el bloque entra en `ANTESALA`,
+     *  así que una visita que no baje hasta aquí no se descarga nada. */
+    let portadasPedidas = false;
+    let portadasListas = false;
+    const pedirPortadas = () => {
+      if (portadasPedidas) return;
+      portadasPedidas = true;
+      const conPortada = PIEZAS.filter((p) => p.archivo);
+      let faltan = conPortada.length;
+      if (!faltan) {
+        portadasListas = true;
+        return;
+      }
+      /* UN TOPE DE SEGURIDAD. Si una portada se pierde o el servidor tarda,
+         los vídeos no se quedan esperando para siempre. */
+      const tope = window.setTimeout(() => {
+        portadasListas = true;
+      }, 2500);
+      const una = () => {
+        faltan -= 1;
+        if (faltan > 0) return;
+        window.clearTimeout(tope);
+        portadasListas = true;
+      };
+      conPortada.forEach((p) => {
+        const img = new Image();
+        img.addEventListener('load', una);
+        img.addEventListener('error', una);
+        img.src = publicVideo(`${p.archivo}.jpg`);
+      });
+    };
+
+    /* Y SE PIDEN EN CUANTO LA PÁGINA TERMINA DE CARGAR, no sólo al llegar al
+       bloque. En un refresco el navegador devuelve el desplazamiento donde
+       estaba, así que se puede aterrizar aquí sin un metro de aviso; para
+       entonces conviene que las fotos ya estén. Va detrás del `load` y en un
+       hueco libre para no competir con la del hero, que es la que de verdad
+       pesa. */
+    const programarPortadas = () => {
+      const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: object) => number };
+      if (w.requestIdleCallback) w.requestIdleCallback(pedirPortadas, { timeout: 1500 });
+      else window.setTimeout(pedirPortadas, 300);
+    };
+    if (document.readyState === 'complete') programarPortadas();
+    else window.addEventListener('load', programarPortadas, { once: true });
+
     const pintar = (celda: HTMLDivElement) => {
       const pieza = PIEZAS[Number(celda.dataset.pieza) || 0];
       if (!pieza?.archivo) return;
+      /* LA PORTADA VA DE FONDO DE LA CELDA, NO EN EL ATRIBUTO `poster`.
+         Con `poster`, la foto y el vídeo son la misma caja: en cuanto el
+         vídeo tiene su primer fotograma, la portada desaparece de golpe, y
+         mientras no lo tiene el elemento se pinta NEGRO. De fondo, la foto es
+         una capa aparte que está ahí desde el principio y no se va nunca; el
+         vídeo nace invisible por encima y entra con un fundido de 0,45s
+         cuando de verdad tiene algo que enseñar. Nunca hay un recuadro negro
+         ni un salto. */
+      /* DOS FONDOS, Y EL ORDEN IMPORTA: el primero va ENCIMA. Mientras la
+         portada no está, se ve la miniatura de 12x21 que viaja dentro del
+         paquete (`data/miniaturas.ts`), o sea el color de la escena sin
+         pedirle nada a la red. El navegador hace el relevo solo, sin una
+         línea de JavaScript: en cuanto la portada decodifica, tapa a la
+         miniatura. */
+      const mini = MINIATURAS[pieza.archivo];
+      celda.style.backgroundImage = [
+        `url("${publicVideo(`${pieza.archivo}.jpg`)}")`,
+        mini ? `url("${mini}")` : null,
+      ]
+        .filter(Boolean)
+        .join(', ');
       const v = document.createElement('video');
       v.muted = true;
       v.loop = true;
@@ -210,7 +306,12 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
          celda se ve desde el primer momento como una foto en vez de como un
          agujero negro, y la red se dedica a los dos que de verdad tocan. */
       v.preload = 'none';
-      v.poster = publicVideo(`${pieza.archivo}.jpg`);
+      /* `loadeddata` es el primer momento en que hay un fotograma de verdad.
+         Antes de eso el elemento sigue a opacidad cero y lo que se ve es la
+         portada de debajo. */
+      v.addEventListener('loadeddata', () => {
+        v.dataset.visto = '1';
+      });
       v.dataset.respaldo = '0';
       v.addEventListener('error', () => {
         if (v.dataset.respaldo === '1' || !pieza.archivo) return;
@@ -230,6 +331,14 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
      *  copias salen casi gratis, porque para cuando les toca el archivo ya
      *  está en la caché del navegador. */
     const encolar = () => {
+      /* LAS FOTOS PRIMERO, Y NO ES UNA PREFERENCIA: ES EL ORDEN.
+         Medido a 12 Mbps: las portadas salían a la red 60ms ANTES que los dos
+         vídeos y aun así llegaban 700ms DESPUÉS, porque un vídeo, una vez
+         empezado, no suelta el ancho de banda. Resultado, nueve recuadros
+         negros. Son 110 KB entre las siete: esperarlas retrasa el primer
+         vídeo una décima y a cambio el mosaico se ve entero desde el primer
+         momento. */
+      if (!portadasListas) return;
       const centro = window.innerHeight / 2;
       const todos: HTMLVideoElement[] = Array.from(
         rejilla.querySelectorAll<HTMLVideoElement>('.mv-celda video'),
@@ -255,15 +364,18 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
         .filter((v) => !v.getAttribute('src'))
         .map((v) => {
           const r = v.getBoundingClientRect();
-          const visible = r.bottom > 0 && r.top < window.innerHeight;
+          /* El vídeo se pide a `CERCA` de entrar, igual que antes. Lo que se
+             adelantó es la PORTADA, no el vídeo: ahora todas las celdas
+             tienen su elemento montado, así que aquí hay que volver a mirar
+             la distancia, que antes la miraba `repartir` al pintar. */
           return {
             v,
-            visible,
+            fuera: Math.max(0, Math.max(r.top - window.innerHeight, -r.bottom)),
             nueva: !yaPedidas.has(v.dataset.pieza),
             dist: Math.abs(r.top + r.height / 2 - centro),
           };
         })
-        .filter((c) => c.visible)
+        .filter((c) => c.fuera <= CERCA)
         .sort((a, b) => (a.nueva === b.nueva ? a.dist - b.dist : a.nueva ? -1 : 1));
 
       for (const c of candidatos) {
@@ -283,24 +395,39 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
       }
     };
 
-    /* Soltar el decodificador de verdad: parar, vaciar la dirección y pedir
-       una carga en vacío. Quitar el elemento a secas deja al navegador con el
-       búfer en la mano un rato largo. */
-    const tirar = (celda: HTMLDivElement, v: HTMLVideoElement) => {
+    /* SOLTAR EL DECODIFICADOR SIN PERDER LA CELDA: parar, vaciar la dirección
+       y pedir una carga en vacío. Un vídeo pausado sigue teniendo cogido su
+       decodificador; uno sin dirección, no. El ELEMENTO se queda donde está,
+       otra vez invisible, y lo que se ve vuelve a ser la portada de fondo.
+       Antes se quitaba del DOM, y volver a la celda costaba repintarlo todo
+       desde cero: ése era el recuadro negro. */
+    const soltarVideo = (v: HTMLVideoElement) => {
       v.pause();
       v.removeAttribute('src');
+      delete v.dataset.visto;
       v.load();
+    };
+
+    /* Esto sí lo saca del documento. Sólo cuando el bloque queda lejos de
+       verdad, o al desmontar el componente. */
+    const quitarVideo = (celda: HTMLDivElement, v: HTMLVideoElement) => {
+      soltarVideo(v);
       celda.removeChild(v);
     };
 
-    const vaciar = () => {
+    const cadaVideo = (hacer: (celda: HTMLDivElement, v: HTMLVideoElement) => void) => {
       columnas().forEach((col) => {
         col.querySelectorAll<HTMLDivElement>('.mv-celda').forEach((celda) => {
           const v = celda.firstElementChild as HTMLVideoElement | null;
-          if (v?.tagName === 'VIDEO') tirar(celda, v);
+          if (v?.tagName === 'VIDEO') hacer(celda, v as HTMLVideoElement);
         });
       });
     };
+
+    /** Ni un decodificador vivo, pero las celdas siguen enseñando su foto. */
+    const vaciar = () => cadaVideo((_, v) => soltarVideo(v));
+    /** Ni un elemento. */
+    const desmontar = () => cadaVideo(quitarVideo);
 
     const repartir = () => {
       const alto = window.innerHeight;
@@ -325,28 +452,45 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
          la foto del hero es exactamente lo que volvía lenta la web. Medido
          con esta puerta: cero al abrir y cero al dejar el bloque atrás. */
       const marco = rejilla.getBoundingClientRect();
-      if (marco.top - alto > 200 || marco.bottom < -200) {
-        vaciar();
+      if (marco.top - alto > ANTESALA || marco.bottom < -ANTESALA) {
+        desmontar();
         return;
       }
+
+      /* EL BLOQUE ESTÁ LLEGANDO: las portadas salen ya, y cada celda se monta
+         con la suya puesta. Montar la celda no cuesta red (el `<video>` nace
+         con `preload="none"` y sin dirección), así que no hay motivo para
+         esperar a los 90px como antes: esperar era justo lo que dejaba la
+         columna en negro. La red de vídeo la sigue repartiendo `encolar`. */
+      pedirPortadas();
+
+      /* LA PUERTA DEL VÍDEO ES LA DE SIEMPRE Y NO SE MUEVE, pero hay que
+         mirar el BLOQUE, no sólo cada celda. Las columnas van en posición
+         absoluta con desfases negativos, así que el rectángulo de una celda
+         puede caer dentro de la pantalla mientras el bloque está 700px por
+         debajo; la máscara la tapa, pero `getBoundingClientRect` no lo sabe.
+         Medido sin esta puerta: tres celdas se declaraban a la vista y DOS
+         VÍDEOS salían a la red nada más abrir la página. */
+      const bloqueCerca = marco.top - alto <= 200 && marco.bottom >= -200;
+
       columnas().forEach((col) => {
         const oculta = getComputedStyle(col).display === 'none';
         col.querySelectorAll<HTMLDivElement>('.mv-celda').forEach((celda) => {
           const puesto = celda.firstElementChild as HTMLVideoElement | null;
           const tiene = puesto?.tagName === 'VIDEO';
           if (oculta) {
-            if (tiene && puesto) tirar(celda, puesto);
+            if (tiene && puesto) quitarVideo(celda, puesto);
             return;
           }
-          const r = celda.getBoundingClientRect();
-          const fuera = Math.max(0, Math.max(r.top - alto, -r.bottom));
-          if (!tiene && fuera <= CERCA) {
+          if (!tiene) {
             pintar(celda);
             return;
           }
-          if (!tiene || !puesto) return;
-          if (fuera > LEJOS) {
-            tirar(celda, puesto);
+          if (!puesto) return;
+          const r = celda.getBoundingClientRect();
+          const fuera = Math.max(0, Math.max(r.top - alto, -r.bottom));
+          if (fuera > LEJOS || !bloqueCerca) {
+            soltarVideo(puesto);
             return;
           }
           /* SÓLO SUENA LO QUE SE VE. Entre `CERCA` y `LEJOS` el vídeo existe
@@ -354,7 +498,7 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
              que sí está en pantalla, y volver a ella no cuesta una descarga.
              `document.hidden` manda sobre todo lo demás: con la pestaña en
              segundo plano no reproduce nadie. */
-          const aLaVista = !document.hidden && fuera === 0;
+          const aLaVista = !document.hidden && bloqueCerca && fuera === 0;
           /* `readyState < 3` es "todavía no hay con qué reproducir sin
              cortes". Pedirle `play()` ahí no acelera nada y además lo deja
              marcado como reproduciendo sin que avance un fotograma, que es
@@ -368,7 +512,7 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
         });
       });
 
-      encolar();
+      if (bloqueCerca) encolar();
     };
 
     /* ---------- frenar y arrancar con curva ---------- */
