@@ -493,12 +493,20 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
             soltarVideo(puesto);
             return;
           }
-          /* SÓLO SUENA LO QUE SE VE. Entre `CERCA` y `LEJOS` el vídeo existe
-             pero está parado: así el decodificador queda libre para la celda
-             que sí está en pantalla, y volver a ella no cuesta una descarga.
-             `document.hidden` manda sobre todo lo demás: con la pestaña en
-             segundo plano no reproduce nadie. */
-          const aLaVista = !document.hidden && bloqueCerca && fuera === 0;
+          /* SÓLO SUENA LO QUE SE VE DE VERDAD: MEDIA CELDA, NO UN DEDO.
+             Antes bastaba con que la celda ROZARA la pantalla, y eso dejaba
+             diez vídeos descodificando a la vez en escritorio. Sumados a los
+             dos marcos del proveedor que puede haber cerca, son doce flujos
+             de vídeo peleándose por los decodificadores del navegador, que
+             son pocos y no se reparten: es lo que Mayurlin describe como
+             "un fallo aleatorio", unos vídeos arrancan y otros no.
+
+             Y no cuesta nada visualmente, que es lo bonito: las celdas que
+             sólo asoman un poco caen JUSTO DENTRO del desvanecido de los
+             bordes, así que están medio apagadas de todas formas. */
+          const visible = Math.min(r.bottom, alto) - Math.max(r.top, 0);
+          const medioDentro = visible >= r.height * 0.5;
+          const aLaVista = !document.hidden && bloqueCerca && fuera === 0 && medioDentro;
           /* `readyState < 3` es "todavía no hay con qué reproducir sin
              cortes". Pedirle `play()` ahí no acelera nada y además lo deja
              marcado como reproduciendo sin que avance un fotograma, que es
@@ -716,6 +724,12 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
           <div className="mv-col mv-c1" aria-hidden />
           <div className="mv-col mv-c2" aria-hidden />
           <div className="mv-col mv-c3" aria-hidden />
+          {/* Las dos capas del desvanecido de los bordes. Van por encima de
+              las columnas y por debajo de `mv-capa`, que es la que recoge el
+              ratón. Ver `.mv-velo` en el CSS: antes esto era una máscara y
+              era lo que impedía componer la animación. */}
+          <div className="mv-velo mv-velo--arriba" aria-hidden />
+          <div className="mv-velo mv-velo--abajo" aria-hidden />
           <div className="mv-capa" ref={capaRef} aria-hidden />
         </div>
       </div>

@@ -25,10 +25,14 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: #fbfaf6;
+  /* El marfil vive en una variable porque lo leen también las dos capas del
+     desvanecido de los bordes (`.mv-velo`). Cambiar uno sin el otro dejaría
+     el velo despegado del fondo. */
+  --mv-fondo: #fbfaf6;
+  background: var(--mv-fondo);
 }
 .mv--alterno {
-  background: #f5f3ed;
+  --mv-fondo: #f5f3ed;
 }
 
 /* ---------------- MÓVIL: el texto arriba y dos columnas debajo ----------- */
@@ -48,10 +52,24 @@
    relleno: con 64px quedaban 7 de margen y con 60 quedan 3, que es el suelo.
    Mayurlin pidió subir el título para dar alto al mosaico; de arriba sólo
    salen esos 4px, el resto sale de los huecos de abajo. */
+/* EL BLOQUE DE TEXTO NO SE TRAGA EL RATÓN.
+   Mayurlin: "ya no hace nada cuando me poso por encima de ellas con el
+   ratón, lo cual era la configuración inicial". Era esto: en escritorio el
+   texto va en posición absoluta con `left: 0; width: 100%`, así que su caja
+   cubre TAMBIÉN las tres columnas aunque sólo se lean las letras de la
+   izquierda. Comprobado con `elementsFromPoint` en el centro de la columna
+   del medio: devolvía `mv-interior > mv-texto > mv-capa`, o sea el texto por
+   delante de la capa que escucha al ratón.
+   `none` en la caja y `auto` en el interior: el ratón pasa de largo por el
+   hueco vacío y las letras se siguen pudiendo seleccionar. */
 .mv-texto {
   flex: none;
   padding: 3.75rem 1.5rem 0.5rem;
   text-align: center;
+  pointer-events: none;
+}
+.mv-interior {
+  pointer-events: auto;
 }
 .mv-texto h2 {
   margin: 0 auto;
@@ -99,81 +117,126 @@
    vídeos a medida que se van reproduciendo". Tenía razón: la cinta entra y
    sale por una línea recta, y sobre marfil claro ese filo se ve.
 
-   SE HACE CON UNA MÁSCARA, no con una capa de color encima. Una capa habría
-   que pintarla del marfil exacto de la sección, y hay dos marfiles (el normal
-   y el de `alterno`), así que a la primera que alguien cambie uno el velo
-   deja de pegar. La máscara no pinta nada: vuelve transparente el propio
-   vídeo, y por debajo asoma el fondo que haya, sea el que sea.
+   SON DOS CAPAS DE MARFIL POR ENCIMA, NO UNA MÁSCARA. Y aquí hay una lección
+   cara, porque la primera versión SÍ era una máscara y era la causa de que el
+   mosaico fuera a trompicones en escritorio.
 
-   Y VA EN CURVA, NO EN RECTA, que es la segunda corrección de Mayurlin: "se
+   Mayurlin: "la columna del medio no aparece, las otras están estáticas...
+   recién cuando carga la del medio, las otras arrancan, pero a trompicones".
+   Medido a 1440x900, contando el hueco entre fotogramas durante 12 segundos
+   con todo ya cargado, sobre el MISMO código y cambiando sólo esto:
+
+                    huecos >60ms   tiempo sin un solo fotograma   tareas largas
+     con máscara         57              4.215ms de 12.000              0
+     sin máscara          6              1.668ms de 12.000              1
+
+   Y el dato que lo explica es la última columna: CON máscara no hay ni una
+   tarea larga, o sea el navegador NO está ocupado. Simplemente no puede
+   componer la animación. Un elemento enmascarado deja de poder moverse en la
+   tarjeta gráfica y cada fotograma pasa a repintarse a mano, con tres
+   columnas de vídeo dentro. Sin máscara el único tropiezo es el de cargar
+   los vídeos, que es inevitable.
+
+   La objeción que tenía la máscara a su favor era buena: una capa de color
+   hay que pintarla del marfil exacto, y hay dos (el normal y el de
+   `alterno`). Se resuelve con `--mv-fondo`, que cada variante declara una
+   vez; las capas lo leen y nunca se despegan del fondo.
+
+   VAN EN CURVA, NO EN RECTA, que fue la segunda corrección de Mayurlin: "se
    nota dónde comienza y dónde finaliza, hay un punto donde se percibe el
    on-off". Un degradado lineal cambia de pendiente DE GOLPE en sus dos
-   extremos -- de nada a bajar, y de bajar a nada -- y el ojo ve esos dos
-   codos aunque las opacidades sean correctas. Estas nueve paradas son una
-   `smoothstep` (t²·(3−2t)), que llega a los dos extremos con pendiente cero:
-   el velo nace y muere sin esquina. La ALTURA no cambia, que ella lo pidió
-   expresamente; lo único que cambia es el reparto.
+   extremos y el ojo ve esos dos codos. Las nueve paradas son una `smoothstep`
+   (t²·(3−2t)), que llega a los dos extremos con pendiente cero.
 
-   Medido aplanando las celdas a un gris plano, para que lo único que varíe
-   sea la máscara, y mirando el mayor cambio de pendiente entre dos tramos de
-   3px (el "codo"), con el mismo recorrido 243 -> 16 en los dos casos:
+   Medido aplanando las celdas a un gris plano, mayor cambio de pendiente
+   entre dos tramos de 3px (el "codo"), mismo recorrido 243 -> 16:
 
               recto   curva
      móvil      15      8     (velo de 45px)
      escritorio  7      4     (velo de 86px)
 
-   Va en la rejilla y no en cada columna para que el desvanecido sea una sola
-   línea recta de lado a lado, y no un escalón por columna. */
-.mv-rejilla {
-  -webkit-mask-image: linear-gradient(
+   Van en la rejilla y no en cada columna para que el desvanecido sea una
+   sola línea recta de lado a lado, y no un escalón por columna. */
+.mv-velo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  height: var(--mv-velo);
+  pointer-events: none;
+}
+
+.mv-velo--arriba {
+  top: 0;
+  background: linear-gradient(
     to bottom,
-    transparent 0,
-    rgba(0, 0, 0, 0.028) calc(var(--mv-velo) * 0.1),
-    rgba(0, 0, 0, 0.104) calc(var(--mv-velo) * 0.2),
-    rgba(0, 0, 0, 0.216) calc(var(--mv-velo) * 0.3),
-    rgba(0, 0, 0, 0.352) calc(var(--mv-velo) * 0.4),
-    rgba(0, 0, 0, 0.500) calc(var(--mv-velo) * 0.5),
-    rgba(0, 0, 0, 0.648) calc(var(--mv-velo) * 0.6),
-    rgba(0, 0, 0, 0.784) calc(var(--mv-velo) * 0.7),
-    rgba(0, 0, 0, 0.896) calc(var(--mv-velo) * 0.8),
-    rgba(0, 0, 0, 0.972) calc(var(--mv-velo) * 0.9),
-    #000 var(--mv-velo),
-    #000 calc(100% - var(--mv-velo)),
-    rgba(0, 0, 0, 0.972) calc(100% - var(--mv-velo) * 0.9),
-    rgba(0, 0, 0, 0.896) calc(100% - var(--mv-velo) * 0.8),
-    rgba(0, 0, 0, 0.784) calc(100% - var(--mv-velo) * 0.7),
-    rgba(0, 0, 0, 0.648) calc(100% - var(--mv-velo) * 0.6),
-    rgba(0, 0, 0, 0.500) calc(100% - var(--mv-velo) * 0.5),
-    rgba(0, 0, 0, 0.352) calc(100% - var(--mv-velo) * 0.4),
-    rgba(0, 0, 0, 0.216) calc(100% - var(--mv-velo) * 0.3),
-    rgba(0, 0, 0, 0.104) calc(100% - var(--mv-velo) * 0.2),
-    rgba(0, 0, 0, 0.028) calc(100% - var(--mv-velo) * 0.1),
-    transparent 100%
+    var(--mv-fondo) 0,
+    rgba(251, 250, 246, 0.972) 10%,
+    rgba(251, 250, 246, 0.896) 20%,
+    rgba(251, 250, 246, 0.784) 30%,
+    rgba(251, 250, 246, 0.648) 40%,
+    rgba(251, 250, 246, 0.5) 50%,
+    rgba(251, 250, 246, 0.352) 60%,
+    rgba(251, 250, 246, 0.216) 70%,
+    rgba(251, 250, 246, 0.104) 80%,
+    rgba(251, 250, 246, 0.028) 90%,
+    rgba(251, 250, 246, 0) 100%
   );
-  mask-image: linear-gradient(
+}
+
+.mv-velo--abajo {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--mv-fondo) 0,
+    rgba(251, 250, 246, 0.972) 10%,
+    rgba(251, 250, 246, 0.896) 20%,
+    rgba(251, 250, 246, 0.784) 30%,
+    rgba(251, 250, 246, 0.648) 40%,
+    rgba(251, 250, 246, 0.5) 50%,
+    rgba(251, 250, 246, 0.352) 60%,
+    rgba(251, 250, 246, 0.216) 70%,
+    rgba(251, 250, 246, 0.104) 80%,
+    rgba(251, 250, 246, 0.028) 90%,
+    rgba(251, 250, 246, 0) 100%
+  );
+}
+
+/* El marfil de `alterno`. Las paradas intermedias no se pueden escribir con
+   `var()` porque son `rgba(...)` con transparencia, así que la variante
+   repite las suyas. Es la única duplicación y vive pegada a la de arriba
+   para que no se separen. */
+.mv--alterno .mv-velo--arriba {
+  background: linear-gradient(
     to bottom,
-    transparent 0,
-    rgba(0, 0, 0, 0.028) calc(var(--mv-velo) * 0.1),
-    rgba(0, 0, 0, 0.104) calc(var(--mv-velo) * 0.2),
-    rgba(0, 0, 0, 0.216) calc(var(--mv-velo) * 0.3),
-    rgba(0, 0, 0, 0.352) calc(var(--mv-velo) * 0.4),
-    rgba(0, 0, 0, 0.500) calc(var(--mv-velo) * 0.5),
-    rgba(0, 0, 0, 0.648) calc(var(--mv-velo) * 0.6),
-    rgba(0, 0, 0, 0.784) calc(var(--mv-velo) * 0.7),
-    rgba(0, 0, 0, 0.896) calc(var(--mv-velo) * 0.8),
-    rgba(0, 0, 0, 0.972) calc(var(--mv-velo) * 0.9),
-    #000 var(--mv-velo),
-    #000 calc(100% - var(--mv-velo)),
-    rgba(0, 0, 0, 0.972) calc(100% - var(--mv-velo) * 0.9),
-    rgba(0, 0, 0, 0.896) calc(100% - var(--mv-velo) * 0.8),
-    rgba(0, 0, 0, 0.784) calc(100% - var(--mv-velo) * 0.7),
-    rgba(0, 0, 0, 0.648) calc(100% - var(--mv-velo) * 0.6),
-    rgba(0, 0, 0, 0.500) calc(100% - var(--mv-velo) * 0.5),
-    rgba(0, 0, 0, 0.352) calc(100% - var(--mv-velo) * 0.4),
-    rgba(0, 0, 0, 0.216) calc(100% - var(--mv-velo) * 0.3),
-    rgba(0, 0, 0, 0.104) calc(100% - var(--mv-velo) * 0.2),
-    rgba(0, 0, 0, 0.028) calc(100% - var(--mv-velo) * 0.1),
-    transparent 100%
+    var(--mv-fondo) 0,
+    rgba(245, 243, 237, 0.972) 10%,
+    rgba(245, 243, 237, 0.896) 20%,
+    rgba(245, 243, 237, 0.784) 30%,
+    rgba(245, 243, 237, 0.648) 40%,
+    rgba(245, 243, 237, 0.5) 50%,
+    rgba(245, 243, 237, 0.352) 60%,
+    rgba(245, 243, 237, 0.216) 70%,
+    rgba(245, 243, 237, 0.104) 80%,
+    rgba(245, 243, 237, 0.028) 90%,
+    rgba(245, 243, 237, 0) 100%
+  );
+}
+
+.mv--alterno .mv-velo--abajo {
+  background: linear-gradient(
+    to top,
+    var(--mv-fondo) 0,
+    rgba(245, 243, 237, 0.972) 10%,
+    rgba(245, 243, 237, 0.896) 20%,
+    rgba(245, 243, 237, 0.784) 30%,
+    rgba(245, 243, 237, 0.648) 40%,
+    rgba(245, 243, 237, 0.5) 50%,
+    rgba(245, 243, 237, 0.352) 60%,
+    rgba(245, 243, 237, 0.216) 70%,
+    rgba(245, 243, 237, 0.104) 80%,
+    rgba(245, 243, 237, 0.028) 90%,
+    rgba(245, 243, 237, 0) 100%
   );
 }
 
