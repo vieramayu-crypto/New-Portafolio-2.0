@@ -83,6 +83,12 @@ const LEGACY_HOTEL_IDS: Record<string, string> = {
  *  directos al contenido. */
 function esRutaDeEntradaConIntro(): boolean {
   if (typeof window === 'undefined') return true;
+  // Y UN ENLACE A UNA SECCIÓN CONCRETA TAMPOCO ABRE CON INTRO. Mismo motivo
+  // que las fichas de hotel: quien abre `/#piezas-verticales` viene a ver esa
+  // sección, y seis segundos de vídeo por delante son seis segundos para
+  // cerrar la pestaña. Además la intro tapa la página entera mientras dura,
+  // así que el aterrizaje no se vería.
+  if (window.location.hash.replace('#', '').length > 0) return false;
   // La ruta ya no vive detrás de una almohadilla, así que se lee del camino
   // de verdad. Hay que quitarle la subcarpeta en la que está colgado el sitio
   // (en GitHub Pages es `/New-Portafolio-2.0/`, en su dominio será `/`).
@@ -241,11 +247,27 @@ const AppShell: React.FC = () => {
     const guardada = navigationType === 'POP' ? posicionGuardada(location.key) : undefined;
     const ancla = navigationType === 'POP' ? tomarAncla() : null;
     if (guardada === undefined && !ancla) {
+      // UN ENLACE CON NOMBRE DE SECCIÓN ATERRIZA EN ESA SECCIÓN. Son los que
+      // Mayurlin comparte: `/#videos-de-marca`, `/#piezas-verticales`. No
+      // vale con dejárselo al navegador: React tira y vuelve a montar lo que
+      // había prerenderizado, así que cuando él busca el elemento todavía no
+      // existe. `restaurarScroll` recalcula a qué altura está en cada
+      // fotograma, que es lo mismo que hace falta aquí.
+      const seccion = decodeURIComponent(location.hash.replace(/^#/, ''));
+      if (seccion) {
+        // El aire de arriba es la cabecera REAL, no un número a mano: mide
+        // 90px en escritorio y 57 en móvil, y va fija. Sin esto el titular de
+        // la sección aterrizaba seis píxeles por debajo de ella, o sea medio
+        // tapado. Se mide aquí y no dentro porque no cambia mientras dura el
+        // aterrizaje.
+        const cabecera = document.querySelector('header')?.getBoundingClientRect().height ?? 90;
+        return restaurarScroll(0, seccion, 4000, Math.round(cabecera));
+      }
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
       return;
     }
-    return restaurarScroll(guardada ?? 0, ancla);
-  }, [location.key, navigationType]);
+    return restaurarScroll(guardada ?? 0, ancla ? `hotel-${ancla}` : null);
+  }, [location.key, location.hash, navigationType]);
 
   const handleSelectStory = (story: HotelStory) => {
     if (pendingTransition) return;
