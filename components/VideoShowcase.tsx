@@ -31,6 +31,27 @@ import { useCercaDePantalla } from '../src/lib/cerca';
  *  `PiezasVerticales.tsx` (la opción C) sigue en el repositorio sin usar, a
  *  propósito: ella dijo que podríamos volver.
  */
+/** LOS NOMBRES CON LOS QUE SE ENLAZA CADA SECCIÓN DE VÍDEO DESDE FUERA.
+ *
+ *  Pedido de Mayurlin: "necesito que las secciones de vídeos tengan su propio
+ *  nombre, para yo poder copiar el enlace directo de esa sección para
+ *  compartir, sin que la persona tenga que bajar hasta ellas".
+ *
+ *      https://mayurlintravel.eu/#videos-de-marca
+ *      https://mayurlintravel.eu/#piezas-verticales
+ *
+ *  Los eligió ella y no se cambian a la ligera: un enlace que ya haya mandado
+ *  a un hotel dejaría de llevar a ninguna parte. El de las verticales lo
+ *  llevan LAS DOS formas de esa sección (la galería publicada y el mosaico de
+ *  la ruta de prueba), para que el enlace valga igual si algún día se cambia
+ *  una por la otra.
+ *
+ *  Quien llega con uno de estos nombres NO VE LA INTRO: viene a ver una
+ *  sección concreta, igual que quien abre el enlace de un hotel. Lo decide
+ *  `esRutaDeEntradaConIntro` en `App.tsx`. */
+export const ANCLA_HORIZONTALES = 'videos-de-marca';
+export const ANCLA_VERTICALES = 'piezas-verticales';
+
 export const VideoShowcase: React.FC = () => {
   const t = crearT(useIdioma().idioma);
 
@@ -42,6 +63,7 @@ export const VideoShowcase: React.FC = () => {
         piezas={PIEZAS_HORIZONTALES}
         titulo={t('videosTitulo')}
         subtitulo={t('videosSubtitulo')}
+        ancla={ANCLA_HORIZONTALES}
       />
     </>
   );
@@ -77,6 +99,7 @@ export const VideoVerticalesInicio: React.FC<{ mosaico?: boolean }> = ({ mosaico
         titulo={t('verticalesTitulo')}
         subtitulo={t('verticalesSubtitulo')}
         alterno
+        ancla={ANCLA_VERTICALES}
       />
     );
   }
@@ -87,6 +110,7 @@ export const VideoVerticalesInicio: React.FC<{ mosaico?: boolean }> = ({ mosaico
       titulo={t('verticalesTitulo')}
       subtitulo={t('verticalesSubtitulo')}
       alterno
+      ancla={ANCLA_VERTICALES}
     />
   );
 };

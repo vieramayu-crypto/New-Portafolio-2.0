@@ -72,32 +72,21 @@
       }
     ],
     "ctaLabel": "Start a project",
-    "scopeLabel": "A typical shoot",
-    "scopeNote": "So you have a sense of it before getting in touch. Every project is shaped around what the hotel needs.",
-    "scopeItems": [
-      {
-        "value": "3–5",
-        "label": "days on the property"
-      },
-      {
-        "value": "40–50",
-        "label": "photographs"
-      },
-      {
-        "value": "3",
-        "label": "vertical video pieces"
-      }
-    ]
+    "scopeLabel": "Every proposal is made to measure",
+    "scopeNote": "From a handful of vertical pieces to a full production over several days. We shape it with you around what you want to tell, where the material will be used and the time we spend at the property.",
+    "scopeItems": []
   },
   "valueBlock": {
-    "claim": "One production, two destinations.",
+    "claim": "Each hotel chooses what it needs.",
     "benefits": [
-      "Content for your hotel's own channels.",
-      "Posts on @mayurlintravel, as an additional service."
+      "Content production",
+      "Exposure on @mayurlintravel",
+      "Production and exposure"
     ],
     "benefitDetails": [
-      "Photography and film in the formats and with the usage rights set out in the proposal.",
-      "When the project suits our audience, part of the material is published on @mayurlintravel, to an international community interested in travel and hospitality."
+      "Photography and film for the hotel's website, social channels and campaigns, with the usage rights set out in the proposal.",
+      "Reels, posts and stories on @mayurlintravel, to an international travel community.",
+      "Both in the same shoot: material for the hotel and posts on our own account."
     ],
     "ctaLabel": "Start a project"
   },
@@ -183,7 +172,7 @@
         "label": "returning clients"
       }
     ],
-    "affiliations": "Properties within Marriott International, IHG Hotels & Resorts and Wyndham, alongside independent boutique collections in five countries.",
+    "affiliations": "Properties within Marriott International and IHG Hotels & Resorts, alongside independent boutique collections in five countries.",
     "footnote": "Returning clients: GPRO Valparaíso (3 shoots) · Numa Group (3 properties) · Hotel Espléndido (2 shoots) · Portixol (2 shoots)"
   },
   "howWeWork": {

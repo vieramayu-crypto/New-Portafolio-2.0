@@ -78,6 +78,13 @@ interface GaleriaPiezasProps {
   /** El marfil de la casa. `alterno` usa el otro, para que dos galerías
    *  seguidas no se lean como un solo bloque interminable. */
   alterno?: boolean;
+  /** El nombre con el que se puede enlazar la sección desde fuera, por
+   *  ejemplo `videos-de-marca`. Pedido de Mayurlin: "necesito que las
+   *  secciones de vídeos tengan su propio nombre, para yo poder copiar el
+   *  enlace directo de esa sección para compartir, sin que la persona tenga
+   *  que bajar hasta ellas". Quien aterriza con ese nombre en la dirección
+   *  cae aquí directamente; lo coloca el efecto de llegada de `App.tsx`. */
+  ancla?: string;
 }
 
 export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
@@ -85,6 +92,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
   titulo,
   subtitulo,
   alterno,
+  ancla,
 }) => {
   const { idioma } = useIdioma();
   const t = crearT(idioma);
@@ -208,6 +216,7 @@ export const GaleriaPiezas: React.FC<GaleriaPiezasProps> = ({
 
   return (
     <section
+      id={ancla}
       className={`relative w-full pb-20 pt-16 md:pb-28 md:pt-24 ${
         alterno ? 'bg-[#f5f3ed]' : 'bg-[#fbfaf6]'
       }`}

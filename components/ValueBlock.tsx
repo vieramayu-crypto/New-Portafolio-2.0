@@ -11,10 +11,18 @@ const rise = (delay: number) => ({
   transition: { duration: 0.85, ease: [0.4, 0, 0.2, 1] as const, delay },
 });
 
-/** "Una producción. Dos capas de valor." (pág. 5 de la auditoría): la
- *  segunda capa (distribución) pasaba desapercibida detrás de un selector de
- *  clic. Ahora las dos tarjetas se ven a la vez, sin interacción de por
- *  medio -- mismo cristal que "Qué creamos" y "Formas de trabajar juntos". */
+/** LOS TRES MODELOS DE TRABAJO, A LA VEZ Y SIN NADA QUE PULSAR.
+ *
+ *  Vienen de la auditoría (pág. 5): la segunda capa, la distribución, pasaba
+ *  desapercibida detrás de un selector de clic. Desde entonces las tarjetas
+ *  se ven todas a la vez, con el mismo cristal que "Qué creamos" y "Formas de
+ *  trabajar juntos".
+ *
+ *  ERAN DOS Y AHORA SON TRES, por el media kit: producción, exposición en
+ *  @mayurlintravel, o las dos. La rejilla pasa a tres columnas en escritorio
+ *  y sigue apilada en móvil; a partir de `sm` y hasta `md` también se apila,
+ *  porque tres tarjetas de texto en 640px salen a 200px de ancho y el título
+ *  se parte en cuatro líneas. */
 export const ValueBlock: React.FC = () => {
   const { valueBlock } = useSiteContent();
 
@@ -28,7 +36,7 @@ export const ValueBlock: React.FC = () => {
           {valueBlock.claim}
         </motion.h2>
 
-        <div className="mt-glass-async mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mt-16 md:gap-7">
+        <div className="mt-glass-async mt-14 grid grid-cols-1 gap-5 md:mt-16 md:grid-cols-3 md:gap-7">
           {valueBlock.benefits.map((benefit, i) => (
             <motion.div
               key={benefit}

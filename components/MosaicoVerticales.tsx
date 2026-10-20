@@ -249,12 +249,15 @@ interface MosaicoVerticalesProps {
   subtitulo: string;
   /** El marfil de la casa. `alterno` usa el otro, igual que `GaleriaPiezas`. */
   alterno?: boolean;
+  /** El nombre para enlazar la sección desde fuera. Ver `GaleriaPiezas`. */
+  ancla?: string;
 }
 
 export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
   titulo,
   subtitulo,
   alterno,
+  ancla,
 }) => {
   const rejillaRef = useRef<HTMLDivElement>(null);
   const capaRef = useRef<HTMLDivElement>(null);
@@ -807,7 +810,7 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
   }, []);
 
   return (
-    <section className={`mv ${alterno ? 'mv--alterno' : ''}`}>
+    <section id={ancla} className={`mv ${alterno ? 'mv--alterno' : ''}`}>
       <div className="mv-lienzo">
         <div className="mv-texto">
           <div className="mv-interior">

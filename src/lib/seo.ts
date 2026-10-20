@@ -46,7 +46,7 @@ const FIJAS: Record<Idioma, Fijas> = {
     inicio: {
       titulo: 'Producción visual para hoteles de lujo · Mayu Travel',
       descripcion:
-        'Fotografía y vídeo para hoteles de lujo. Más de 35 propiedades en cinco países, entre ellas hoteles de Marriott, IHG y Wyndham.',
+        'Fotografía y vídeo para hoteles de lujo. Más de 35 propiedades en cinco países, entre ellas hoteles de Marriott e IHG.',
     },
     proyectos: {
       titulo: 'Proyectos y portafolio · Mayu Travel',
@@ -76,7 +76,7 @@ const FIJAS: Record<Idioma, Fijas> = {
     inicio: {
       titulo: 'Visual production for luxury hotels · Mayu Travel',
       descripcion:
-        'Photography and film for luxury hotels. More than 35 properties across five countries, among them hotels within Marriott, IHG and Wyndham.',
+        'Photography and film for luxury hotels. More than 35 properties across five countries, among them hotels within Marriott and IHG.',
     },
     proyectos: {
       titulo: 'Projects and portfolio · Mayu Travel',
@@ -174,7 +174,7 @@ export const DATOS_ESTRUCTURADOS: Record<Idioma, {
 }> = {
   es: {
     description:
-      'Estudio de producción visual para hoteles de lujo: cine, fotografía y contenido editorial. Más de 35 propiedades en cinco países, incluyendo propiedades dentro de Marriott International, IHG Hotels & Resorts y Wyndham.',
+      'Estudio de producción visual para hoteles de lujo: cine, fotografía y contenido editorial. Más de 35 propiedades en cinco países, incluyendo propiedades dentro de Marriott International e IHG Hotels & Resorts.',
     jobTitle: 'Productora Visual y Directora de Contenido',
     areaServed: ['España', 'Portugal', 'Grecia', 'Suiza', 'Países Bajos'],
     serviceType: [
@@ -191,13 +191,12 @@ export const DATOS_ESTRUCTURADOS: Record<Idioma, {
       'Marketing de hotelería de lujo',
       'Propiedades de Marriott International',
       'Propiedades de IHG Hotels & Resorts',
-      'Propiedades de Wyndham Hotels & Resorts',
       'Colecciones de hoteles boutique',
     ],
   },
   en: {
     description:
-      'Visual production studio for luxury hotels: film, photography and editorial content. More than 35 properties in five countries, including properties within Marriott International, IHG Hotels & Resorts and Wyndham.',
+      'Visual production studio for luxury hotels: film, photography and editorial content. More than 35 properties in five countries, including properties within Marriott International and IHG Hotels & Resorts.',
     jobTitle: 'Visual Producer and Content Director',
     areaServed: ['Spain', 'Portugal', 'Greece', 'Switzerland', 'Netherlands'],
     serviceType: [
@@ -214,7 +213,6 @@ export const DATOS_ESTRUCTURADOS: Record<Idioma, {
       'Luxury hospitality marketing',
       'Properties within Marriott International',
       'Properties within IHG Hotels & Resorts',
-      'Properties within Wyndham Hotels & Resorts',
       'Boutique hotel collections',
     ],
   },

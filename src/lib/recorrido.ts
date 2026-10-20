@@ -87,7 +87,24 @@ export function tomarAncla(): string | null {
   return a;
 }
 
-export function restaurarScroll(destino: number, ancla?: string | null, ms = 1600): () => void {
+/** Coloca la página en `destino`, y si se le da el `id` de un elemento manda
+ *  ese elemento: recalcula a qué altura está en CADA fotograma, porque la
+ *  página puede crecer mientras tanto (fotos que terminan de cargar).
+ *
+ *  `ancla` es el id COMPLETO del elemento, no sólo el del hotel. Antes se le
+ *  pegaba `hotel-` aquí dentro y eso dejaba fuera cualquier otra ancla; ahora
+ *  sirve igual para volver a un hotel que para aterrizar en una sección de
+ *  vídeo compartida por enlace.
+ *
+ *  `margen` es cuánto aire dejar por encima. 96px para un hotel, que es lo
+ *  justo para caer bajo el navbar; 0 para una sección entera, que empieza con
+ *  su propio aire. */
+export function restaurarScroll(
+  destino: number,
+  ancla?: string | null,
+  ms = 1600,
+  margen = 96,
+): () => void {
   let cancelado = false;
   const parar = () => {
     cancelado = true;
@@ -100,21 +117,27 @@ export function restaurarScroll(destino: number, ancla?: string | null, ms = 160
 
   const limite = performance.now() + ms;
   let aciertos = 0;
+  let anterior = Number.NaN;
   const paso = () => {
     if (cancelado) return;
     // Si sabemos a qué bloque volvemos, mandan sus coordenadas de AHORA, no
     // las de cuando se salió.
-    const elemento = ancla ? document.getElementById(`hotel-${ancla}`) : null;
+    const elemento = ancla ? document.getElementById(ancla) : null;
     if (elemento) {
       const arriba = elemento.getBoundingClientRect().top + window.scrollY;
-      destino = Math.max(0, Math.round(arriba) - 96);
+      destino = Math.max(0, Math.round(arriba) - margen);
     }
     window.scrollTo({ top: destino, behavior: 'instant' as ScrollBehavior });
     // Damos por bueno el destino sólo cuando se sostiene varios fotogramas
-    // seguidos: una foto que termina de cargar puede reacomodar la página
-    // justo después de haber acertado, y entonces hay que volver a colocarse.
-    aciertos = Math.abs(window.scrollY - destino) <= 2 ? aciertos + 1 : 0;
-    if (aciertos < 4 && performance.now() < limite) {
+    // seguidos, Y ADEMÁS NO SE HA MOVIDO: una foto que termina de cargar
+    // reacomoda la página justo después de haber acertado. Contando sólo que
+    // el scroll coincidiera, el aterrizaje se daba por bueno al instante y
+    // la sección se iba sola unos 26px en cuanto cargaba lo de encima; es lo
+    // que se midió al estrenar las anclas con nombre.
+    const quieto = Math.abs(destino - anterior) <= 1;
+    anterior = destino;
+    aciertos = Math.abs(window.scrollY - destino) <= 2 && quieto ? aciertos + 1 : 0;
+    if (aciertos < 8 && performance.now() < limite) {
       requestAnimationFrame(paso);
     } else {
       parar();

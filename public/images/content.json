@@ -72,32 +72,21 @@
       }
     ],
     "ctaLabel": "Iniciar un proyecto",
-    "scopeLabel": "Un rodaje tipo",
-    "scopeNote": "Para hacerte una idea antes de escribir. Cada proyecto se ajusta a lo que el hotel necesita.",
-    "scopeItems": [
-      {
-        "value": "3–5",
-        "label": "días en la propiedad"
-      },
-      {
-        "value": "40–50",
-        "label": "fotografías"
-      },
-      {
-        "value": "3",
-        "label": "piezas de vídeo vertical"
-      }
-    ]
+    "scopeLabel": "Cada propuesta es a medida",
+    "scopeNote": "Desde unas pocas piezas verticales hasta una producción completa de varios días. Lo definimos contigo según lo que quieras contar, dónde se va a usar el material y el tiempo que pasemos en la propiedad.",
+    "scopeItems": []
   },
   "valueBlock": {
-    "claim": "Una producción, dos destinos.",
+    "claim": "Cada hotel elige lo que necesita.",
     "benefits": [
-      "Contenido para los canales de tu hotel.",
-      "Publicaciones en @mayurlintravel, como servicio adicional."
+      "Producción de contenido",
+      "Exposición en @mayurlintravel",
+      "Producción y exposición"
     ],
     "benefitDetails": [
-      "Fotografías y vídeos en los formatos y con los usos definidos en la propuesta.",
-      "Cuando el proyecto encaja con nuestra audiencia, parte del material se publica en @mayurlintravel, ante una comunidad internacional de viajes y hotelería."
+      "Fotografía y vídeo para la web, las redes y las campañas del hotel, con los usos definidos en la propuesta.",
+      "Reels, publicaciones y stories en @mayurlintravel, ante una comunidad internacional de viajes.",
+      "Las dos cosas en un mismo rodaje: material para el hotel y publicaciones en nuestra cuenta."
     ],
     "ctaLabel": "Iniciar un proyecto"
   },
@@ -183,7 +172,7 @@
         "label": "clientes recurrentes"
       }
     ],
-    "affiliations": "Propiedades dentro de Marriott International, IHG Hotels & Resorts y Wyndham, junto a colecciones boutique independientes en cinco países.",
+    "affiliations": "Propiedades dentro de Marriott International e IHG Hotels & Resorts, junto a colecciones boutique independientes en cinco países.",
     "footnote": "Clientes recurrentes: GPRO Valparaíso (3 rodajes) · Numa Group (3 propiedades) · Hotel Espléndido (2 rodajes) · Portixol (2 rodajes)"
   },
   "howWeWork": {
