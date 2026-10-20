@@ -87,9 +87,12 @@ export const BrandsMarquee: React.FC<BrandsMarqueeProps> = ({ limit }) => {
       {/* El carrusel era el unico bloque de Inicio que entraba en seco. Y sin
           rotulo, los 22 nombres se leen como una lista suelta: nadie ata que
           Ritz-Carlton es Marriott, que InterContinental y Holiday Inn Express
-          son los dos IHG, y que Dolce es Wyndham. Esta cabecera nombra los
-          grupos y rescata la linea de clientes recurrentes, que llevaba
-          escrita en el contenido sin pintarse en ninguna parte.
+          son los dos IHG. Esta cabecera nombra los grupos y rescata la linea
+          de clientes recurrentes, que llevaba escrita en el contenido sin
+          pintarse en ninguna parte.
+          WYNDHAM YA NO SE NOMBRA, y no es un descuido: Mayurlin lo quito de
+          la linea y de la ficha de Google. El logo de Dolce sigue en la tira
+          porque ella no pidio quitarlo, solo la mencion al grupo.
           "Properties within" y no "clients": son propiedades dentro de esos
           grupos, no contratos con la corporacion. */}
       {/* `text-balance` reparte las lineas en vez de llenar cada una hasta el

@@ -148,8 +148,11 @@ export interface SiteContent {
     items: MilestoneItem[];
     /** Los grupos hoteleros detrás de las marcas del carrusel. Sin esta línea
      *  el carrusel es una lista de 22 nombres sueltos y el lector nunca ata
-     *  que Ritz-Carlton es Marriott, que InterContinental y Holiday Inn
-     *  Express son ambos IHG, y que Dolce es Wyndham. */
+     *  que Ritz-Carlton es Marriott, o que InterContinental y Holiday Inn
+     *  Express son ambos IHG.
+     *  NO NOMBRA A WYNDHAM, y es decisión de Mayurlin: lo quitó de aquí y de
+     *  la descripción que sale en Google y al compartir el enlace. Si vuelve
+     *  a aparecer en alguno de los dos sitios, es un error. */
     affiliations: string;
     footnote: string;
   };
@@ -268,23 +271,40 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
     ],
     ctaLabel: 'Iniciar un proyecto',
-    scopeLabel: 'Un rodaje tipo',
-    scopeNote: 'Para hacerte una idea antes de escribir. Cada proyecto se ajusta a lo que el hotel necesita.',
-    scopeItems: [
-      { value: '3–5', label: 'días en la propiedad' },
-      { value: '40–50', label: 'fotografías' },
-      { value: '3', label: 'piezas de vídeo vertical' },
-    ],
+    /* SIN CIFRAS, A PROPÓSITO. Decían "3–5 días en la propiedad", "40–50
+       fotografías" y "3 piezas de vídeo vertical", y Mayurlin las quitó: la
+       auditoría ya había dejado dos de esas cifras como pendientes de
+       confirmar, y prometer un número antes de saber qué necesita el hotel
+       ancla la conversación donde no toca. En su lugar va el mensaje del
+       media kit, que dice lo mismo sin comprometer volumen. `scopeItems`
+       se queda en el tipo y vacío: si algún día hay una cifra que SÍ se
+       pueda sostener, vuelve sin tocar el componente. */
+    scopeLabel: 'Cada propuesta es a medida',
+    scopeNote:
+      'Desde unas pocas piezas verticales hasta una producción completa de varios días. Lo definimos contigo según lo que quieras contar, dónde se va a usar el material y el tiempo que pasemos en la propiedad.',
+    scopeItems: [],
   },
+  /* TRES MODELOS, Y LA EXPOSICIÓN ES UNO DE ELLOS.
+     Antes el bloque se titulaba "Una producción, dos destinos" y la segunda
+     tarjeta decía "Publicaciones en @mayurlintravel, como servicio
+     adicional". Mayurlin lo paró: "la exposición en @mayurlintravel debe
+     aparecer como un modelo independiente, no como servicio adicional:
+     producción, exposición o las dos, y el hotel elige".
+     Y tenía razón de fondo: con el titular anterior la exposición era un
+     subproducto del rodaje, así que un hotel que sólo quisiera exposición no
+     veía su opción en ninguna parte. Los tres textos son los del media kit,
+     que es donde ella ya lo había resuelto. */
   valueBlock: {
-    claim: 'Una producción, dos destinos.',
+    claim: 'Cada hotel elige lo que necesita.',
     benefits: [
-      'Contenido para los canales de tu hotel.',
-      'Publicaciones en @mayurlintravel, como servicio adicional.',
+      'Producción de contenido',
+      'Exposición en @mayurlintravel',
+      'Producción y exposición',
     ],
     benefitDetails: [
-      'Fotografías y vídeos en los formatos y con los usos definidos en la propuesta.',
-      'Cuando el proyecto encaja con nuestra audiencia, parte del material se publica en @mayurlintravel, ante una comunidad internacional de viajes y hotelería.',
+      'Fotografía y vídeo para la web, las redes y las campañas del hotel, con los usos definidos en la propuesta.',
+      'Reels, publicaciones y stories en @mayurlintravel, ante una comunidad internacional de viajes.',
+      'Las dos cosas en un mismo rodaje: material para el hotel y publicaciones en nuestra cuenta.',
     ],
     ctaLabel: 'Iniciar un proyecto',
   },
@@ -351,7 +371,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       { value: '4', label: 'clientes recurrentes' },
     ],
     affiliations:
-      'Propiedades dentro de Marriott International, IHG Hotels & Resorts y Wyndham, junto a colecciones boutique independientes en cinco países.',
+      'Propiedades dentro de Marriott International e IHG Hotels & Resorts, junto a colecciones boutique independientes en cinco países.',
     footnote:
       'Clientes recurrentes: GPRO Valparaíso (3 rodajes) · Numa Group (3 propiedades) · Hotel Espléndido (2 rodajes) · Portixol (2 rodajes)',
   },
