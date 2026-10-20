@@ -1,0 +1,9 @@
+{
+  "name": "mayu-travel-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "La web de Mayu Travel, ya compilada. Se genera sola desde el repositorio del codigo; no se edita a mano.",
+  "scripts": {
+    "build": "echo 'Nada que compilar: la web ya viene hecha desde GitHub Actions, en dist/.'"
+  }
+}

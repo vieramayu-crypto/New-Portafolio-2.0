@@ -1,0 +1,127 @@
+# ====================================================================
+#  MAYU TRAVEL — configuración del servidor para un hosting propio
+#  (Hostinger y cualquier otro Apache). GitHub Pages NO lee este
+#  archivo: allí todo esto lo hace la plataforma sola. Aquí hay que
+#  decírselo al servidor.
+# ====================================================================
+
+
+# --------------------------------------------------------------------
+# 1. LAS DIRECCIONES QUE NO SON UN ARCHIVO
+#
+# La web tiene 32 direcciones y cada una existe como carpeta con su
+# index.html dentro, así que el servidor las encuentra sola. El problema
+# son las OTRAS: un enlace antiguo, una dirección mal copiada, o
+# /trabajo/loquesea. Sin esta regla, el visitante vería el 404 genérico
+# del hosting, con su marca y su aspecto, en vez de la web.
+#
+# Con ella, cualquier dirección desconocida entrega el index.html y el
+# enrutador de la propia web decide qué enseñar (normalmente, llevarlo a
+# Inicio). Se entrega con estado 200 a propósito.
+# --------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Si la web no vive en la raíz del dominio sino en una subcarpeta,
+  # descomentar la línea siguiente y poner la subcarpeta. Tiene que
+  # coincidir con la ruta con la que se compiló (VITE_BASE).
+  # RewriteBase /
+
+  # Todo por https y sin www, que es la dirección que la web declara como
+  # buena en sus etiquetas. Servir las dos versiones a la vez divide el
+  # posicionamiento entre ambas.
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # LOS SIETE NOMBRES ANTIGUOS DE HOTEL. La web los reconoce y redirige
+  # por su cuenta, pero hacerlo aquí es mejor: un buscador ve un 301 de
+  # verdad y traslada el posicionamiento al nombre nuevo.
+  RewriteRule ^trabajo/aman-venice/?$           /trabajo/intercontinental-lisboa/ [L,R=301]
+  RewriteRule ^trabajo/villa-cimbrone-ravello/?$ /trabajo/vestige-binidufa/ [L,R=301]
+  RewriteRule ^trabajo/hotel-caruso-belmond/?$  /trabajo/deltapark-vitalresort/ [L,R=301]
+  RewriteRule ^trabajo/borgo-egnazia-puglia/?$  /trabajo/honeymoon-petra-villas/ [L,R=301]
+  RewriteRule ^trabajo/hotel-danieli-venezia/?$ /trabajo/gpro-valparaiso/ [L,R=301]
+  RewriteRule ^trabajo/villa-deste-como/?$      /trabajo/hotel-esplendido/ [L,R=301]
+  RewriteRule ^trabajo/san-domenico-palace/?$   /trabajo/welmoon-villas/ [L,R=301]
+
+  RewriteRule ^en/work/aman-venice/?$           /en/work/intercontinental-lisboa/ [L,R=301]
+  RewriteRule ^en/work/villa-cimbrone-ravello/?$ /en/work/vestige-binidufa/ [L,R=301]
+  RewriteRule ^en/work/hotel-caruso-belmond/?$  /en/work/deltapark-vitalresort/ [L,R=301]
+  RewriteRule ^en/work/borgo-egnazia-puglia/?$  /en/work/honeymoon-petra-villas/ [L,R=301]
+  RewriteRule ^en/work/hotel-danieli-venezia/?$ /en/work/gpro-valparaiso/ [L,R=301]
+  RewriteRule ^en/work/villa-deste-como/?$      /en/work/hotel-esplendido/ [L,R=301]
+  RewriteRule ^en/work/san-domenico-palace/?$   /en/work/welmoon-villas/ [L,R=301]
+
+  # Y la regla general: lo que no sea un archivo ni una carpeta de
+  # verdad, lo resuelve la web.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+
+# --------------------------------------------------------------------
+# 2. COMPRESIÓN
+#
+# El código de la web son unos 600 KB de texto. Comprimido viaja en
+# unos 175. Las fotos y los vídeos NO se comprimen aquí: ya vienen
+# comprimidos y volver a hacerlo sólo gasta procesador.
+# --------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/xml image/svg+xml
+</IfModule>
+
+
+# --------------------------------------------------------------------
+# 3. CUÁNTO GUARDA EL NAVEGADOR CADA COSA
+#
+# Las fotos y el código llevan una huella en el nombre del archivo: si
+# cambian, cambia el nombre. Por eso se pueden guardar un año sin riesgo
+# de que alguien vea una versión vieja.
+#
+# EL HTML Y content.json NO, y eso importa: `content.json` es el archivo
+# que Mayurlin edita para cambiar fotos y textos sin tocar código. Si el
+# navegador lo guardara, ella subiría un cambio y no lo vería. Se pide
+# fresco siempre.
+# --------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                        "access plus 1 month"
+  ExpiresByType image/jpeg              "access plus 1 year"
+  ExpiresByType image/png               "access plus 1 year"
+  ExpiresByType image/webp              "access plus 1 year"
+  ExpiresByType image/svg+xml           "access plus 1 year"
+  ExpiresByType video/mp4               "access plus 1 year"
+  ExpiresByType video/webm              "access plus 1 year"
+  ExpiresByType font/woff2              "access plus 1 year"
+  ExpiresByType text/css                "access plus 1 year"
+  ExpiresByType application/javascript  "access plus 1 year"
+  ExpiresByType text/html               "access plus 0 seconds"
+  ExpiresByType application/json        "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # Las fotos y el código, al revés: se pueden guardar y olvidar.
+  <FilesMatch "\.(jpg|jpeg|png|webp|svg|mp4|webm|woff2|css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+
+# --------------------------------------------------------------------
+# 4. LO QUE NO SE ENSEÑA
+# --------------------------------------------------------------------
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
