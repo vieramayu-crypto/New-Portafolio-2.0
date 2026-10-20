@@ -106,6 +106,30 @@ const AIRE_FICHA_DEBAJO = 40;
 /** Aire por debajo de lo último que se ve, antes del hotel siguiente. */
 const AIRE_ABAJO = 56;
 
+/** EL MISMO PROBLEMA QUE EN PROYECTOS, PERO EN INICIO.
+ *
+ *  Mayurlin: "la parte que dice ver proyecto o ver galería está demasiado
+ *  lejos de las imágenes; deberíamos poder subir este copy más cerca de donde
+ *  terminan las fotos o los vídeos".
+ *
+ *  En Inicio el lienzo tenía alto fijo (1.320px) y la ficha venía detrás, en
+ *  flujo, así que el aire era lo que sobrara del lienzo. Y sobraba de forma
+ *  salvaje, porque las fotos van en % del alto pero crecen con el ANCHO.
+ *  Medido sobre las `img` y el marco del vídeo, de la última pieza al nombre:
+ *
+ *             1280    1440    1680+   (1920 y 2560 dan lo mismo que 1680)
+ *    Abama     538     386     169
+ *    GPRO      197      56    -155
+ *    Vestige   198     100     -47
+ *    Inter     531     386     169
+ *
+ *  O sea medio folio de nada en unos y el nombre PISANDO las fotos en otros.
+ *  La solución es la que ya se usa en Proyectos: medir dónde acaba de verdad
+ *  lo último que se ve, contando lo que baja con el parallax, y darle ese
+ *  alto al bloque. El lienzo no se toca -- si se encogiera, las fotos, que
+ *  van en % de su alto, se moverían todas. */
+const AIRE_INICIO = 104;
+
 /** Cuánto recorre cada foto con el parallax, a tamaño de referencia.
  *
  *  Hay que contarlo para colocar la ficha: la ficha está quieta y las fotos
@@ -325,10 +349,10 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
     );
 
   useLayoutEffect(() => {
-    if (!ficha) return;
     const lienzo = lienzoRef.current;
     const caja = fichaRef.current;
-    if (!lienzo || !caja) return;
+    if (!lienzo) return;
+    if (ficha && !caja) return;
 
     const medir = () => {
       // Altura de un elemento dentro del lienzo, sin contar los `transform`.
@@ -364,6 +388,24 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
       // Nunca más de lo de siempre, y nunca tan poco que el movimiento
       // desaparezca: entre el 30% y el 100% del recorrido de referencia.
       const f = Math.min(1, Math.max(0.3, lienzo.offsetWidth / LIENZO_REFERENCIA));
+
+      /* INICIO: no hay ficha dentro, sólo hay que cortar el lienzo por donde
+         acaba lo último que se ve. El parallax va SIN escalar, porque en
+         Inicio las fotos conservan su recorrido de siempre (los 80/120/50
+         enteros) y hay que dejarles sitio para que no pisen el nombre. */
+      if (!ficha) {
+        const fondoConMovimiento = marcos.reduce(
+          (m, marco, i) => Math.max(m, fondoDe(marco) + (PARALLAX[i] ?? 0)),
+          0,
+        );
+        setAjuste({
+          topFicha: 0,
+          dentro: false,
+          alto: Math.round(lienzo.offsetTop + fondoConMovimiento + AIRE_INICIO),
+        });
+        return;
+      }
+
       setEscala(f);
 
       const dentro = window.matchMedia(ANCHO_FICHA_DENTRO).matches;
@@ -402,7 +444,10 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
     medir();
     const ro = new ResizeObserver(medir);
     ro.observe(lienzo);
-    ro.observe(caja);
+    /* En Inicio no hay ficha que observar, y pasarle `null` revienta el
+       componente entero: la página se queda a medias y el prerenderizado se
+       cuelga esperándola. Pasó. */
+    if (caja) ro.observe(caja);
     const mq = window.matchMedia(ANCHO_FICHA_DENTRO);
     mq.addEventListener('change', medir);
     return () => {
@@ -416,13 +461,16 @@ export const HotelSectionBlock: React.FC<HotelSectionBlockProps> = ({
       ref={sectionRef}
       id={`hotel-${story.id}`}
       data-hotel-id={story.id}
-      style={ficha && ajuste.alto ? { height: ajuste.alto } : undefined}
+      style={ajuste.alto ? { height: ajuste.alto } : undefined}
       className={`hotel-section-block relative w-full scroll-mt-24 px-4 md:px-12 lg:px-20 overflow-hidden ${
         ficha
           ? // El alto lo decide la medida de abajo, no un mínimo. Y arriba
             // sobra aire: con la ficha dentro, el hotel empieza en la foto.
             'py-10 md:pt-12 md:pb-0'
-          : 'py-16 md:py-28 md:min-h-[1380px]'
+          : // El mínimo sólo vale hasta que la medida llega, en el primer
+            // fotograma: después manda el alto medido, y un `min-height` le
+            // ganaría a un `height` y dejaría el hueco igual que antes.
+            `py-16 md:py-28 ${ajuste.alto ? '' : 'md:min-h-[1380px]'}`
       }`}
     >
       {/* El nombre del hotel lo pone ahora la ficha que va debajo del bloque
