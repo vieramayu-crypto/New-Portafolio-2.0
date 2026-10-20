@@ -115,9 +115,27 @@ jobs:
           echo "Esto es lo que va a ver Hostinger:"
           ls -a publicacion
 
-      # La rama se rehace entera en cada vuelta, sin arrastrar historia: lo que
-      # importa es el estado actual del sitio, no como llego hasta aqui. Esa
-      # historia ya esta en `main`.
+      # LA RAMA CONSERVA SU HISTORIA, Y ESO NO ES UN DETALLE.
+      #
+      # Antes se rehacia entera en cada vuelta: `git init`, un commit huerfano
+      # y `push --force`. El razonamiento era que lo que importa es el estado
+      # actual del sitio, no como se llego hasta aqui. Pero para Hostinger esa
+      # rama es un repositorio del que tira con un `git pull`, y un pull no
+      # puede con una rama cuya historia se ha sustituido entera: la primera
+      # vez clona y funciona, y a partir de la segunda falla siempre.
+      #
+      # Mayurlin, tras dos publicaciones seguidas: "abro el enlace pero no
+      # cambia nada, he probado con varios navegadores". Comprobado: la rama
+      # tenia UN solo commit, del dia, y el `content.json` que servia su
+      # dominio seguia diciendo "Un rodaje tipo" mientras el de la rama ya
+      # decia "Cada propuesta es a medida". O sea GitHub publicaba bien y
+      # Hostinger no podia recogerlo.
+      #
+      # Ahora cada publicacion es un commit normal encima del anterior, asi
+      # que el pull de Hostinger avanza sin sobresaltos. El contenido sigue
+      # siendo un reemplazo completo: el indice se arma desde cero con los
+      # archivos nuevos, asi que lo que desaparece de `dist` desaparece de la
+      # rama.
       - name: Dejarlo en la rama hostinger
         run: |
           cd publicacion
@@ -125,9 +143,21 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q -b hostinger
+          git remote add origin \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          # Si la rama ya existe, su punta pasa a ser el padre de este commit.
+          # `--soft` mueve HEAD y deja el indice vacio, que es justo lo que se
+          # quiere: el `git add -A` de abajo lo llena con los archivos nuevos
+          # y nada mas.
+          if git fetch -q --depth 1 origin hostinger 2>/dev/null; then
+            git reset -q --soft FETCH_HEAD
+            echo "La rama ya existia: este commit va encima del anterior."
+          else
+            echo "La rama no existia todavia: se crea ahora."
+          fi
           git add -A
           git commit -q -m "Web compilada desde ${GITHUB_SHA::7}"
-          git push -q --force \
-            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
-            hostinger
+          # SIN `--force`. Si alguna vez saliera rechazado, es que ha pasado
+          # algo que conviene mirar, no algo que pisar.
+          git push -q origin HEAD:hostinger
           echo "Listo. Hostinger puede tirar de la rama 'hostinger'."
