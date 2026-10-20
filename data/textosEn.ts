@@ -111,6 +111,8 @@ export const ALT_EN: Record<string, string> = {
   'Servicio de café y folleto de Deltapark Vitalresort sobre la cama':
     'Coffee service and the Deltapark Vitalresort booklet on the bed',
   'Vista aérea del complejo junto al lago Thun': 'Aerial view of the resort beside Lake Thun',
+  'Vista aérea del complejo y las villas sobre el agua al anochecer, con el lago Thun y los Alpes al fondo':
+    'Aerial view of the resort and the lakeside villas at dusk, with Lake Thun and the Alps behind',
   'Cesta de mimbre con toallas recién lavadas junto a la entrada':
     'A wicker basket of freshly washed towels beside the entrance',
   'Chimenea de diseño en el vestíbulo del complejo':

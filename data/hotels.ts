@@ -483,10 +483,19 @@ export const HOTEL_STORIES: HotelStory[] = [
     ],
     galleryPhotos: [
       {
+        /* LA AÉREA DEL ANOCHECER, Y NO LA DE ANTES.
+           Mayurlin: "quiero que esta sea la primera foto del álbum de
+           Deltapark; actualmente hay una foto que no me gusta, es de dron
+           igual pero pierde calidad". Tenía razón en lo de la calidad: la
+           anterior llegó a 2000x1500 y para una toma de dron eso se come el
+           detalle. Esta viene del archivo original de 8192x6144 y se publica
+           a 3840 de ancho, que es lo que pide una pantalla de 1920 a 2x.
+           La anterior NO desaparece: sigue siendo la segunda foto del bloque
+           de Deltapark en Inicio. */
         id: 'hc-gal-1',
-        url: publicImage('sec3-foto2-h.jpg'),
-        alt: 'Vista aérea del complejo junto al lago Thun',
-        caption: 'El complejo, visto desde el aire',
+        url: publicImage('sec3-gal00-aerea-anochecer-h.jpg'),
+        alt: 'Vista aérea del complejo y las villas sobre el agua al anochecer, con el lago Thun y los Alpes al fondo',
+        caption: 'El complejo al anochecer, visto desde el aire',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
       },
