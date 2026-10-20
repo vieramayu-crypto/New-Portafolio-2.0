@@ -46,23 +46,119 @@ import { publicVideo } from '../src/lib/content';
  *  reanudarlo al volver, que es exactamente lo que faltaba. */
 const PIEZAS = VIDEOS_VERTICALES.filter((v) => !v.provisional && v.archivo);
 
-/** CADA COLUMNA LLEVA SU PROPIO JUEGO DE PIEZAS, Y ALTERNA ENTRE ELLAS.
+/** EL REPARTO: QUÉ PIEZA VA EN CADA HUECO DE CADA COLUMNA.
  *
- *  Es lo único que garantiza verlas todas a la vez: si una columna sólo enseña
- *  las piezas 1 y 4, y la siguiente la 2 y la 5, en la franja visible de cada
- *  una siempre hay piezas distintas, caiga donde caiga el bucle. Repartidas al
- *  azar salían entre tres y seis en pantalla, porque la columna del medio gira
- *  al revés y se va desfasando de las otras dos.
+ *  LA REGLA QUE MANDA, EN PALABRAS DE MAYURLIN: "habiendo tres columnas y
+ *  tanto espacio, la idea es que siempre se vea un vídeo diferente; termina
+ *  un vídeo de Ritz-Carlton y empieza otro, el mismo, y eso se ve como
+ *  material repetido".
  *
- *  EL REPARTO SE CALCULA, NO SE ESCRIBE A MANO. Antes eran dos listas fijas,
- *  una de pares y otra de tríos, que daban por hecho que las piezas eran seis.
- *  Al entrar la de Ritz pasaron a siete, y la última se habría quedado fuera
- *  sin que nadie se enterara. Ahora se reparten por turnos: con siete piezas y
- *  tres columnas salen 3, 2 y 2; con dos columnas, 4 y 3. */
-const repartoPorColumna = (cuantas: number, piezas: number): number[][] =>
-  Array.from({ length: cuantas }, (_, c) =>
-    Array.from({ length: piezas }, (_, i) => i).filter((i) => i % cuantas === c),
-  );
+ *  POR QUÉ PASABA. Antes cada columna se quedaba con un subconjunto fijo de
+ *  piezas (la 0, la 3 y la 6 para la primera) y lo recorría en bucle hasta
+ *  llenar sus cuatro huecos: 0, 3, 6, 0. Al clonar la columna para cerrar la
+ *  cinta, la secuencia real pasaba a ser `0 3 6 0 | 0 3 6 0`, y en la costura
+ *  quedaban DOS CEROS SEGUIDOS. Ritz es justo la pieza 0.
+ *
+ *  LO QUE SE HACE AHORA. Los huecos se numeran en orden de lectura (fila por
+ *  fila, de izquierda a derecha) y se van repartiendo las piezas por turnos.
+ *  Dos huecos seguidos de una misma columna están separados por tantos turnos
+ *  como columnas haya, así que les toca pieza distinta mientras el número de
+ *  columnas no sea múltiplo del de piezas. Con 7 piezas sale, en escritorio:
+ *
+ *      columna 1: 0 3 6 2        columna 2: 1 4 0 3        columna 3: 2 5 1 4
+ *
+ *  Ninguna columna repite pieza en huecos contiguos, tampoco al cerrar el
+ *  bucle (el último hueco con el primero del clon), y cada fila enseña tres
+ *  piezas distintas.
+ *
+ *  Y POR SI ALGÚN DÍA CAMBIA EL NÚMERO DE PIEZAS, el reparto se comprueba a
+ *  sí mismo: si deja alguna pegada, reordena esa columna, y si ni con eso
+ *  (pasa cuando el número de piezas divide al de columnas, y entonces a cada
+ *  columna le toca siempre la misma), reparte con otro paso hasta que sale
+ *  limpio. Probado de 2 a 16 piezas, en las dos formas de columna: ni una
+ *  pegada y sin dejarse ninguna pieza fuera. Con las siete de hoy acierta a
+ *  la primera y el reparto es el de arriba.
+ *
+ *  Existe porque añadir o quitar una pieza no puede volver a colar un Ritz
+ *  pegado a otro Ritz sin que nadie se entere. */
+/** ¿Hay dos huecos contiguos con la misma pieza, o con el mismo hotel?
+ *  `% col.length` cierra el bucle: el último hueco de la columna se toca con
+ *  el primero del clon, que es exactamente donde se coló el Ritz repetido. */
+const sinPegados = (col: number[], clave: (i: number) => string | number): boolean =>
+  col.every((v, i) => clave(v) !== clave(col[(i + 1) % col.length]));
+
+/** REORDENA UNA COLUMNA PARA QUE NO HAYA DOS PIEZAS IGUALES PEGADAS.
+ *  Coloca primero la pieza que más se repite y va saltando de dos en dos
+ *  (0, 2, 4... y luego 1, 3, 5...): así dos copias de la misma nunca caen
+ *  juntas mientras ninguna pase de la mitad de los huecos. Sólo se usa
+ *  cuando hace falta, para no deshacer el reparto bueno. */
+const reordenar = (col: number[]): number[] => {
+  const cuenta = new Map<number, number>();
+  col.forEach((v) => cuenta.set(v, (cuenta.get(v) || 0) + 1));
+  const porFrecuencia = [...cuenta.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
+  const orden: number[] = [];
+  for (let i = 0; i < col.length; i += 2) orden.push(i);
+  for (let i = 1; i < col.length; i += 2) orden.push(i);
+  const salida = new Array<number>(col.length);
+  let i = 0;
+  porFrecuencia.forEach(([pieza, veces]) => {
+    for (let v = 0; v < veces; v += 1) {
+      salida[orden[i]] = pieza;
+      i += 1;
+    }
+  });
+  return salida;
+};
+
+const repartoDeHuecos = (
+  cuantas: number,
+  huecos: number,
+  piezas: number,
+  hotelDe: (i: number) => string,
+): number[][] => {
+  if (piezas < 1) return Array.from({ length: cuantas }, () => []);
+  /* `paso` es cuántos turnos hay entre dos huecos seguidos de una misma
+     columna. Lo natural es el número de columnas, y con las siete piezas de
+     hoy sale bien a la primera. Pero si el número de piezas divide al paso,
+     a una columna le toca SIEMPRE la misma pieza (tres columnas y tres
+     piezas, por ejemplo) y entonces no hay reordenación que salve nada: hay
+     que repartir distinto. Por eso se prueban pasos hasta encontrar uno que
+     no deje ninguna pegada. */
+  const laPieza = (i: number) => i;
+  const repartirCon = (paso: number, clave: (i: number) => string | number): number[][] => {
+    const cols: number[][] = Array.from({ length: cuantas }, () => []);
+    for (let k = 0; k < huecos; k += 1) {
+      for (let c = 0; c < cuantas; c += 1) cols[c].push((k * paso + c) % piezas);
+    }
+    return cols.map((col) => (sinPegados(col, clave) ? col : reordenar(col)));
+  };
+  /* Y NINGUNA PIEZA PUEDE QUEDARSE FUERA. Es la lección que ya costó una
+     ronda en esta web: cuando entró la de Ritz, el reparto de entonces la
+     habría dejado sin enseñar y nadie se habría enterado. Cambiar de paso
+     para evitar repetidos puede dejar huérfana alguna pieza, así que un
+     reparto sólo vale si enseña todas las que caben. */
+  const objetivo = Math.min(piezas, cuantas * huecos);
+  const lasEnseñaTodas = (cols: number[][]) => new Set(cols.flat()).size >= objetivo;
+
+  /* Dos vueltas, y la primera es la exigente: NI EL MISMO HOTEL DOS VECES
+     SEGUIDAS. No basta con que no se repita la pieza; Stic Urban tiene tres
+     clips y dos de ellos seguidos se leen igual de mal, aunque sean vídeos
+     distintos. Si ningún paso lo consigue, se conforma con que no se repita
+     la PIEZA, que es el fallo que vio Mayurlin. */
+  let apaño: number[][] | null = null;
+  for (const clave of [hotelDe, laPieza]) {
+    for (let paso = cuantas; paso <= cuantas + piezas; paso += 1) {
+      const intento = repartirCon(paso, clave);
+      if (!intento.every((col) => sinPegados(col, clave))) continue;
+      if (lasEnseñaTodas(intento)) return intento;
+      apaño = apaño ?? intento;
+    }
+  }
+  /* Si hay que elegir, antes dejar una pegada que esconder una pieza. */
+  const porTurnos = repartirCon(cuantas, laPieza);
+  if (lasEnseñaTodas(porTurnos)) return apaño && lasEnseñaTodas(apaño) ? apaño : porTurnos;
+  return apaño ?? porTurnos;
+};
 
 /** Cuántos huecos por columna antes de clonar. Los justos para cubrir la
  *  pantalla: el clonado duplica la columna para que el `translateY(-50%)`
@@ -193,18 +289,18 @@ export const MosaicoVerticales: React.FC<MosaicoVerticalesProps> = ({
          navegador con los decodificadores cogidos un rato largo. */
       if (cuantas) vaciar();
       cuantas = n;
-      const reparto = repartoPorColumna(n, PIEZAS.length);
+      const huecos = dos ? HUECOS_MOVIL : HUECOS_ESCRITORIO;
+      const reparto = repartoDeHuecos(n, huecos, PIEZAS.length, (i) => PIEZAS[i]?.hotel || String(i));
       columnas().forEach((col, ci) => {
         col.innerHTML = '';
         const lista = reparto[ci % reparto.length];
         if (!lista.length) return;
-        const huecos = dos ? HUECOS_MOVIL : HUECOS_ESCRITORIO;
-        for (let k = 0; k < huecos; k += 1) {
+        lista.forEach((pieza) => {
           const celda = document.createElement('div');
           celda.className = 'mv-celda';
-          celda.dataset.pieza = String(lista[k % lista.length]);
+          celda.dataset.pieza = String(pieza);
           col.appendChild(celda);
-        }
+        });
         Array.from(col.children).forEach((c) => col.appendChild(c.cloneNode(true)));
       });
     };
