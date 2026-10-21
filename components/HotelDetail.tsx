@@ -5,7 +5,7 @@ import { HotelStory, PhotoItem } from '../types';
 import { VideoNube } from './VideoNube';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
-import { versionMovil, MEDIA_MOVIL, srcSetDe } from '../src/lib/foto';
+import { versionMovil, MEDIA_MOVIL, srcSetDe, sizesDe, SIZES_SANGRE } from '../src/lib/foto';
 import { traducirCaso } from '../data/textosEn';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
@@ -38,6 +38,11 @@ interface GalleryPhotoProps {
   widthClass: string;
   offsetClass?: string;
   bleed?: boolean;
+  /** El ancho real del hueco, para las fotos que tienen escalera. Se escribe
+   *  con `sizesDe(porcentaje)` o con `SIZES_SANGRE` si va a sangre completa.
+   *  Si falta, se asume la ventana entera, que es lo que vale para las fotos
+   *  sin escalera porque a ésas el navegador no tiene nada que elegir. */
+  sizes?: string;
 }
 
 /** El parallax va en la FOTO, no en la caja.
@@ -55,7 +60,9 @@ interface GalleryPhotoProps {
  *  destape el fondo de la caja. Por eso los recorridos bajan a ~30px como
  *  máximo: moviendo la imagen dentro de un marco quieto, el efecto se percibe
  *  igual o más con mucho menos recorrido. */
-const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widthClass, offsetClass, bleed }) => (
+const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widthClass, offsetClass, bleed, sizes }) => {
+  const escalera = srcSetDe(photo.url);
+  return (
   <div
     className={`relative ${widthClass} ${aspectClass} ${offsetClass || ''} ${
       bleed ? '' : 'shadow-2xl'
@@ -72,18 +79,23 @@ const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widt
       className={`absolute left-0 w-full ${bleed ? 'inset-y-0' : '-top-[24px] h-[calc(100%+48px)]'}`}
     >
       <picture>
-        <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />
+        {/* LA COPIA DE MÓVIL SÓLO PARA LAS FOTOS SIN ESCALERA. Un `<source>`
+            cuyo `media` casa gana siempre al `srcset` del `<img>`, así que
+            dejarlo puesto le daría al teléfono los 900px de `images/m/` y la
+            escalera no serviría de nada justo donde Mayurlin dijo que
+            tampoco se podía perder calidad. */}
+        {!escalera && <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />}
         {/* LA ESCALERA, cuando esta foto la tiene. Sin ella el navegador
             recibe un archivo mucho mayor que el hueco y lo reduce él, con un
             filtro barato: medido, 87% del detalle frente al 101% de servirle
-            su medida. Ver `srcSetDe` en `src/lib/foto.ts`.
-            `sizes="100vw"` porque esta foto va a sangre completa; si algún
-            día se usa en un hueco más estrecho, hay que decirlo aquí o el
-            navegador pedirá de más. */}
+            su medida. Ver `srcSetDe` en `src/lib/foto.ts`. Y `sizes` tiene
+            que decir el ancho REAL del hueco: con `100vw` en una foto que
+            ocupa media columna, el navegador pide el doble y vuelve a
+            reducirlo él. */}
         <img
           src={photo.url}
-          srcSet={srcSetDe(photo.url)}
-          sizes={srcSetDe(photo.url) ? '100vw' : undefined}
+          srcSet={escalera}
+          sizes={escalera ? sizes || SIZES_SANGRE : undefined}
           alt={photo.alt}
           className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
             photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
@@ -92,7 +104,8 @@ const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widt
       </picture>
     </motion.div>
   </div>
-);
+  );
+};
 
 interface GalleryVideoProps {
   video: { url: string; poster: string };
@@ -170,7 +183,7 @@ const Bleed: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 // de la primera pieza estrecha.
 //
 // AUDITORÍA (bloque del vídeo / bloques totales): v0 3/11 · v1 4/11 ·
-// v2 4/13 · v3 sin vídeo · v4 3/14 · v5 3/14 · v6 4/14 · v7 sin vídeo ·
+// v2 4/13 · v3 sin vídeo · v4 3/14 · v5 4/12 · v6 4/14 · v7 sin vídeo ·
 // v8 3/10.
 const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
   // 0 -- THE RITZ-CARLTON TENERIFE, ABAMA: a guided walk through the property --
@@ -654,17 +667,32 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
     </>
   ),
 
-  // 5 -- HOTEL ESPLÉNDIDO: 13 photos, chronological with color coherence.
-  // Slot map:
-  //   0 fachada nocturna (landscape bleed) → 1 guía flat lay (portrait solo) →
-  //   2+3 detalle habitación + spa entrada (warm portrait pair) →
-  //   4 spa interior turquesa (landscape solo, transition to blue) →
-  //   5+6 bahía panorámica + playa vestido (blue portrait pair) →
-  //   7 piscina + bahía + faro (landscape bleed, pool wow) →
-  //   8+9 coco + copa piernas (blue-pool portrait pair) →
-  //   10 entrada bistro Davant la Mar (square solo, day facade) →
-  //   11 terraza pareja vista (landscape solo, warm terrace) →
-  //   12 tranvía (portrait solo, closing outside).
+  // 5 -- HOTEL ESPLÉNDIDO: 15 fotos, la mañana en la habitación y de ahí hacia
+  // fuera, hasta el tranvía y la fachada de noche.
+  //
+  // EL ORDEN LO PIDIÓ MAYURLIN y cambia el arranque entero: "la primera es de
+  // Mayu en la cama, esa quiero que sea la primera foto... esa foto que está
+  // ahorita de primero, la pasamos hacia abajo". La fachada nocturna, que
+  // abría, se va al final: es la única foto de noche de las quince, así que
+  // bajarla además cuadra la cronología que ella pide siempre (fachada ->
+  // habitación -> desayuno -> spa -> cena).
+  //
+  // LA GUÍA SOBRE LA CAMA YA NO VA SOLA. Suelta en el centro, en escritorio
+  // dejaba una columna estrecha entre dos franjas vacías y su fondo es una
+  // cama blanca: "no me gusta cómo queda como una foto sola... podríamos
+  // intentar colocarla con una foto al lado horizontal, que no tenga tanto
+  // espacio a los lados". Ahora comparte fila con la terraza, que es
+  // horizontal y ocupa el 56%: entre las dos llenan el ancho.
+  //
+  // Mapa de huecos:
+  //   0 cama con la guía (sangre 3/2, la mañana) →
+  //   1+2 guía flat lay + terraza sobre la bahía (vertical + horizontal) →
+  //   3+4 detalle de la habitación + restaurante (par de interiores) →
+  //   VÍDEO →
+  //   5 entrada del spa (vertical sola) → 6 spa turquesa (horizontal) →
+  //   7+8 bahía + playa (par azul) → 9 piscina y faro (sangre) →
+  //   10+11 coco + copa (par de piscina) → 12 entrada del bistró (cuadrada) →
+  //   13 tranvía → 14 fachada de noche (cierre).
   ({ photos, y, embed }) => (
     <>
       {photos[0] && (
@@ -672,92 +700,166 @@ const GALLERY_LAYOUTS: Array<React.FC<GalleryLayoutProps>> = [
           <GalleryPhoto photo={photos[0]} y={y[0]} aspectClass="aspect-[3/2]" widthClass="w-full" bleed />
         </Bleed>
       )}
-      {photos[1] && (
-        <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[1]} y={y[1]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[42%]" />
+      {(photos[1] || photos[2]) && (
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+          {photos[1] && (
+            <GalleryPhoto
+              photo={photos[1]}
+              y={y[1]}
+              aspectClass="aspect-[3/4]"
+              widthClass="w-full md:w-[40%]"
+              sizes={sizesDe(40)}
+            />
+          )}
+          {photos[2] && (
+            <GalleryPhoto
+              photo={photos[2]}
+              y={y[2]}
+              aspectClass="aspect-[4/3]"
+              widthClass="w-full md:w-[56%]"
+              offsetClass="md:mt-20"
+              sizes={sizesDe(56)}
+            />
+          )}
         </div>
       )}
-      {/* EL VÍDEO VA AQUÍ, entre la foto suelta y la pareja de verticales.
-          Cumple las tres condiciones que puso Mayurlin: no es lo primero que
-          se ve, está en la primera mitad del recorrido y no toca ninguna foto
-          horizontal -- sus dos vecinas son verticales 3/4. Las horizontales a
-          sangre de este hotel son las fotos 1 y 8, y ninguna queda pegada. */}
-      {embed && (
-        <Bleed>
-          <GalleryEmbed src={embed} />
-        </Bleed>
-      )}
-      {(photos[2] || photos[3]) && (
+      {(photos[3] || photos[4]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-          {photos[2] && (
-            <GalleryPhoto photo={photos[2]} y={y[2]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[48%]" />
-          )}
           {photos[3] && (
             <GalleryPhoto
               photo={photos[3]}
               y={y[3]}
               aspectClass="aspect-[3/4]"
               widthClass="w-full md:w-[48%]"
-              offsetClass="md:mt-16"
+              sizes={sizesDe(48)}
             />
           )}
-        </div>
-      )}
-      {photos[4] && (
-        <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[4]} y={y[4]} aspectClass="aspect-[3/2]" widthClass="w-full md:w-[74%]" />
-        </div>
-      )}
-      {(photos[5] || photos[6]) && (
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-          {photos[5] && (
+          {photos[4] && (
             <GalleryPhoto
-              photo={photos[5]}
-              y={y[5]}
-              aspectClass="aspect-[3/4]"
+              photo={photos[4]}
+              y={y[4]}
+              aspectClass="aspect-[2/3]"
               widthClass="w-full md:w-[48%]"
-              offsetClass="md:mt-16"
+              offsetClass="md:mt-12"
+              sizes={sizesDe(48)}
             />
-          )}
-          {photos[6] && (
-            <GalleryPhoto photo={photos[6]} y={y[6]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[48%]" />
           )}
         </div>
       )}
-      {photos[7] && (
+      {/* EL VÍDEO VA AQUÍ, el cuarto bloque. Cumple las tres condiciones que
+          puso Mayurlin: no es lo primero que se ve, está en la primera mitad
+          del recorrido y no toca ninguna foto horizontal -- encima tiene un
+          par de verticales y debajo una vertical sola. Las horizontales a
+          sangre de este hotel son las fotos 1 y 10, y ninguna queda pegada. */}
+      {embed && (
         <Bleed>
-          <GalleryPhoto photo={photos[7]} y={y[7]} aspectClass="aspect-[3/2]" widthClass="w-full" bleed />
+          <GalleryEmbed src={embed} />
         </Bleed>
       )}
-      {(photos[8] || photos[9]) && (
+      {photos[5] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto
+            photo={photos[5]}
+            y={y[5]}
+            aspectClass="aspect-[3/4]"
+            widthClass="w-full md:w-[42%]"
+            sizes={sizesDe(42)}
+          />
+        </div>
+      )}
+      {photos[6] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto
+            photo={photos[6]}
+            y={y[6]}
+            aspectClass="aspect-[3/2]"
+            widthClass="w-full md:w-[74%]"
+            sizes={sizesDe(74)}
+          />
+        </div>
+      )}
+      {(photos[7] || photos[8]) && (
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-          {photos[8] && (
-            <GalleryPhoto photo={photos[8]} y={y[8]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[48%]" />
-          )}
-          {photos[9] && (
+          {photos[7] && (
             <GalleryPhoto
-              photo={photos[9]}
-              y={y[9]}
+              photo={photos[7]}
+              y={y[7]}
               aspectClass="aspect-[3/4]"
               widthClass="w-full md:w-[48%]"
               offsetClass="md:mt-16"
+              sizes={sizesDe(48)}
+            />
+          )}
+          {photos[8] && (
+            <GalleryPhoto
+              photo={photos[8]}
+              y={y[8]}
+              aspectClass="aspect-[3/4]"
+              widthClass="w-full md:w-[48%]"
+              sizes={sizesDe(48)}
             />
           )}
         </div>
       )}
-      {photos[10] && (
-        <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[10]} y={y[10]} aspectClass="aspect-square" widthClass="w-full md:w-[50%]" />
-        </div>
+      {photos[9] && (
+        <Bleed>
+          <GalleryPhoto photo={photos[9]} y={y[9]} aspectClass="aspect-[3/2]" widthClass="w-full" bleed />
+        </Bleed>
       )}
-      {photos[11] && (
-        <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[11]} y={y[11]} aspectClass="aspect-[3/2]" widthClass="w-full md:w-[74%]" />
+      {(photos[10] || photos[11]) && (
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+          {photos[10] && (
+            <GalleryPhoto
+              photo={photos[10]}
+              y={y[10]}
+              aspectClass="aspect-[3/4]"
+              widthClass="w-full md:w-[48%]"
+              sizes={sizesDe(48)}
+            />
+          )}
+          {photos[11] && (
+            <GalleryPhoto
+              photo={photos[11]}
+              y={y[11]}
+              aspectClass="aspect-[3/4]"
+              widthClass="w-full md:w-[48%]"
+              offsetClass="md:mt-16"
+              sizes={sizesDe(48)}
+            />
+          )}
         </div>
       )}
       {photos[12] && (
         <div className="w-full flex justify-center">
-          <GalleryPhoto photo={photos[12]} y={y[12]} aspectClass="aspect-[3/4]" widthClass="w-full md:w-[46%]" />
+          <GalleryPhoto
+            photo={photos[12]}
+            y={y[12]}
+            aspectClass="aspect-square"
+            widthClass="w-full md:w-[50%]"
+            sizes={sizesDe(50)}
+          />
+        </div>
+      )}
+      {photos[13] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto
+            photo={photos[13]}
+            y={y[13]}
+            aspectClass="aspect-[3/4]"
+            widthClass="w-full md:w-[46%]"
+            sizes={sizesDe(46)}
+          />
+        </div>
+      )}
+      {photos[14] && (
+        <div className="w-full flex justify-center">
+          <GalleryPhoto
+            photo={photos[14]}
+            y={y[14]}
+            aspectClass="aspect-[3/2]"
+            widthClass="w-full md:w-[74%]"
+            sizes={sizesDe(74)}
+          />
         </div>
       )}
     </>
@@ -1059,8 +1161,8 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   const caseStudy = casoBase ? traducirCaso(casoBase, idioma) : undefined;
   const [heroLoaded, setHeroLoaded] = useState(false);
 
-  // STRICT CONSTRAINT: Maximum 14 photos in the gallery
-  const photos = (story.galleryPhotos ?? story.photos ?? []).slice(0, 14);
+  // STRICT CONSTRAINT: Maximum 15 photos in the gallery
+  const photos = (story.galleryPhotos ?? story.photos ?? []).slice(0, 15);
 
   const galleryRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -1069,7 +1171,7 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   });
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 70, damping: 22 });
 
-  // Same parallax mechanism as the home page hotel sections, extended to 14 photos
+  // Same parallax mechanism as the home page hotel sections, extended to 15 photos
   const y0 = useTransform(smoothProgress, [0, 1], ['17px', '-17px']);
   const y1 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
   const y2 = useTransform(smoothProgress, [0, 1], ['11px', '-11px']);
@@ -1084,7 +1186,8 @@ export const HotelDetail: React.FC<HotelDetailProps> = ({
   const y11 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
   const y12 = useTransform(smoothProgress, [0, 1], ['13px', '-13px']);
   const y13 = useTransform(smoothProgress, [0, 1], ['20px', '-20px']);
-  const yTransforms = [y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13];
+  const y14 = useTransform(smoothProgress, [0, 1], ['16px', '-16px']);
+  const yTransforms = [y0, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14];
 
   const venueMapUrl = `https://www.google.com/maps/search/${encodeURIComponent(
     `${story.hotelName} ${story.location} ${story.country}`

@@ -198,6 +198,10 @@ export const ALT_EN: Record<string, string> = {
     'A couple talking on the terrace with views over the Bay of Sóller',
   'Fachada del Hotel Espléndido iluminada de noche, con el tranvía naranja de época y la terraza del bistró':
     'The Hotel Espléndido facade lit at night, with the vintage orange tram and the bistro terrace',
+  'Mujer en albornoz leyendo la guía de Mallorca en la cama, con un café en la mano y el papel pintado de palmeras de la habitación':
+    'A woman in a robe reading the Mallorca guide in bed, coffee in hand, against the room\'s palm leaf wallpaper',
+  'Mesa puesta junto al ventanal del restaurante, con la lámpara de techo granate y los veleros fondeados en la bahía':
+    'A laid table by the restaurant window, with the burgundy pendant lamp and the sailing boats moored in the bay',
   'La guía del Hotel Espléndido de Sóller abierta sobre la cama, con un sombrero de paja y una mandarina':
     'The Hotel Espléndido Sóller guide open on the bed, with a straw hat and a mandarin',
   'Detalle de la habitación con cabecero de cuero, una lámpara encendida, un sillón turquesa y un sombrero de paja':

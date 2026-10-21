@@ -942,11 +942,14 @@ export const HOTEL_STORIES: HotelStory[] = [
       }
     ],
     galleryPhotos: [
+      // EL ORDEN ES EL QUE PIDIÓ MAYURLIN: abre la cama con la guía y la
+      // fachada de noche, que abría antes, se va al cierre. Ver el mapa de
+      // huecos de la variante 5 en `components/HotelDetail.tsx`.
       {
         id: 'vde-gal-1',
-        url: publicImage('sec6-gal01-fachada-noche-h.jpg'),
-        alt: 'Fachada del Hotel Espléndido iluminada de noche, con el tranvía naranja de época y la terraza del bistró',
-        caption: 'La fachada, al caer la noche',
+        url: publicImage('sec6-gal00-cama-lectura-h.jpg'),
+        alt: 'Mujer en albornoz leyendo la guía de Mallorca en la cama, con un café en la mano y el papel pintado de palmeras de la habitación',
+        caption: 'La mañana, con la guía y un café',
         aspectRatio: 'landscape',
         isBlackAndWhite: false
       },
@@ -960,78 +963,6 @@ export const HOTEL_STORIES: HotelStory[] = [
       },
       {
         id: 'vde-gal-3',
-        url: publicImage('sec6-gal03-detalle-habitacion-v.jpg'),
-        alt: 'Detalle de la habitación con cabecero de cuero, una lámpara encendida, un sillón turquesa y un sombrero de paja',
-        caption: 'Un detalle de la habitación',
-        aspectRatio: 'portrait',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-4',
-        url: publicImage('sec6-gal04-spa-entrada-v.jpg'),
-        alt: 'Mujer con cesta de mimbre y kaftán de encaje entrando al spa del Hotel Espléndido',
-        caption: 'De camino al spa',
-        aspectRatio: 'portrait',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-5',
-        url: publicImage('sec6-gal05-spa-interior-h.jpg'),
-        alt: 'Piscina interior del spa iluminada en turquesa con una celosía blanca decorativa',
-        caption: 'La piscina interior del spa',
-        aspectRatio: 'landscape',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-6',
-        url: publicImage('sec6-gal06-bahia-panoramica-v.jpg'),
-        alt: 'Panorámica de la bahía de Port de Sóller con gaviotas, veleros y la playa de piedras blancas',
-        caption: 'La bahía de Sóller, entre las gaviotas',
-        aspectRatio: 'portrait',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-7',
-        url: publicImage('sec6-gal07-playa-vestido-v.jpg'),
-        alt: 'Mujer con vestido turquesa sentada en la playa de piedras, vista desde la habitación entre las palmeras',
-        caption: 'La playa, vista desde la habitación',
-        aspectRatio: 'portrait',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-8',
-        url: publicImage('sec6-gal08-piscina-pareja-h.jpg'),
-        alt: 'Pareja nadando en la piscina de la azotea con vistas a la bahía de Sóller y su faro',
-        caption: 'La piscina, frente al faro',
-        aspectRatio: 'landscape',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-9',
-        url: publicImage('sec6-gal09-piscina-coco-v.jpg'),
-        alt: 'Mujer con bañador blanco al borde de la piscina de la azotea bebiendo de un coco verde',
-        caption: 'Un coco al borde de la piscina',
-        aspectRatio: 'portrait',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-10',
-        url: publicImage('sec6-gal10-piscina-copa-v.jpg'),
-        alt: 'Piernas al borde de la piscina con una copa de cava y la guía del Hotel Espléndido de Sóller abierta',
-        caption: 'Cava y la guía al sol',
-        aspectRatio: 'portrait',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-11',
-        url: publicImage('sec6-foto1-c.jpg'),
-        alt: 'Entrada al Hotel Espléndido con el bistró Davant la Mar y sus flores rojas',
-        caption: 'La entrada, en el paseo marítimo',
-        aspectRatio: 'square',
-        isBlackAndWhite: false
-      },
-      {
-        id: 'vde-gal-12',
         url: publicImage('sec6-foto3-h.jpg'),
         alt: 'Pareja conversando en la terraza con vistas a la bahía de Sóller',
         caption: 'Terraza frente a la bahía',
@@ -1039,11 +970,99 @@ export const HOTEL_STORIES: HotelStory[] = [
         isBlackAndWhite: false
       },
       {
+        id: 'vde-gal-4',
+        url: publicImage('sec6-gal03-detalle-habitacion-v.jpg'),
+        alt: 'Detalle de la habitación con cabecero de cuero, una lámpara encendida, un sillón turquesa y un sombrero de paja',
+        caption: 'Un detalle de la habitación',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-5',
+        url: publicImage('sec6-gal11-restaurante-v.jpg'),
+        alt: 'Mesa puesta junto al ventanal del restaurante, con la lámpara de techo granate y los veleros fondeados en la bahía',
+        caption: 'El restaurante, frente a los veleros',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-6',
+        url: publicImage('sec6-gal04-spa-entrada-v.jpg'),
+        alt: 'Mujer con cesta de mimbre y kaftán de encaje entrando al spa del Hotel Espléndido',
+        caption: 'De camino al spa',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-7',
+        url: publicImage('sec6-gal05-spa-interior-h.jpg'),
+        alt: 'Piscina interior del spa iluminada en turquesa con una celosía blanca decorativa',
+        caption: 'La piscina interior del spa',
+        aspectRatio: 'landscape',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-8',
+        url: publicImage('sec6-gal06-bahia-panoramica-v.jpg'),
+        alt: 'Panorámica de la bahía de Port de Sóller con gaviotas, veleros y la playa de piedras blancas',
+        caption: 'La bahía de Sóller, entre las gaviotas',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-9',
+        url: publicImage('sec6-gal07-playa-vestido-v.jpg'),
+        alt: 'Mujer con vestido turquesa sentada en la playa de piedras, vista desde la habitación entre las palmeras',
+        caption: 'La playa, vista desde la habitación',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-10',
+        url: publicImage('sec6-gal08-piscina-pareja-h.jpg'),
+        alt: 'Pareja nadando en la piscina de la azotea con vistas a la bahía de Sóller y su faro',
+        caption: 'La piscina, frente al faro',
+        aspectRatio: 'landscape',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-11',
+        url: publicImage('sec6-gal09-piscina-coco-v.jpg'),
+        alt: 'Mujer con bañador blanco al borde de la piscina de la azotea bebiendo de un coco verde',
+        caption: 'Un coco al borde de la piscina',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-12',
+        url: publicImage('sec6-gal10-piscina-copa-v.jpg'),
+        alt: 'Piernas al borde de la piscina con una copa de cava y la guía del Hotel Espléndido de Sóller abierta',
+        caption: 'Cava y la guía al sol',
+        aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
         id: 'vde-gal-13',
+        url: publicImage('sec6-foto1-c.jpg'),
+        alt: 'Entrada al Hotel Espléndido con el bistró Davant la Mar y sus flores rojas',
+        caption: 'La entrada, en el paseo marítimo',
+        aspectRatio: 'square',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-14',
         url: publicImage('sec6-foto2-v.jpg'),
         alt: 'Vista elevada del tranvía histórico y la playa de Port de Sóller',
         caption: 'El tranvía histórico junto a la bahía',
         aspectRatio: 'portrait',
+        isBlackAndWhite: false
+      },
+      {
+        id: 'vde-gal-15',
+        url: publicImage('sec6-gal01-fachada-noche-h.jpg'),
+        alt: 'Fachada del Hotel Espléndido iluminada de noche, con el tranvía naranja de época y la terraza del bistró',
+        caption: 'La fachada, al caer la noche',
+        aspectRatio: 'landscape',
         isBlackAndWhite: false
       }
     ]

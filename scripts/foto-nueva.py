@@ -18,6 +18,9 @@ POR QUÉ EXISTE ESTE SCRIPT, que son tres lecciones pagadas:
    copia ligera desde `images/m/` con `<picture>` y `media`. Un `<source>`
    que casa con el `media` y da 404 NO cae al archivo de respaldo: el
    navegador deja el hueco vacío. Pasó con la aérea de Deltapark.
+   La copia se sigue generando como red de seguridad, pero una foto que
+   entra en la escalera ya NO la usa: la escalera también cubre el móvil, y
+   mejor (1170px de verdad contra 900 ampliados).
 
 2. DARLE AL NAVEGADOR UN ARCHIVO MÁS GRANDE QUE EL HUECO LA EMPEORA. Él la
    reduce con un filtro barato. Medido con la misma foto en una caja de 1920:
@@ -62,11 +65,28 @@ SUBMUESTREO = 0
 ANCHO_MOVIL = 900
 CALIDAD_MOVIL = 88
 
-# La escalera. Los anchos cubren lo que piden las pantallas reales: 1440 y
-# 1920 normales, 2560 de un monitor grande, 2880 y 3024 de los portátiles
-# retina (1440 y 1512 a 2x), y 3840 y 5120 de 4K y 5K. Un ancho mayor que el
-# original no se genera: ampliar no añade detalle, sólo peso.
-ESCALERA = [1440, 1920, 2560, 2880, 3024, 3840, 5120]
+# La escalera. Los anchos cubren lo que piden las pantallas reales: 780 y
+# 1170 de un móvil a 2x y a 3x, 1440 y 1920 normales, 2560 de un monitor
+# grande, 2880 y 3024 de los portátiles retina (1440 y 1512 a 2x), y 3840 y
+# 5120 de 4K y 5K. Un ancho mayor que el original no se genera: ampliar no
+# añade detalle, sólo peso.
+#
+# LOS DOS PRIMEROS SON LOS DEL MÓVIL, y no están de adorno: una foto con
+# escalera YA NO USA la copia de `images/m/`. Esa copia mide 900px y un
+# teléfono de 390pt a 3x pide 1170, así que la ampliaba un 30%. Con la
+# escalera el teléfono se lleva su medida exacta, guardada aquí con Lanczos y
+# calidad 97. Ver `src/lib/foto.ts`.
+ESCALERA = [780, 1170, 1440, 1920, 2560, 2880, 3024, 3840, 5120]
+
+# TOPE POR HUECO. Una foto que nunca se ve más ancha que media columna no
+# necesita una copia de 5120: nadie la pediría nunca y son 7 MB en el
+# repositorio. Se pasa como tercer argumento:
+#
+#     python3 scripts/foto-nueva.py originales/X.jpg sec6-gal11-mesa-v 1920
+#
+# El ancho que pide cada hueco sale de `sizesDe` en `src/lib/foto.ts`: el
+# porcentaje del hueco sobre 1472px (el contenido de la galería a tope), por
+# dos de densidad de pantalla.
 
 
 def guardar(imagen: Image.Image, destino: str, calidad: int = CALIDAD) -> float:
@@ -82,7 +102,7 @@ def ancho_a(imagen: Image.Image, ancho: int) -> Image.Image:
 
 
 def main() -> None:
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         raise SystemExit(__doc__)
     origen, nombre = sys.argv[1], sys.argv[2]
     if nombre.endswith('.jpg'):
@@ -95,11 +115,14 @@ def main() -> None:
     ancho_original = original.size[0]
     print(f'original: {original.size[0]}x{original.size[1]}')
 
+    tope = int(sys.argv[3]) if len(sys.argv) > 3 else ESCALERA[-1]
     archivo = f'{nombre}.jpg'
 
-    # El principal: el mayor de la escalera que quepa en el original, para que
-    # quien no entienda `srcset` reciba algo sensato y no el de 5120.
-    principal = max([a for a in ESCALERA if a <= ancho_original] or [ancho_original])
+    # El principal: el mayor de la escalera que quepa en el original y en el
+    # tope del hueco. No se genera también como copia de la escalera, porque
+    # sería el mismo archivo dos veces: `srcSetDe` lo añade a la lista con su
+    # ancho real (`nativo`).
+    principal = max([a for a in ESCALERA if a <= ancho_original and a <= tope] or [min(ancho_original, tope)])
     peso = guardar(ancho_a(original, principal), os.path.join(IMAGENES, archivo))
     print(f'\nprincipal  images/{archivo}  {principal}px  {peso:.2f} MB')
 
@@ -109,15 +132,15 @@ def main() -> None:
     print('\nescalera:')
     usados = []
     for ancho in ESCALERA:
-        if ancho > ancho_original:
-            print(f'   {ancho:5}px  (saltado: el original sólo tiene {ancho_original}px)')
+        if ancho >= principal:
+            print(f'   {ancho:5}px  (saltado: el principal ya mide {principal}px)')
             continue
         peso = guardar(ancho_a(original, ancho), os.path.join(IMAGENES, f'w{ancho}', archivo))
         usados.append(ancho)
         print(f'   {ancho:5}px  {peso:.2f} MB')
 
     print('\nFALTA UN PASO A MANO: añadir esta línea a `ESCALERA` en src/lib/foto.ts')
-    print(f"  '{archivo}': {usados},")
+    print(f"  '{archivo}': {{ copias: {usados}, nativo: {principal} }},")
     print('\ny luego meter la foto en `galleryPhotos` del hotel (data/hotels.ts)')
     print('con su texto alternativo, y traducirlo en data/textosEn.ts.')
 
