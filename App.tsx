@@ -99,23 +99,6 @@ function esRutaDeEntradaConIntro(): boolean {
   return !partes || CLAVES_DE_MENU.includes(partes.clave);
 }
 
-/** `noindex` MIENTRAS SE MIRA LA RUTA DE PRUEBA, y la etiqueta de siempre al
- *  salir. El `index, follow` vive en `index.html`, así que aquí se cambia el
- *  valor y se devuelve al desmontar: una página de pruebas que acabe en Google
- *  compitiendo con Inicio sería lo peor que podría pasar. */
-const PruebaMosaico: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  useEffect(() => {
-    const meta = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
-    const antes = meta?.content ?? null;
-    if (meta) meta.content = 'noindex, nofollow';
-    return () => {
-      if (meta && antes !== null) meta.content = antes;
-    };
-  }, []);
-
-  return <>{children}</>;
-};
-
 /** El botón Volver de una ficha o de un caso.
  *
  *  Hacia atrás de verdad cuando hay algo detrás -- así se recupera la página y
@@ -357,36 +340,6 @@ const AppShell: React.FC = () => {
                 />
               </React.Fragment>
             ))}
-            {/* LA RUTA ESCONDIDA DE PRUEBA. Es el Inicio de verdad, con su copy,
-                sus datos, sus dos idiomas y su intro, y lo único distinto es
-                que el bloque de piezas verticales se enseña como mosaico de
-                seis vídeos a la vez.
-
-                NO ESTÁ EN `src/lib/rutas.ts` a propósito, y de ahí se sigue
-                todo lo demás: no entra en el sitemap, no se prerenderiza (así
-                que el recuento de 32 páginas que vigilan los dos despliegues
-                no se mueve), no sale en el menú y no hay un solo enlace a
-                ella. Llega por el 404.html, igual que los enlaces antiguos de
-                hotel. Además pone `noindex` mientras se está mirando.
-
-                Existe para una sola pregunta, la que no se puede contestar
-                desde el entorno del agente: si un móvil de verdad sostiene
-                seis reproductores a la vez. Cuando esté contestada, esta ruta
-                se borra o el mosaico pasa a Inicio. */}
-            <Route
-              path="/pruebas/inicio-mosaico"
-              element={
-                <PruebaMosaico>
-                  <HomeMain
-                    introDone={introPlayed}
-                    onNavigate={handleNavigate}
-                    onOpenAvailability={openAvailability}
-                    onSelectStory={handleSelectStory}
-                    mosaicoVerticales
-                  />
-                </PruebaMosaico>
-              }
-            />
             <Route
               path="*"
               element={

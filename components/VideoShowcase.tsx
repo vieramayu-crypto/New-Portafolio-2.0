@@ -84,29 +84,28 @@ export const VideoShowcase: React.FC = () => {
  *  Va con `alterno` a propósito: sus dos vecinas son marfil `#fbfaf6`, y sin
  *  el cambio de fondo las tres se leerían como un solo bloque.
  */
-export const VideoVerticalesInicio: React.FC<{ mosaico?: boolean }> = ({ mosaico }) => {
+export const VideoVerticalesInicio: React.FC = () => {
   const t = crearT(useIdioma().idioma);
 
-  /* `mosaico` ES SÓLO PARA LA RUTA ESCONDIDA `/pruebas/inicio-mosaico`.
-     Enseña las seis piezas a la vez en tres columnas que se desplazan, en vez
-     de una cada vez. Mismo copy, mismos datos, mismo idioma: lo único que
-     cambia es la forma. Inicio no pasa la bandera, así que la web publicada
-     no se entera de que existe. Ver `MosaicoVerticales.tsx`, que explica por
-     qué todavía no está publicado. */
-  if (mosaico) {
-    return (
-      <MosaicoVerticales
-        titulo={t('verticalesTitulo')}
-        subtitulo={t('verticalesSubtitulo')}
-        alterno
-        ancla={ANCLA_VERTICALES}
-      />
-    );
-  }
+  /* EL MOSAICO ES AHORA EL INICIO, y no una ruta escondida.
+     Vivió en `/pruebas/inicio-mosaico` para contestar la única pregunta que no
+     se puede contestar desde el entorno del agente: si un móvil de verdad
+     sostiene seis piezas a la vez. Mayurlin lo probó en sus dispositivos y la
+     contestó -- "funciona", y de ahí salió el último arreglo, el de la pieza
+     repetida en la primera columna --, así que la ruta de prueba se retira y
+     esto pasa a Inicio. Ver `MosaicoVerticales.tsx`.
 
+     PARA VOLVER A LA GALERÍA DE UNA PIEZA CADA VEZ, que es lo que había
+     publicado hasta hoy, basta con devolver esto en su lugar; los datos
+     (`PIEZAS_VERTICALES`) y el componente siguen donde estaban:
+
+       <GaleriaPiezas piezas={PIEZAS_VERTICALES} titulo={t('verticalesTitulo')}
+         subtitulo={t('verticalesSubtitulo')} alterno ancla={ANCLA_VERTICALES} />
+
+     El import de `PIEZAS_VERTICALES` se queda puesto a propósito, justo para
+     que esa vuelta sea una línea y no tres. */
   return (
-    <GaleriaPiezas
-      piezas={PIEZAS_VERTICALES}
+    <MosaicoVerticales
       titulo={t('verticalesTitulo')}
       subtitulo={t('verticalesSubtitulo')}
       alterno
