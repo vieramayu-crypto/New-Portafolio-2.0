@@ -65,31 +65,32 @@ export function urlMediaKit(idioma: Idioma): string {
 interface CopyMediaKit {
   rotulo: string;
   titular: string;
-  linea: string;
   descargar: string;
   abrir: string;
   portafolio: string;
   pendiente: string;
 }
 
-/** EL COPY VIVE AQUÍ Y NO EN `content.json` a propósito: son siete frases que
- *  no se tocan nunca, y meterlas en el archivo que Mayurlin edita sería
- *  darle una cosa más que mantener a cambio de nada. El titular es el mismo
- *  del hero, que ya está aprobado en los dos idiomas. */
+/** EL COPY VIVE AQUÍ Y NO EN `content.json` a propósito: son seis frases que
+ *  no se tocan nunca, y meterlas en el archivo que Mayurlin edita sería darle
+ *  una cosa más que mantener a cambio de nada.
+ *
+ *  Y ES CORTO PORQUE ELLA LO PIDIÓ CORTO: *"con poco texto"*. Un rótulo, una
+ *  línea y dos acciones. Quien abre este enlace viene a por un documento, no
+ *  a leerse la propuesta otra vez; la propuesta está en el PDF. Por eso el
+ *  titular tampoco es el largo del hero, sino su versión de una línea. */
 export const COPY_MEDIA_KIT: Record<Idioma, CopyMediaKit> = {
   es: {
     rotulo: 'MEDIA KIT · 2026',
-    titular: 'Fotografía y producción audiovisual para hoteles de lujo.',
-    linea: 'Servicios, formatos de entrega y cómo trabajamos con cada propiedad.',
+    titular: 'Producción visual para hoteles de lujo.',
     descargar: 'Descargar PDF',
     abrir: 'Abrir en el navegador',
     portafolio: 'Ver el portafolio',
-    pendiente: 'El media kit se está actualizando. Escríbeme y te lo mando ahora mismo.',
+    pendiente: 'El media kit se está actualizando. Escríbeme y te lo mando.',
   },
   en: {
     rotulo: 'MEDIA KIT · 2026',
-    titular: 'Photography and film production for luxury hotels.',
-    linea: 'Services, delivery formats and how we work with each property.',
+    titular: 'Visual production for luxury hotels.',
     descargar: 'Download PDF',
     abrir: 'Open in the browser',
     portafolio: 'See the work',

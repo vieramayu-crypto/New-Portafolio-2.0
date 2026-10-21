@@ -2,29 +2,42 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import mayuLogo from '../src/assets/images/mayu-logo-black.png';
+import { HERO_PHOTO, HERO_PHOTO_MOBILE } from '../data/media';
 import { useIdioma } from '../src/lib/idioma';
 import { ruta } from '../src/lib/rutas';
 import { COPY_MEDIA_KIT, CORREO, urlMediaKit } from '../src/lib/mediaKit';
 import { useEsMovil } from './VideoNube';
 
-/** LA PÁGINA DEL MEDIA KIT. Una sola pantalla y el documento debajo.
+/** LA PÁGINA DEL MEDIA KIT: la foto del hero y una sola caja de cristal.
  *
- *  Va suelta: sin cabecera, sin menú y sin pie. No es una sección más de la
- *  web, es lo que se abre cuando Mayurlin manda un enlace a una agencia, y
- *  cuanto menos haya alrededor del documento, mejor. La única salida es el
- *  enlace al portafolio del pie, que es el sentido que ella pidió: del media
- *  kit a la web, nunca al revés.
+ *  LA PRIMERA VERSIÓN ERA UNA PÁGINA DE TEXTO SOBRE MARFIL, con el documento
+ *  incrustado debajo en una banda oscura. Mayurlin: *"la presentación del PDF
+ *  está bastante pobre. Como mínimo debe tener un diseño bonito... puede ser
+ *  la caja de cristal que usamos para el formulario, con una animación de
+ *  entrada hacia arriba y con poco texto, donde se pueda acceder al documento
+ *  de forma más fácil"*. Tenía razón: era una pantalla de aviso, no la portada
+ *  de un media kit.
  *
- *  EL VISOR SÓLO EN ESCRITORIO, y no es pereza. Safari de iPhone no dibuja un
- *  PDF dentro de un marco: deja la primera página congelada, o un recuadro
- *  gris. Así que en móvil se enseñan las dos acciones de verdad (descargar y
- *  abrir en el navegador, donde el teléfono usa su propio visor, que funciona
- *  bien) y nada más.
+ *  ASÍ QUE NO SE INVENTA NADA NUEVO, se usan dos piezas que ya existen y que
+ *  son lo mejor que tiene la web: la fotografía del hero y el cristal del
+ *  formulario (`mt-glass mt-glass-light`). Es la misma imagen que ve quien
+ *  entra por la portada, así que el enlace del media kit se reconoce como
+ *  parte de la misma casa.
  *
- *  Y SE COMPRUEBA QUE EL ARCHIVO ESTÉ antes de enseñar nada. Si el PDF todavía
- *  no se ha subido, un marco vacío enseñaría el 404 del servidor dentro de la
- *  página, que es lo peor que puede ver una agencia. En su lugar sale una
- *  línea diciendo que se está actualizando, con el correo al lado. */
+ *  EL CRISTAL NECESITA ALGO DETRÁS. `backdrop-filter` desenfoca lo que hay
+ *  debajo: sobre el marfil plano de antes no habría desenfocado nada y la caja
+ *  se vería como un rectángulo gris. Sobre la fotografía sí es cristal.
+ *
+ *  Y SE FUE EL VISOR INCRUSTADO. El navegador lo pinta con su propio fondo
+ *  gris oscuro y su barra de herramientas, y no se puede tocar ni un píxel
+ *  desde fuera: era justo lo que ella llamó pobre. "Abrir en el navegador"
+ *  lleva al mismo visor pero a pantalla completa, que es donde ese visor sí
+ *  funciona bien, y además es lo único que vale en el iPhone, donde Safari no
+ *  dibuja un PDF dentro de una página.
+ *
+ *  SE COMPRUEBA QUE EL ARCHIVO ESTÉ antes de enseñar los botones: si el PDF no
+ *  está subido, dos botones que llevan a un 404 son peor que una línea
+ *  diciendo que se está actualizando. */
 export const MediaKit: React.FC = () => {
   const { idioma } = useIdioma();
   const esMovil = useEsMovil();
@@ -35,7 +48,7 @@ export const MediaKit: React.FC = () => {
   /* `noindex, nofollow` MIENTRAS SE MIRA, y la etiqueta de siempre al salir.
      El `index, follow` vive en `index.html` y lo comparten todas las páginas,
      así que aquí se cambia el valor y se devuelve al desmontar. Que esta
-     página acabe en Google sería exactamente lo contrario de lo que se pidió. */
+     página acabe en Google sería lo contrario de lo que se pidió. */
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
     const antes = meta?.content ?? null;
@@ -61,99 +74,86 @@ export const MediaKit: React.FC = () => {
   }, [pdf]);
 
   return (
-    <div className="min-h-screen bg-[#fbfaf6] px-6 pb-16 pt-14 text-[#1a1918] md:px-10 md:pb-24 md:pt-20">
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="mx-auto max-w-[760px] text-center"
-      >
-        <img src={mayuLogo} alt="Mayu Travel" className="mx-auto h-[22px] w-auto md:h-[26px]" />
+    <section className="relative min-h-[100dvh] overflow-hidden bg-[#1a1918]">
+      {/* LA FOTO VA SIN FILTROS, que es la regla que puso ella para el hero y
+          vale igual aquí: es su graduación. Una sola copia, elegida por ancho
+          de pantalla, nunca las dos con `hidden`. */}
+      <img
+        src={esMovil ? HERO_PHOTO_MOBILE : HERO_PHOTO}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover object-[50%_65%] md:object-[50%_66%]"
+      />
 
-        <p className="mt-10 font-sans text-[10px] uppercase tracking-[0.3em] text-[#1a1918]/55 md:mt-12 md:text-[11px]">
-          {copy.rotulo}
-        </p>
+      <div className="relative z-10 flex min-h-[100dvh] items-center justify-center px-5 py-14 md:px-10 md:py-16">
+        {/* LA ENTRADA ES HACIA ARRIBA, como pidió. Mismo muelle y misma curva
+            que el panel del formulario, para que sea el mismo gesto y no dos
+            parecidos; sólo el recorrido es mayor (34px contra 12), porque aquí
+            la caja llega a una página vacía y no sobre contenido que ya está. */}
+        <motion.div
+          initial={{ opacity: 0, y: 34 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-glass mt-glass-light relative w-full max-w-[460px] overflow-hidden rounded-lg px-7 py-11 text-center text-[#1a1918] md:max-w-[520px] md:rounded-[10px] md:px-12 md:py-14"
+        >
+          <img src={mayuLogo} alt="Mayu Travel" className="mx-auto h-[22px] w-auto md:h-[26px]" />
 
-        <h1 className="mx-auto mt-5 max-w-[19ch] font-serif text-[2rem] leading-[1.14] md:mt-6 md:max-w-[27ch] md:text-[2.9rem]">
-          {copy.titular}
-        </h1>
+          <p className="mt-8 font-sans text-[10px] uppercase tracking-[0.3em] text-[#1a1918]/60 md:mt-9 md:text-[11px]">
+            {copy.rotulo}
+          </p>
 
-        <p className="mx-auto mt-5 max-w-[46ch] font-sans text-[15px] leading-relaxed text-[#1a1918]/70 md:mt-6 md:text-base">
-          {copy.linea}
-        </p>
+          <h1 className="mx-auto mt-4 max-w-[22ch] font-serif text-[1.75rem] leading-[1.16] md:mt-5 md:max-w-[20ch] md:text-[2.15rem]">
+            {copy.titular}
+          </h1>
 
-        {estado === 'falta' ? (
-          <p className="mx-auto mt-10 max-w-[44ch] font-sans text-[13px] leading-relaxed text-[#1a1918]/60 md:mt-12">
-            {copy.pendiente}{' '}
-            <a href={`mailto:${CORREO}`} className="border-b border-[#1a1918]/40 pb-[2px] text-[#1a1918] transition-colors hover:border-[#1a1918]">
+          {estado === 'falta' ? (
+            <p className="mx-auto mt-7 max-w-[34ch] font-sans text-[13px] leading-relaxed text-[#1a1918]/70">
+              {copy.pendiente}
+            </p>
+          ) : (
+            <div className="mt-9 flex flex-col items-center gap-[18px] md:mt-10">
+              {/* El botón de la casa, sin inventar otro tamaño, y a todo el
+                  ancho de la caja: es a lo que se viene. */}
+              <a
+                href={pdf}
+                download
+                className="w-full bg-[#1a1918] px-8 py-4 font-sans text-[12px] font-medium uppercase tracking-[0.22em] text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:py-[1.15rem] md:text-xs"
+              >
+                {copy.descargar}
+              </a>
+              <a
+                href={pdf}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-b border-[#1a1918]/45 pb-[3px] font-sans text-[11px] uppercase tracking-[0.22em] text-[#1a1918]/80 transition-colors hover:border-[#1a1918] hover:text-[#1a1918] md:text-[12px]"
+              >
+                {copy.abrir}
+              </a>
+            </div>
+          )}
+
+          {/* LA ÚNICA SALIDA, y hacia la web: del media kit al portafolio, no al
+              revés. Dentro del cristal y no sobre la foto, que es donde se lee
+              sin pelear con lo que haya debajo. */}
+          <div className="mt-10 border-t border-[#1a1918]/15 pt-6 md:mt-11">
+            <a
+              href={`mailto:${CORREO}`}
+              className="font-sans text-[12px] text-[#1a1918]/65 transition-colors hover:text-[#1a1918]"
+            >
               {CORREO}
             </a>
-          </p>
-        ) : (
-          <div className="mt-10 flex flex-col items-center gap-5 md:mt-12">
-            {/* El botón de la casa, sin inventar otro tamaño. Un solo CTA en
-                el bloque: descargar. "Abrir en el navegador" va debajo como
-                enlace fino, que es lo que hace falta en el móvil. */}
-            <a
-              href={pdf}
-              download
-              className="bg-[#1a1918] px-8 py-4 font-sans text-[12px] font-medium uppercase tracking-[0.22em] text-[#f5f3ed] transition-colors hover:bg-[#5a5854] md:px-10 md:py-[1.15rem] md:text-xs"
+            <span aria-hidden className="mx-3 text-[#1a1918]/25">
+              ·
+            </span>
+            <Link
+              to={ruta(idioma, 'inicio')}
+              className="font-sans text-[12px] text-[#1a1918]/65 transition-colors hover:text-[#1a1918]"
             >
-              {copy.descargar}
-            </a>
-            <a
-              href={pdf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-b border-[#1a1918]/45 pb-[3px] font-sans text-[11px] uppercase tracking-[0.22em] text-[#1a1918]/80 transition-colors hover:border-[#1a1918] hover:text-[#1a1918] md:text-[12px]"
-            >
-              {copy.abrir}
-            </a>
+              {copy.portafolio}
+            </Link>
           </div>
-        )}
-      </motion.div>
-
-      {/* EL DOCUMENTO, a la vista y sin tener que descargar nada.
-          LA BANDA OSCURA NO ES DECORACIÓN, es lo que hace que esto no parezca
-          un error. El visor de PDF lo pinta el navegador dentro del marco, con
-          su propio fondo gris oscuro y su barra de herramientas, y desde fuera
-          no se puede cambiar ni un píxel: sobre el marfil se veía como un
-          ladrillo negro caído en mitad de la página. Metido en una banda
-          `#1a1918` a sangre, que es la tinta de la casa y el mismo fondo que
-          usan los bloques de vídeo, el gris del visor se lee como parte del
-          diseño.
-
-          Alto en vh porque un PDF no tiene una proporción que se pueda calcular
-          desde fuera: son muchas páginas y el visor las apila. Y `#view=FitH`
-          para que abra encajado al ancho en la primera página en vez de al
-          tamaño que le parezca. */}
-      {estado === 'esta' && !esMovil && (
-        <div className="relative left-1/2 right-1/2 mt-16 -mx-[50vw] w-screen bg-[#1a1918] px-6 py-10 md:mt-20 md:px-10 md:py-14">
-          <iframe
-            src={`${pdf}#view=FitH`}
-            title={copy.rotulo}
-            className="mx-auto block h-[80vh] w-full max-w-[1100px] border-0"
-          />
-        </div>
-      )}
-
-      {/* LA ÚNICA SALIDA, y hacia la web. Discreta, al pie, para que no compita
-          con el botón de descargar: quien abre esto viene al documento. */}
-      <div className="mx-auto mt-14 max-w-[760px] border-t border-[#1a1918]/12 pt-8 text-center md:mt-16 md:pt-10">
-        <a
-          href={`mailto:${CORREO}`}
-          className="font-sans text-[12px] text-[#1a1918]/65 transition-colors hover:text-[#1a1918] md:text-[13px]"
-        >
-          {CORREO}
-        </a>
-        <span aria-hidden className="mx-3 text-[#1a1918]/25">·</span>
-        <Link
-          to={ruta(idioma, 'inicio')}
-          className="font-sans text-[12px] text-[#1a1918]/65 transition-colors hover:text-[#1a1918] md:text-[13px]"
-        >
-          {copy.portafolio}
-        </Link>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 };
