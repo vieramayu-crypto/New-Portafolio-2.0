@@ -39,8 +39,26 @@ jobs:
         run: |
           echo "Ruta usada: ${{ inputs.ruta }}"
           grep -o 'src="[^"]*"' dist/index.html
+      - name: Comprobar que el paquete esta entero
+        run: |
+          test -f dist/.htaccess   || { echo "FALTA .htaccess"; exit 1; }
+          test -f dist/404.html    || { echo "FALTA 404.html"; exit 1; }
+          test -f dist/sitemap.xml || { echo "FALTA sitemap.xml"; exit 1; }
+          test -d dist/images      || { echo "FALTAN las fotos"; exit 1; }
+          paginas=$(find dist -name index.html | wc -l)
+          echo "Paginas prerenderizadas: $paginas"
+          test "$paginas" -eq 34 || { echo "Esperaba 34 paginas, hay $paginas"; exit 1; }
+
+      # `include-hidden-files` NO ES UN DETALLE: desde la version 4.4 esta
+      # accion DEJA FUERA los archivos que empiezan por punto, y avisa en un
+      # renglon que nadie lee. El unico que hay aqui es `.htaccess`, y es el
+      # que hace que /media-kit, /proyectos y las nueve galerias existan en un
+      # hosting Apache. Sin el, el paquete se sube entero, la portada se ve
+      # bien, y cualquier enlace directo da el 404 del hosting: justo los
+      # enlaces que Mayurlin manda a los hoteles.
       - uses: actions/upload-artifact@v4
         with:
           name: web-para-mi-dominio
           path: dist
+          include-hidden-files: true
           retention-days: 30
