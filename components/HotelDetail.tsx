@@ -5,7 +5,7 @@ import { HotelStory, PhotoItem } from '../types';
 import { VideoNube } from './VideoNube';
 import { CASE_STUDIES } from '../data/caseStudies';
 import { toTitleCase } from '../src/lib/hotelName';
-import { versionMovil, MEDIA_MOVIL } from '../src/lib/foto';
+import { versionMovil, MEDIA_MOVIL, srcSetDe } from '../src/lib/foto';
 import { traducirCaso } from '../data/textosEn';
 import { useIdioma } from '../src/lib/idioma';
 import { crearT } from '../src/lib/textos';
@@ -73,8 +73,17 @@ const GalleryPhoto: React.FC<GalleryPhotoProps> = ({ photo, y, aspectClass, widt
     >
       <picture>
         <source media={MEDIA_MOVIL} srcSet={versionMovil(photo.url)} />
+        {/* LA ESCALERA, cuando esta foto la tiene. Sin ella el navegador
+            recibe un archivo mucho mayor que el hueco y lo reduce él, con un
+            filtro barato: medido, 87% del detalle frente al 101% de servirle
+            su medida. Ver `srcSetDe` en `src/lib/foto.ts`.
+            `sizes="100vw"` porque esta foto va a sangre completa; si algún
+            día se usa en un hueco más estrecho, hay que decirlo aquí o el
+            navegador pedirá de más. */}
         <img
           src={photo.url}
+          srcSet={srcSetDe(photo.url)}
+          sizes={srcSetDe(photo.url) ? '100vw' : undefined}
           alt={photo.alt}
           className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
             photo.isBlackAndWhite ? 'grayscale contrast-125' : ''
