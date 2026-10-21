@@ -211,12 +211,19 @@ async function main() {
     // pierde nada y se ahorra toda su descarga. Los monta React cuando toca,
     // uno a la vez, como siempre.
     //
+    // Y DESDE QUE EL MOSAICO ES EL INICIO, también los `<video>` propios. Nacen
+    // con `preload="none"` y sin dirección, pero este guion recorre la página
+    // entera antes de guardarla -- tiene que hacerlo, o la mitad de abajo se
+    // guardaría con la opacidad a cero --, así que para cuando se guarda ya
+    // tienen la suya puesta. Dejarlos sería hacer que una copia que nadie ve
+    // descargara seis vídeos.
+    //
     // LAS FOTOS SE QUEDAN, pero con carga diferida. El texto alternativo y la
     // dirección sí valen para el buscador. `lazy` no retrasa lo que se ve al
     // entrar: sólo evita que el navegador se traiga de golpe lo que está
     // doce pantallas más abajo.
     await pagina.evaluate(() => {
-      document.querySelectorAll('iframe').forEach((f) => f.remove());
+      document.querySelectorAll('iframe, video').forEach((f) => f.remove());
       document.querySelectorAll('img').forEach((i) => {
         i.setAttribute('loading', 'lazy');
         i.setAttribute('decoding', 'async');
