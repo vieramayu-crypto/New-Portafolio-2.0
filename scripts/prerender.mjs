@@ -153,7 +153,20 @@ async function main() {
   }
 
   const paginas = await rutasDelSitio();
-  const direcciones = paginas.flatMap((p) => Object.values(p.porIdioma));
+  // LAS DOS DEL MEDIA KIT VAN APARTE, y ése es justo el motivo de que estén
+  // aquí a mano y no en `rutasDelSitio()`: esa lista la comparten el
+  // prerenderizado y el sitemap, y el media kit tiene que entrar en el
+  // primero pero NUNCA en el segundo. Se prerenderizan para que el enlace que
+  // Mayurlin manda a una agencia responda 200 y enseñe vista previa al
+  // pegarlo en un correo o en WhatsApp; sin esto llegaba por el `404.html`,
+  // se veía bien pero con estado 404 y sin tarjeta de vista previa. La copia
+  // que se guarda ya lleva `noindex, nofollow` dentro, porque la etiqueta la
+  // pone la propia página al montarse y esto guarda el DOM ya dibujado.
+  const direcciones = [
+    ...paginas.flatMap((p) => Object.values(p.porIdioma)),
+    '/media-kit',
+    '/en/media-kit',
+  ];
 
   const srv = servidor(esqueleto);
   await new Promise((r) => srv.listen(PUERTO, r));

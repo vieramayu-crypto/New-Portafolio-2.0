@@ -13,6 +13,8 @@ import { HOTEL_STORIES } from './data/hotels';
 import { traducirHotel } from './data/textosEn';
 import { useIdioma } from './src/lib/idioma';
 import { analizarRuta, IDIOMAS, ruta, type Clave } from './src/lib/rutas';
+import { MediaKit } from './components/MediaKit';
+import { RUTA_MEDIA_KIT, esMediaKit } from './src/lib/mediaKit';
 import { Navbar } from './components/Navbar';
 import { HomeMain } from './components/HomeMain';
 import { About } from './components/About';
@@ -95,6 +97,11 @@ function esRutaDeEntradaConIntro(): boolean {
   const base = BASE.replace(/\/$/, '');
   let camino = window.location.pathname;
   if (base && camino.startsWith(base)) camino = camino.slice(base.length);
+  // EL MEDIA KIT TAMPOCO ABRE CON INTRO, por el mismo motivo que una ficha de
+  // hotel: quien abre ese enlace viene a por un documento, y seis segundos de
+  // vídeo por delante son seis segundos para cerrar la pestaña. Y además es un
+  // enlace que Mayurlin manda a una agencia, no una visita que llega a la web.
+  if (esMediaKit(camino || '/')) return false;
   const partes = analizarRuta(camino || '/');
   return !partes || CLAVES_DE_MENU.includes(partes.clave);
 }
@@ -206,6 +213,12 @@ const AppShell: React.FC = () => {
   );
 
   const { idioma } = useIdioma();
+  /* EL MEDIA KIT VA SUELTO: sin cabecera, sin pie y sin formulario. Es lo que
+     se abre cuando Mayurlin manda un enlace a una agencia, no una sección más
+     de la web, y cuanto menos haya alrededor del documento, mejor. Que la
+     cabecera no salga es además lo que impide el camino de vuelta que ella no
+     quiere: desde aquí se va a la web, pero no hay menú por el que llegar. */
+  const enMediaKit = esMediaKit(location.pathname);
   const partesRuta = analizarRuta(location.pathname);
   const currentPage: Page = partesRuta
     ? PAGINA_POR_CLAVE[partesRuta.clave] ?? 'home'
@@ -283,7 +296,9 @@ const AppShell: React.FC = () => {
           se esté viendo. */}
       <Metadatos />
 
-      <Navbar currentPage={currentPage} onNavigate={handleNavigate} onOpenAvailability={openAvailability} />
+      {!enMediaKit && (
+        <Navbar currentPage={currentPage} onNavigate={handleNavigate} onOpenAvailability={openAvailability} />
+      )}
 
       {/* Detras del cristal, la pagina se desenfoca y se apaga — sin eso, una
           foto a pantalla completa atraviesa el modal como una mancha. Envuelve
@@ -340,6 +355,16 @@ const AppShell: React.FC = () => {
                 />
               </React.Fragment>
             ))}
+            {/* LAS DOS PÁGINAS DEL MEDIA KIT. No están en `src/lib/rutas.ts` a
+                propósito, y de ahí se sigue todo lo demás: no entran en el
+                sitemap, no se prerenderizan (así que el recuento de 32 páginas
+                que vigilan los dos despliegues no se mueve), no salen en el
+                menú y no hay un solo enlace a ellas en toda la web. Se llega
+                sólo con el enlace que Mayurlin manda; en GitHub Pages por el
+                `404.html` y en su dominio por la regla general del
+                `.htaccess`. Ver `src/lib/mediaKit.ts`. */}
+            <Route path={RUTA_MEDIA_KIT.es} element={<MediaKit />} />
+            <Route path={RUTA_MEDIA_KIT.en} element={<MediaKit />} />
             <Route
               path="*"
               element={
@@ -356,7 +381,7 @@ const AppShell: React.FC = () => {
 
         {/* El pie cierra todas las páginas, Inicio incluido: hasta ahora Inicio
             terminaba en seco, sin Instagram, sin navegación y sin aviso legal. */}
-        <Footer onNavigate={handleNavigate} />
+        {!enMediaKit && <Footer onNavigate={handleNavigate} />}
       </div>
 
       {/* Un solo formulario de solicitud en toda la web: lo abren el CTA de

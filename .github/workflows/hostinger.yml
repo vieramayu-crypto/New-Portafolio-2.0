@@ -2,7 +2,7 @@
 #
 # Hostinger SI compila: al ver un package.json ejecuta `npm install` y
 # `npm run build`, y publica lo que quede en `dist`. El problema no es que
-# compile, es QUE NO PUEDE compilar esta web: el prerenderizado abre las 32
+# compile, es QUE NO PUEDE compilar esta web: el prerenderizado abre las 34
 # paginas en un navegador de verdad, y en un hosting compartido ese navegador
 # no se puede instalar -- hacen falta permisos de administrador para sus
 # librerias.
@@ -10,7 +10,7 @@
 # ASI QUE SE LE DA COMPILADO Y SE LE DEJA "COMPILAR". La rama `hostinger`
 # lleva dos cosas:
 #
-#   dist/           la web entera, ya hecha aqui, con las 32 paginas
+#   dist/           la web entera, ya hecha aqui, con las 34 paginas
 #   package.json    un guion de compilacion que solo escribe una linea
 #
 # Hostinger hace su `npm install` (no hay una sola dependencia que instalar,
@@ -25,7 +25,7 @@
 # POR QUE LA RAMA NO INFLA EL REPOSITORIO. Las fotos pesan 130 MB, pero son
 # exactamente los mismos archivos que ya estan en `public/images`: git guarda
 # por contenido, asi que no se duplican. Lo unico nuevo en cada compilacion
-# son el JavaScript, el CSS y los 32 HTML, que juntos no llegan a un mega.
+# son el JavaScript, el CSS y los 34 HTML, que juntos no llegan a un mega.
 name: Publicar en mi dominio (Hostinger)
 
 on:
@@ -81,13 +81,13 @@ jobs:
           test -f dist/404.html    || { echo "FALTA 404.html"; exit 1; }
           test -f dist/sitemap.xml || { echo "FALTA sitemap.xml"; exit 1; }
           test -d dist/images      || { echo "FALTAN las fotos"; exit 1; }
-          # LAS 32 PAGINAS SON EL MOTIVO DE TODO ESTO. Si el prerenderizado se
+          # LAS 34 PAGINAS SON EL MOTIVO DE TODO ESTO. Si el prerenderizado se
           # salto -- no tumba la compilacion, solo avisa --, aqui se nota y no
           # se publica nada: una web sin sus copias llega vacia a cualquier
           # buscador, y eso es peor que no publicar.
           paginas=$(find dist -name index.html | wc -l)
           echo "Paginas prerenderizadas: $paginas"
-          test "$paginas" -eq 32 || { echo "Esperaba 32 paginas, hay $paginas"; exit 1; }
+          test "$paginas" -eq 34 || { echo "Esperaba 34 paginas, hay $paginas"; exit 1; }
           echo "Como quedaron las rutas:"
           grep -o 'src="[^"]*\.js"' dist/index.html
 
