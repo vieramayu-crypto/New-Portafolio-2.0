@@ -42,7 +42,13 @@ import { rutasDelSitio } from './rutas-del-sitio.mjs';
 
 const RAIZ = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const DIST = path.join(RAIZ, 'dist');
-const BASE = (process.env.VITE_BASE || '/').replace(/\/+$/, '') + '/';
+// EL MISMO VALOR POR DEFECTO QUE `vite.config.ts`, y no es un detalle: aquí
+// ponía '/' mientras vite compilaba contra '/New-Portafolio-2.0/', así que
+// `npm run build` sin la variable puesta servía las páginas en la raíz y el
+// navegador pedía el código a una dirección que no existía. El prerenderizado
+// se quedaba esperando a que montara una aplicación que nunca arrancaba, y
+// fallaba con un tiempo agotado que no decía nada de esto.
+const BASE = (process.env.VITE_BASE || '/New-Portafolio-2.0/').replace(/\/+$/, '') + '/';
 const PUERTO = 4317;
 
 const TIPOS = {
