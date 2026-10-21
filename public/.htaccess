@@ -125,3 +125,26 @@ Options -Indexes
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
+
+
+# --------------------------------------------------------------------
+# 5. EL MEDIA KIT NO SE INDEXA, NI LA PAGINA NI EL PDF
+#
+# Las dos paginas (/media-kit y /en/media-kit) ya llevan dentro su
+# etiqueta `noindex`, asi que de eso se encargan solas. El PDF no puede:
+# un archivo no tiene etiquetas, asi que si un buscador diera con su
+# direccion lo indexaria y acabaria saliendo en Google aunque la pagina
+# que lo enseña no salga. La unica forma de decirselo es por cabecera.
+#
+# NO SE PONE EN robots.txt A PROPOSITO. Ese archivo lo puede leer
+# cualquiera, asi que un "Disallow: /media-kit/" seria publicar
+# exactamente la direccion que se quiere mantener fuera de la vista.
+#
+# Mayurlin: "no quiero que nadie que entre a mi web pueda acceder a mi
+# media kit, sino unicamente a traves del enlace que yo comparto".
+# --------------------------------------------------------------------
+<IfModule mod_headers.c>
+  <FilesMatch "\.pdf$">
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+  </FilesMatch>
+</IfModule>

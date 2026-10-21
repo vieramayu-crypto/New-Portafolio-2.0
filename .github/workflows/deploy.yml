@@ -26,25 +26,25 @@ jobs:
       - run: npm install
       # El prerenderizado abre la web en un Chromium de verdad para guardar el
       # HTML ya dibujado de cada pagina. Sin este paso no hay navegador en el
-      # runner y la compilacion se queda sin las 32 copias.
+      # runner y la compilacion se queda sin las 34 copias.
       - run: npx playwright install --with-deps chromium
       - run: npm run build
         env:
           # Este repo (New-Portafolio-2.0) vive en su propia subcarpeta de
           # GitHub Pages, distinta de la del repo original -- ver vite.config.ts.
           VITE_BASE: /New-Portafolio-2.0/
-      # LAS 32 PAGINAS SON EL MOTIVO DE PRERENDERIZAR. `prerender.mjs` no
+      # LAS 34 PAGINAS SON EL MOTIVO DE PRERENDERIZAR. `prerender.mjs` no
       # tumba una compilacion si no encuentra navegador: avisa y sigue, para
       # que un hosting que no puede instalarlo pueda compilar igual. Aqui si
       # hay navegador -- se instala en el paso de arriba --, asi que si
       # faltaran paginas seria un error de configuracion, y publicarlas a
       # medias dejaria la web vacia para cualquier buscador sin que nadie se
       # entere. Se comprueba antes de subir nada.
-      - name: Comprobar que estan las 32 paginas
+      - name: Comprobar que estan las 34 paginas
         run: |
           paginas=$(find dist -name index.html | wc -l)
           echo "Paginas prerenderizadas: $paginas"
-          test "$paginas" -eq 32 || { echo "Esperaba 32 paginas, hay $paginas"; exit 1; }
+          test "$paginas" -eq 34 || { echo "Esperaba 34 paginas, hay $paginas"; exit 1; }
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
