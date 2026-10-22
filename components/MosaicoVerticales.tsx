@@ -72,15 +72,19 @@ const PIEZAS = VIDEOS_VERTICALES.filter((v) => !v.provisional && v.archivo);
  *  sentido (en escritorio la 1 y la 3), que entre ellas tienen un desfase fijo
  *  y se podían girar para no coincidir nunca a la misma altura. Sobre el papel
  *  da columnas más variadas, pero medido es peor: la misma pieza aparecía en
- *  pantalla, a distinta altura, en 47 de 60 momentos, contra 5 de 60 con los
- *  grupos disjuntos. Así que disjuntos, y punto.
+ *  pantalla, a distinta altura, en 47 de 60 momentos, contra 5 a 13 de 60 con
+ *  los grupos disjuntos. Así que disjuntos, y punto.
  *
  *  MEDIDO, con las siete piezas de hoy (60 muestras a lo largo del bucle):
  *
  *                                        móvil      escritorio
  *      la misma pieza a la misma altura   0/60          0/60
  *      la misma pieza entre las que se
- *      ven a más de la mitad              0/60          5/60
+ *      ven a más de la mitad              0/60       5 a 13/60
+ *
+ *  El de escritorio no es un número fijo y no hay que apuntarlo como tal:
+ *  cambia de una medición a otra según por dónde pille el bucle al muestrear.
+ *  El de móvil sí es cero en todas.
  *
  *  EN MÓVIL ESTÁ RESUELTO DEL TODO. En escritorio no se puede: caben hasta
  *  seis celdas bien visibles entre las tres columnas y las piezas son siete,
