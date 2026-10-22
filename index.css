@@ -212,6 +212,32 @@ body {
   z-index: 1;
 }
 
+/* EL SELECTOR DE IDIOMA DEL MEDIA KIT, en la esquina de su caja de cristal.
+
+   Va aquí por el mismo motivo que el velo del hero: la regla de arriba
+   declara `position: relative` a todos los hijos del cristal sin condición, y
+   esta hoja se carga DESPUÉS de las utilidades de Tailwind. Con la utilidad
+   `absolute` el selector no se movía: medido, se quedaba a 308 px del borde
+   derecho en móvil y a 460 en escritorio, es decir en el flujo y pegado a la
+   izquierda, a la altura del logo.
+
+   Los valores son menores que el relleno de la caja (28 y 48 px) a propósito:
+   así queda en el canto, como el de la cabecera, y no en línea con el texto.
+   El logo va centrado, así que no se tocan. */
+.mt-kit-idioma {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+}
+
+@media (min-width: 768px) {
+  .mt-kit-idioma {
+    top: 18px;
+    right: 20px;
+  }
+}
+
 /* EL VELO DE LA BANDA DEL HERO.
 
    Va aquí y no en una utilidad de Tailwind por una razón concreta: la regla

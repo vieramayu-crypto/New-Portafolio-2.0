@@ -13,10 +13,9 @@ import type { Idioma } from './idioma';
  *  es NO LISTADO, que es lo mismo que hace un enlace de "cualquiera con el
  *  enlace" de Drive:
  *
- *    - no está en `src/lib/rutas.ts`, así que no entra en el sitemap ni en el
- *      prerenderizado (los dos despliegues vigilan que sigan siendo 32
- *      páginas, y éstas no las mueven);
- *    - no sale en el menú, ni en el pie, ni en ningún enlace de la web;
+ *    - sus direcciones viven en `rutas.ts` pero fuera de `rutasFijas()`, así
+ *      que no entran en el sitemap;
+ *    - no salen en el menú, ni en el pie, ni en ningún enlace de la web;
  *    - la página se pone `noindex, nofollow` mientras se mira, para que no
  *      acabe en Google ni aunque alguien la enlace desde fuera.
  *
@@ -29,19 +28,16 @@ import type { Idioma } from './idioma';
  *  ponen en un correo sin que parezcan un enlace de descarga sospechoso. El
  *  precio es que se pueden adivinar escribiéndolas; Google no las va a
  *  enseñar, pero una persona curiosa puede dar con ellas. Si algún día eso
- *  molesta, aquí se le añade un código al final y ya está. */
-export const RUTA_MEDIA_KIT: Record<Idioma, string> = {
-  es: '/media-kit',
-  en: '/en/media-kit',
-};
-
-/** Si esta dirección es una de las dos del media kit. Sirve para apagarle a la
- *  página la cabecera, el pie y la intro: es una página suelta que se comparte
- *  por enlace, no una sección más de la web. */
-export function esMediaKit(pathname: string): boolean {
-  const limpio = pathname.replace(/\/+$/, '') || '/';
-  return Object.values(RUTA_MEDIA_KIT).includes(limpio);
-}
+ *  molesta, en `rutas.ts` se le añade un código al final y ya está.
+ *
+ *  PERO SE COMPARTE UN SOLO ENLACE, no dos. Mayurlin: *"así no tengo que
+ *  manejar dos enlaces, sino un solo enlace con la capacidad de cambiar de
+ *  idioma la interfaz y el archivo que hay de fondo"*. Por eso la página lleva
+ *  el mismo selector de idioma que el resto de la web: al pulsar EN cambia la
+ *  dirección, el texto Y el PDF que se descarga, porque el archivo sale del
+ *  idioma activo (`urlMediaKit`). Las dos direcciones siguen existiendo, así
+ *  que mandar la inglesa directamente también vale.
+ */
 
 /** LOS DOS ARCHIVOS, Y SUS NOMBRES NO CAMBIAN NUNCA.
  *

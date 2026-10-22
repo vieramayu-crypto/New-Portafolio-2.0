@@ -56,6 +56,29 @@ const SEGMENTOS: Record<Idioma, Record<ClaveConSegmento, string>> = {
 
 export const PREFIJO_EN = '/en';
 
+/** LAS DOS PÁGINAS DEL MEDIA KIT, que son rutas de verdad pero NO del sitio.
+ *
+ *  Viven aquí, con las demás, porque ninguna ruta de esta web se escribe a
+ *  mano en otro sitio. Pero están FUERA de `SEGMENTOS` y de `rutasFijas()` a
+ *  propósito, y eso es lo que las mantiene sin listar: el sitemap sale de esa
+ *  función, así que el media kit no entra en él por mucho que exista aquí.
+ *
+ *  Lo que sí necesitan de este archivo es `traducirRuta`: sin ello, pulsar EN
+ *  estando en el media kit mandaba a la portada inglesa, porque `analizarRuta`
+ *  no reconoce esta dirección y la traducción cae a Inicio. Y cambiar de
+ *  idioma aquí no es un detalle: cambia también el PDF que se descarga.
+ *  Ver `src/lib/mediaKit.ts`. */
+export const RUTA_MEDIA_KIT: Record<Idioma, string> = {
+  es: '/media-kit',
+  en: '/en/media-kit',
+};
+
+/** Si esta dirección es una de las dos del media kit. */
+export function esMediaKit(pathname: string): boolean {
+  const limpio = pathname.replace(/\/+$/, '') || '/';
+  return Object.values(RUTA_MEDIA_KIT).includes(limpio);
+}
+
 /** Los dos idiomas, en el orden en que se declaran al buscador. */
 export const IDIOMAS: Idioma[] = ['es', 'en'];
 
@@ -114,6 +137,7 @@ export function analizarRuta(
  *  inglés, no volver al principio y buscarla otra vez. Si la ruta no se
  *  reconoce, entonces sí, a la portada del idioma pedido. */
 export function traducirRuta(pathname: string, a: Idioma): string {
+  if (esMediaKit(pathname)) return RUTA_MEDIA_KIT[a];
   const partes = analizarRuta(pathname);
   if (!partes) return ruta(a, 'inicio');
   return ruta(a, partes.clave, partes.param);
