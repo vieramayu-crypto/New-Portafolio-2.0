@@ -7,6 +7,7 @@ import { useIdioma } from '../src/lib/idioma';
 import { ruta } from '../src/lib/rutas';
 import { COPY_MEDIA_KIT, CORREO, urlMediaKit } from '../src/lib/mediaKit';
 import { useEsMovil } from './VideoNube';
+import { SelectorIdioma } from './SelectorIdioma';
 
 /** LA PÁGINA DEL MEDIA KIT: la foto del hero y una sola caja de cristal.
  *
@@ -84,6 +85,22 @@ export const MediaKit: React.FC = () => {
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover object-[50%_65%] md:object-[50%_66%]"
       />
+
+      {/* EL MISMO SELECTOR DE IDIOMA QUE EL RESTO DE LA WEB, y aquí hace dos
+          cosas a la vez. Mayurlin: *"así no tengo que manejar dos enlaces,
+          sino un solo enlace con la capacidad de cambiar de idioma la
+          interfaz y el archivo que hay de fondo"*. Al pulsar EN cambia la
+          dirección, el texto Y el PDF, porque el archivo sale del idioma
+          activo. El trabajo de verdad no está aquí sino en `traducirRuta`
+          (`src/lib/rutas.ts`): sin ella, pulsar EN desde el media kit
+          mandaba a la portada inglesa.
+
+          Va en una píldora de cristal porque debajo hay una fotografía, no
+          la banda blanca de la cabecera: dos letras en tinta sobre una foto
+          no se leen. Es la misma solución del botón flotante de Proyectos. */}
+      <div className="mt-glass mt-glass-light fixed right-4 top-4 z-30 overflow-hidden rounded-md px-3 py-2 md:right-7 md:top-6 md:px-4 md:py-2.5">
+        <SelectorIdioma />
+      </div>
 
       <div className="relative z-10 flex min-h-[100dvh] items-center justify-center px-5 py-14 md:px-10 md:py-16">
         {/* LA ENTRADA ES HACIA ARRIBA, como pidió. Mismo muelle y misma curva
