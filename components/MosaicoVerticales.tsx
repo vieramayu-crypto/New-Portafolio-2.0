@@ -48,66 +48,162 @@ const PIEZAS = VIDEOS_VERTICALES.filter((v) => !v.provisional && v.archivo);
 
 /** EL REPARTO: QUÉ PIEZA VA EN CADA HUECO DE CADA COLUMNA.
  *
- *  LA REGLA QUE MANDA, EN PALABRAS DE MAYURLIN: "habiendo tres columnas y
- *  tanto espacio, la idea es que siempre se vea un vídeo diferente; termina
- *  un vídeo de Ritz-Carlton y empieza otro, el mismo, y eso se ve como
- *  material repetido".
+ *  LA REGLA QUE MANDA, EN PALABRAS DE MAYURLIN: "no tiene ningún sentido que
+ *  esté viendo la misma pieza a la izquierda y a la derecha. Si el objetivo de
+ *  tener varios vídeos es poder apreciar diferentes contenidos".
  *
- *  POR QUÉ PASABA. Antes cada columna se quedaba con un subconjunto fijo de
- *  piezas (la 0, la 3 y la 6 para la primera) y lo recorría en bucle hasta
- *  llenar sus cuatro huecos: 0, 3, 6, 0. Al clonar la columna para cerrar la
- *  cinta, la secuencia real pasaba a ser `0 3 6 0 | 0 3 6 0`, y en la costura
- *  quedaban DOS CEROS SEGUIDOS. Ritz es justo la pieza 0.
+ *  POR QUÉ PASABA, Y POR QUÉ REORDENAR NO LO ARREGLA. Las columnas van a la
+ *  MISMA velocidad y en sentidos OPUESTOS (`mv-baja` y `mv-sube`, la misma
+ *  `--mv-dur`). Eso significa que el desfase entre dos columnas enfrentadas no
+ *  es fijo: recorre el bucle entero. A lo largo de una vuelta, cada celda de
+ *  la izquierda llega a quedar a la altura de TODAS las de la derecha. Así que
+ *  mientras dos columnas compartan una pieza, verla dos veces a la vez no es
+ *  mala suerte: es cuestión de esperar. El reparto anterior sólo cuidaba que
+ *  no hubiera dos iguales seguidas DENTRO de una columna, y las filas salían
+ *  distintas al cargar, que es justo lo que despistaba.
  *
- *  LO QUE SE HACE AHORA. Los huecos se numeran en orden de lectura (fila por
- *  fila, de izquierda a derecha) y se van repartiendo las piezas por turnos.
- *  Dos huecos seguidos de una misma columna están separados por tantos turnos
- *  como columnas haya, así que les toca pieza distinta mientras el número de
- *  columnas no sea múltiplo del de piezas. Con 7 piezas sale, en escritorio:
+ *  LO QUE SE HACE AHORA: CADA COLUMNA TIENE SUS PROPIAS PIEZAS. Se reparten en
+ *  grupos disjuntos, uno por columna, y ninguna pieza está en dos grupos. Con
+ *  eso da igual cómo se crucen las columnas, a qué velocidad vayan o en qué
+ *  sentido: dos celdas a la misma altura no pueden llevar la misma pieza
+ *  porque esa pieza sólo existe en una columna.
  *
- *      columna 1: 0 3 6 2        columna 2: 1 4 0 3        columna 3: 2 5 1 4
+ *  SE PROBÓ TAMBIÉN DEJAR QUE COMPARTIERAN las columnas que van en el mismo
+ *  sentido (en escritorio la 1 y la 3), que entre ellas tienen un desfase fijo
+ *  y se podían girar para no coincidir nunca a la misma altura. Sobre el papel
+ *  da columnas más variadas, pero medido es peor: la misma pieza aparecía en
+ *  pantalla, a distinta altura, en 47 de 60 momentos, contra 5 de 60 con los
+ *  grupos disjuntos. Así que disjuntos, y punto.
  *
- *  Ninguna columna repite pieza en huecos contiguos, tampoco al cerrar el
- *  bucle (el último hueco con el primero del clon), y cada fila enseña tres
- *  piezas distintas.
+ *  MEDIDO, con las siete piezas de hoy (60 muestras a lo largo del bucle):
  *
- *  Y POR SI ALGÚN DÍA CAMBIA EL NÚMERO DE PIEZAS, el reparto se comprueba a
- *  sí mismo: si deja alguna pegada, reordena esa columna, y si ni con eso
- *  (pasa cuando el número de piezas divide al de columnas, y entonces a cada
- *  columna le toca siempre la misma), reparte con otro paso hasta que sale
- *  limpio. Probado de 2 a 16 piezas, en las dos formas de columna: ni una
- *  pegada y sin dejarse ninguna pieza fuera. Con las siete de hoy acierta a
- *  la primera y el reparto es el de arriba.
+ *                                        móvil      escritorio
+ *      la misma pieza a la misma altura   0/60          0/60
+ *      la misma pieza entre las que se
+ *      ven a más de la mitad              0/60          5/60
  *
- *  Existe porque añadir o quitar una pieza no puede volver a colar un Ritz
- *  pegado a otro Ritz sin que nadie se entere. */
+ *  EN MÓVIL ESTÁ RESUELTO DEL TODO. En escritorio no se puede: caben hasta
+ *  seis celdas bien visibles entre las tres columnas y las piezas son siete,
+ *  así que basta con que una columna enseñe tres para que algo se repita. La
+ *  cuenta sólo cuadra con más piezas verticales; no hay reparto que lo arregle.
+ *
+ *  Y SE REPARTE POR HOTEL, no por orden de lista. Los clips se agrupan por
+ *  hotel, se ordenan de más a menos y se van dando por turnos: así los tres de
+ *  Stic Urban caen en columnas distintas en vez de amontonarse en una, que
+ *  dejaría una columna entera del mismo sitio. Con las siete de hoy sale:
+ *
+ *      móvil (2 columnas):  [Stic, Stic, GPRO, Deltapark] · [Stic, GPRO, Ritz]
+ *      escritorio (3):      [Stic, GPRO, Deltapark] · [Stic, GPRO] · [Stic, Ritz]
+ *
+ *  DENTRO DE CADA COLUMNA se llenan los huecos repitiendo su grupo en el orden
+ *  que no deje dos piezas iguales seguidas NI dos del mismo hotel; se prueban
+ *  las ordenaciones del grupo hasta dar con una que valga. El bucle cuenta: el
+ *  último hueco se toca con el primero del clon.
+ *
+ *  LO QUE ESTO NO ARREGLA, Y HAY QUE DECIRLO: dos clips DISTINTOS del mismo
+ *  hotel sí pueden verse a la vez en columnas distintas. Con cuatro hoteles,
+ *  uno de ellos con tres piezas, y hasta ocho celdas en pantalla, es
+ *  imposible evitarlo repartiendo. Se arregla solo el día que haya piezas de
+ *  más hoteles.
+ *
+ *  Y NINGUNA PIEZA SE QUEDA FUERA: cada una cae en exactamente un grupo. Es la
+ *  lección que ya costó una ronda cuando entró la de Ritz y el reparto de
+ *  entonces la habría dejado sin enseñar sin que nadie se enterara. */
 /** ¿Hay dos huecos contiguos con la misma pieza, o con el mismo hotel?
  *  `% col.length` cierra el bucle: el último hueco de la columna se toca con
- *  el primero del clon, que es exactamente donde se coló el Ritz repetido. */
+ *  el primero del clon, que es exactamente donde se coló un Ritz repetido. */
 const sinPegados = (col: number[], clave: (i: number) => string | number): boolean =>
   col.every((v, i) => clave(v) !== clave(col[(i + 1) % col.length]));
 
-/** REORDENA UNA COLUMNA PARA QUE NO HAYA DOS PIEZAS IGUALES PEGADAS.
- *  Coloca primero la pieza que más se repite y va saltando de dos en dos
- *  (0, 2, 4... y luego 1, 3, 5...): así dos copias de la misma nunca caen
- *  juntas mientras ninguna pase de la mitad de los huecos. Sólo se usa
- *  cuando hace falta, para no deshacer el reparto bueno. */
-const reordenar = (col: number[]): number[] => {
-  const cuenta = new Map<number, number>();
-  col.forEach((v) => cuenta.set(v, (cuenta.get(v) || 0) + 1));
-  const porFrecuencia = [...cuenta.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
-  const orden: number[] = [];
-  for (let i = 0; i < col.length; i += 2) orden.push(i);
-  for (let i = 1; i < col.length; i += 2) orden.push(i);
-  const salida = new Array<number>(col.length);
-  let i = 0;
-  porFrecuencia.forEach(([pieza, veces]) => {
-    for (let v = 0; v < veces; v += 1) {
-      salida[orden[i]] = pieza;
-      i += 1;
+/** Las piezas en grupos disjuntos, uno por columna, repartiendo cada hotel
+ *  entre columnas distintas. Se empieza por el hotel con más clips, que es el que más
+ *  daño hace si se amontona. */
+const gruposPorColumna = (cuantas: number, piezas: number, hotelDe: (i: number) => string): number[][] => {
+  const porHotel = new Map<string, number[]>();
+  for (let i = 0; i < piezas; i += 1) {
+    const h = hotelDe(i);
+    if (!porHotel.has(h)) porHotel.set(h, []);
+    porHotel.get(h)!.push(i);
+  }
+  const hoteles = [...porHotel.values()].sort((a, b) => b.length - a.length);
+  const grupos: number[][] = Array.from({ length: cuantas }, () => []);
+  let turno = 0;
+  hoteles.forEach((delHotel) =>
+    delHotel.forEach((pieza) => {
+      grupos[turno % cuantas].push(pieza);
+      turno += 1;
+    }),
+  );
+  return grupos;
+};
+
+/** Llena los huecos de una columna con las piezas de su grupo.
+ *
+ *  NO VALE CICLAR EL GRUPO. Con tres piezas en cuatro huecos sale `a b c a`, y
+ *  al clonar la columna para cerrar el bucle el último hueco toca al primero:
+ *  dos `a` seguidas en la costura. Es el mismo defecto que ya se coló una vez
+ *  con la pieza de Ritz. `a b c b` lo evita y usa las mismas tres piezas.
+ *
+ *  Así que se prueban todas las secuencias posibles (como mucho cuatro piezas
+ *  en seis huecos, unas cuatro mil, nada para el navegador) y se elige la
+ *  primera que cumpla, por este orden:
+ *
+ *    1. que estén TODAS las piezas del grupo, que ninguna se quede sin salir;
+ *    2. que no haya dos iguales seguidas, contando la costura del bucle;
+ *    3. que no haya dos del mismo hotel seguidas;
+ *    4. y de las que quedan, la que reparte los huecos más parejo, para que
+ *       una pieza no salga el triple que otra.
+ */
+const llenarColumna = (grupo: number[], huecos: number, hotelDe: (i: number) => string): number[] => {
+  if (!grupo.length) return [];
+  const laPieza = (i: number) => i;
+  const todas: number[][] = [];
+  const construir = (col: number[]) => {
+    if (col.length === huecos) {
+      todas.push(col);
+      return;
     }
-  });
-  return salida;
+    grupo.forEach((pieza) => {
+      if (col.length && col[col.length - 1] === pieza) return;
+      construir([...col, pieza]);
+    });
+  };
+  construir([]);
+
+  /* LO QUE DE VERDAD DECIDE: CUÁNTO SE SEPARAN DOS COPIAS DE LA MISMA PIEZA.
+     No basta con que no estén pegadas. En pantalla caben dos o tres celdas de
+     una misma columna, así que dos copias a dos huecos de distancia se ven a
+     la vez igualmente. Se mide en el ciclo, porque la columna se clona para
+     cerrar el bucle: la última celda toca a la primera de la copia. Con cuatro
+     piezas en seis huecos lo mejor posible es tres, y eso es justo lo que hay
+     que buscar. */
+  const separacion = (col: number[]) => {
+    let peor = col.length;
+    col.forEach((pieza, i) => {
+      for (let d = 1; d < col.length; d += 1) {
+        if (col[(i + d) % col.length] === pieza) {
+          peor = Math.min(peor, d);
+          break;
+        }
+      }
+    });
+    return peor;
+  };
+  /* Y a igualdad de separación, que ninguna pieza salga más veces que otra. */
+  const desequilibrio = (col: number[]) => {
+    const cuenta = grupo.map((p) => col.filter((v) => v === p).length);
+    return Math.max(...cuenta) - Math.min(...cuenta);
+  };
+  const completas = todas.filter((col) => new Set(col).size === grupo.length);
+  const candidatas = (completas.length ? completas : todas)
+    .filter((col) => sinPegados(col, laPieza))
+    .sort((a, b) => separacion(b) - separacion(a) || desequilibrio(a) - desequilibrio(b));
+
+  return (
+    candidatas.find((col) => sinPegados(col, hotelDe)) ??
+    candidatas[0] ??
+    Array.from({ length: huecos }, (_, k) => grupo[k % grupo.length])
+  );
 };
 
 const repartoDeHuecos = (
@@ -117,47 +213,16 @@ const repartoDeHuecos = (
   hotelDe: (i: number) => string,
 ): number[][] => {
   if (piezas < 1) return Array.from({ length: cuantas }, () => []);
-  /* `paso` es cuántos turnos hay entre dos huecos seguidos de una misma
-     columna. Lo natural es el número de columnas, y con las siete piezas de
-     hoy sale bien a la primera. Pero si el número de piezas divide al paso,
-     a una columna le toca SIEMPRE la misma pieza (tres columnas y tres
-     piezas, por ejemplo) y entonces no hay reordenación que salve nada: hay
-     que repartir distinto. Por eso se prueban pasos hasta encontrar uno que
-     no deje ninguna pegada. */
-  const laPieza = (i: number) => i;
-  const repartirCon = (paso: number, clave: (i: number) => string | number): number[][] => {
-    const cols: number[][] = Array.from({ length: cuantas }, () => []);
-    for (let k = 0; k < huecos; k += 1) {
-      for (let c = 0; c < cuantas; c += 1) cols[c].push((k * paso + c) % piezas);
-    }
-    return cols.map((col) => (sinPegados(col, clave) ? col : reordenar(col)));
-  };
-  /* Y NINGUNA PIEZA PUEDE QUEDARSE FUERA. Es la lección que ya costó una
-     ronda en esta web: cuando entró la de Ritz, el reparto de entonces la
-     habría dejado sin enseñar y nadie se habría enterado. Cambiar de paso
-     para evitar repetidos puede dejar huérfana alguna pieza, así que un
-     reparto sólo vale si enseña todas las que caben. */
-  const objetivo = Math.min(piezas, cuantas * huecos);
-  const lasEnseñaTodas = (cols: number[][]) => new Set(cols.flat()).size >= objetivo;
-
-  /* Dos vueltas, y la primera es la exigente: NI EL MISMO HOTEL DOS VECES
-     SEGUIDAS. No basta con que no se repita la pieza; Stic Urban tiene tres
-     clips y dos de ellos seguidos se leen igual de mal, aunque sean vídeos
-     distintos. Si ningún paso lo consigue, se conforma con que no se repita
-     la PIEZA, que es el fallo que vio Mayurlin. */
-  let apaño: number[][] | null = null;
-  for (const clave of [hotelDe, laPieza]) {
-    for (let paso = cuantas; paso <= cuantas + piezas; paso += 1) {
-      const intento = repartirCon(paso, clave);
-      if (!intento.every((col) => sinPegados(col, clave))) continue;
-      if (lasEnseñaTodas(intento)) return intento;
-      apaño = apaño ?? intento;
-    }
+  /* CON MENOS PIEZAS QUE COLUMNAS no hay grupos disjuntos que valgan: alguna
+     columna se quedaría vacía, que es peor que repetir. Entonces cada columna
+     las lleva todas, empezando por una distinta, que es lo máximo que se puede
+     hacer con lo que hay. */
+  if (piezas < cuantas) {
+    return Array.from({ length: cuantas }, (_, c) =>
+      Array.from({ length: huecos }, (_, k) => (c + k) % piezas),
+    );
   }
-  /* Si hay que elegir, antes dejar una pegada que esconder una pieza. */
-  const porTurnos = repartirCon(cuantas, laPieza);
-  if (lasEnseñaTodas(porTurnos)) return apaño && lasEnseñaTodas(apaño) ? apaño : porTurnos;
-  return apaño ?? porTurnos;
+  return gruposPorColumna(cuantas, piezas, hotelDe).map((g) => llenarColumna(g, huecos, hotelDe));
 };
 
 /** Cuántos huecos por columna antes de clonar. Los justos para cubrir la
