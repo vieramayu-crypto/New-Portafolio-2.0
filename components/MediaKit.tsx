@@ -86,22 +86,6 @@ export const MediaKit: React.FC = () => {
         className="absolute inset-0 h-full w-full object-cover object-[50%_65%] md:object-[50%_66%]"
       />
 
-      {/* EL MISMO SELECTOR DE IDIOMA QUE EL RESTO DE LA WEB, y aquí hace dos
-          cosas a la vez. Mayurlin: *"así no tengo que manejar dos enlaces,
-          sino un solo enlace con la capacidad de cambiar de idioma la
-          interfaz y el archivo que hay de fondo"*. Al pulsar EN cambia la
-          dirección, el texto Y el PDF, porque el archivo sale del idioma
-          activo. El trabajo de verdad no está aquí sino en `traducirRuta`
-          (`src/lib/rutas.ts`): sin ella, pulsar EN desde el media kit
-          mandaba a la portada inglesa.
-
-          Va en una píldora de cristal porque debajo hay una fotografía, no
-          la banda blanca de la cabecera: dos letras en tinta sobre una foto
-          no se leen. Es la misma solución del botón flotante de Proyectos. */}
-      <div className="mt-glass mt-glass-light fixed right-4 top-4 z-30 overflow-hidden rounded-md px-3 py-2 md:right-7 md:top-6 md:px-4 md:py-2.5">
-        <SelectorIdioma />
-      </div>
-
       <div className="relative z-10 flex min-h-[100dvh] items-center justify-center px-5 py-14 md:px-10 md:py-16">
         {/* LA ENTRADA ES HACIA ARRIBA, como pidió. Mismo muelle y misma curva
             que el panel del formulario, para que sea el mismo gesto y no dos
@@ -113,6 +97,30 @@ export const MediaKit: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mt-glass mt-glass-light relative w-full max-w-[460px] overflow-hidden rounded-lg px-7 py-11 text-center text-[#1a1918] md:max-w-[520px] md:rounded-[10px] md:px-12 md:py-14"
         >
+          {/* EL MISMO SELECTOR DE IDIOMA QUE EL RESTO DE LA WEB, y aquí hace
+              dos cosas a la vez. Mayurlin: *"así no tengo que manejar dos
+              enlaces, sino un solo enlace con la capacidad de cambiar de
+              idioma la interfaz y el archivo que hay de fondo"*. Al pulsarlo
+              cambia la dirección, el texto Y el PDF, porque el archivo sale
+              del idioma activo. El trabajo de verdad no está aquí sino en
+              `traducirRuta` (`src/lib/rutas.ts`): sin ella, pulsar EN desde
+              el media kit llevaba a la portada inglesa.
+
+              VA DENTRO DEL CRISTAL, no flotando sobre la foto. Se probó
+              arriba a la derecha de la pantalla, en su propia píldora, y las
+              dos letras desaparecían: ese rincón cae sobre el olivo, que es
+              la zona oscura del encuadre, y el cristal es translúcido, así
+              que la tinta sobre una foto oscura no se lee. Aquí el fondo lo
+              pone la propia caja y siempre es claro. */}
+          {/* EL `position` VIVE EN `.mt-kit-idioma` (en `index.css`) y no en una
+              utilidad de Tailwind: `.mt-glass > *` declara `relative` a todos
+              los hijos del cristal y esa hoja va después de las utilidades,
+              así que un `absolute` aquí no se aplicaba. Es la misma trampa
+              que ya costó una ronda con el velo del hero. */}
+          <div className="mt-kit-idioma">
+            <SelectorIdioma />
+          </div>
+
           <img src={mayuLogo} alt="Mayu Travel" className="mx-auto h-[22px] w-auto md:h-[26px]" />
 
           <p className="mt-8 font-sans text-[10px] uppercase tracking-[0.3em] text-[#1a1918]/60 md:mt-9 md:text-[11px]">
